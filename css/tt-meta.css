@@ -1,0 +1,16 @@
+.TTImageContainer {
+
+	position: relative;
+	width: 550px;
+	height: 700px;
+	margin-left: 180px;
+	cursor: crosshair;
+}
+
+.TTImage{
+	overflow: hidden;
+	position: relative;
+	width: 550px;
+	height: 700px
+	
+}

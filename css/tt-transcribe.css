@@ -1,0 +1,26 @@
+.viewer {
+	width: 550px;
+	height: 700px;
+	border: 1px solid black;
+	position: relative;
+	float:	left;
+	overflow: hidden;
+	position: relative;
+    overflow: hidden;
+}
+#right-panel {
+    float: right;
+}
+
+#jQuerySheet{
+    height:450px;
+    margin-left:30px;
+    margin-top:56px;
+    width:563px;
+}
+
+img {
+max-width: 800%;
+height: auto;
+border: 0;
+}
