@@ -1,0 +1,150 @@
+<style type="text/css">
+    #throbber {
+        padding: 10px;
+        position:absolute;
+        left: 50%;
+        top:10%;
+        margin: -50px 0 0 -50px;
+        z-index: 10000;
+        width: 100px;
+        height: 100px;
+    }
+</style>
+
+<div class="row">
+
+  <div class="span8 offset2" style="height:50px">
+    <div id="success" class="alert alert-success" style="display:none;">
+      <a class="close">×</a>
+      <strong>Muito bem!</strong> Sua resposta foi salva</strong>
+    </div>
+    <div id="finish" class="alert alert-success" style="display:none;">
+      <strong>Parabéns!</strong> Todas as tarefas foram finalizadas</strong>
+      <br/>
+      <div class="alert-actions">
+              <a class="btn small" href="/">Voltar</a>
+              <a class="btn small" href="/app">ou, verificar outras aplicações</a>
+      </div>
+    </div>
+    <div id="error" class="alert alert-error" style="display:none;">
+      <a class="close">×</a>
+      <strong>Erro!</strong> Algo ocorreu errado, por favor contate o administrador do site.</strong>
+    </div>
+  </div> <!-- End Success and Error Messages for the user -->
+</div>
+
+
+<div id="throbber"></div>
+
+<div class="row skeleton">
+  <div id="question" class="span8 offset2">
+      <h2>Question</h2>
+      <p>Tarefa: <span id="task-id" class="label label-warning">#</span></p>
+  </div>
+</div>
+
+<div class="row skeleton">
+      <!-- Answer buttons -->
+      <div id="answer" class="span8 offset2">
+          <button id="button" class="btn btn-success" onclick="submitTask()"><i class="icon icon-white icon-ok"></i> Salvar essas marcações</button>
+      </div>
+</div>
+
+<div class="row skeleton" style="padding-top:10px;">
+  <div id="TTContainer" style="width: 456px;">
+  </div>
+</div>
+
+<script src="/static/js/pybossa/pybossa.js" type="text/javascript"></script>
+<script src="/static/js/throbber/throbber.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="#server/js/jquery.tooltip.js"></script>
+<link rel="stylesheet" type="text/css" href="#server/css/jquery.tooltip.css"/>
+<link rel="stylesheet" type="text/css" href="#server/css/tt-select.css"/><link rel="stylesheet" type="text/css" href="#server/css/tt-meta.css"/>
+
+
+<script>
+
+var spinner = new Throbber({
+    color: 'black',
+    size: 90
+});
+spinner.appendTo (document.getElementById('throbber'));
+
+function spinnerStart() {
+    $("#throbber").show();
+    spinner.start();
+}
+function spinnerStop() {
+    spinner.stop()
+    $("#throbber").hide();
+    
+}
+
+function loadData( data ) {
+
+    if ( !$.isEmptyObject(data.task) ) {
+        //spinnerStart();
+        $("#question h2").text(data.question);
+        $("#task-id").text(data.task.id);
+        var links = data.task.info.links;
+        for(i = 0; i < links.length; i += 3){
+        	var $imgContainer = $('<div style="position: relative"/>');
+        	$("#TTContainer").append($imgContainer);
+        	for(j = i; j < (i+3 > links.length ? links.length : i+3) ; j++){
+        		console.log($imgContainer);
+        		$imgContainer.append('<div class="tables"><img src=' + links[j].link +'  ></div>');
+        	}
+        }
+    }
+   else {
+        $(".skeleton").hide();
+        $("#finish").fadeIn();
+    }
+
+
+	$('.tables > img').tooltip(
+				{
+					delay : 0,
+					showURL : false,
+					bodyHandler : function() {
+						return $("<img style='width: 375px; height: 490px;'/>")
+								.attr("src", this.src);
+					}
+				});
+
+		$('.tables > img').click(function() {
+			$(this).parent().toggleClass('selected');
+		});
+
+		$('.tables').dblclick(function() {
+			$('.tables').toggleClass('selected');
+		});
+
+	}
+
+	// Function to submit and save the TaskRun in PyBossa
+	function submitTask() {
+		// Get the task-id
+		var taskid = $("#task-id").text();
+
+		answer = $.fn.annotateImage.exportJsonData();
+
+		// Save the task
+		pybossa.saveTask(taskid, answer).done(function(data) {
+
+			$("#success").fadeIn();
+			setTimeout(function() {
+				$("#success").fadeOut()
+			}, 2000);
+			// Load a new task
+			pybossa.newTask("tt-select").done(function(data) {
+				loadData(data)
+			});
+		});
+	}
+
+	pybossa.newTask("tt-select").done(function(data) {
+		loadData(data)
+	});
+</script>
