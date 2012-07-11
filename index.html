@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Table Transcriber select</title>
+<script type="text/javascript" src="js/jquery-1.7.1.js"></script>
+<script type="text/javascript" src="js/jquery.tooltip.js"></script>
+<link type="text/css" src="css/jquery.tooltip.css"/>
+
+<script language="javascript">
+  $(window).load(function() {
+	  $('.tables > img').tooltip({
+			delay: 0,
+			showURL: false,
+			bodyHandler: function() {
+				return $("<img style='width: 300px; height: 400px;'/>").attr("src", this.src);
+			}
+		});
+	  
+
+	  $('.tables > img').toggle(
+		function(){
+		  console.log("aa");
+		  $(this).parent().css({'background-color' : 'lightGreen'});
+	  },
+	  	function(){
+		  $(this).parent().css({'background-color' : 'white'});
+	  });
+	  
+	  $('.tables').dblclick(function(){
+		  $('.tables').each(function(){
+		  	$(this).css({'background-color' : 'red'});
+	  	});
+	  });
+    
+  });
+  
+  
+  
+</script>
+
+<style>
+.tables{
+float:left;
+position: relative;
+width: 130px;
+height: 170px;
+padding: 10px;
+
+}
+
+.tables > img{
+cursor: pointer;
+overflow: hidden;
+position: relative;
+width: 120px;
+height: 160px;
+
+}
+
+
+</style>
+
+</head>
+<body>
+	<div id="container" style="width: 456px;">
+		<div style="position: relative">
+			<div class="tables">
+				<img src="00256000/baixa_resolucao/00256000_000.png">
+			</div>
+			<div class="tables">
+				<img src="00256000/baixa_resolucao/00256000_001.png">
+			</div>
+			<div class="tables">
+				<img src="00256000/baixa_resolucao/00256000_002.png">
+			</div>
+		</div>
+		<div style="position: relative;">
+			<div class="tables">
+				<img src="00256000/baixa_resolucao/00256000_003.png">
+			</div>
+			<div class="tables">
+				<img src="00256000/baixa_resolucao/00256000_004.png">
+			</div>
+			<div class="tables">
+				<img src="00256000/baixa_resolucao/00256000_005.png">
+			</div>
+		</div>
+	</div>
+
+	<!-- <div>
+
+		<label id="x1">X1 <input type="text" size="4" id="x1"
+			name="x1" /></label> <label>Y1 <input type="text" size="4" id="y1"
+			name="y1" />
+		</label> <label>X2 <input type="text" size="4" id="x2" name="x2" /></label> <label>Y2
+			<input type="text" size="4" id="y2" name="y2" />
+		</label> <label>W <input type="text" size="4" id="w" name="w" /></label> <label>H
+			<input type="text" size="4" id="h" name="h" />
+		</label>
+
+		<button id="sub">Submmit</button>
+
+	</div> -->
+
+</body>
+</html>
