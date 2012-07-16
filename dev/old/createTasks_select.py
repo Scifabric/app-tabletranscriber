@@ -26,7 +26,7 @@ from optparse import OptionParser
 
 def delete_app(api_url, api_key, id):
     """
-    Deletes the Table Transcriber Transcribe application.
+    Deletes the Table Transcriber Select application.
 
     :arg integer id: The ID of the application
     :returns: True if the application has been deleted
@@ -44,7 +44,7 @@ def delete_app(api_url, api_key, id):
 
 def update_app(api_url, api_key, id, name=None):
     """
-    Updates the name of the Table Transcriber Transcribe application
+    Updates the name of the Table Transcriber Select application
     :arg integer id: The ID of the application
     :arg string name: The new name for the application
     :returns: True if the application has been updated
@@ -67,7 +67,7 @@ def update_app(api_url, api_key, id, name=None):
 def create_app(api_url, api_key, server, name=None, short_name=None,
                description=None):
     """
-    Creates the Table Transcriber Transcribe application.
+    Creates the Table Transcriber Select application.
     :arg string server: The application url.
     :arg string name: The application name.
     :arg string short_name: The slug application name.
@@ -79,16 +79,16 @@ def create_app(api_url, api_key, server, name=None, short_name=None,
     if(server.endswith('/')):
         server = server[:server.rfind('/')]
     print('Creating app')
-    name = u'Table Transcriber Transcribe'  # Name with a typo
-    short_name = u'tt-transcribe'
-    description = u'Por favor, transcreva as tabelas.'
+    name = u'Table Transcriber Select'  # Name with a typo
+    short_name = u'tt-select'
+    description = u'Por favor, selecione as páginas com tabelas.'
     # JSON Blob to present the tasks for this app to the users
     # First we read the template:
-    file = open('template-transcribe.html')
+    file = open('template-select.html')
     text = url_template_edit(server,file)
     file.close()
     # HTML Blob with a long description for the application
-    file = open('long_description-transcribe.html')
+    file = open('long_description-select.html')
     long_description = url_template_edit(server, file)
     file.close()
     
@@ -106,9 +106,8 @@ def create_app(api_url, api_key, server, name=None, short_name=None,
         if app['short_name'] == short_name:
             print('{app_name} app is already registered in the DB'\
                     .format(app_name=name))
-            print('Deleting it!')
-            if (delete_app(api_url, api_key, app['id'])):
-                print "Application deleted!"
+            
+            return app['id']
     print("The application is not registered in PyBOSSA. Creating it...")
     # Setting the POST action
     request = urllib2.Request(api_url + '/api/app?api_key=' + api_key)
@@ -122,7 +121,7 @@ def create_app(api_url, api_key, server, name=None, short_name=None,
         print("Ooooops! the name of the application has a typo!")
         print("Updating it!")
         if (update_app(api_url, api_key, output['id'],
-            "Table Transcriber Transcribe")):
+            "Table Transcriber Select")):
             print "Application name fixed!"
             return output['id']
         else:
@@ -132,16 +131,16 @@ def create_app(api_url, api_key, server, name=None, short_name=None,
         return 0
 
 
-def create_task(api_url, api_key, app_id, n_answers, image):
+def create_task(api_url, api_key, app_id, n_answers, images):
     """
     Creates tasks for the application
-
     :arg integer app_id: Application ID in PyBossa.
     :returns: Task ID in PyBossa.
     :rtype: integer
     """
+    print("Creating Tasks...")
     # Data for the tasks
-    info = dict(n_answers=int(n_answers), link=image['link'])
+    info = dict(n_answers=int(n_answers), links=images)
 
     data = dict(app_id=app_id, state=0, info=info,
                  calibration=0, priority_0=0)
@@ -168,9 +167,9 @@ def url_template_edit(server,file):
     
     return text
 
-def update_template(api_url, api_key, server, app='tt-transcribe'):
+def update_template(api_url, api_key, server, app='tt-select'):
     """
-    Update tasks template and long description for the application tt-transcribe
+    Update tasks template and long description for the application tt-select
 
     :arg string app: Application short_name in PyBossa.
     :arg string server: The application url.
@@ -186,11 +185,11 @@ def update_template(api_url, api_key, server, app='tt-transcribe'):
     res = res[0]
     if res.get('short_name'):
         # Re-read the template
-        file = open('template-transcribe.html')
+        file = open('template-select.html')
         text = url_template_edit(server,file)
         file.close()
         # Re-read the long_description
-        file = open('long_description-transcribe.html')
+        file = open('long_description-select.html')
         long_desc = url_template_edit(server, file)
         file.close()
         info = dict(thumbnail=res['info']['thumbnail'], task_presenter=text)
@@ -364,13 +363,13 @@ if __name__ == "__main__":
     parser.add_option("-s", 
                       "--server", 
                       dest="server", 
-                      help="Table Transcriber Transcribe Server URL", 
+                      help="Table Transcriber Select Server URL", 
                       metavar="TT-URL")
     
     parser.add_option("-b", 
                       "--book", 
                       dest="book", 
-                      help="Table Transcriber Transcribe Book Name", 
+                      help="Table Transcriber Select Book Name", 
                       metavar="BOOK-NAME")
     
     parser.add_option("-r", "--recursive", action="store_true", dest="recursive")
@@ -386,7 +385,7 @@ if __name__ == "__main__":
         parser.error("You must supply an API-KEY to create an \
                       applicationa and tasks in PyBossa")
     if not options.server:
-        parser.error("You must choose a Table Transcriber Transcribe's server URL ex: http://localhost/TTappname")
+        parser.error("You must choose a Table Transcriber Select's server URL ex: http://localhost/TTappname")
 
     if (options.verbose):
         print('Running against PyBosssa instance at: %s' % options.api_url)
@@ -398,23 +397,29 @@ if __name__ == "__main__":
                 parser.error("You must choice --book, or a --recursive option")
 
         if options.book:
-            print "aqui"
             images = get_tt_images(options.server,options.book)
         else:
             images = get_recursive_tt_images(options.server)
         
         app_id = create_app(options.api_url, options.api_key, options.server)
-        # First of all we get the URL photos
+
         
-        # Finally, we have to create a set of tasks for the application
-        # For this, we get first the image URLs
-        for image in images:
+        GROUP_ITEMS = 1
+
+        for i in range(0,len(images),GROUP_ITEMS):
+            imagesAux = []
+            if(i+GROUP_ITEMS < len(images)):
+                for j in range(i,i+GROUP_ITEMS):        
+                    imagesAux.append(images[j])
+            else:
+                for j in range(i,len(images)):
+                    imagesAux.append(images[j])
             if options.n_answers:
                 create_task(options.api_url, options.api_key, app_id,
-                            options.n_answers, image)
+                            options.n_answers, imagesAux)
             else:
                 create_task(options.api_url, options.api_key, app_id,
-                            30, image)
+                            30, imagesAux)
 
     if options.update_template:
         print "Updating app template"
