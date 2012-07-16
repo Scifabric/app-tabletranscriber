@@ -106,9 +106,7 @@ def create_app(api_url, api_key, server, name=None, short_name=None,
         if app['short_name'] == short_name:
             print('{app_name} app is already registered in the DB'\
                     .format(app_name=name))
-            print('Deleting it!')
-            if (delete_app(api_url, api_key, app['id'])):
-                print "Application deleted!"
+            return app['id']
     print("The application is not registered in PyBOSSA. Creating it...")
     # Setting the POST action
     request = urllib2.Request(api_url + '/api/app?api_key=' + api_key)
@@ -140,7 +138,8 @@ def create_task(api_url, api_key, app_id, n_answers, image):
     :returns: Task ID in PyBossa.
     :rtype: integer
     """
-    # Data for the tasks
+    print("Creating Tasks...")
+    # Data for the TaskStoppe
     info = dict(n_answers=int(n_answers), link=image['link'])
 
     data = dict(app_id=app_id, state=0, info=info,
@@ -398,16 +397,11 @@ if __name__ == "__main__":
                 parser.error("You must choice --book, or a --recursive option")
 
         if options.book:
-            print "aqui"
             images = get_tt_images(options.server,options.book)
         else:
             images = get_recursive_tt_images(options.server)
         
         app_id = create_app(options.api_url, options.api_key, options.server)
-        # First of all we get the URL photos
-        
-        # Finally, we have to create a set of tasks for the application
-        # For this, we get first the image URLs
         for image in images:
             if options.n_answers:
                 create_task(options.api_url, options.api_key, app_id,
