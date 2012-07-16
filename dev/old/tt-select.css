@@ -1,0 +1,22 @@
+.tables{
+float:left;
+position: relative;
+width: 130px;
+height: 170px;
+padding: 10px;
+background-color: white;
+
+}
+
+.tables.selected{
+	background-color: lightGreen;
+}
+
+.tables > img{
+cursor: pointer;
+overflow: hidden;
+position: relative;
+width: 120px;
+height: 160px;
+border: 1px solid;
+}
