@@ -21,20 +21,20 @@
 
   <div class="span8 offset2" style="height:50px">
     <div id="success" class="alert alert-success" style="display:none;">
-      <a class="close">×</a>
-      <strong>Muito bem!</strong> Sua resposta foi salva</strong>
+   	  <a class="close">×</a>
+      <p><span><strong>#</strong></span><span>#</span></p>
     </div>
     <div id="finish" class="alert alert-success" style="display:none;">
-      <strong>Parabéns!</strong> Todas as tarefas foram finalizadas</strong>
+      <p><span><strong>#</strong></span><span>#</span></p>
       <br/>
       <div class="alert-actions">
-              <a class="btn small" href="/">Voltar</a>
-              <a class="btn small" href="/app">ou, verificar outras aplicações</a>
+              <a id="back" class="btn small" href="/">#</a>
+              <a id="other_apps" class="btn small" href="/app">#</a>
       </div>
     </div>
     <div id="error" class="alert alert-error" style="display:none;">
       <a class="close">×</a>
-      <strong>Erro!</strong> Algo ocorreu errado, por favor contate o administrador do site.</strong>
+      <p><span><strong>#</strong></span><span>#</span></p>
     </div>
   </div> <!-- End Success and Error Messages for the user -->
 </div>
@@ -45,7 +45,7 @@
 <div class="row skeleton">
   <div id="question" class="span8 offset2">
       <h2>Question</h2>
-      <p>Tarefa: <span id="task-id" class="label label-warning">#</span></p>
+      <p><span>#</span><span id="task-id" class="label label-warning">#</span></p>
   </div>
 </div>
 
@@ -87,26 +87,27 @@
 
 <script src="/static/js/pybossa/pybossa.js" type="text/javascript"></script>
 <script src="/static/js/throbber/throbber.js" type="text/javascript"></script>
-
-<script type="text/javascript" src="#server/js/jquery.i18n.properties-1.0.9.js"></script>
+<script type="text/javascript" src="#server/js/jquery.i18n.min.js"></script>
+<script type="text/javascript" src="#server/js/tt-select-internationalization.js"></script>
 
 <script>
 
 $(window).load(function(){
-	  jQuery.i18n.properties({
-		    name:'tt-select', 
-		    path:'#server/bundle', 
-		    mode:'both',
-		    callback: function() {
-		    	$("#question h2").text(question);
-		    	$("#question p").text(task_name);
-		    	$("#button_yes").text(button_yes);
-		    	$("#button_no").text(button_no);
-		    	$("#button_ntk").text(button_ntk);
-		    	
-		    }
-		});
-});
+		$("#question h2").text($.i18n._('question'));
+		$("#question span:first").text($.i18n._('task_name'));
+		$("#button_yes").text($.i18n._('button_yes'));
+		$("#button_no").text($.i18n._('button_no'));
+		$("#button_ntk").text($.i18n._('button_ntk'));
+		$("#success strong").text($.i18n._('well_done'));
+		$("#success span:nth-child(2)").text($.i18n._('saved'));
+		$("#finish strong").text($.i18n._('congratulations'));
+		$("#finish span:nth-child(2)").text($.i18n._('finished'));
+		$("#error strong").text($.i18n._('error'));
+		$("#error span:nth-child(2)").text($.i18n._('err_msg'));
+		$("#back").text($.i18n._('back'));
+		$("#other_apps").text($.i18n._('other_apps'));
+		
+}); //Internationalization using jquery.i18n
 
 var spinner = new Throbber({
     color: 'black',
@@ -128,7 +129,6 @@ function loadData( data, reloadTask ) {
 
 	 if ( !$.isEmptyObject(data.task) ) {
 	        spinnerStart();
-	        $("#question h2").text(data.question);
 	        $("#task-id").text(data.task.id);
 	        $("#image-link").attr("href", data.task.info.link);
 	        $("#image").attr("src",data.task.info.link);

@@ -4,41 +4,13 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Table Transcriber select</title>
 <script type="text/javascript" src="../js/jquery-1.7.1.js"></script>
-<script type="text/javascript" src="../js/jquery.tooltip.js"></script>
-<link rel="stylesheet" type="text/css" href="../css/jquery.tooltip.css"/>
-<link rel="stylesheet" type="text/css" href="../css/tt-select.css"/>
-<script type="text/javascript" language="JavaScript" src="../js/jquery.i18n.properties-min-1.0.9.js"></script>
+<script type="text/javascript" language="JavaScript" src="../js/jquery.i18n.min.js"></script>
+<script type="text/javascript" src="../js/tt-select-internationalization.js"></script>
 
 <script language="javascript">
-  $(window).load(function() {
-	  $('.tables > img').tooltip({
-			delay: 0,
-			showURL: false,
-			bodyHandler: function() {
-				return $("<img style='width: 375px; height: 490px;'/>").attr("src", this.src);
-			}
-		});
-	  
 
-	  $('.tables > img').click(
-		function(){
-			$(this).parent().toggleClass('selected');
-	  });
-	  
-	  $('.tables').dblclick(function(){
-		  $('.tables').toggleClass('selected');
-	  });
-	  
-	  jQuery.i18n.properties({
-		    name:'tt-meta', 
-		    path:'bundle/', 
-		    mode:'both',
-		    language: 'pt',
-		    callback: function() {
-		    	console.log(msg);
-		    	$("h2").text(msg);
-		    }
-		});
+	$(window).load(function(){
+		console.log($("#container h2:first"));
 	  
   });
   
@@ -50,29 +22,9 @@
 </head>
 <body>
 	<div id="container" style="width: 456px;">
-		<h2></h2>
-		<div style="position: relative">
-			<div class="tables">
-				<img src="00256000/baixa_resolucao/00256000_000.png">
-			</div>
-			<div class="tables">
-				<img src="00256000/baixa_resolucao/00256000_001.png">
-			</div>
-			<div class="tables">
-				<img src="00256000/baixa_resolucao/00256000_002.png">
-			</div>
-		</div>
-		<div style="position: relative;">
-			<div class="tables">
-				<img src="00256000/baixa_resolucao/00256000_003.png">
-			</div>
-			<div class="tables">
-				<img src="00256000/baixa_resolucao/00256000_004.png">
-			</div>
-			<div class="tables">
-				<img src="00256000/baixa_resolucao/00256000_005.png">
-			</div>
-		</div>
+		<h1>first h1</h1>
+		<h2>first h2</h2>
+		<h2>second h2</h2>
 	</div>
 
 	<!-- <div>
