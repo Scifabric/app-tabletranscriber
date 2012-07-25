@@ -125,7 +125,8 @@ function loadData(data){
 	    }
 	
 	  viewer($("#table").attr("value"));
-	  last_answer = undefined;
+	  last_answer = data.task.info.last_answer;
+	  console.log(data.task.info);
 	  createTable();
 	
 	

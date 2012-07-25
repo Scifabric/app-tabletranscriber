@@ -93,7 +93,7 @@ def create_app(api_url, api_key, server, name=None, short_name=None,
     file.close()
     
     info = dict(thumbnail=server + "/images/imagettPresenter.png",
-                 task_presenter=text)
+                 task_presenter=text,sched="incremental")           #Additional attribute to create a incremental app
     data = dict(name=name, short_name=short_name, description=description,
                 long_description=long_description,
                 hidden=0, info=info)
@@ -192,7 +192,7 @@ def update_template(api_url, api_key, server, app='tt-transcribe'):
         file = open('long_description-transcribe.html')
         long_desc = url_template_edit(server, file)
         file.close()
-        info = dict(thumbnail=res['info']['thumbnail'], task_presenter=text)
+        info = dict(thumbnail=res['info']['thumbnail'], task_presenter=text,sched="incremental")
         data = dict(id=res['id'], name=res['name'],
                     short_name=res['short_name'],
                     description=res['description'], hidden=res['hidden'],
