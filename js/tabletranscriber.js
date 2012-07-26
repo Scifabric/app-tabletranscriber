@@ -17,13 +17,14 @@ function createTable() {
 				buildSheet: 
 					jQuery.sheet.makeTable.json(table,true),
 					calcOff: true,
+					menu: " ",
 					lockFormulas: true,
-					boxModelCorrection: 1,
+					resizable: false,
+					boxModelCorrection: 2,
 					cellSelectModel: 'excel',
 					newColumnWidth: 	130,
 					colMargin: 			38,
 					autoFiller:                 false,
-					resizable: 			true,
 					minSize: 			{rows: 6, cols: 4},
 					forceColWidthsOnStartup:	false
 			}); 
@@ -33,13 +34,14 @@ function createTable() {
 			jQuery('#jQuerySheet').sheet({
 				buildSheet: '4x6',
 				calcOff: true,
+				resizable: false,
+				menu: " ",
 				lockFormulas: true,
-				boxModelCorrection: 1,
+				boxModelCorrection: 2,
 				cellSelectModel: 'excel',
 				newColumnWidth: 	130,
 				colMargin: 			38,
 				autoFiller:                 false,
-				resizable: 			true,
 				minSize: 			{rows: 6, cols: 4},
 				forceColWidthsOnStartup:	false
 
