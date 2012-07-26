@@ -900,7 +900,7 @@ jQuery.sheet = {
 								}
 							}, {
 								msg: 'line'
-							}, {
+							}]);/*, {
 								msg: jS.msg.menuAddSheet,
 								fn: function() {
 									jS.addSheet('5x10');
@@ -910,7 +910,7 @@ jQuery.sheet = {
 								fn: function() {
 									jS.deleteSheet();
 								}
-							}]);
+							}]);*/
 					}
 					
 					menu
@@ -1025,10 +1025,12 @@ jQuery.sheet = {
 							.keydown(jS.evt.keyDownHandler.documentKeydown)
 							.click(function(e) {
 								var target = jQuery(e.target);
-								if (target.is(':input') && !target.hasClass(jS.cl.inPlaceEdit) && !target.hasClass(jS.cl.formula)) {
-									document.jSKeydownSkip = true;
-								} else {
-									document.jSKeydownSkip = false;
+								if(jS != null){
+									if (target.is(':input') && !target.hasClass(jS.cl.inPlaceEdit) && !target.hasClass(jS.cl.formula)) {
+										document.jSKeydownSkip = true;
+									} else {
+										document.jSKeydownSkip = false;
+									}
 								}
 							});
 					}
@@ -2561,7 +2563,7 @@ jQuery.sheet = {
 			resizable: function(o, settings) { /* jQuery ui resizeable integration
 													o: object, any object that neds resizing;
 													settings: object, the settings used with jQuery ui resizable;
-												*/
+			 								*/
 				if (!o.resizable) return;
 				
 				if (o.attr('resizable')) {
