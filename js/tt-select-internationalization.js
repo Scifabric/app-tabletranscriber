@@ -51,7 +51,7 @@ var language = navigator.language? navigator.language : navigator.userLanguage;
 
 switch(language){
 	case 'en-US': var dict = en_US_dict;	break;
-	case 'pt': var dict = pt_dict; break;
+	case 'pt-BR': var dict = pt_dict; break;
 	default: var dict = default_dict;
 }
 
