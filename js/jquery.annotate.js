@@ -162,7 +162,7 @@
 
 		ok.click(function() {
 			var form = $('#image-annotate-edit-form form');
-			var text = {titulo : $('#titulo').val(), subtitulo: $('#subtitulo').val(), rodape: $('#rodape').val()};
+			var text = {titulo : $('#titulo').val(), subtitulo: $('#subtitulo').val(), conteudo: $('#conteudo').val(), rodape: $('#rodape').val()};
 			$.fn.annotateImage.appendPosition(form, editable);
 			image.mode = 'view';
 
@@ -259,13 +259,15 @@
 
 		// Add the note (which we'll load with the form afterwards)
 		var form = $('<div id="image-annotate-edit-form"><form>	Título: <textarea type="textarea" id="titulo" rows="0">' + this.note.text.titulo + '</textarea><br/>' + 
-					 'Subtítulo: <textarea type="textarea" id="subtitulo">' + this.note.text.subtitulo + '</textarea><br/>' + 
+					 'Subtítulo: <textarea type="textarea" id="subtitulo">' + this.note.text.subtitulo + '</textarea><br/>' +
+                     'Conteúdo: <select size="1" id="conteudo"><option value="economia">Economia</option> <option value="populacao">População/Demografia</option>'+ 
+                     '<option value="Violência/Criminalidade">Violência/Criminalidade</option></select>' +
 					 'Rodapé: <textarea type="textarea" id="rodape">' + this.note.text.rodape + '</textarea></form></div>');
 		this.form = form;
 
 		$('body').append(this.form);
-		this.form.css('left', this.area.offset().left + 'px');
-		this.form.css('top', (parseInt(this.area.offset().top) + parseInt(this.area.height()) + 7) + 'px');
+		this.form.css('left', (this.area.offset().left + this.area.width() + 7) + 'px');
+		this.form.css('top', parseInt(this.area.offset().top) + 'px');
 
 		// Set the area as a draggable/resizable element contained in the image canvas.
 		// Would be better to use the containment option for resizable but buggy
@@ -273,19 +275,19 @@
 			handles: 'all',
 
 			stop: function(e, ui) {
-				form.css('left', area.offset().left + 'px');
-				form.css('top', (parseInt(area.offset().top) + parseInt(area.height()) + 2) + 'px');
+				form.css('left', (area.offset().left + area.width() + 7) + 'px');
+				form.css('top', parseInt(area.offset().top) + 'px');
 			}
 		})
 		.draggable({
 			containment: image.canvas,
 			drag: function(e, ui) {
-				form.css('left', area.offset().left + 'px');
-				form.css('top', (parseInt(area.offset().top) + parseInt(area.height()) + 2) + 'px');
+				form.css('left', (area.offset().left + area.width() + 7) + 'px');
+				form.css('top', parseInt(area.offset().top) + 'px');
 			},
 			stop: function(e, ui) {
-				form.css('left', area.offset().left + 'px');
-				form.css('top', (parseInt(area.offset().top) + parseInt(area.height()) + 2) + 'px');
+				form.css('left', (area.offset().left + area.width() + 7) + 'px');
+				form.css('top', parseInt(area.offset().top) + 'px');
 			}
 		});
 		return this;
@@ -588,8 +590,10 @@
 	$.fn.annotateImage.exportJsonData = function(){
 		jsonData = [];
 		for (var i = 0; i < noteS.length; i++) {
-			jsonData.push({data: {titulo: noteS[i].text.titulo, subtitulo: noteS[i].text.subtitulo, rodape: noteS[i].text.rodape}, coords: {x1: noteS[i].left, y1: noteS[i].top, x2: noteS[i].left + noteS[i].width , y2: noteS[i].top + noteS[i].height}});
+			jsonData.push({data: {titulo: noteS[i].text.titulo, subtitulo: noteS[i].text.subtitulo, conteudo: noteS[i].text.conteudo,
+                    rodape: noteS[i].text.rodape}, coords: {x1: noteS[i].left, y1:noteS[i].top, x2: noteS[i].left + noteS[i].width , y2: noteS[i].top + noteS[i].height}});
 		}
+        console.log(jsonData);
 		
 		return JSON.stringify(jsonData);
 	};
