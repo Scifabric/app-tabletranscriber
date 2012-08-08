@@ -64,7 +64,7 @@ def update_app(api_url, api_key, id, name=None):
         return False
 
 
-def create_app(api_url, api_key, server, name=None, short_name=None,
+def create_app(api_url, api_key, server, bookId, name=None, short_name=None,
                description=None):
     """
     Creates the Table Transcriber Select application.
@@ -93,7 +93,7 @@ def create_app(api_url, api_key, server, name=None, short_name=None,
     file.close()
     
     info = dict(thumbnail=server + "/images/imagettPresenter.png",
-                 task_presenter=text)
+                 task_presenter=text, bookId = bookId, sched="default")
     data = dict(name=name, short_name=short_name, description=description,
                 long_description=long_description,
                 hidden=0, info=info)
@@ -140,7 +140,7 @@ def create_task(api_url, api_key, app_id, n_answers, image):
     """
     print("Creating Tasks...")
     # Data for the tasks
-    info = dict(n_answers=int(n_answers), link=image['link'])
+    info = dict(n_answers=int(n_answers), url_b=image['url_b'], url_m=image['url_m'])
 
     data = dict(app_id=app_id, state=0, info=info,
                  calibration=0, priority_0=0)
@@ -239,102 +239,39 @@ def get_recursive_tt_images(url):
     :returns: A list of book images photos.
     :rtype: list
     """
-    # Get the ID of the images and load it in the output var
-    if(url.endswith('/')):
-        url = url[:url.rfind('/')]
-    url = url + "/books/"
-    patternLinks = re.compile(r'<a\s.*?href\s*?=\s*?"(.*?)"', re.DOTALL | re.IGNORECASE)
-    
-    try:
-        urlobj = urllib2.urlopen(url)
-    except urllib2.HTTPError:
-        print("Error: " + url + "Doesn't exist")
-        exit()
-    
-    print('Contacting ' + url + ' for images')
-   
-    data = urlobj.read()
-    urlobj.close()
-    iterator = patternLinks.finditer(data);
-    
-    imageList = []
-    
-    # process individual items
-    for match in iterator:
-        fileUrl = match.group(1)
-        dirUrl = url[:url.rfind('/')] + '/' + fileUrl
-        if(url[:url.rfind('/')] == dirUrl[:dirUrl.rfind('//')] ):
-            continue
-        dirobj = urllib2.urlopen(url[:url.rfind('/')] + '/' + fileUrl)
-        dirdata = dirobj.read()
-        dirobj.close()
-        diriterator = patternLinks.finditer(dirdata)
-        for dirmatch in diriterator:
-            dirfileUrl = dirmatch.group(1)
-            if dirfileUrl.endswith(".png") or fileUrl.endswith(".jpg"):
-                urlType = re.match('^https?://(.*)', fileUrl)
-            # absolute URL
-                if urlType:
-                    filename = urlType.group(1)
-                    imageUrl = urlType.group(0)
-                else: # relative url
-                    imageUrl = dirUrl[:dirUrl.rfind('/')] + '/' + dirfileUrl
-            
-                imageList.append({'link' : imageUrl})
-    
-    if(len(imageList) == 0):
-        print("Error: Couldn't find any image")
-        exit()
-    
-    return imageList
+   #TODO
 
-def get_tt_images(url,book):
+def get_tt_images(url,bookId):
     """
     Gets public book images from a given server
     :returns: A list of book images photos.
     :rtype: list
     """
-    # Get the ID of the photos and load it in the output var
-    patternLinks = re.compile(r'<a\s.*?href\s*?=\s*?"(.*?)"', re.DOTALL | re.IGNORECASE)
+    WIDTH = 550
+    HEIGHT = 700
     
-    if(url.endswith('/')):
-        url = url[:url.rfind('/')]
+    print('Contacting archive.org')
     
-    url = url + "/books/" + book
-    try:
-        urlobj = urllib2.urlopen(url)
-    except urllib2.HTTPError:
-        print("Error: " + url + "Doesn't exist")
-        exit()
-    
-    print('Contacting ' + url + ' for images')
-    urlobj = urllib2.urlopen(url)
+    url = "http://archive.org/metadata/"
+    query = url + bookId
+    urlobj = urllib2.urlopen(query)
     data = urlobj.read()
     urlobj.close()
-    iterator = patternLinks.finditer(data);
+    output = json.loads(data)
     
-    imageList = []
+    imagecount = output['metadata']['imagecount']
+    collections = output['metadata']['collection']
     
-    # process individual items
-    for match in iterator:
-        fileUrl = match.group(1)
-        
-        if fileUrl.endswith(".png") or fileUrl.endswith(".jpg"):
-            urlType = re.match('^https?://(.*)', fileUrl)
-            # absolute URL
-            if urlType:
-                filename = urlType.group(1)
-                imageUrl = urlType.group(0)
-            else: # relative url
-                imageUrl = url + '/' + fileUrl
-            
-            imageList.append({'link' : imageUrl})
+    imgUrls = "http://www.archive.org/download/" + bookId + "/page/n"
     
-    if(len(imageList) == 0):
-        print("Error: Couldn't find any image")
-        exit()
+    imgList = []
+    for idx in range(int(imagecount)-2):
+        print 'Retrieved img: %s' % idx
+        imgUrl_m = imgUrls + "%d_w%d_h%d" % (idx,WIDTH,HEIGHT)
+        imgUrl_b = imgUrls + str(idx)
+        imgList.append({'url_m':  imgUrl_m, 'url_b': imgUrl_b})
     
-    return imageList
+    return imgList
 
 
 if __name__ == "__main__":
@@ -401,7 +338,7 @@ if __name__ == "__main__":
         else:
             images = get_recursive_tt_images(options.server)
         
-        app_id = create_app(options.api_url, options.api_key, options.server)
+        app_id = create_app(options.api_url, options.api_key, options.server, options.book)
 
         
         GROUP_ITEMS = 1

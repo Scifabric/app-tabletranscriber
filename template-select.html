@@ -3,7 +3,7 @@
         padding: 10px;
         position:absolute;
         left: 50%;
-        top:10%;
+        top:50%;
         margin: -50px 0 0 -50px;
         z-index: 10000;
         width: 100px;
@@ -60,7 +60,7 @@
 
 <div class="row skeleton" style="padding: 10px;">
    <div class="span8 offset2">
-    <a id="image-link" href="#">
+    <a id="image-link" href="#" target="_blank">
       <img id="image" class=ttImage src="#" onload="spinnerStop()">
     </a>
   </div>
@@ -130,8 +130,8 @@ function loadData( data, reloadTask ) {
 	 if ( !$.isEmptyObject(data.task) ) {
 	        spinnerStart();
 	        $("#task-id").text(data.task.id);
-	        $("#image-link").attr("href", data.task.info.link);
-	        $("#image").attr("src",data.task.info.link);
+	        $("#image-link").attr("href", data.task.info.url_b);
+	        $("#image").attr("src",data.task.info.url_m);
 	    }
    else {
         $(".skeleton").hide();
