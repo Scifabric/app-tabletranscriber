@@ -92,8 +92,20 @@ def create_app(api_url, api_key, server, bookId, name=None, short_name=None,
     long_description = url_template_edit(server, file)
     file.close()
     
+    
+    archiveUrl = "http://archive.org/metadata/"
+    query = archiveUrl + bookId
+    urlobj = urllib2.urlopen(query)
+    data = urlobj.read()
+    urlobj.close()
+    output = json.loads(data)
+
+    bookName = output['metadata']['title']
+    volume = output['metadata']['volume']
+
     info = dict(thumbnail=server + "/images/imagettPresenter.png",
-                 task_presenter=text, bookId = bookId, sched="default")
+                 task_presenter=text, bookId = bookId, sched="default",
+                 title = bookName, volume = volume)
     data = dict(name=name, short_name=short_name, description=description,
                 long_description=long_description,
                 hidden=0, info=info)
@@ -241,7 +253,7 @@ def get_recursive_tt_images(url):
     """
    #TODO
 
-def get_tt_images(url,bookId):
+def get_tt_images(bookId):
     """
     Gets public book images from a given server
     :returns: A list of book images photos.
@@ -251,7 +263,7 @@ def get_tt_images(url,bookId):
     HEIGHT = 700
     
     print('Contacting archive.org')
-    
+   
     url = "http://archive.org/metadata/"
     query = url + bookId
     urlobj = urllib2.urlopen(query)
@@ -260,10 +272,8 @@ def get_tt_images(url,bookId):
     output = json.loads(data)
     
     imagecount = output['metadata']['imagecount']
-    collections = output['metadata']['collection']
-    
     imgUrls = "http://www.archive.org/download/" + bookId + "/page/n"
-    
+
     imgList = []
     for idx in range(int(imagecount)-2):
         print 'Retrieved img: %s' % idx
@@ -334,7 +344,7 @@ if __name__ == "__main__":
                 parser.error("You must choice --book, or a --recursive option")
 
         if options.book:
-            images = get_tt_images(options.server,options.book)
+            images = get_tt_images(options.book)
         else:
             images = get_recursive_tt_images(options.server)
         
