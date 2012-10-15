@@ -1,262 +1,23 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-# This file is part of PyBOSSA.
-#
-# PyBOSSA is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# PyBOSSA is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with PyBOSSA.  If not, see <http://www.gnu.org/licenses/>.
-
 import urllib
 import urllib2
 import json
-import re
 import string
 from optparse import OptionParser
-
-
-def delete_app(api_url, api_key, id):
-    """
-    Deletes the Table Transcriber Select application.
-
-    :arg integer id: The ID of the application
-    :returns: True if the application has been deleted
-    :rtype: boolean
-    """
-    request = urllib2.Request(api_url + '/api/app/' + str(id) + \
-                              '?api_key=' + api_key)
-    request.get_method = lambda: 'DELETE'
-
-    if (urllib2.urlopen(request).getcode() == 204):
-        return True
-    else:
-        return False
-
-
-def update_app(api_url, api_key, id, name=None):
-    """
-    Updates the name of the Table Transcriber Select application
-    :arg integer id: The ID of the application
-    :arg string name: The new name for the application
-    :returns: True if the application has been updated
-    :rtype: boolean
-    """
-    data = dict(id=id, name=name)
-    data = json.dumps(data)
-    request = urllib2.Request(api_url + '/api/app/' + str(id) + \
-                              '?api_key=' + api_key)
-    request.add_data(data)
-    request.add_header('Content-type', 'application/json')
-    request.get_method = lambda: 'PUT'
-
-    if (urllib2.urlopen(request).getcode() == 200):
-        return True
-    else:
-        return False
-
-
-def create_app(api_url, api_key, server, bookId, name=None, short_name=None,
-               description=None):
-    """
-    Creates the Table Transcriber Select application.
-    :arg string server: The application url.
-    :arg string name: The application name.
-    :arg string short_name: The slug application name.
-    :arg string description: A short description of the application.
-
-    :returns: Application ID or 0 in case of error.
-    :rtype: integer
-    """
-    if(server.endswith('/')):
-        server = server[:server.rfind('/')]
-    print('Creating app')
-    name = u'Table Transcriber Select'  # Name with a typo
-    short_name = u'tt-select'
-    description = u'Por favor, selecione as páginas com tabelas.'
-    # JSON Blob to present the tasks for this app to the users
-    # First we read the template:
-    file = open('template-select.html')
-    text = url_template_edit(server,file)
-    file.close()
-    # HTML Blob with a long description for the application
-    file = open('long_description-select.html')
-    long_description = url_template_edit(server, file)
-    file.close()
-    
-    
-    archiveUrl = "http://archive.org/metadata/"
-    query = archiveUrl + bookId
-    urlobj = urllib2.urlopen(query)
-    data = urlobj.read()
-    urlobj.close()
-    output = json.loads(data)
-
-    bookName = output['metadata']['title']
-    volume = output['metadata']['volume']
-
-    info = dict(thumbnail=server + "/images/imagettPresenter.png",
-                 task_presenter=text, bookId = bookId, sched="default",
-                 title = bookName, volume = volume)
-    data = dict(name=name, short_name=short_name, description=description,
-                long_description=long_description,
-                hidden=0, info=info)
-    data = json.dumps(data)
-
-    # Checking which apps have been already registered in the DB
-    apps = json.loads(urllib2.urlopen(api_url + '/api/app' + \
-                      '?api_key=' + api_key).read())
-    for app in apps:
-        if app['short_name'] == short_name:
-            print('{app_name} app is already registered in the DB'\
-                    .format(app_name=name))
-            
-            return app['id']
-    print("The application is not registered in PyBOSSA. Creating it...")
-    # Setting the POST action
-    request = urllib2.Request(api_url + '/api/app?api_key=' + api_key)
-    request.add_data(data)
-    request.add_header('Content-type', 'application/json')
-
-    # Create the app in PyBOSSA
-    output = json.loads(urllib2.urlopen(request).read())
-    if (output['id'] != None):
-        print("Done!")
-        print("Ooooops! the name of the application has a typo!")
-        print("Updating it!")
-        if (update_app(api_url, api_key, output['id'],
-            "Table Transcriber Select")):
-            print "Application name fixed!"
-            return output['id']
-        else:
-            print "An error has occurred"
-    else:
-        print("Error creating the application")
-        return 0
-
-
-def create_task(api_url, api_key, app_id, n_answers, image):
-    """
-    Creates tasks for the application
-    :arg integer app_id: Application ID in PyBossa.
-    :returns: Task ID in PyBossa.
-    :rtype: integer
-    """
-    print("Creating Tasks...")
-    # Data for the tasks
-    info = dict(n_answers=int(n_answers), url_b=image['url_b'], url_m=image['url_m'])
-
-    data = dict(app_id=app_id, state=0, info=info,
-                 calibration=0, priority_0=0)
-
-    data = json.dumps(data)
-
-    # Setting the POST action
-    request = urllib2.Request(api_url + '/api/task' + '?api_key=' + api_key)
-    request.add_data(data)
-    request.add_header('Content-type', 'application/json')
-
-    # Create the task
-    output = json.loads(urllib2.urlopen(request).read())
-    if (output['id'] != None):
-        return True
-    else:
-        return False
+from PybossaApp import App
 
 def url_template_edit(server,file):
     text = ""
-    for line in file.readlines():
+    for line in open(file).readlines():
         line = line.replace("#server",server)
         text += line
     
     return text
 
-def update_template(api_url, api_key, server, app='tt-select'):
-    """
-    Update tasks template and long description for the application tt-select
-
-    :arg string app: Application short_name in PyBossa.
-    :arg string server: The application url.
-    :returns: True when the template has been updated.
-    :rtype: boolean
-    """
-    request = urllib2.Request('%s/api/app?short_name=%s' %
-                              (api_url, app))
-    request.add_header('Content-type', 'application/json')
-
-    res = urllib2.urlopen(request).read()
-    res = json.loads(res)
-    res = res[0]
-    if res.get('short_name'):
-        # Re-read the template
-        file = open('template-select.html')
-        text = url_template_edit(server,file)
-        file.close()
-        # Re-read the long_description
-        file = open('long_description-select.html')
-        long_desc = url_template_edit(server, file)
-        file.close()
-        info = dict(thumbnail=res['info']['thumbnail'], task_presenter=text)
-        data = dict(id=res['id'], name=res['name'],
-                    short_name=res['short_name'],
-                    description=res['description'], hidden=res['hidden'],
-                    long_description=long_desc,
-                    info=info)
-        data = json.dumps(data)
-        request = urllib2.Request(api_url + '/api/app/' + str(res['id']) + \
-                                  '?api_key=' + api_key)
-        request.add_data(data)
-        request.add_header('Content-type', 'application/json')
-        request.get_method = lambda: 'PUT'
-
-        if (urllib2.urlopen(request).getcode() == 200):
-            return True
-        else:
-            return False
-
-    else:
-        return False
-
-    # Data for the tasks
-    info = dict(n_answers=2, link=photo['link'], url_m=photo['url_m'],
-                 url_b=photo['url_b'])
-    data = dict(app_id=app_id, state=0, info=info,
-                calibration=0, priority_0=0)
-    data = json.dumps(data)
-
-    # Setting the POST action
-    request = urllib2.Request(api_url + '/api/task' + '?api_key=' + api_key)
-    request.add_data(data)
-    request.add_header('Content-type', 'application/json')
-
-    # Create the task
-    output = json.loads(urllib2.urlopen(request).read())
-    if (output['id'] != None):
-        return True
-    else:
-        return False
-
-
-def get_recursive_tt_images(url):
-    """
-    Gets recursively public books images from a given server
-    :returns: A list of book images photos.
-    :rtype: list
-    """
-   #TODO
 
 def get_tt_images(bookId):
     """
-    Gets public book images from a given server
-    :returns: A list of book images photos.
+    Gets public book images from internet archive server
+    :returns: A list of book images.
     :rtype: list
     """
     WIDTH = 550
@@ -325,45 +86,22 @@ if __name__ == "__main__":
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose")
     (options, args) = parser.parse_args()
 
-    if not options.api_url:
-        options.api_url = 'http://localhost:5000/'
-
-    if not options.api_key:
-        parser.error("You must supply an API-KEY to create an \
-                      applicationa and tasks in PyBossa")
-    if not options.server:
-        parser.error("You must choose a Table Transcriber Select's server URL ex: http://localhost/TTappname")
 
     if (options.verbose):
         print('Running against PyBosssa instance at: %s' % options.api_url)
         print('Using API-KEY: %s' % options.api_key)
 
-    if options.create_app:
-        if not options.recursive:
-            if not options.book:
-                parser.error("You must choice --book, or a --recursive option")
+    if not options.book:
+            parser.error("You must choice --book, or a --recursive option")
 
-        if options.book:
-            images = get_tt_images(options.book)
-        else:
-            images = get_recursive_tt_images(options.server)
-        
-        app_id = create_app(options.api_url, options.api_key, options.server, options.book)
+    else:
+        images = get_tt_images(options.book)
+    
+    app = App("Name", "testeapp", "Description", "3d39044f-bc93-4226-b44c-6e88f3fa76c8",  "http://localhost:5000")
 
-        
-        GROUP_ITEMS = 1
-
-        for image in images:
-            if options.n_answers:
-                create_task(options.api_url, options.api_key, app_id,
-                            options.n_answers, image)
-            else:
-                create_task(options.api_url, options.api_key, app_id,
-                            30, image)
+    for image in images:
+        app.add_task(image)
 
     if options.update_template:
         print "Updating app template"
-        update_template(options.api_url, options.api_key, options.server)
-
-    if not options.create_app and not options.update_template:
-        parser.error("Please check --help or -h for the available options")
+        app.set_template(url_template_edit(options.server,"template-select.html"))

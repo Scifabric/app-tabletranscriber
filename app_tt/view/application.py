@@ -2,15 +2,15 @@ import urllib2
 import json
 
 from flask import Flask, render_template, request
-import flow.api as api
+from app_tt.engine.api import blueprint as api
 
-import pb_app.default_settings as settings
+import app_tt.default_settings as settings
 
 
 app = Flask(__name__)
 app.config.from_object(settings)
 
-app.register_blueprint(api)
+app.register_blueprint(api, url_prefix='/api')
 
 def getAppData(app_short_name, pybossa_server):
     return json.load(urllib2.urlopen(pybossa_server + '/api/app?short_name='

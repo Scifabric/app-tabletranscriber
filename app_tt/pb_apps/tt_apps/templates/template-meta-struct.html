@@ -1,0 +1,157 @@
+<div class="row">
+
+  <div class="span8 offset2" style="height:40px; display:none;">
+    <div id="success" class="alert alert-success" style="display:none;">
+	    <p><span>Sua resposta foi salva.</span></p>
+	</div>
+    <div id="finish" class="alert alert-success" style="display:none;">
+      <strong>Parabéns!</strong> Todas as tarefas foram finalizadas</strong>
+      <br/>
+      <div class="alert-actions">
+              <a class="btn small" href="/">Voltar</a>
+              <a class="btn small" href="/app">ou, verificar outras aplicações</a>
+      </div>
+    </div>
+    <div id="error" class="alert alert-error" style="display:none;">
+      <a class="close">×</a>
+      <strong>Erro!</strong> Algo ocorreu errado, por favor contate o administrador do site.</strong>
+    </div>
+  </div> <!-- End Success and Error Messages for the user -->
+</div>
+
+
+<div id="throbber"></div>
+
+<div class="row skeleton">
+  <div id="question" class="span8">
+      <h3>Question</h3>
+      <p>Tarefa: <span id="task-id" class="label label-warning">#</span>
+      <a class="btn btn-primary" href="./tutorial">Tutorial</a></p>
+  </div>
+</div>
+
+<div class="row skeleton" style="padding:10px; padding-bottom: 40px;">
+  <div class="task-container">
+      <div class="tables" id="img1"></div>
+      <div class="tables" id="img2">
+    </div>
+    <button class="btn btn-success" id="1" style="float: left; position: relative; margin-right: 306px;" >Esta é a melhor grade</button>
+    <button class="btn btn-success" id="2" style="float: left; position: relative; margin-right: 306px;" >Esta é a melhor grade</button>
+    <button class="btn" id="ruins" style="margin-top: 3px;">Ambas as grades estão muito ruins</button>
+
+  </div>
+</div>
+
+<div class="row skeleton">
+<div id="disqus_thread" class="span8 offset1"></div>
+</div>
+
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'lsdpybossa'; // required: replace example with your forum shortname
+    //var disqus_developer = 1;
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="/static/js/pybossa/pybossa.js" type="text/javascript"></script>
+<script src="/static/js/throbber/throbber.js" type="text/javascript"></script>
+<script type="text/javascript" src="#server/js/jquery-ui-1.8.22.custom.min.js"></script>
+<script src="#server/js/jquery.mousewheel.js" type="text/javascript" charset="utf-8"></script>
+<script src="#server/js/jquery.mod.iviewer.js" type="text/javascript"></script>
+<script type="text/javascript" src="http://malsup.github.com/jquery.blockUI.js"></script>
+
+<link rel="stylesheet" type="text/css" href="#server/css/meta-struct.css"/>
+<link rel="stylesheet" href="#server/css/jquery.mod.iviewer.css" title="" type="text/css" />
+
+<script>
+
+
+$(document).ready(function(){
+                var iv1 = $('#img1').iviewer({
+                                src: "",
+                                ui_disabled: false,
+                                onZoom: function(ev, coords){
+                                    $('#img2').iviewer('set_zoom', coords);
+                                },
+                                onFinishLoad: function(){ spinnerStop(); }
+                                });
+                                    
+                var iv2 = $('#img2').iviewer({
+                                src: "",
+                                ui_disabled: true,
+                                mousewheel: false,
+                                });
+
+                $('#img1').scroll(function(e){
+                    $('#img2').scrollTop($(this).scrollTop());
+                    $('#img2').scrollLeft($(this).scrollLeft());
+                    $('.iviewer_button,.iviewer_common').animate({"top": $(this).scrollTop(), "left": $(this).scrollLeft() },"fast");
+                    });
+                
+                $('#img2').scroll(function(e){
+                    $('#img1').scrollTop($(this).scrollTop());
+                    $('#img1').scrollLeft($(this).scrollLeft());
+                });
+
+                $("#1").click(function(){
+                    submitTask(iv1.iviewer("info", "src"));
+                    spinnerStart();
+                });
+
+                $("#2").click(function(){
+                    submitTask(iv2.iviewer("info", "src"));
+                    spinnerStart();
+                });
+
+                $("#ruins").click(function(){
+                    submitTask(0);
+                    spinnerStart();
+                });
+        
+        });
+
+function spinnerStart() {
+     $.blockUI({message: $("#success"),
+                        css: {height: $("#success").parent().height(), border: "none"}
+            });
+}
+function spinnerStop() {
+    $.unblockUI();
+}
+
+function loadData( data ) {
+    if ( !$.isEmptyObject(data.task) ) {
+        $("#question h3").text(data.question);
+        $("#task-id").text(data.task.id);
+        for (var i = 0; i < data.task.info.imgs_url.length; i++) {
+            $("#img" + (i+1)).iviewer('loadImage', data.task.info.imgs_url[i]);
+        }
+    }
+    else {
+        $(".skeleton").hide();
+        $("#finish").fadeIn();
+    }
+}
+
+// Function to submit and save the TaskRun in PyBossa
+function submitTask(answer) {
+    // Get the task-id
+    var taskid = $("#task-id").text();
+    
+    // Save the task
+    pybossa.saveTask(taskid, answer).done( function( data ) {
+
+        pybossa.newTask("tt-meta-struct").done( function( data ){ loadData( data ) });
+    });
+}
+
+pybossa.newTask("tt-meta-struct").done( function( data ) { loadData( data ) });
+</script>
