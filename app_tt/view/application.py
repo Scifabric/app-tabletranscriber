@@ -4,10 +4,7 @@ import urllib2
 import json
 
 from flask import Flask, render_template, request
-
-sys.path.append(os.path.abspath("..") + "/engine")
-
-from api import blueprint as api
+from app_tt.engine.api import blueprint as api
 import app_tt.default_settings as settings
 
 

@@ -1,9 +1,9 @@
 <div class="row">
 
-  <div class="span8 offset2" style="height:40px; display:none;">
+  <div id="divsuccess" class="span8 offset2" style="height:40px; display:none;">
     <div id="success" class="alert alert-success" style="display:none;">
-	    <p><span>Sua resposta foi salva.</span></p>
-	</div>
+    <p><span>Sua resposta foi salva.</span></p>
+</div>
     <div id="finish" class="alert alert-success" style="display:none;">
       <strong>Parabéns!</strong> Todas as tarefas foram finalizadas</strong>
       <br/>
@@ -73,6 +73,10 @@
 
 <script>
 
+RANDOM = "random-tt-meta-struct";
+NO_RANDOM = "tt-meta-struct";
+app_short_name = RANDOM;
+
 
 $(document).ready(function(){
                 var iv1 = $('#img1').iviewer({
@@ -127,6 +131,23 @@ function spinnerStop() {
     $.unblockUI();
 }
 
+//auxMinute = (new Date()).getMinutes();
+//auxCont = 0;
+//
+//function urlSwitch(){
+//    var curMinute = (new Date()).getMinutes();
+//    if(auxMinute < curMinute){
+//       auxMinute = curMinute;
+//        
+//        auxCont % 2 == 0 ? app_short_name = NO_RANDOM : app_short_name = RANDOM;
+//        auxCont++;
+//        if(curMinute == 59){
+//            auxMinute = -1;
+//        }
+//    }
+//    
+//}
+
 function loadData( data ) {
     if ( !$.isEmptyObject(data.task) ) {
         $("#question h3").text(data.question);
@@ -137,6 +158,7 @@ function loadData( data ) {
     }
     else {
         $(".skeleton").hide();
+        $("#divsuccess").css('display':'show')
         $("#finish").fadeIn();
     }
 }
@@ -148,10 +170,10 @@ function submitTask(answer) {
     
     // Save the task
     pybossa.saveTask(taskid, answer).done( function( data ) {
-
-        pybossa.newTask("tt-meta-struct").done( function( data ){ loadData( data ) });
+        //urlSwitch();
+        pybossa.newTask(app_short_name).done( function( data ){ loadData( data ) });
     });
 }
 
-pybossa.newTask("tt-meta-struct").done( function( data ) { loadData( data ) });
+pybossa.newTask(app_short_name).done( function( data ) { loadData( data ) });
 </script>

@@ -9,14 +9,13 @@ import re
 class Apptt_meta_struct(app.Apptt):
     def __init__(self, short_name):
         super(Apptt_meta_struct, self).__init__(
-                "Estrutura tabelar",
+                "Enxergue a melhor tabela",
                 short_name, "Qual das tabelas está melhor construida?",
                 settings.API_KEY, settings.PYBOSSA_URL)
-
         super(Apptt_meta_struct, self).set_template(
-                __setUrl__(
-                     os.path.dirname(__file__) + os.sep + "templates" +
-                     os.sep + "template-meta-struct.html"))
+                 __setUrl__(
+                      os.path.dirname(__file__) + os.sep + "templates" +
+                      os.sep + "template-meta-struct.html"))
 
         super(Apptt_meta_struct, self).set_long_description(
                 __setUrl__(
@@ -92,18 +91,18 @@ def get_images_url(url):
 
 if __name__ == '__main__':
 
-    app = Apptt_meta_struct("tt-meta-struct")
+    app = Apptt_meta_struct("random-tt-meta-struct")
     
-    app.add_app_infos(dict(tutorial=
-                __setUrl__(
-                     os.path.dirname(__file__) + os.sep + "templates" +
-                     os.sep + "tutorial-meta-struct.html")))
+    # app.add_app_infos(dict(tutorial=
+    #             __setUrl__(
+    #                  os.path.dirname(__file__) + os.sep + "templates" +
+    #                  os.sep + "tutorial-meta-struct.html")))
 
-    imgDict = get_images_url("http://bacalhau.lsd.ufcg.edu.br/transcriber/packages%20low%20resolution/")
+    # imgDict = get_images_url("http://bacalhau.lsd.ufcg.edu.br/transcriber/packages%20low%20resolution/")
 
-    for dic in imgDict.keys():          #Creates tasks combining 2-2
-         images = imgDict[dic]
-         for cur_img in range(len(images)):
-             for next_img in range(cur_img+1, len(images)):
-                 app.add_task(dict(package=dic, imgs_url=[images[cur_img],
-                                   images[next_img]], n_answers=2))
+    # for dic in imgDict.keys():          #Creates tasks combining 2-2
+    #      images = imgDict[dic]
+    #      for cur_img in range(len(images)):
+    #          for next_img in range(cur_img+1, len(images)):
+    #              app.add_task(dict(package=dic, imgs_url=[images[cur_img],
+    #                                images[next_img]], n_answers=2))
