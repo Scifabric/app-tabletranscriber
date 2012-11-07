@@ -13,14 +13,11 @@ celery = Celery('tasks', backend='amqp', broker=BROKER_URL)
 #celery.config_from_object('app_tt.engine.celeryconfig')
 
 @task(name="app_tt.engine.tasks.check_task")
-def check_task(task_id):
+def check_task(task_id, strategy):
     task = json.loads(urllib2.urlopen("%s/api/task/%s?api_key=%s" % (settings.PYBOSSA_URL, task_id, settings.API_KEY)).read())
 
     if(task):
-        if(task["state"] == 'completed'):
-            return True
-        else:
-            return False
+        return __answer_ok(task_id, strategy)
     else:
         raise ValueError("Task not found")
 
@@ -42,6 +39,34 @@ def create_apps(book_id):
         raise ValueError("Error didn't find book id")
     
     return False
+
+
+@task(name="app_tt.engine.tasks.close_task")
+def close_task(task_id):
+    a =1
+    #TODO: close the task 
+
+
+def __answer_ok(task_id, strategy):
+    task_runs = json.loads(urllib2.urlopen("%s/api/taskrun?task_id=%s" % (settings.PYBOSSA_URL, task_id)).read())
+    
+    if(strategy == "tt1"):
+        N_ANSWER = 2
+        answers = {}
+        for taskrun in task_runs:
+            answer = taskrun["info"]
+            if(answer not in answers.keys()):
+                answers[answer] = 1
+            else:
+                answers[answer] += 1
+
+            if(answers[answer] == N_ANSWER and answer != "NotKnown"):
+                return True
+
+        return False
+
+
+
 
 
 def __get_tt_images(bookId):

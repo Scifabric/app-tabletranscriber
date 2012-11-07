@@ -1,11 +1,11 @@
-# Check the official documentation http://flask.pocoo.org/docs/deploying/mod_wsgi/¬                                                                            
+# Check the official documentation http://flask.pocoo.org/docs/deploying/mod_wsgi/
 # Activate the virtual env (we assume that virtualenv is in the env folder)
-activate_this = '/home/user/env/bin/activate_this.py'
+activate_this = '/home/jeymissonebeo/.app-tt/bin/activate_this.py'
 execfile(activate_this, dict(__file__=activate_this))
 # Import sys to add the path of PyBossa
 import sys
 sys.stdout = sys.stderr
-sys.path.insert(0,'/home/user/app_tt')
-# Run the web-app¬
-import app_tt.view.application as application
+sys.path.insert(0,'/home/jeymissonebeo/workspace/app-tt/app_tt')
+# Run the web-app
+from app_tt.view.application import app as application
 

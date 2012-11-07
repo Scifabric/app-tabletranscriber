@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask import Blueprint, abort
-from tasks import check_task, create_apps
+from tasks import check_task, create_apps, close_task
 
 blueprint = Blueprint('api', __name__)
 
@@ -18,5 +18,10 @@ def book_init(book_id):
 
 @blueprint.route('/<task_id>/done')
 def check_app_done(task_id):
-    result = check_task.delay(task_id)
-    return str(result.get())
+    done = check_task.delay(task_id, "tt1")
+    done = done.get()
+    
+    if(done):
+        close_task.delay(task_id) 
+    
+    return str(done)

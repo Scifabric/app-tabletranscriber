@@ -2,8 +2,8 @@ HOST = "127.0.0.1"
 PORT = 5005
 
 PYBOSSA_HOST = "127.0.0.1"
-PYBOSSA_PORT = 5000
+PYBOSSA_PORT = 80
 
-API_KEY = "54f52dd6-0eed-4dc7-9f28-3e800c6fdfd9" 
-URL_TEMPLATES = "http://localhost/tt/app_tt/pb_apps/tt_apps" 
-PYBOSSA_URL = "http://%s:%d" % (PYBOSSA_HOST,PYBOSSA_PORT)
+API_KEY = "7d99ff5f-401c-4a79-97d8-3235f4927618"
+URL_TEMPLATES = "http://localhost/media" 
+PYBOSSA_URL = "http://%s:%d/pybossa" % (PYBOSSA_HOST,PYBOSSA_PORT)
