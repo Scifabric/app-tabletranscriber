@@ -16,19 +16,19 @@
 
                 <div id="tt1" class="workflow-image-panel">
                     <a href="#">
-                        <img src="/static/images/classificacao-off.png"></img></a>
+                        <img src="/tt/static/images/classificacao-off.png"></img></a>
                 </div>
                 
                 <div id="tt2" class="workflow-image-panel">
-                    <a href="#"><img src="/static/images/selecao-off.png"></img></a>
+                    <a href="#"><img src="/tt/static/images/selecao-off.png"></img></a>
                 </div>    
 
                 <div id="tt3" class="workflow-image-panel">
-                    <a href="#"><img src="/static/images/marcacao-off.png"></img></a>
+                    <a href="#"><img src="/tt/static/images/marcacao-off.png"></img></a>
                 </div>  
 
                 <div id="tt4" class="workflow-image-panel">
-                    <a href="#"><img src="/static/images/transcricao-off.png"></img></a>
+                    <a href="#"><img src="/tt/static/images/transcricao-off.png"></img></a>
                 </div>
 
                 <div id="status">
@@ -50,42 +50,25 @@
                 });
         
 function checkTasks(){
-    var tt1 = JSON.parse('{{ tt1|safe }}');
-    var tt2 = JSON.parse('{{ tt2|safe }}');
-    var tt3 = JSON.parse('{{ tt3|safe }}');
-    var tt4 = JSON.parse('{{ tt4|safe }}');
-    var tt1_url = "{{tt1_url}}";
-    var tt2_url = "{{tt2_url}}";
-    var tt3_url = "{{tt3_url}}";
-    var tt4_url = "{{tt4_url}}";
-
-    if(tt1.length > 0){
-        $("#tt1 > a").attr("href",tt1_url);
-        $("#tt1 > a > img").attr("src","/static/images/classificacao.png");
-    }    
-    if(tt2.length > 0){
-        $("#tt2 > a").attr("href",tt2_url);
-        $("#tt2 > a > img").attr("src","/static/images/selecao.png");
-    }
-    if(tt3.length > 0){
-        $("#tt3 > a").attr("href",tt3_url);
-        $("#tt3 > a > img").attr("src","/static/images/marcacao.png");
-    }
-    if(tt4.length > 0){
-        $("#tt4 > a").attr("href",tt4_url);
-        $("#tt4 > a > img").attr("src","/static/images/transcricao.png");
+    var tasks = JSON.parse('{{ tasks|safe }}');
+    console.log(tasks);
+    for (i = 0; i < tasks.length; i++){
+        if(tasks[i][1].length > 0){
+            $("#tt" + (i+1) + " > a").attr("href", tasks[i][2]);
+            $("#tt" + (i+1) + " > a > img").attr("src","/tt/static/images/classificacao.png");
+        }
     }
     
     //TODO: Try to improve this later.
     var checked = known = qtd = transcribed = 0;
-    for(i = 0; i < tt1.length; i++){
+    for(i = 0; i < tasks[0][1].length; i++){
         qtd++;
-        if(tt1[i].state == "completed"){
+        if(tasks[0][1][i].state == "completed"){
             checked++;
         }
     }
 
-    for(i = 0; i < tt2.length; i++){
+    for(i = 0; i < tasks[1][1].length; i++){
         known++;
     }
 

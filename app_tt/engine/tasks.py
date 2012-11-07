@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from celery import Celery
 import urllib2
 import json
@@ -27,17 +28,19 @@ def check_task(task_id):
 @task(name="app_tt.engine.tasks.create_apps")
 def create_apps(book_id):
     imgs = __get_tt_images(book_id)
-
-    if(len(imgs) > 0):
+    
+    if(imgs):
         tt_select = Apptt_select(book_id + "_tt1")
         tt_meta = Apptt_meta(book_id + "_tt2")
-
-        for image in imgs:
-            tt_select.add_task(image)
+        
+        for img in imgs:
+            tt_select.add_task(img)
+        
         return True
+    
     else:
         raise ValueError("Error didn't find book id")
-
+    
     return False
 
 
@@ -59,11 +62,14 @@ def __get_tt_images(bookId):
     urlobj.close()
     output = json.loads(data)
 
-    imagecount = output['metadata']['imagecount']
+    try:
+        imagecount = output['metadata']['imagecount']
+    except KeyError:
+        imagecount = output['metadata']['numero_de_paginas_do_item']
     imgUrls = "http://www.archive.org/download/" + bookId + "/page/n"
 
     imgList = []
-    for idx in range(int(imagecount) - 2):
+    for idx in range(int(imagecount)):
         print 'Retrieved img: %s' % idx
         imgUrl_m = imgUrls + "%d_w%d_h%d" % (idx, WIDTH, HEIGHT)
         imgUrl_b = imgUrls + str(idx)

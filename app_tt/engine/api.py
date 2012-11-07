@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask import Blueprint, abort
 from tasks import check_task, create_apps
 
