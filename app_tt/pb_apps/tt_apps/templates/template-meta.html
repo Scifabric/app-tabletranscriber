@@ -86,6 +86,9 @@
 
 
 <script>
+var task_shortname = "#task_shortname#";
+var endpoint = "/pybossa";
+
 
 var spinner = new Throbber({
     color: 'black',
@@ -110,17 +113,25 @@ function loadData( data ) {
         $("#question h2").text(data.question);
         $("#task-id").text(data.task.id);
         $("#table").attr("src",data.task.info.link);
+
+        var notes = data.task.info.last_answer != undefined ? JSON.parse(data.task.info.last_answer) : [];
+
+        console.log(notes);
+
+        
+        image = $("#table").annotateImage({
+	      editable: true,
+	      useAjax: false,
+	      clear: false,
+	      notes: notes });
     }
    else {
         $(".skeleton").hide();
         $("#finish").fadeIn();
     }
-    $("#table").annotateImage({
-	      editable: true,
-	      useAjax: false,
-	      clear: true,
-	      notes: []   
-	    });
+
+
+
     
 }
 
@@ -133,13 +144,12 @@ function submitTask() {
     
     // Save the task
     pybossa.saveTask(taskid, answer).done( function( data ) {
-
         $("#success").fadeIn();
         setTimeout(function() { $("#success").fadeOut() }, 2000);
         // Load a new task
-        pybossa.newTask("tt-meta").done( function( data ){ loadData( data ) });
+        pybossa.newTask(task_shortname, endpoint).done( function( data ){ loadData( data ) });
     });
 }
 
-pybossa.newTask("tt-meta").done( function( data ) { loadData( data ) });
+pybossa.newTask(task_shortname, endpoint).done( function( data ) { loadData( data ) });
 </script>

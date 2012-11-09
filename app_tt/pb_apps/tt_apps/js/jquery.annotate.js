@@ -2,7 +2,6 @@
 (function($) {
 
 	$.fn.annotateImage = function(options) {
-		noteS = new Array(); // auxiliary array to return objects
 		///	<summary>
 		///		Creates annotations on the given image.
 		///     Images are loaded from the "getUrl" propety passed into the options.
@@ -22,7 +21,7 @@
 		this.useAjax = opts.useAjax;
 		this.notes = opts.notes;
 		this.clear = opts.clear;
-
+        noteS = opts.notes;
 		
 		if(this.clear){
 			$.fn.annotateImage.clear(this);
@@ -190,7 +189,6 @@
 				note = new $.fn.annotateView(image, editable.note);
 				note.resetPosition(editable, text);
 				image.notes.push(editable.note);
-				$.fn.annotateImage.addNote(editable.note);
 			}
 			editable.destroy();
 		});
@@ -588,12 +586,12 @@
 	};
 	
 	$.fn.annotateImage.exportJsonData = function(){
-		jsonData = [];
-		for (var i = 0; i < noteS.length; i++) {
-			jsonData.push({data: {titulo: noteS[i].text.titulo, subtitulo: noteS[i].text.subtitulo, conteudo: noteS[i].text.conteudo,
-                    rodape: noteS[i].text.rodape}, coords: {x1: noteS[i].left, y1:noteS[i].top, x2: noteS[i].left + noteS[i].width , y2: noteS[i].top + noteS[i].height}});
-		}
-        console.log(jsonData);
+		jsonData = noteS;
+		// for (var i = 0; i < noteS.length; i++) {
+		// 	jsonData.push({data: {titulo: noteS[i].text.titulo, subtitulo: noteS[i].text.subtitulo, conteudo: noteS[i].text.conteudo,
+                    // rodape: noteS[i].text.rodape}, coords: {x1: noteS[i].left, y1:noteS[i].top, x2: noteS[i].left + noteS[i].width , y2: noteS[i].top + noteS[i].height}});
+		// }
+        // console.log(jsonData);
 		
 		return JSON.stringify(jsonData);
 	};

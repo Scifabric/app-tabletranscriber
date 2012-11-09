@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask import Blueprint, abort
-from tasks import check_task, create_apps, close_task
+from tasks import check_task, create_apps, close_task, create_task
 
 blueprint = Blueprint('api', __name__)
 
@@ -22,6 +22,7 @@ def check_app_done(task_id):
     done = done.get()
     
     if(done):
-        close_task.delay(task_id) 
+        close_task.delay(task_id)
+        create_task.delay(task_id, "tt2")
     
     return str(done)
