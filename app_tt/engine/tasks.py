@@ -14,11 +14,11 @@ celery = Celery('tasks', backend='amqp', broker=BROKER_URL)
 #celery.config_from_object('app_tt.engine.celeryconfig')
 
 @task(name="app_tt.engine.tasks.check_task")
-def check_task(task_id, strategy):
-    task = json.loads(urllib2.urlopen("%s/api/task/%s?api_key=%s" % (settings.PYBOSSA_URL, task_id, settings.API_KEY)).read())
+def check_task(task_id):
+    app = __find_task_app(task_id)
 
-    if(task):
-        return __answer_ok(task_id, strategy)  # Verify if the answer completed the task
+    if(app):
+        return __answer_ok(task_id, app["short_name"][-3:])  # Verify if the answer completed the task
     else:
         raise ValueError("Task not found")
 
@@ -50,10 +50,10 @@ def close_task(task_id):
 
 
 @task(name="app_tt.engine.tasks.create_task")
-def create_task(task_id, strategy):
+def create_task(task_id, strategy=None):
         task = json.loads(requests.get("%s/api/task/%s?api_key=%s" % (settings.PYBOSSA_URL,
             task_id, settings.API_KEY)).content)
-        app = __find_app(id=str(task["app_id"]))  # get entrypoint app
+        app = __find_task_app(task_id)  # get entrypoint app
         
         if(app["short_name"][-3:] == "tt1"):  # task from tt1 to tt2
             if(task["info"]["answer"] == "Yes"):  # Verify the answer of the questio to create a new task
@@ -69,6 +69,9 @@ def create_task(task_id, strategy):
 def __find_app(**keyargs):
     return json.loads(requests.get("%s/api/app" % (settings.PYBOSSA_URL), params=keyargs).content)[0]  # get the app data dict
 
+def __find_task_app(task_id):
+    task = json.loads(urllib2.urlopen("%s/api/task/%s?api_key=%s" % (settings.PYBOSSA_URL, task_id, settings.API_KEY)).read())  # get task data
+    return __find_app(id=task["app_id"])
 
 
 def __answer_ok(task_id, strategy):
@@ -92,8 +95,17 @@ def __answer_ok(task_id, strategy):
             data=json.dumps(dict(info=task_info)))  # put the answer into task info
 
                 return True
-
         return False
+    
+    elif(strategy == "tt2"):
+        n_taskruns = len(task_runs)  # task_runs goes from 0 to n-1
+        if(n_taskruns > 1):
+            answer1 = json.loads(task_runs[n_taskruns - 1]["info"])
+            answer2 = json.loads(task_runs[n_taskruns - 2]["info"])
+        
+            return answer1 == answer2
+        else:
+            return False
 
 
 def __get_tt_images(bookId):

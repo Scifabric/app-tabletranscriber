@@ -36,7 +36,7 @@
 		// Give the canvas and the container their size and background
 		this.canvas.height(this.height());
 		this.canvas.width(this.width());
-		this.canvas.css('background-image', 'url("' + this.attr('src') + '")');
+		this.canvas.css({'background-image' : 'url("' + this.attr('src') + '")', 'background-size': this.height() + ';' + this.width() + ';' });
 		this.canvas.children('.image-annotate-view, .image-annotate-edit').height(this.height());
 		this.canvas.children('.image-annotate-view, .image-annotate-edit').width(this.width());
 
@@ -99,8 +99,10 @@
 		///	</summary>    
 		$("#image-annotate-edit-form").remove();
 		$(".image-annotate-canvas").remove();
-		for (var i = 0; i < image.notes.length; i++) {
-			image.notes[image.notes[i]].destroy();
+		var toDestroy = undefined
+        for (var i = 0; i < image.notes.length; i++) {
+			toDestroy = image.notes[image.notes[i]]
+            if(toDestroy != undefined) toDestroy.destroy();
 		}
 		image.notes = new Array();
 		noteS = new Array();

@@ -22,6 +22,9 @@ def getAppTasks(app_id, pybossa_server):
     return json.load(urllib2.urlopen(pybossa_server + '/api/task?app_id=%d' %
             app_id))
 
+@app.route('/')
+def home():
+    return render_template("/home/index.html")
 
 @app.route('/colabore', methods=['GET'])
 def index():
@@ -47,13 +50,13 @@ def index():
 
     if(apps):
         app_tasks = [[this_app["num"], this_app["tasks"], this_app["url"]] for this_app in apps]
-        print app_tasks
 
     else:
         error = "Erro, algum erro inesperado ocorreu, \
                 por favor contate o administrador."
+        print error
         return render_template('/error.html', error=error)
-
+    print "passou"
     return render_template('/index.html',
             bookid=bookid_app,
             tasks=json.dumps(app_tasks))

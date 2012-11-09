@@ -18,11 +18,11 @@ def book_init(book_id):
 
 @blueprint.route('/<task_id>/done')
 def check_app_done(task_id):
-    done = check_task.delay(task_id, "tt1")
+    done = check_task.delay(task_id)
     done = done.get()
     
     if(done):
         close_task.delay(task_id)
-        create_task.delay(task_id, "tt2")
+        create_task.delay(task_id)
     
     return str(done)

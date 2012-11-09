@@ -47,7 +47,7 @@
       <!-- Answer buttons -->
       <div id="answer" class="span8 offset2">
           <button id="button" class="btn btn-success" onclick="submitTask()"><i class="icon icon-white icon-ok"></i> Salvar essas marcações</button>
-          <button id="button" class="btn small" onclick="submitTask()"><i class="icon icon-white icon-ok"></i> Não há tabelas</button>
+          <button id="button" class="btn small" onclick="submitTask('0')"><i class="icon icon-white icon-ok"></i> Não há tabelas</button>
       </div>
 </div>
 
@@ -89,6 +89,11 @@
 var task_shortname = "#task_shortname#";
 var endpoint = "/pybossa";
 
+function taskRunDone(taskId){
+    return $.ajax({
+        url: '/tt/api/'+taskid+'/done'
+    });
+}
 
 var spinner = new Throbber({
     color: 'black',
@@ -130,21 +135,22 @@ function loadData( data ) {
         $("#finish").fadeIn();
     }
 
-
-
-    
 }
 
 // Function to submit and save the TaskRun in PyBossa
-function submitTask() {
+function submitTask(answer) {
     // Get the task-id
-    var taskid = $("#task-id").text();
+    taskid = $("#task-id").text();
     
-    answer = $.fn.annotateImage.exportJsonData();
-    
+    answer = answer == "0"? "0" : $.fn.annotateImage.exportJsonData();
+
+
     // Save the task
     pybossa.saveTask(taskid, answer).done( function( data ) {
+
+        taskRunDone(taskid);
         $("#success").fadeIn();
+        $.fn.annotateImage.clear(image);
         setTimeout(function() { $("#success").fadeOut() }, 2000);
         // Load a new task
         pybossa.newTask(task_shortname, endpoint).done( function( data ){ loadData( data ) });
