@@ -5,23 +5,31 @@
 
     <title>{{ bookname }}</title>
 
-    <link rel="stylesheet" href="/tt/static/style.css" type="text/css" />
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}" type="text/css" />
+    <link rel="stylesheet" href="{{url_for('static', filename='vendor/bootstrap/2.1.0/bootstrap.min.css')}}">
+    <!-- FontAwesome goodies -->
+    <link rel="stylesheet" href="{{url_for('static', filename='vendor/fontawesome/css/font-awesome.css')}}">
 
-    <script src="/tt/static/js/jquery-1.7.1.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/tt/static/js/jquery-ui-1.8.22.custom.min.js" type="text/javascript" charset="utf-8"></script>
+    <!-- Le javascript -->
+    <script type="text/javascript" src="{{url_for('static', filename='vendor/bootstrap/2.1.0/bootstrap.js')}}"></script>
+    <script src="{{url_for('static', filename='js/jquery-1.7.1.js')}}" type="text/javascript" charset="utf-8"></script>
+    <script src="{{url_for('static', filename='js/jquery-ui-1.8.22.custom.min.js')}}" type="text/javascript" charset="utf-8"></script>
    </head> 
-
-   <body>
+    <header>
+        {% include "header.html" ignore missing %}    
+    </header>
+    <body>
+        {% set active_page = active_page | default('index') -%}
+        {% include "navbar.html" %}
        <div class="container">
         {% block content %}{% endblock %}           
        </div>
 
        <hr>
-       <footer>
-        {% include "footer.html" ignore missing %}
-       </footer>
-
    </body>
+    <footer>
+        {% include "footer.html" ignore missing %}
+    </footer>
 
 </html>
 

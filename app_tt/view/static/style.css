@@ -1,38 +1,8 @@
-.container{
-    left:50%;
-    margin-left:-375px; /* metade da largura fictícia */
-    position:relative;
-    width:750px;
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+  background-color: #EBEAF0;
 }
-.main-panel{
-    height: 1000px;
-}
-
-.book-panel{
-    position: relative;
-    width: 650px;
-    height: 700px;
-    padding-bottom: 1px;
-
-}
-
-.workflow-panel{
-    width: 650px;
-    height: 150px;
-
-}
-
-.workflow-image-panel{
-    float: left;
-    position: relative;
-    padding-right: 2px;
-}
-.workflow-image-panel > a > img{
-    width: 70px;
-    height: 90px;
-
-}
-
-#status {
-    margin-left: 430px;
+#info{
+    text-align: center;
 }

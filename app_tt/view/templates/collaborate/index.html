@@ -1,0 +1,86 @@
+{% extends "/base.html" %}
+{% set active_page = "collaborate" %}
+
+
+{% macro render_pagination(pagination) %}
+<div class="pagination pagination-centered">
+    
+    {% if pagination.has_prev %}
+    <li>
+    <a href="{{ url_for_other_page(pagination.page - 1) }}">&laquo; Voltar</a>
+    </li>
+  {% endif %}
+  {%- for page in pagination.iter_pages() %}
+    {% if page %}
+    {% if page != pagination.page %}
+        <li>
+        <a href="{{ url_for_other_page(page) }}">{{ page }}</a>
+        </li>
+      {% else %}
+       <li class="active">
+            <a href="#">{{ page }}</a>
+        </li>  
+    {% endif %}
+    {% endif %}
+
+  {%- endfor %}
+  {% if pagination.has_next %}
+    <li>
+    <a href="{{ url_for_other_page(pagination.page + 1)
+        }}">Proxima &raquo;</a>
+    </li>
+  {% endif %}
+  </div>
+{% endmacro %}
+
+
+{% macro show_book(book) -%}
+<div class="row">
+    <div class="span12 well">
+        <div class="row">
+            <div class="span2">
+                <ul class="thumbnails">
+                    <li>
+                    {% if book.img %}
+                    <img class="thumbnail" src="{{ book.img }}" style="max-width:100px; max-height:100px">
+                    {% else %}
+                    <img class="thumbnail" src="{{url_for('static', filename='images/noimgbook.png')}}">
+                    {% endif %}
+                    </li>
+                </ul> <!-- End of class=thumbnails -->
+            </div> <!-- End of span2 -->
+            <div id="data" class="span8">
+                <h2><a href="{{ url_for('collaborate.book', bookid=book.bookid) }}">{{ book.title }}</a></h2>
+                <ul>
+                    <li><strong>Volume</strong>: {{ book.volume }}</li>
+                    <li><strong>Publicado por</strong>: {{ book.publisher }}</li>
+                    <li><strong>Acervo</strong>: {{ book.contributor }}</li>
+                </ul>
+            </div> <!-- end of id=data class=span8 -->
+        </div> <!--end of class=row -->
+    </div> <!-- end of class=span10 well -->
+</div><!-- end of class=row -->
+{%- endmacro %}
+
+{% block content %}
+
+<div class="span12">
+        <h1>Livros</h1>
+    </div>
+<br/>
+
+
+{% if books %}
+{% for book in books %}
+{{ show_book(book )}}
+{% endfor %}
+
+<div class="row">
+    <div class="span9 offset2">
+        {{ render_pagination(pagination) }}
+    </div>
+</div>
+{% endif %}
+
+
+{% endblock %}
