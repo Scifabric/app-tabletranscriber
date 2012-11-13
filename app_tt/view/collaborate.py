@@ -42,13 +42,14 @@ def index(page):
         books.add(app["short_name"][:-4])
     for book in books:
         data = _archiveBookData(book)
-        img = "http://www.archive.org/download/" + book + "/page/n5_w100_h100" 
-        book_data.append(dict(title=data["metadata"]["title"],
-            publisher=data["metadata"]["publisher"],
-            volume=data["metadata"]["volume"],
-            contributor=data["metadata"]["contributor"],
-            img=img,
-            bookid=book))
+        if(data):
+            img = "http://www.archive.org/download/" + book + "/page/n5_w100_h100" 
+            book_data.append(dict(title=data["metadata"]["title"],
+                publisher=data["metadata"]["publisher"],
+                volume=data["metadata"]["volume"],
+                contributor=data["metadata"]["contributor"],
+                img=img,
+                bookid=book))
    
     count = len(book_data)
     books = []

@@ -2,9 +2,10 @@
 # Activate the virtual env (we assume that virtualenv is in the env folder)
 activate_this = '/home/jeymissonebeo/.app-tt/bin/activate_this.py'
 execfile(activate_this, dict(__file__=activate_this))
-import sys
+import logging, sys
 sys.stdout = sys.stderr
-sys.path.insert(0,'/home/jeymissonebeo/workspace/app-tt/app_tt')
+logging.basicConfig(stream=sys.stderr)
+sys.path.insert(0,'/home/jeymissonebeo/workspace/app-tt')
 # Run the web-app
 from app_tt.view.application import app as application
 
