@@ -30,8 +30,12 @@ def create_apps(book_id):
     if(imgs):
         tt_select = Apptt_select(book_id + "_tt1")
         tt_meta = Apptt_meta(book_id + "_tt2")
+        bookInfo = _archiveBookData(book_id)
+
         tt_meta.add_app_infos(dict(sched="incremental"))
-        
+        tt_meta.add_app_infos(bookInfo)
+        tt_select.add_app_infos(bookInfo)
+
         for img in imgs:
             tt_select.add_task(img)
         
@@ -140,3 +144,15 @@ def __get_tt_images(bookId):
         imgList.append({'url_m':  imgUrl_m, 'url_b': imgUrl_b})
 
     return imgList
+
+
+def _archiveBookData(bookid):
+    query = "http://archive.org/metadata/" + bookid
+    data = json.loads(requests.get(query).content)
+    img = "http://www.archive.org/download/" + bookid + "/page/n7_w100_h100" 
+    return dict(title=data["metadata"]["title"],
+        publisher=data["metadata"]["publisher"],
+        volume=data["metadata"]["volume"],
+        contributor=data["metadata"]["contributor"],
+        img=img,
+        bookid=bookid)

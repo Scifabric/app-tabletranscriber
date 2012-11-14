@@ -20,7 +20,7 @@ def book_init(book_id):
 def check_app_done(task_id):
     done = check_task.delay(task_id)
     done = done.get()
-    
+    print done
     if(done):
         close_task.delay(task_id)
         create_task.delay(task_id)

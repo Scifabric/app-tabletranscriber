@@ -2,7 +2,6 @@ import urllib2
 import json
 
 from flask import Blueprint, render_template, redirect, request
-from sets import Set
 from app_tt.util import Pagination
 import requests
 import app_tt.default_settings as settings
@@ -24,37 +23,27 @@ def getAppTasks(app_id, pybossa_server):
             (app_id, 10**7)))
 
 
-def _archiveBookData(bookid):
-    query = "http://archive.org/metadata/" + bookid
-    data = json.loads(requests.get(query).content)
-    return data
-
-
 @blueprint.route('/', defaults={'page': 1})
 @blueprint.route('/page/<int:page>')
 def index(page):
     per_page = 5
-    apps = json.loads(requests.get(pybossa_server + '/api/app?api_key=' + api_key ).content)
-    books = Set()
+    apps = json.loads(requests.get(pybossa_server + '/api/app?api_key=%s&limit=%d' % (api_key, 10**7)).content)
+    book_stack = []
     book_data = []
-    
+
     for app in apps:
-        books.add(app["short_name"][:-4])
-    for book in books:
-        data = _archiveBookData(book)
-        if(data):
-            img = "http://www.archive.org/download/" + book + "/page/n5_w100_h100" 
-            book_data.append(dict(title=data["metadata"]["title"],
-                publisher=data["metadata"]["publisher"],
-                volume=data["metadata"]["volume"],
-                contributor=data["metadata"]["contributor"],
-                img=img,
-                bookid=book))
-   
+        book_id = app["short_name"][:-4]
+        
+        if(book_id not in book_stack):
+            book_stack.append(book_id)
+            book_data.append(app)
+
     count = len(book_data)
     books = []
-    for book in range((page - 1) * per_page, count):
-        books.append(book_data[book])
+    for index in range((page - 1) * per_page, page * per_page ):
+        if(index < count):
+            books.append(book_data[index])
+    print books[0]["info"]
 
     if(not book_data and page!=1):
         abort(404)
