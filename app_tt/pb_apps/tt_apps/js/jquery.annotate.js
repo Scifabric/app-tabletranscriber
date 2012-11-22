@@ -260,7 +260,7 @@
 		// Add the note (which we'll load with the form afterwards)
 		var form = $('<div id="image-annotate-edit-form"><form>	Título: <textarea type="textarea" id="titulo" rows="0">' + this.note.text.titulo + '</textarea><br/>' + 
 					 'Subtítulo: <textarea type="textarea" id="subtitulo">' + this.note.text.subtitulo + '</textarea><br/>' +
-                     'Conteúdo: <select size="1" id="conteudo"><option value="economia">Economia</option> <option value="populacao">População/Demografia</option>'+ 
+                     'Conteúdo: <select selected=' + this.note.text.conteudo +' size="1" id="conteudo"><option value="Economia">Economia</option> <option value="Populacão/Demografia">População/Demografia</option>'+ 
                      '<option value="Violência/Criminalidade">Violência/Criminalidade</option></select>' +
 					 'Rodapé: <textarea type="textarea" id="rodape">' + this.note.text.rodape + '</textarea></form></div>');
 		this.form = form;

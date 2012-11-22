@@ -30,8 +30,10 @@ class Apptt(object):
 
     def _create_app(self):
 
+        info = dict(newtask="%s/app/%s/newtask" % (settings.PYBOSSA_URL, self.short_name))
         data = dict(name=self.name, short_name=self.short_name,
-                description=self.description, hidden=0)
+                description=self.description, hidden=0,
+                info=info)
         data = json.dumps(data)
 
         # Checking which apps have been already registered in the DB

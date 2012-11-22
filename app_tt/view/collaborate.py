@@ -43,7 +43,6 @@ def index(page):
     for index in range((page - 1) * per_page, page * per_page ):
         if(index < count):
             books.append(book_data[index])
-    print books[0]["info"]
 
     if(not book_data and page!=1):
         abort(404)
