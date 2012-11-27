@@ -11,24 +11,11 @@ var default_dict = {
     'back': "Go back ",
     'other_apps': "or, Check other applications",
     'error': "Error! ",
-    'err_msg': "Something went wrong, please contact the site administrators."
+    'err_msg': "Something went wrong, please contact the site administrators.",
+    'workflowtask' : "There is a new kind of task available. Click to Try it."
 }
 
-var en_US_dict= {
-		'question': "Is there a table in this page?",
-	    'button_yes': "Yes",
-	    'button_no':  "No",
-	    'button_ntk': "I don't know",
-	    'task_name': "Task: ",
-	    'well_done': "Well done! ",
-	    'saved': "Your answer has been saved",
-	    'congratulations': "Congratulations! ",
-	    'finished': "All the tasks have been completed!",
-	    'back': "Go back ",
-	    'other_apps': "or, Check other applications",
-	    'error': "Error! ",
-	    'err_msg': "Something went wrong, please contact the site administrators."
-}
+var en_US_dict = default_dict;
 
 var pt_dict= {
 		'question': "Existe uma tabela nessa página?",
@@ -43,7 +30,8 @@ var pt_dict= {
 	    'back': "Voltar ",
 	    'other_apps': "ou, verificar outras aplicações",
 	    'error': "Erro! ",
-	    'err_msg': "Algo ocorreu errado, por favor contate o administrador do site."
+	    'err_msg': "Algo ocorreu errado, por favor contate o administrador do site.",
+        'workflowtask' : "Existe um novo tipo de tarefa disponível. Clique para ir."
 		
 }
 

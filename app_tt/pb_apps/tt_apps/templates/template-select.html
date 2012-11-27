@@ -36,7 +36,12 @@
     <div id="error" class="alert alert-error" style="display:none;">
       <a class="close">x</a>
       <p><span><strong>#</strong></span><span>#</span></p>
+  </div>
+  <div id="workflowtask" class="alert alert-success" style="display:none; cursor:pointer;">
+        <a class="close"></a>
+       <p><span>#</span></p>
     </div>
+
   </div> <!-- End Success and Error Messages for the user -->
 </div>
 
@@ -109,7 +114,8 @@ $(window).load(function(){
 		$("#error strong").text($.i18n._('error'));
 		$("#error span:nth-child(2)").text($.i18n._('err_msg'));
 		$("#back").text($.i18n._('back'));
-		$("#other_apps").text($.i18n._('other_apps'));
+        $("#other_apps").text($.i18n._('other_apps'));
+        $("#workflowtask span:first").text($.i18n._('workflowtask'));
 		
 }); //Internationalization using jquery.i18n
 
@@ -134,10 +140,23 @@ function spinnerStop() {
 }
 
 function taskRunDone(taskId){
-    return $.ajax({
-        url: '/tt/api/'+taskid+'/done'
-    });
+    $.ajax({
+        url: '/tt/api/'+taskId+'/done',
+        success: function(data){
+                console.log(data);
+                console.log("DFASFAAD");
+                if(data == "True"){
+                    $("#workflowtask").fadeIn(200);
+                }
+                
+                $("#workflowtask").click(function(){
+                    window.open(endpoint + "/app/" + task_shortname.replace("_tt1", "_tt2")  + "/newtask", "_self");
+                });
+            
+            }
+        });
 }
+
 
 function loadData( data ) {
 
@@ -164,7 +183,7 @@ function loadData( data ) {
             //Call tt workflow api.
             taskRunDone(taskid);
 
-            $.blockUI({message: $("#success"),
+           $.blockUI({message: $("#success"),
                         css: {height: $("#success").height()}
             });
 			// Load a new task
