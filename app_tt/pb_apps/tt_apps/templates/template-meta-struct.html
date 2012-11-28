@@ -73,9 +73,10 @@
 
 <script>
 
+var endpoint = "/pybossa";
 RANDOM = "random-tt-meta-struct";
 NO_RANDOM = "tt-meta-struct";
-app_short_name = RANDOM;
+app_short_name = NO_RANDOM;
 
 
 $(document).ready(function(){
@@ -131,22 +132,22 @@ function spinnerStop() {
     $.unblockUI();
 }
 
-//auxMinute = (new Date()).getMinutes();
-//auxCont = 0;
-//
-//function urlSwitch(){
-//    var curMinute = (new Date()).getMinutes();
-//    if(auxMinute < curMinute){
-//       auxMinute = curMinute;
-//        
-//        auxCont % 2 == 0 ? app_short_name = NO_RANDOM : app_short_name = RANDOM;
-//        auxCont++;
-//        if(curMinute == 59){
-//            auxMinute = -1;
-//        }
-//    }
-//    
-//}
+auxMinute = (new Date()).getMinutes();
+auxCont = 0;
+
+function urlSwitch(){
+    var curMinute = (new Date()).getMinutes();
+    if(auxMinute < curMinute){
+       auxMinute = curMinute;
+        
+        auxCont % 2 == 0 ? app_short_name = NO_RANDOM : app_short_name = RANDOM;
+        auxCont++;
+        if(curMinute == 59){
+            auxMinute = -1;
+        }
+    }
+    
+}
 
 function loadData( data ) {
     if ( !$.isEmptyObject(data.task) ) {
@@ -158,7 +159,7 @@ function loadData( data ) {
     }
     else {
         $(".skeleton").hide();
-        $("#divsuccess").css('display':'show')
+        $("#divsuccess").css('display','show');
         $("#finish").fadeIn();
     }
 }
@@ -169,11 +170,11 @@ function submitTask(answer) {
     var taskid = $("#task-id").text();
     
     // Save the task
-    pybossa.saveTask(taskid, answer).done( function( data ) {
-        //urlSwitch();
-        pybossa.newTask(app_short_name).done( function( data ){ loadData( data ) });
+    pybossa.saveTask(taskid, answer, endpoint).done( function( data ) {
+        urlSwitch();
+        pybossa.newTask(app_short_name, endpoint).done( function( data ){ loadData( data ) });
     });
 }
 
-pybossa.newTask(app_short_name).done( function( data ) { loadData( data ) });
+pybossa.newTask(app_short_name, endpoint).done( function( data ) { loadData( data ) });
 </script>
