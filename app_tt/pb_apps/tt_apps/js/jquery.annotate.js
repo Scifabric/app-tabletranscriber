@@ -163,7 +163,9 @@
 
 		ok.click(function() {
 			var form = $('#image-annotate-edit-form form');
-			var text = {titulo : $('#titulo').val(), subtitulo: $('#subtitulo').val(), conteudo: $('#conteudo').val(), rodape: $('#rodape').val()};
+			var text = {titulo : $('#titulo').val(), subtitulo: $('#subtitulo').val(),
+                conteudo: $('#conteudo').val(), rodape: $('#rodape').val(),
+                girar: $('#girar')[0].checked};
 			$.fn.annotateImage.appendPosition(form, editable);
 			image.mode = 'view';
 
@@ -241,7 +243,7 @@
 			newNote.left = coords.left;
 			newNote.width = coords.width;
 			newNote.height = coords.height;
-			newNote.text = {titulo: "",subtitulo: "",rodape: ""};
+			newNote.text = {titulo: "",subtitulo: "",rodape: "", conteudo : ""};
 			this.note = newNote;
 		}
 
@@ -257,13 +259,22 @@
 		image.canvas.children('.image-annotate-view').hide();
 		image.canvas.children('.image-annotate-edit').show();
 
-		// Add the note (which we'll load with the form afterwards)
-		var form = $('<div id="image-annotate-edit-form"><form>	Título: <textarea type="textarea" id="titulo" rows="0">' + this.note.text.titulo + '</textarea><br/>' + 
-					 'Subtítulo: <textarea type="textarea" id="subtitulo">' + this.note.text.subtitulo + '</textarea><br/>' +
-                     'Conteúdo: <select selected=' + this.note.text.conteudo +' size="1" id="conteudo"><option value="Economia">Economia</option> <option value="Populacão/Demografia">População/Demografia</option>'+ 
-                     '<option value="Violência/Criminalidade">Violência/Criminalidade</option></select>' +
-					 'Rodapé: <textarea type="textarea" id="rodape">' + this.note.text.rodape + '</textarea></form></div>');
-		this.form = form;
+        var selected = this.note.text.conteudo;
+        var girar = this.note.text.girar;
+		
+        // Add the note (which we'll load with the form afterwards)
+		var form = $('<div id="image-annotate-edit-form">' + 
+                '<form>	Título: <textarea type="textarea" id="titulo" rows="0">' + this.note.text.titulo + '</textarea><br/>' + 
+				'Subtítulo: <textarea type="textarea" id="subtitulo">' + this.note.text.subtitulo + '</textarea><br/>' +
+                'Conteúdo: <select size="1" id="conteudo">' +
+                '<option value="0"' + (selected == "0" ? "selected" : "") + ' >Economia</option>' +
+                '<option value="1"' + (selected == "1" ? "selected" : "") + ' >População/Demografia</option>'+ 
+                '<option value="2" ' + (selected == "2" ? "selected" : "") + '>Violência/Criminalidade</option></select>' +
+				'Rodapé: <textarea type="textarea" id="rodape">' + this.note.text.rodape + '</textarea>' +
+                '<input id="girar"' + (girar ? "checked='true'" : "") + 'type="checkbox" value="true"> Girar imagem?</input>' +
+                '</form></div>');
+		
+        this.form = form;
 
 		$('body').append(this.form);
 		this.form.css('left', (this.area.offset().left + this.area.width() + 7) + 'px');
