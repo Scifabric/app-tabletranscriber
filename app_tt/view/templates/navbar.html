@@ -9,7 +9,7 @@
 
           <div class="nav-collapse collapse">
             <ul class="nav">
-                <li {% if active_page == "index"  %} class="active" {% endif %}> <a href="{{ url_for('home') }}"><i class="icon-home icon-white"></i> Home</a></li>
+                <li {% if active_page == "index"  %} class="active" {% endif %}> <a href="{{ url_for('home')  }}"><i class="icon-home icon-white"></i> Home</a></li>
               <li {% if active_page == "collaborate"  %} class="active" {% endif %}><a href="{{ url_for('collaborate.index')}}"><i class="icon-globe icon-white"></i>Colabore</a></li>
             </ul>
           </div>

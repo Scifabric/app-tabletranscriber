@@ -7,13 +7,13 @@ import app_tt.default_settings as settings
 app = Flask(__name__)
 app.config.from_object(settings)
 
-app.register_blueprint(collaborate, url_prefix='/collaborate')
+app.register_blueprint(collaborate, url_prefix='/collaborate', template_folder='templates/collaborate/')
 app.register_blueprint(api, url_prefix='/api')
 
 
 @app.route('/')
 def home():
-    return render_template("/home/index.html")
+    return render_template("index.html")
 
 
 def url_for_other_page(page):

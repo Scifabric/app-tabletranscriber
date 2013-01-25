@@ -76,7 +76,7 @@
 var endpoint = "/pybossa";
 RANDOM = "random-tt-meta-struct";
 NO_RANDOM = "tt-meta-struct";
-app_short_name = NO_RANDOM;
+app_short_name = RANDOM;
 
 
 $(document).ready(function(){
@@ -140,7 +140,7 @@ function urlSwitch(){
     if(auxMinute < curMinute){
        auxMinute = curMinute;
         
-        auxCont % 2 == 0 ? app_short_name = NO_RANDOM : app_short_name = RANDOM;
+        auxCont % 2 == 0 ? app_short_name = RANDOM : app_short_name = NO_RANDOM;
         auxCont++;
         if(curMinute == 59){
             auxMinute = -1;

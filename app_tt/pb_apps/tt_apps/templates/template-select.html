@@ -179,7 +179,7 @@ function loadData( data ) {
 		taskid = $("#task-id").text();
 		
 		// Save the task
-		pybossa.saveTask(taskid, answer, endpoint).done(function(data) {
+		pybossa.saveTask(taskid, answer).done(function(data) {
             //Call tt workflow api.
             taskRunDone(taskid);
 
@@ -187,12 +187,14 @@ function loadData( data ) {
                         css: {height: $("#success").height()}
             });
 			// Load a new task
-            pybossa.newTask(task_shortname, endpoint).done(function(data) {
+            pybossa.newTask(task_shortname).done(function(data) {
 
 				loadData(data);
 			});
 		});
 	}
 
-	pybossa.newTask(task_shortname, endpoint).done( function( data ) { loadData( data ) });
+    pybossa.setEndpoint(endpoint);
+    pybossa.newTask(task_shortname).done( function( data ) { loadData( data ) });
+    
 </script>

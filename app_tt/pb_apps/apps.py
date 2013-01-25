@@ -4,6 +4,7 @@ import json
 import urllib2
 import app_tt.default_settings as settings
 import os
+import sys
 
 class Apptt(object):
     def __init__(self, name, short_name, description,
@@ -78,6 +79,11 @@ class Apptt(object):
             raise ValueError("Error you must supply values in a dict")
 
         pbclient.update_app(app)
+
+
+    def get_tasks(self):
+        return pbclient.get_tasks(self.app_id, sys.maxint)
+
 
     def add_task(self, task_info):
         pbclient.create_task(self.app_id, task_info)

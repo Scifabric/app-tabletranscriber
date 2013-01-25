@@ -7,6 +7,7 @@ from celery import task
 import app_tt.default_settings as settings
 from app_tt.pb_apps.tt_apps.ttapps import Apptt_select
 from app_tt.pb_apps.tt_apps.ttapps import Apptt_meta
+from app_tt.pb_apps.tt_apps.ttapps import Apptt_struct
 
 BROKER_URL = "amqp://celery:celery@localhost:5672/celery"
 
@@ -15,7 +16,7 @@ celery = Celery('tasks', backend='amqp', broker=BROKER_URL)
 
 @task(name="app_tt.engine.tasks.check_task")
 def check_task(task_id):
-    app = __find_task_app(task_id)
+    app = __find_app_by_taskid(task_id)
 
     if(app):
         return __answer_ok(task_id, app["short_name"][-3:])  # Verify if the answer completed the task
@@ -27,17 +28,21 @@ def check_task(task_id):
 def create_apps(book_id):
     imgs = __get_tt_images(book_id)
     
+
     if(imgs):
         tt_select = Apptt_select(book_id + "_tt1")
         tt_meta = Apptt_meta(book_id + "_tt2")
+        tt_struct = Apptt_struct(book_id + "_tt3")
+
         bookInfo = _archiveBookData(book_id)
 
         tt_meta.add_app_infos(dict(sched="incremental"))
         tt_meta.add_app_infos(bookInfo)
         tt_select.add_app_infos(bookInfo)
 
-        for img in imgs:
-            tt_select.add_task(img)
+        if len(tt_select.get_tasks()) == 0:
+            for img in imgs:
+                tt_select.add_task(img)
         
         return True
     
@@ -57,9 +62,10 @@ def close_task(task_id):
 def create_task(task_id, strategy=None):
         task = json.loads(requests.get("%s/api/task/%s?api_key=%s" % (settings.PYBOSSA_URL,
             task_id, settings.API_KEY)).content)
-        app = __find_task_app(task_id)  # get entrypoint app
+        app = __find_app_by_taskid(task_id)  # get entrypoint app
+        strategy = app["short_name"][-3:]
         
-        if(app["short_name"][-3:] == "tt1"):  # task from tt1 to tt2
+        if(strategy == "tt1"):  # task from tt1 to tt2
             if(task["info"]["answer"] == "Yes"):  # Verify the answer of the questio to create a new task
                 #TODO: apply strategy pattern
                 info = dict(link=task["info"]["url_m"])
@@ -73,7 +79,7 @@ def create_task(task_id, strategy=None):
 def __find_app(**keyargs):
     return json.loads(requests.get("%s/api/app" % (settings.PYBOSSA_URL), params=keyargs).content)[0]  # get the app data dict
 
-def __find_task_app(task_id):
+def __find_app_by_taskid(task_id):
     task = json.loads(urllib2.urlopen("%s/api/task/%s?api_key=%s" % (settings.PYBOSSA_URL, task_id, settings.API_KEY)).read())  # get task data
     return __find_app(id=task["app_id"])
 

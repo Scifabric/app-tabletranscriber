@@ -13,7 +13,7 @@ def index():
 @blueprint.route('/<book_id>/init')
 def book_init(book_id):
     result = create_apps.delay(book_id)
-    return str(result.get())
+    return str(result.get(propagate=True))
 
 
 @blueprint.route('/<task_id>/done')

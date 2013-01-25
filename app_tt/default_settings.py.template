@@ -3,7 +3,9 @@ PORT = 5005
 
 PYBOSSA_HOST = "127.0.0.1"
 PYBOSSA_PORT = 80
+PYBOSSA_ENDPOINT = "/pybossa"
 
-API_KEY = "7d99ff5f-401c-4a79-97d8-3235f4927618"
+BOOKS_DIR = "<dir-tt3-backend>/TableTranscriber/books"
+API_KEY = "pybossa-api-key"
 URL_TEMPLATES = "http://localhost/media" 
-PYBOSSA_URL = "http://%s:%d/pybossa" % (PYBOSSA_HOST,PYBOSSA_PORT)
+PYBOSSA_URL = "http://%s:%d%s" % (PYBOSSA_HOST,PYBOSSA_PORT, PYBOSSA_ENDPOINT)

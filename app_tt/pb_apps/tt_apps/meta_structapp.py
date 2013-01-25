@@ -91,9 +91,9 @@ def get_images_url(url):
 
 if __name__ == '__main__':
 
-    app = Apptt_meta_struct("tt-meta-struct")
+    app = Apptt_meta_struct("random-tt-meta-struct")
     
-    app.add_app_infos(dict(tutorial=
+    app.add_app_infos(dict(sched="random", tutorial=
                 __setUrl__(
                      os.path.dirname(__file__) + os.sep + "templates" +
                      os.sep + "tutorial-meta-struct.html")))

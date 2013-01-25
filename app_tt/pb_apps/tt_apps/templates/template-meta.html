@@ -153,9 +153,10 @@ function submitTask(answer) {
         $.fn.annotateImage.clear(image);
         setTimeout(function() { $("#success").fadeOut() }, 2000);
         // Load a new task
-        pybossa.newTask(task_shortname, endpoint).done( function( data ){ loadData( data ) });
+        pybossa.newTask(task_shortname).done( function( data ){ loadData( data ) });
     });
 }
 
-pybossa.newTask(task_shortname, endpoint).done( function( data ) { loadData( data ) });
+pybossa.setEndpoint(endpoint);
+pybossa.newTask(task_shortname).done( function( data ) { loadData( data ) });
 </script>
