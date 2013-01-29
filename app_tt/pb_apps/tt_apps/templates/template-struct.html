@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+
+<div class="row skeleton">
+        
+    <div id="container" style="margin: 20px"></div>
+
+    <!--  Radio buttons para definir qual a ação que o usuário -->
+    <p>
+        <!-- Opção remover segmento -->
+        <input type="radio" name="acao" id="remover" class="remover"
+            value="remover" checked="checked" /> <label for="remover">Remover
+            Segmento</label>
+
+        <!-- Opção mover segmento -->
+        <input type="radio" name="acao" id="mover" class="mover" value="mover" />
+        <label for="mover">Mover Segmento</label>
+
+        <!-- Opção remover linha -->
+        <input type="radio" name="acao" id="removerLinha" class="removerLinha"
+            value="removerLinha" /> <label for="removerLinha">Remover
+            Linha</label>
+
+        <!-- Opção mover linha -->
+        <input type="radio" name="acao" id="moverLinha" class="moverLinha"
+            value="moverLinha" /> <label for="moverLinha">Mover Linha</label>
+	</p>
+</div>
+
+<script src="js/kinetic.js"></script>
+<script src="js/tt3.js" type="text/javascript" charset="utf-8"></script>
+
+<style>
+
+canvas {
+	border: 1px solid #9C9898;
+}
+</style>    
+    
+<script type="text/javascript" charset="utf-8">
+
+    var task_shortname = "#task_shortname#";
+    var endpoint = "/pybossa";
+
+    function loadData( data ) {
+
+	 if ( !$.isEmptyObject(data.task) ) {
+         $("#task-id").text(data.task.id);
+         var lines = json.Load(data.task.info.lines);
+         gridInit(lines);
+         $("#image").attr("src",data.task.info.url_m);
+	    }
+   else {
+        $(".skeleton").hide();
+        $("#finish").fadeIn();
+   }
+
+	}
+
+	// Function to submit and save the TaskRun in PyBossa
+	function submitTask(answer) {
+		// Get the task-id
+		taskid = $("#task-id").text();
+		
+		// Save the task
+		pybossa.saveTask(taskid, answer).done(function(data) {
+            //Call tt workflow api.
+            taskRunDone(taskid);
+
+           $.blockUI({message: $("#success"),
+                        css: {height: $("#success").height()}
+            });
+			// Load a new task
+            pybossa.newTask(task_shortname).done(function(data) {
+
+				loadData(data);
+			});
+		});
+	}
+
+    pybossa.setEndpoint(endpoint);
+    pybossa.newTask(task_shortname).done( function( data ) { loadData( data ) });
+
+</script>

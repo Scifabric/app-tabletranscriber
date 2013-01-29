@@ -1,11 +1,8 @@
 from flask import Flask, render_template, request, url_for
 from app_tt.engine.api import blueprint as api
 from collaborate import blueprint as collaborate
-import app_tt.default_settings as settings
+from app_tt.core import app
 
-
-app = Flask(__name__)
-app.config.from_object(settings)
 
 app.register_blueprint(collaborate, url_prefix='/collaborate', template_folder='templates/collaborate/')
 app.register_blueprint(api, url_prefix='/api')

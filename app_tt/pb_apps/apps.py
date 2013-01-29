@@ -2,14 +2,14 @@
 import pbclient
 import json
 import urllib2
-import app_tt.default_settings as settings
+from app_tt.core import app as flask_app
 import os
 import sys
 
 class Apptt(object):
     def __init__(self, name, short_name, description,
-                api_key=settings.API_KEY,
-                pybossa_url=settings.PYBOSSA_URL):
+                api_key=flask_app.config['API_KEY'],
+                pybossa_url=flask_app.config['PYBOSSA_URL']):
         """
         :arg string name: The application name.
         :arg string short_name: The slug application name.
@@ -19,7 +19,6 @@ class Apptt(object):
 
         :returns: Application ID or ValueError in case of error.
         """
-
         self.short_name = short_name
         self.api_key = api_key
         self.pybossa_url = pybossa_url
@@ -31,14 +30,14 @@ class Apptt(object):
 
     def _create_app(self):
 
-        info = dict(newtask="%s/app/%s/newtask" % (settings.PYBOSSA_URL, self.short_name))
+        info = dict(newtask="%s/app/%s/newtask" % (flask_app.config['PYBOSSA_URL'], self.short_name))
         data = dict(name=self.name, short_name=self.short_name,
                 description=self.description, hidden=0,
                 info=info)
         data = json.dumps(data)
 
         # Checking which apps have been already registered in the DB
-        apps = pbclient.get_apps()
+        apps = pbclient.get_apps(sys.maxint)
         for app in apps:
             if app.short_name == self.short_name:
                 print('{app_name} app is already registered in the DB'
@@ -52,6 +51,7 @@ class Apptt(object):
         request.add_data(data)
         request.add_header('Content-type', 'application/json')
 
+        print self.api_key
         # Create the app in PyBOSSA
         output = json.loads(urllib2.urlopen(request).read())
         if (output['id'] is not None):

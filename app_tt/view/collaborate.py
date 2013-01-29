@@ -1,16 +1,16 @@
 import urllib2
 import json
 
+from app_tt.core import app as flask_app
 from flask import Blueprint, render_template, redirect, request
 from app_tt.util import Pagination
 import requests
-import app_tt.default_settings as settings
 
 
 blueprint = Blueprint('collaborate', __name__)
-pybossa_server = settings.PYBOSSA_URL
+pybossa_server = flask_app.config['PYBOSSA_URL']
 
-api_key = settings.API_KEY
+api_key = flask_app.config['API_KEY']
 
 
 def getAppData(app_short_name, pybossa_server):
