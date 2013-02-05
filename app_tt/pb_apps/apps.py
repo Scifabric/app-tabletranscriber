@@ -3,29 +3,25 @@ import pbclient
 import json
 import urllib2
 from app_tt.core import app as flask_app
+from app_tt.core import pbclient
 import os
 import sys
 
 class Apptt(object):
-    def __init__(self, name, short_name, description,
-                api_key=flask_app.config['API_KEY'],
-                pybossa_url=flask_app.config['PYBOSSA_URL']):
+    def __init__(self, name, short_name, description):
         """
+        Pybossa application constructor
+
         :arg string name: The application name.
         :arg string short_name: The slug application name.
         :arg string description: A short description of the application.
-        :arg string api_key: User api provided by pybossa
-        :arg string pybossa_url: Pybossa's server url
-
-        :returns: Application ID or ValueError in case of error.
         """
+
         self.short_name = short_name
-        self.api_key = api_key
-        self.pybossa_url = pybossa_url
+        self.api_key = pbclient._opts['api_key']
+        self.pybossa_url = pbclient._opts['endpoint']
         self.description = description
         self.name = name
-        pbclient.set('endpoint', self.pybossa_url)
-        pbclient.set('api_key', self.api_key)
         self.app_id = self._create_app()
 
     def _create_app(self):
@@ -51,7 +47,6 @@ class Apptt(object):
         request.add_data(data)
         request.add_header('Content-type', 'application/json')
 
-        print self.api_key
         # Create the app in PyBOSSA
         output = json.loads(urllib2.urlopen(request).read())
         if (output['id'] is not None):

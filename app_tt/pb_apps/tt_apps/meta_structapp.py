@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import app_tt.default_settings as settings
+from app_tt.core import app as flask_app
 import app_tt.pb_apps.apps as app
 import os
 import urllib2
@@ -11,7 +11,7 @@ class Apptt_meta_struct(app.Apptt):
         super(Apptt_meta_struct, self).__init__(
                 "Enxergue a melhor tabela",
                 short_name, "Qual das tabelas está melhor construida?",
-                settings.API_KEY, settings.PYBOSSA_URL)
+                flask_app.config['API_KEY'], flask_app.config['PYBOSSA_URL'])
         super(Apptt_meta_struct, self).set_template(
                  __setUrl__(
                       os.path.dirname(__file__) + os.sep + "templates" +

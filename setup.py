@@ -1,3 +1,5 @@
+import os
+import sys
 from setuptools import setup, find_packages
 try:
     requirements = open('requirements.txt').read().strip().split('\n')

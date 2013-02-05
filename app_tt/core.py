@@ -24,5 +24,5 @@ def setup_pbclient(app):
     pbclient.set('endpoint', app.config['PYBOSSA_URL'])
     pbclient.set('api_key', app.config['API_KEY'])
 
-
 app = create_app()
+pbclient = pbclient

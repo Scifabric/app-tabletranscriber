@@ -4,6 +4,7 @@
 <div class="row skeleton">
         
     <div id="container" style="margin: 20px"></div>
+        <div id="task-id"></div>
 
     <!--  Radio buttons para definir qual a ação que o usuário -->
     <p>
@@ -24,11 +25,13 @@
         <!-- Opção mover linha -->
         <input type="radio" name="acao" id="moverLinha" class="moverLinha"
             value="moverLinha" /> <label for="moverLinha">Mover Linha</label>
-	</p>
+            </p>
+        <button onclick="submitTask()">Concluído</button>
+
 </div>
 
-<script src="js/kinetic.js"></script>
-<script src="js/tt3.js" type="text/javascript" charset="utf-8"></script>
+<script src="#server/js/kinetic.js"></script>
+<script src="#server/js/tt3.js" type="text/javascript" charset="utf-8"></script>
 
 <style>
 
@@ -41,14 +44,15 @@ canvas {
 
     var task_shortname = "#task_shortname#";
     var endpoint = "/pybossa";
+    var img_url;
 
     function loadData( data ) {
 
 	 if ( !$.isEmptyObject(data.task) ) {
          $("#task-id").text(data.task.id);
-         var lines = json.Load(data.task.info.lines);
-         gridInit(lines);
-         $("#image").attr("src",data.task.info.url_m);
+         var coords = data.task.info.coords;
+         img_url = data.task.info.img_url;
+         initGrid(coords, img_url);
 	    }
    else {
         $(".skeleton").hide();
@@ -58,18 +62,24 @@ canvas {
 	}
 
 	// Function to submit and save the TaskRun in PyBossa
-	function submitTask(answer) {
+function submitTask() {
+        // Get grid infos
+
+        var gridCoords = salvarAlteracoes();
+
+        var answer = {'img_url' : img_url, 'coords': gridCoords};
 		// Get the task-id
 		taskid = $("#task-id").text();
 		
 		// Save the task
 		pybossa.saveTask(taskid, answer).done(function(data) {
             //Call tt workflow api.
-            taskRunDone(taskid);
+            //taskRunDone(taskid);
+            clearCanvas();
 
-           $.blockUI({message: $("#success"),
-                        css: {height: $("#success").height()}
-            });
+          // $.blockUI({message: $("#success"),
+          //              css: {height: $("#success").height()}
+          //  });
 			// Load a new task
             pybossa.newTask(task_shortname).done(function(data) {
 
@@ -78,7 +88,14 @@ canvas {
 		});
 	}
 
-    pybossa.setEndpoint(endpoint);
-    pybossa.newTask(task_shortname).done( function( data ) { loadData( data ) });
+pybossa.setEndpoint(endpoint);
+
+$(window).load(function(){
+        pybossa.newTask(task_shortname).done(
+            function( data ) {
+                loadData( data )
+                });
+        
+});
 
 </script>

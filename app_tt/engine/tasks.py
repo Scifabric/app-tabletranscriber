@@ -7,9 +7,11 @@ import sys
 from celery import task
 from app_tt.core import pbclient
 from app_tt.core import app
+from requests import RequestException
 from app_tt.pb_apps.tt_apps.ttapps import Apptt_select
 from app_tt.pb_apps.tt_apps.ttapps import Apptt_meta
 from app_tt.pb_apps.tt_apps.ttapps import Apptt_struct
+from subprocess import call
 
 BROKER_URL = "amqp://celery:celery@localhost:5672/celery"
 celery = Celery('tasks', backend='amqp', broker=BROKER_URL)
@@ -28,13 +30,19 @@ def check_task(task_id):
 
 @task(name="app_tt.engine.tasks.create_apps")
 def create_apps(book_id):
+    """"
+    Creates tt_apps and tt1 tasks
+    :params book_id: Internet archive book id
+    :returns: book indicating if the applications were created
+    :rtype: bool
+    """
     imgs = __get_tt_images(book_id)
     
 
     if(imgs):
-        tt_select = Apptt_select(book_id + "_tt1")
-        tt_meta = Apptt_meta(book_id + "_tt2")
-        tt_struct = Apptt_struct(book_id + "_tt3")
+        tt_select = Apptt_select(short_name=book_id + "_tt1")
+        tt_meta = Apptt_meta(short_name=book_id + "_tt2")
+        tt_struct = Apptt_struct(short_name=book_id + "_tt3")
 
         bookInfo = _archiveBookData(book_id)
 
@@ -49,7 +57,8 @@ def create_apps(book_id):
         return True
     
     else:
-        raise ValueError("Error didn't find book id")
+        print "Error didn't find book id"
+        return False
     
     return False
 
@@ -71,48 +80,118 @@ def create_task(task_id, strategy=None):
             if(task["info"]["answer"] == "Yes"):  # Verify the answer of the questio to create a new task
                 #TODO: apply strategy pattern
                 info = dict(link=task["info"]["url_m"], page=task["info"]["page"])
-                pb_app=  __find_app(short_name=(pb_app["short_name"][:-3] + "tt2"))  #  app where will be added the task
-                task = dict(app_id=pb_app["id"], state=0, calibration=0, priority_0=0, info=info)  #  dict with task data to be added
-                
-                add_task = requests.post("%s/api/task" % (app.config['PYBOSSA_URL']),
-                        params=dict(api_key=app.config['API_KEY']), data=json.dumps(task))  # add the task to tt2
+                add_task = __add_task(pb_app, "tt2", info)# add the task to tt2
 
-        else if(strategy == "tt2"):
+        elif(strategy == "tt2"):
             #Get the list of task_runs
             task_runs = json.loads(urllib2.urlopen("%s/api/taskrun?task_id=%s&limit=%d" % (app.config['PYBOSSA_URL'],
                                                     task_id, sys.maxint)).read())
             task_run = task_runs[len(task_runs) - 1] # Get the last answer
-            answer = task_run["info"]
-            print type(answer)
-            print answer
+            answer = json.loads(task_run["info"])
+            
             if(answer != 0):
-                bookId = pb_app[:-4]
+                bookId = pb_app["short_name"][:-4]
                 imgId = task["info"]["page"]
-                arch = open("%s/%s/metadados/baixa_resolucao/image%s" % (app.config['BOOKS_DIR'], bookId, imgId))
-                dic_tables = __splitFile(arch)
+                
+                __downloadArchiveImages(bookId, imgId)
+                __runLinesRecognition(bookId, imgId, answer[0]["text"]["girar"] )
+
+                try:
+                    arch = open("%s/books/%s/metadados/saida/image%s.txt" % (app.config['TT3_BACKEND'], bookId, imgId)) # file with the lines recognitio
+                    coord_matrices = __splitFile(arch) # get the lines recognitions
+                    for matrix_index in range(len(coord_matrices)):
+                        info = dict(coords=coord_matrices[matrix_index], page=imgId, img_url=__url_table(bookId, imgId, matrix_index))
+                        add_task = __add_task(pb_app, "tt3", info) #add task to tt3
+                except IOError,e: print str(e) #TODO: the task will not be created, a routine to solve this must be implemented
+                except Exception,e: print str(e)
+
+
+def __downloadArchiveImages(bookId, imgId, width=550, height=700):
+    """
+    Downloads internet archive images to tt3_backend project
+    :returns: True if the download was successful
+    :rtype: bool
+    """
+    
+    try:
+        url_request = requests.get("http://archive.org/download/%s/page/n%s" % (bookId, imgId))
+        fullImgPath = "%s/books/%s/alta_resolucao/image%s.png" % (app.config['TT3_BACKEND'], bookId, imgId)
+        fullImgFile = open(fullImgPath, "w")
+        fullImgFile.write(url_request.content)
+        fullImgFile.close()
+    
+        url_request = requests.get("http://archive.org/download/%s/page/n%s_w%d_h%d" % (bookId, imgId, width, height))
+        lowImgPath = "%s/books/%s/baixa_resolucao/image%s.png" % (app.config['TT3_BACKEND'], bookId, imgId)
+        lowImgFile = open(lowImgPath, "w")
+        lowImgFile.write(url_request.content)
+        lowImgFile.close()
+        
+        return True
+    except IOError,e: print str(e)          #TODO: Implement strategies for exceptions cases
+    except RequestException,e: print str(e)
+    except Exception,e: print str(e)
+
+    return False
+
+def __runLinesRecognition(bookId, imgId, rotate="", model="1"):
+    """
+    Call cpp software that recognizes lines into the table and
+    writes lines coords into <tt3_backend_dir>/books/bookId/metadata/saida/image<imgId>.txt
+    :returns: True if the write was successful 
+    :rtype: bool
+    """
+    if(rotate):
+        rotate = "-r"
+    
+    #command shell to enter into the tt3 backend project and 
+    #calls the lines recognizer software
+    command = 'cd %s/TableTranscriber/; ./tabletranscriber "/books/%s/baixa_resolucao/image%s.png" "model%s" "%s"' % (app.config['TT3_BACKEND'],
+            bookId, imgId, model, rotate)
+    
+    call([command], shell=True) #calls the shell command    
+    #TODO: implements exception strategy
+
+
+def __url_table(bookId, imgId, idx):
+    """""
+    Build a url of a splited image for the lines recognizer
+    :returns: a indexed book table image
+    :rtype: str
+    """
+    return "%s/books/%s/metadados/tabelasBaixa/image%s_%d.png" % (app.config['URL_TEMPLATES'], bookId, imgId, idx)
+
+
+def __add_task(pb_app, strategy, info):
+    pb_app =  __find_app(short_name=(pb_app["short_name"][:-3] + strategy))  #  app where will be added the task
+    task = dict(app_id=pb_app["id"], state=0, calibration=0, priority_0=0, info=info)  #  dict with task data to be added
+    add_task = requests.post("%s/api/task" % (app.config['PYBOSSA_URL']),
+                        params=dict(api_key=app.config['API_KEY']), data=json.dumps(task)) # add the task
 
 
 def __splitFile(arch):
     """""
-    Splits a given file and return a dic where the lines with '#' are the keys
-    and the other lines with values separated with ',' are lists
-    :returns: a dict with keys:str and values:lists
-    :rtype: dict
+    Splits a given file and return a matrices list where the lines with '#' are the index
+    and the other lines with values separated with ',' are the vectors of the inner matrices
+    :returns: a list of matrix
+    :rtype: list
     """
 
     strLines = arch.read().strip().split("\n")
-    dic_keys = {}
-    current_key = None
+    matrix = []
+    matrix_index = -1
 
     for line in strLines:
         if line.find("#") != -1:
-            current_key = line
-            dic_keys[current_key] = []
+            matrix_index +=1
+            matrix.append([])
         else:
-            dic_keys[current_key].append(line.split(","))
+            line = line.split(",")
+            for char_idx in range(len(line)):
+                line[char_idx] = int(line[char_idx])
 
-    return dic_keys
-
+            matrix[matrix_index].append(line)
+    arch.close()
+    return matrix
 
 def __find_app(**keyargs):
     """""
@@ -166,15 +245,44 @@ def __answer_ok(task_id, strategy):
             answer1 = json.loads(task_runs[n_taskruns - 1]["info"])
             answer2 = json.loads(task_runs[n_taskruns - 2]["info"])
 
-            return answer1 == answer2
+            if answer1 == answer2:
+                if answer2 != "0":
+                    return __tt2FileOutput(task, answer2)
         else:
             return False
+
+
+def __tt2FileOutput(task, answer):
+    """""
+    Writes tt2 answers into the file input for the lines recognitions
+    :returns: True if the answer is saved at the file
+    :rtype: bool
+    """
+    pb_app = __find_app_by_taskid(task["id"])
+    bookId = pb_app["short_name"][:-4]
+    imgId = task["info"]["page"]
+    
+    try:
+        arch = open("%s/books/%s/metadados/entrada/image%s.txt" % (app.config["TT3_BACKEND"], bookId , imgId), "a")
+        for table in answer:
+            x0 = table["left"]
+            x1 = table["width"] + x0
+            y0 = table["top"]
+            y1 = table["height"] + y0
+            arch.write(str(x0) + "," + str(y0) + "," + str(x1) + "," + str(y1))
+        arch.close()
+        
+        return True
+    except IOError,e: print str(e) #TODO: see what to do with the flow in exceptions
+
+    return False
+
 
 
 def __get_tt_images(bookId):
     """
     Get public book images from internet archive server
-    :returns: A list with dicts with images urls and index.
+    :returns: A list with dicts containing images urls and index.
     :rtype: list
     """
     WIDTH = 550
@@ -188,20 +296,21 @@ def __get_tt_images(bookId):
     data = urlobj.read()
     urlobj.close()
     output = json.loads(data)
-
-    try:
-        imagecount = output['metadata']['imagecount']
-    except KeyError:
-        imagecount = output['metadata']['numero_de_paginas_do_item']
-    imgUrls = "http://www.archive.org/download/" + bookId + "/page/n"
-
     imgList = []
-    for idx in range(int(imagecount)):
-        print 'Retrieved img: %s' % idx
-        page = idx
-        imgUrl_m = imgUrls + "%d_w%d_h%d" % (idx, WIDTH, HEIGHT)
-        imgUrl_b = imgUrls + str(idx)
-        imgList.append({'url_m':  imgUrl_m, 'url_b': imgUrl_b, 'page': page})
+
+    if output:
+        try:
+            imagecount = output['metadata']['imagecount']
+        except KeyError:
+            imagecount = output['metadata']['numero_de_paginas_do_item']
+
+        imgUrls = "http://www.archive.org/download/" + bookId + "/page/n"
+        for idx in range(int(imagecount)):
+            print 'Retrieved img: %s' % idx
+            page = idx
+            imgUrl_m = imgUrls + "%d_w%d_h%d" % (idx, WIDTH, HEIGHT)
+            imgUrl_b = imgUrls + str(idx)
+            imgList.append({'url_m':  imgUrl_m, 'url_b': imgUrl_b, 'page': page})
 
     return imgList
 
@@ -215,10 +324,14 @@ def _archiveBookData(bookid):
     """
     query = "http://archive.org/metadata/" + bookid
     data = json.loads(requests.get(query).content)
-    img = "http://www.archive.org/download/" + bookid + "/page/n7_w100_h100" 
-    return dict(title=data["metadata"]["title"],
-        publisher=data["metadata"]["publisher"],
-        volume=data["metadata"]["volume"],
-        contributor=data["metadata"]["contributor"],
-        img=img,
-        bookid=bookid)
+    img = "http://www.archive.org/download/" + bookid + "/page/n7_w100_h100"
+    default_dict = {"title" : None, "publisher" : None, "volume" : None, "contributor" : None}
+    known_dict = dict(img=img, bookid=bookid)
+
+    for key in default_dict:
+        try:
+            default_dict[key] = data["metadata"][key]
+        except:
+            print "This book does not have %s key" % key
+
+    return dict(known_dict.items() + default_dict.items())

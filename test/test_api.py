@@ -1,25 +1,23 @@
 from unittest import TestCase
 import sys
 import unittest
-import app_tt.view.application as application
-import api
+from app_tt.application import app as application
+from app_tt.core import pbclient
+import app_tt.engine.api as api
 import requests
 import json
-import pbclient
-import app_tt.default_settings as settings
+
 
 class test_api(TestCase):
 
 
     def setUp(self):
-        app = application.app
+        app = application
         app.config['TESTING'] = True
-        self.app = app.test_client()
-        pbclient.set('endpoint', settings.PYBOSSA_URL)
-        pbclient.set('api_key', settings.API_KEY)
+        self.app = application.test_client()
         
         try:
-            pybossa_api = requests.get(settings.PYBOSSA_URL + "/api")
+            pybossa_api = requests.get(app.config['PYBOSSA_URL'] + "/api")
         except:
             raise AssertionError("Pybossa's not working")
         if not pybossa_api.content:
@@ -29,7 +27,8 @@ class test_api(TestCase):
         # Creating new tt applications
         pb_app = pbclient.find_app(short_name="custodevida1946bras_tt1")
         if len(pb_app) == 0:
-            self.app.get("/api/custodevida1946bras/init")
+            a = self.app.get("/api/custodevida1946bras/init", follow_redirects=True)
+            #print a.response.__dict__
             pb_app = pbclient.find_app(short_name="custodevida1946bras_tt1")
             
             self.assertTrue(len(pb_app) > 0, "Error tt_app was not created")
@@ -48,8 +47,18 @@ class test_api(TestCase):
 
     def test_01_init(self):
         # Creating tt_app where book_id does not exist
-        #self.app.get("/api/does_not_exist/init")
-        return True
+
+        inexistent_id = "XX_does_not_exist_XX"
+        init_req = self.app.get("/api/%s/init" % inexistent_id)
+
+        self.assertEqual(init_req.data, "False",
+                "Error application can not be created") 
+        
+        search_list = pbclient.find_app(short_name=inexistent_id + "_tt1")
+
+        self.assertTrue(len(search_list) == 0,
+                "Error application with inexistent id was found")
+
 
     def test_check_app_done(self):
         return True
@@ -58,6 +67,3 @@ class test_api(TestCase):
 def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(test_api)
     return suite
-
-if __name__ == "__main__":
-    unittest.main()
