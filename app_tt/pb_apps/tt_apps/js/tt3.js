@@ -4,7 +4,6 @@ var matrizDePontos = new Array();
 var coordenadasOriginais = new Array();
 var resultado;
 var removendo = true;
-var movendo = false;
 var removendoLinha = false;
 var movendoLinha = false;
 var minX;
@@ -38,8 +37,6 @@ function salvarAlteracoes(){
 
     resultado = new Array();
 
-    resultado.push(coordenadasOriginais);
-    
     while (linhas.length > 0 && z < linhas.length){
         primeiraLinha = linhas[z];
         pts = primeiraLinha.getPoints();
@@ -57,7 +54,7 @@ function salvarAlteracoes(){
             if (rightX == null || bottomY == null){
                 linhas.splice(0,1);
             } else {
-                resultado.push([leftX, upperY, rightX, bottomY]);
+                resultado.push([leftX, upperY, rightX, bottomY]);						
             }
         }
     }
@@ -201,6 +198,7 @@ function moverLinha(posY, newPosY){
     for (i=0; i < linhas.length; i++){
         var pts = linhas[i].getPoints();
         if (pts[0].y == pts[1].y && pts[0].y == posY){
+            atualizaSegmentosAdjacentes(pts, [pts[0].x, newPosY, pts[1].x, newPosY]);
             linhas[i].setPoints([pts[0].x, newPosY, pts[1].x, newPosY]);
         }
     }
@@ -210,7 +208,33 @@ function moverColuna(posX, newPosX) {
     for (i=0; i < linhas.length; i++){
         var pts = linhas[i].getPoints();
         if (pts[0].x == pts[1].x && pts[0].x == posX){
+            atualizaSegmentosAdjacentes(pts, [newPosX, pts[0].y, newPosX, pts[1].y]);
             linhas[i].setPoints([newPosX, pts[0].y, newPosX, pts[1].y]);
+        }
+    }
+}
+
+function moverSegmento(ptsAntes, ptsDepois){
+    for (i=0; i<linhas.length; i++){
+        var pts = linhas[i].getPoints();
+            if (pts[0].x == ptsAntes[0].x && pts[0].y == ptsAntes[0].y && pts[1].x == ptsAntes[1].x && pts[1].y == ptsAntes[1].y){
+                atualizaSegmentosAdjacentes(pts, ptsDepois);
+                linhas[i].setPoints(ptsDepois);
+            }
+    }
+}
+
+function atualizaSegmentosAdjacentes(ptsAntes, ptsDepois){
+    for (var z=0; z<linhas.length; z++){
+        pts = linhas[z].getPoints();
+        if (ptsAntes[0].x == ptsAntes[1].x && pts[0].y == pts[1].y && (ptsAntes[0].y == pts[0].y || ptsAntes[1].y == pts[0].y) && ptsAntes[0].x == pts[0].x){
+            linhas[z].setPoints([ptsDepois[0], pts[0].y, pts[1].x, pts[1].y]);
+        } else if (ptsAntes[0].x == ptsAntes[1].x && pts[0].y == pts[1].y && (ptsAntes[0].y == pts[0].y || ptsAntes[1].y == pts[0].y) && ptsAntes[0].x == pts[1].x){
+            linhas[z].setPoints([pts[0].x, pts[0].y, ptsDepois[2], pts[1].y]);
+        } else if (ptsAntes[0].y == ptsAntes[1].y && pts[0].x == pts[1].x && (ptsAntes[0].x == pts[0].x || ptsAntes[1].x == pts[0].x) && ptsAntes[0].y == pts[0].y){
+            linhas[z].setPoints([pts[0].x, ptsDepois[1], pts[1].x, pts[1].y]);
+        } else if (ptsAntes[0].y == ptsAntes[1].y && pts[0].x == pts[1].x && (ptsAntes[0].x == pts[0].x || ptsAntes[1].x == pts[0].x) && ptsAntes[0].y == pts[1].y){
+            linhas[z].setPoints([pts[0].x, pts[0].y, pts[1].x, ptsDepois[3]]);
         }
     }
 }
@@ -229,57 +253,42 @@ $(document).ready(function() {
 
     $(".remover").click(function() {
         removendo = true;
-        movendo = false;
         removendoLinha = false;
         movendoLinha = false;
     });
 
-    $(".mover").click(function() {
-        removendo = false;
-        movendo = true;
-        removendoLinha = false;
-        movendoLinha = false;
-    });
 
     $(".removerLinha").click(function() {
         removendo = false;
-        movendo = false;
         removendoLinha = true;
         movendoLinha = false;
     });
 
     $(".moverLinha").click(function() {
         removendo = false;
-        movendo = false;
         removendoLinha = false;
         movendoLinha = true;
     });
 });
-
 
 function initGrid(matrizDePontos, uri) {
     minX = 2000;
     minY = 2000;
     maxX = 0;
     maxY = 0;
-    
-    for (i = 0; i < matrizDePontos.length; i++) {
+                
+    for (i = 1; i < matrizDePontos.length; i++) {
         arr = matrizDePontos[i];
         
         leftX = arr[0];
-        if (leftX < minX){ minX = leftX; }
+        if (leftX < minX) minX = leftX;
         upperY = arr[1];
-        if (upperY < minY){ min = upperY;}
+        if (upperY < minY) min = upperY;
         rightX = arr[2];
-        console.log("RightX: " + rightX + "MaxX: " + maxX);
-        
-        if (rightX > maxX){ 
-            maxX = rightX;
-            console.log("Dentro do if: " + rightX);
-        }
+        if (rightX > maxX) maxX = rightX;
         bottomY = arr[3];
-        if (bottomY > maxY){ maxY = bottomY;}
-        
+        if (bottomY > maxY) maxY = bottomY;
+
         var novasLinhas = new Array();
         novasLinhas.push([leftX, upperY, leftX, bottomY]);
         novasLinhas.push([rightX, upperY, rightX, bottomY]);
@@ -296,48 +305,33 @@ function initGrid(matrizDePontos, uri) {
                     dragBoundFunc: function(pos, event) {
                         var points = this.getPoints();
                         if (points[0].x == points[1].x){
-                            var posX = event.offsetX;
+                            var posX = event.offsetX==undefined?event.layerX:event.offsetX;
                             var newX = posX < minX ? minX : (posX > maxX ? maxX : posX);
                             if (movendoLinha) {
                                 if(isColunaMovivel(newX)){
                                     moverColuna(points[0].x, newX);
-                                    this.setPoints([newX, points[0].y, newX, points[1].y]);
                                 }
-                            }
-                            else{
-                                if(isSegmentoColunaMovivel(points, newX)){
-                                    this.setPoints([newX, points[0].y, newX, points[1].y]);
-                                }
-                            }
-                            return {
-                                x: this.getAbsolutePosition().x,
-                                y: this.getAbsolutePosition().y
                             }
                         } else {
-                            var posY = event.offsetY;
+                            var posY = event.offsetY==undefined?event.layerY:event.offsetY;
                             var newY = posY < minY ? minY : (posY > maxY ? maxY : posY);
                             if (movendoLinha) {
                                 if (isLinhaMovivel(newY)){
                                     moverLinha(points[0].y, newY);
-                                    this.setPoints([points[0].x, newY, points[1].x, newY]);
                                 }
                             }
-                            else{
-                                if (isSegmentoLinhaMovivel(points, newY)){
-                                    this.setPoints([points[0].x, newY, points[1].x, newY]);
-                                }
-                            }
-                            return {
-                                x: this.getAbsolutePosition().x,
-                                y: this.getAbsolutePosition().y
-                            }
+                        }
+
+                        return {
+                            x: 0,
+                            y: 0
                         }
                     }
                 });
                 var pts= linha.getPoints();
                 if (pts[0].x == pts[1].x) {
                     linha.on("mouseover", function() {
-                        if (movendo || movendoLinha) {
+                        if (movendoLinha) {
                             document.body.style.cursor = "ew-resize";
                         } else if (removendo || removendoLinha) {
                             document.body.style.cursor = "pointer";
@@ -346,7 +340,7 @@ function initGrid(matrizDePontos, uri) {
                     });
                 } else {
                     linha.on("mouseover", function() {
-                        if (movendo || movendoLinha) {
+                        if (movendoLinha) {
                             document.body.style.cursor = "ns-resize";
                         } else if (removendo || removendoLinha) {
                             document.body.style.cursor = "pointer";
@@ -406,14 +400,14 @@ function initGrid(matrizDePontos, uri) {
 
     layer.on('click', function(evt) {
 
-        //Cï¿½digo para remover apenas um segmento da tabela
+        //C�digo para remover apenas um segmento da tabela
         if (removendo) {
             
             // Recupera o objeto que foi clicado
             var shape = evt.shape;
             var points = shape.getPoints();
 
-            // ï¿½ necessï¿½rio fazer iteraï¿½ï¿½o inversa sobre o array para nï¿½o pular nenhum elemento.
+            // � necess�rio fazer itera��o inversa sobre o array para n�o pular nenhum elemento.
             for (i = linhas.length - 1; i >= 0; i--) {
                 var points2 = linhas[i].getPoints();
                 if (points2[0].x == points[0].x && 
@@ -426,7 +420,7 @@ function initGrid(matrizDePontos, uri) {
                 }
             }
         }
-        //Cï¿½digo para remover todos os segmentos que pertenï¿½am a uma mesma linha
+        //C�digo para remover todos os segmentos que perten�am a uma mesma linha
         else if (removendoLinha) {
 
             // Recupera o objeto que foi clicado
@@ -434,7 +428,7 @@ function initGrid(matrizDePontos, uri) {
             var points = shape.getPoints();
             if (points[0].x == points[1].x) {
 
-                // ï¿½ necessï¿½rio fazer iteraï¿½ï¿½o inversa sobre o array para nï¿½o pular nenhum elemento.
+                // � necess�rio fazer itera��o inversa sobre o array para n�o pular nenhum elemento.
                 for (i = linhas.length - 1; i >= 0; i--) {
                     var points2 = linhas[i].getPoints();
                     if (points2[0].x == points[0].x
@@ -454,7 +448,7 @@ function initGrid(matrizDePontos, uri) {
                 }
             }
         }
-        // Apï¿½s remover os objetos selecionados, redesenhamos a camada apenas com os objetos restantes.
+        // Ap�s remover os objetos selecionados, redesenhamos a camada apenas com os objetos restantes.
         layer.draw();
     });
     var imageObj = new Image();
@@ -466,7 +460,6 @@ function initGrid(matrizDePontos, uri) {
             width : maxX,
             height : maxY
         });
-        console.log(tabela.width);
 
         // add the shape to the layer
         layer.add(tabela);
