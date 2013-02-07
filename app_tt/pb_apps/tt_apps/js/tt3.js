@@ -251,20 +251,20 @@ function verificaExistenciaLinha(pontos){
 
 $(document).ready(function() {
 
-    $(".remover").click(function() {
+    $("#remover").click(function() {
         removendo = true;
         removendoLinha = false;
         movendoLinha = false;
     });
 
 
-    $(".removerLinha").click(function() {
+    $("#removerLinha").click(function() {
         removendo = false;
         removendoLinha = true;
         movendoLinha = false;
     });
 
-    $(".moverLinha").click(function() {
+    $("#moverLinha").click(function() {
         removendo = false;
         removendoLinha = false;
         movendoLinha = true;

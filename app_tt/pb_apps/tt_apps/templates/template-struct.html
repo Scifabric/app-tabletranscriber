@@ -1,32 +1,73 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
 "http://www.w3.org/TR/html4/strict.dtd">
 
+
+<div class="row">
+
+  <div class="span8 offset2" style="height:50px">
+
+   	<div id="success" class="alert alert-success" style="display:none;">
+	   	<a class="close">x</a>
+	    <p><span><strong>#</strong></span><span>#</span></p>
+	</div>
+    <div id="finish" class="alert alert-success" style="display:none;">
+      <p><span><strong>#</strong></span><span>#</span></p>
+      <br/>
+      <div class="alert-actions">
+              <a id="back" class="btn small" href="/">#</a>
+              <a id="other_apps" class="btn small" href="/app">#</a>
+      </div>
+    </div>
+    <div id="error" class="alert alert-error" style="display:none;">
+      <a class="close">x</a>
+      <p><span><strong>#</strong></span><span>#</span></p>
+  </div>
+  <div id="workflowtask" class="alert alert-success" style="display:none; cursor:pointer;">
+        <a class="close"></a>
+       <p><span>#</span></p>
+    </div>
+
+  </div> <!-- End Success and Error Messages for the user -->
+</div>
+
+<div class="row skeleton">
+  <div id="question" class="span8 offset2">
+      <h2>Question</h2>
+      <p>Tarefa: <span id="task-id" class="label label-warning">#</span></p>
+  </div>
+</div>
+
 <div class="row skeleton">
         
     <div id="container" style="margin: 20px"></div>
-        <div id="task-id"></div>
-
     <!--  Radio buttons para definir qual a ação que o usuário -->
-    <p>
+        <div class="row">
         <!-- Opção remover segmento -->
-        <input type="radio" name="acao" id="remover" class="remover"
-            value="remover" checked="checked" /> <label for="remover">Remover
-            Segmento</label>
+            <div class="span3">
+                <input type="radio" name="acao" id="remover" 
+                value="remover" checked="checked" /> <label for="remover">Remover
+                Segmento</label> 
+            </div>
 
-        <!-- Opção mover segmento -->
-        <input type="radio" name="acao" id="mover" class="mover" value="mover" />
-        <label for="mover">Mover Segmento</label>
 
-        <!-- Opção remover linha -->
-        <input type="radio" name="acao" id="removerLinha" class="removerLinha"
-            value="removerLinha" /> <label for="removerLinha">Remover
-            Linha</label>
+            <!-- Opção remover linha -->
+            <div class="span3">
+               
+                <input type="radio" name="acao" id="removerLinha" 
+                value="removerLinha" /> <label for="removerLinha">Remover
+                Linha</label> 
+            </div>
 
-        <!-- Opção mover linha -->
-        <input type="radio" name="acao" id="moverLinha" class="moverLinha"
-            value="moverLinha" /> <label for="moverLinha">Mover Linha</label>
-            </p>
-        <button onclick="submitTask()">Concluído</button>
+            <!-- Opção mover linha -->
+            <div class="span3">
+                <input type="radio" name="acao" id="moverLinha" 
+                value="moverLinha" /> <label for="moverLinha">Mover Linha</label>
+
+            </div>
+            <button onclick="submitTask()">Concluído</button>
+        
+        </div>
+
 
 </div>
 
@@ -48,7 +89,8 @@ canvas {
 
     function loadData( data ) {
 
-	 if ( !$.isEmptyObject(data.task) ) {
+        if ( !$.isEmptyObject(data.task) ) {
+         $("#question h2").text(data.question);
          $("#task-id").text(data.task.id);
          var coords = data.task.info.coords;
          img_url = data.task.info.img_url;

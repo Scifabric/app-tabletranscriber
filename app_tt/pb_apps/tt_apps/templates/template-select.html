@@ -144,7 +144,6 @@ function taskRunDone(taskId){
         url: '/tt/api/'+taskId+'/done',
         success: function(data){
                 console.log(data);
-                console.log("DFASFAAD");
                 if(data == "True"){
                     $("#workflowtask").fadeIn(200);
                 }

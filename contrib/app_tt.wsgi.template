@@ -7,5 +7,5 @@ sys.stdout = sys.stderr
 logging.basicConfig(stream=sys.stderr)
 sys.path.insert(0,'/home/jeymissonebeo/workspace/app-tt')
 # Run the web-app
-from app_tt.view.application import app as application
+from app_tt.application import app as application
 
