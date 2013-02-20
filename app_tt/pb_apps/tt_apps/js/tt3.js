@@ -283,7 +283,7 @@ function initGrid(matrizDePontos, uri) {
         leftX = arr[0];
         if (leftX < minX) minX = leftX;
         upperY = arr[1];
-        if (upperY < minY) min = upperY;
+        if (upperY < minY) minY = upperY;
         rightX = arr[2];
         if (rightX > maxX) maxX = rightX;
         bottomY = arr[3];
