@@ -72,30 +72,6 @@ def create_task(task_id, strategy=None):
         task.add_next_task()
 
 
-def __find_app(**keyargs):
-    """""
-    Find one pybossa app by a given params
-    :returns: One pybossa's app data
-    :rtype: dict
-    """
-    return json.loads(requests.get("%s/api/app" % (
-        app.config['PYBOSSA_URL']),
-        params=keyargs).content)[0]  # get pb_appdata dict
-
-
-def __find_app_by_taskid(task_id):
-    """""
-    Find a pybossa app by a pybossa task id
-    :returns: The pybossa's app data
-    :rtype: dict
-    """
-    task = json.loads(requests.get("%s/api/task/%s?api_key=%s" % (
-        app.config['PYBOSSA_URL'], task_id,
-        app.config['API_KEY'])).content)  # get task data
-
-    return __find_app(id=task["app_id"])
-
-
 def __get_tt_images(bookId):
     """
     Get public book images from internet archive server

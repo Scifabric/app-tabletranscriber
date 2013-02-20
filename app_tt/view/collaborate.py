@@ -33,10 +33,15 @@ def index(page):
 
     for app in apps:
         book_id = app["short_name"][:-4]
+
         
         if(book_id not in book_stack):
-            book_stack.append(book_id)
-            book_data.append(app)
+            try:
+                app["info"]["title"]
+                book_stack.append(book_id)
+                book_data.append(app)
+            except:
+                print "It's not a tt app"
 
     count = len(book_data)
     books = []
