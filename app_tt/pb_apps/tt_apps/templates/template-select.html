@@ -28,16 +28,12 @@
     <div id="finish" class="alert alert-success" style="display:none;">
       <p><span><strong>#</strong></span><span>#</span></p>
       <br/>
-      <div class="alert-actions">
-              <a id="back" class="btn small" href="/">#</a>
-              <a id="other_apps" class="btn small" href="/app">#</a>
-      </div>
     </div>
     <div id="error" class="alert alert-error" style="display:none;">
       <a class="close">x</a>
       <p><span><strong>#</strong></span><span>#</span></p>
   </div>
-  <div id="workflowtask" class="alert alert-success" style="display:none; cursor:pointer;">
+  <div id="workflowtask" class="alert alert-success" style="display:none; cursor:pointer; position:relative">
         <a class="close"></a>
        <p><span>#</span></p>
     </div>
@@ -113,8 +109,6 @@ $(window).load(function(){
 		$("#finish span:nth-child(2)").text($.i18n._('finished'));
 		$("#error strong").text($.i18n._('error'));
 		$("#error span:nth-child(2)").text($.i18n._('err_msg'));
-		$("#back").text($.i18n._('back'));
-        $("#other_apps").text($.i18n._('other_apps'));
         $("#workflowtask span:first").text($.i18n._('workflowtask'));
 		
 }); //Internationalization using jquery.i18n
@@ -143,17 +137,24 @@ function taskRunDone(taskId){
     $.ajax({
         url: '/tt/api/'+taskId+'/done',
         success: function(data){
-                console.log(data);
-                if(data == "True"){
-                    $("#workflowtask").fadeIn(200);
-                }
-                
-                $("#workflowtask").click(function(){
-                    window.open(endpoint + "/app/" + task_shortname.replace("_tt1", "_tt2")  + "/newtask", "_self");
-                });
-            
+                enableNextTask(taskId);
             }
         });
+}
+
+function enableNextTask(taskId){
+    $.ajax({
+        url: '/tt/api/' + taskId + '/available_tasks',
+        success: function(data){
+            if(data == "True"){
+                $("#workflowtask").fadeIn(200);
+            }
+        }
+    });
+
+    $("#workflowtask").click(function(){
+                window.open(endpoint + "/app/" + task_shortname.replace("_tt1", "_tt2")  + "/newtask", "_self");
+    });
 }
 
 

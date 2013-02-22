@@ -21,6 +21,19 @@ def check_task(task_id):
     return task.check_answer()
 
 
+@task(name="app_tt.engine.tasks.available_tasks")
+def available_tasks(task_id):
+    current_task = task_factory.get_task(task_id)
+    next_app = current_task.get_next_app()
+    available_tasks = next_app.get_tasks()
+    
+    for task in available_tasks:
+        if task.state != "completed":
+            return True
+    
+    return False
+
+
 @task(name="app_tt.engine.tasks.create_apps")
 def create_apps(book_id):
     """"

@@ -33,6 +33,9 @@ class pb_task(object):
         """
         raise NotImplemented("Should have implemented this")
 
+    def get_next_app(self):
+        raise NotImplemented("Should have implemented this")
+
     def get_task_runs(self):
         data = json.loads(requests.get("%s/api/taskrun?task_id=%s" % (app.config['PYBOSSA_URL'], self.task.id)).content)
         return [pbclient.TaskRun(taskrun) for taskrun in data]

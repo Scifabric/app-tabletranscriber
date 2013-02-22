@@ -3,6 +3,7 @@
 from app_tt.pb_apps.pb_task import pb_task
 import ttapps
 from app_tt.core import app
+from app_tt.core import pbclient
 from subprocess import call
 import requests
 import urllib2
@@ -55,6 +56,10 @@ class TTTask1(pb_task):
                 return True
         return False
 
+    def get_next_app(self):
+        curr_app_name = self.app_short_name
+        next_app_name = curr_app_name[:-1] + "2"
+        return ttapps.Apptt_meta(short_name=next_app_name)
 
 class TTTask2(pb_task):
     def __init__(self, task_id, app_short_name):
@@ -117,6 +122,12 @@ class TTTask2(pb_task):
                     pass
         else:
             return False
+
+    def get_next_app(self):
+        curr_app_name = self.app_short_name
+        next_app_name = curr_app_name[:-1] + "3"
+        return ttapps.Apptt_struct(short_name=next_app_name)
+
 
     def __downloadArchiveImages(self, bookId, imgId, width=550, height=700):
         """

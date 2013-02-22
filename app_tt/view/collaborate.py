@@ -40,8 +40,10 @@ def index(page):
                 app["info"]["title"]
                 book_stack.append(book_id)
                 book_data.append(app)
-            except:
+            except KeyError:
                 print "It's not a tt app"
+            except Exception, e:
+                print str(e)
 
     count = len(book_data)
     books = []

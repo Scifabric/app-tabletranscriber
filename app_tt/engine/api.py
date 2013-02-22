@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask import Blueprint, abort
-from tasks import check_task, create_apps, close_task, create_task
+from tasks import check_task, create_apps, close_task, create_task, available_tasks
 
 blueprint = Blueprint('api', __name__)
 
@@ -26,3 +26,9 @@ def check_app_done(task_id):
         create_task.delay(task_id)
     
     return str(done)
+
+
+@blueprint.route('/<task_id>/available_tasks')
+def are_there_tasks(task_id):
+    available = available_tasks.delay(task_id)
+    return str(available.get())

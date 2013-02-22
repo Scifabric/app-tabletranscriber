@@ -20,15 +20,14 @@
     </div>
     <div id="finish" class="alert alert-success" style="display:none;">
       <strong>Parabéns!</strong> Todas as tarefas foram finalizadas</strong>
-      <br/>
-      <div class="alert-actions">
-              <a class="btn small" href="/">Voltar</a>
-              <a class="btn small" href="/app">ou, verificar outras aplicações</a>
-      </div>
     </div>
     <div id="error" class="alert alert-error" style="display:none;">
       <a class="close">×</a>
       <strong>Erro!</strong> Algo ocorreu errado, por favor contate o administrador do site.</strong>
+    </div>
+      <div id="workflowtask" class="alert alert-success" style="display:none; cursor:pointer; position:relative">
+        <a class="close"></a>
+       <p><span>Existe um novo tipo de tarefa disponível. Clique para ir.</span></p>
     </div>
   </div> <!-- End Success and Error Messages for the user -->
 </div>
@@ -91,7 +90,25 @@ var endpoint = "/pybossa";
 
 function taskRunDone(taskId){
     return $.ajax({
-        url: '/tt/api/'+taskid+'/done'
+        url: '/tt/api/'+taskid+'/done',
+        success: function(data){
+            enableNextTask(taskId);
+        }
+    });
+}
+
+function enableNextTask(taskId){
+    $.ajax({
+        url: '/tt/api/' + taskId + '/available_tasks',
+        success: function(data){
+            if(data == "True"){
+                $("#workflowtask").fadeIn(200);
+            }
+        }
+    });
+
+    $("#workflowtask").click(function(){
+                window.open(endpoint + "/app/" + task_shortname.replace("_tt2", "_tt3")  + "/newtask", "_self");
     });
 }
 
