@@ -94,7 +94,8 @@ canvas {
         if ( !$.isEmptyObject(data.task) ) {
          $("#question h2").text(data.question);
          $("#task-id").text(data.task.id);
-         var coords = data.task.info.coords;
+         console.log(data.task.info.last_answer);
+         var coords = data.task.info.last_answer != undefined ? data.task.info.last_answer.coords : data.task.info.coords;
          img_url = data.task.info.img_url;
          initGrid(coords, img_url);
 	    }
@@ -112,6 +113,7 @@ function submitTask() {
         var gridCoords = salvarAlteracoes();
 
         var answer = {'img_url' : img_url, 'coords': gridCoords};
+        console.log(answer);
 		// Get the task-id
 		taskid = $("#task-id").text();
 		

@@ -36,6 +36,7 @@ function salvarAlteracoes(){
     var z = 0;
 
     resultado = new Array();
+    console.log(linhas);
 
     while (linhas.length > 0 && z < linhas.length){
         primeiraLinha = linhas[z];
@@ -58,6 +59,9 @@ function salvarAlteracoes(){
             }
         }
     }
+
+    console.log(resultado);
+    return resultado;
 }
 
 function isBorda(pontos){
