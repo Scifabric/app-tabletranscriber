@@ -26,11 +26,11 @@ def available_tasks(task_id):
     current_task = task_factory.get_task(task_id)
     next_app = current_task.get_next_app()
     available_tasks = next_app.get_tasks()
-    
+
     for task in available_tasks:
         if task.state != "completed":
             return True
-    
+
     return False
 
 
@@ -51,8 +51,21 @@ def create_apps(book_id):
 
         bookInfo = _archiveBookData(book_id)
 
-        tt_meta.add_app_infos(dict(sched="incremental"))
-        tt_struct.add_app_infos(dict(sched="incremental"))
+        tt_select.add_app_infos(dict(thumbnail=bookInfo["img"]))
+
+        tt_meta.add_app_infos(
+            dict(
+                sched="incremental",
+                thumbnail=app.config['URL_TEMPLATES']
+                + "/images"
+                + "/long_description.png"))
+
+        tt_struct.add_app_infos(
+            dict(
+                sched="incremental",
+                thumbnail=app.config['URL_TEMPLATES']
+                + "/images/tutorial-meta-struct"
+                + "/model0_1.png"))
 
         tt_meta.add_app_infos(bookInfo)
         tt_select.add_app_infos(bookInfo)

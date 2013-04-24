@@ -1,0 +1,21 @@
+{% block body %}
+
+<div>
+     <img id="table" style="height: 800px; width: 600px; margin: 20px;" src="{{table.url}}"/>
+</div>
+
+<script src="{{ url_for('static', filename='js/jquery-1.7.1.js') }}" type="text/javascript" charset="utf-8"></script>
+<script src="{{ url_for('static', filename='js/jquery-ui-1.8.22.custom.min.js') }}" type="text/javascript" charset="utf-8"></script>
+<script src="{{ url_for('static', filename='js/tt4.js') }}" type="text/javascript" charset="utf-8"></script>
+
+<script type="text/javascript" charset="utf-8">
+    $(window).load(
+            function(){
+                var cells = {{ table.cells | tojson| safe}};
+                $('#table').table({"cells": cells});
+    });
+</script>
+<link rel="stylesheet" href="{{ url_for('static', filename='vendor/tt4.css')}}" type="text/css" />
+<link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap/2.1.0/bootstrap.css')}}" type="text/css" />
+
+{% endblock %}

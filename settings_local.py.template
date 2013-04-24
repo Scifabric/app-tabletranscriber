@@ -5,3 +5,5 @@ PYBOSSA_ENDPOINT = "/pybossa"
 BOOKS_DIR = "<dir-tt3-backend>/TableTranscriber/books"
 API_KEY = "pybossa-api-key"
 URL_TEMPLATES = "http://localhost/media"
+
+TT_DB_URI = "dbname='db_name' user='db_user' host='db_host' password='db_password'" 

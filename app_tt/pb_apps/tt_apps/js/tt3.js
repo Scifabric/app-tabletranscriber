@@ -35,8 +35,7 @@ function salvarAlteracoes(){
     var pts;
     var z = 0;
 
-    resultado = new Array();
-    console.log(linhas);
+    var resultado = new Array();
 
     while (linhas.length > 0 && z < linhas.length){
         primeiraLinha = linhas[z];
@@ -60,24 +59,19 @@ function salvarAlteracoes(){
         }
     }
 
-    console.log(resultado);
     return resultado;
 }
 
 function isBorda(pontos){
-    var l;
-    var pts;
-    for (l=0; l<linhas.length; l++){
-        pts = linhas[l].getPoints();
-        if (pontos[0].x == pontos[1].x && pts[1].x > pontos[1].x){
-            return false;
-        }
-        if (pontos[0].y == pontos[1].y && pts[1].y > pontos[1].y){
-            return false;
-        }
-    }
-    return true;
+	return ((pontos[0].x == pontos[1].x && (pontos[0].x == maxX || pontos[0].x == minX)) ||
+		(pontos[0].y == pontos[1].y && (pontos[0].y == maxY || pontos[0].y == minY)));
 }
+		
+function isPosBorda(pontos){
+	return ((pontos[0] == pontos[2] && (pontos[0] == maxX || pontos[0] == minX)) ||
+		(pontos[1] == pontos[3] && (pontos[1] == maxY || pontos[1] == minY)));
+}
+
 
 function encontraRightX(leftX, upperY){
     var z;
@@ -198,32 +192,38 @@ function isSegmentoLinhaMovivel(pts, newY){
     return true;
 }
 function moverLinha(posY, newPosY){
-    for (i=0; i < linhas.length; i++){
-        var pts = linhas[i].getPoints();
-        if (pts[0].y == pts[1].y && pts[0].y == posY){
-            atualizaSegmentosAdjacentes(pts, [pts[0].x, newPosY, pts[1].x, newPosY]);
-            linhas[i].setPoints([pts[0].x, newPosY, pts[1].x, newPosY]);
+    if (!isPosBorda([minX, posY, maxX, posY])){
+        for (i=0; i < linhas.length; i++){
+            var pts = linhas[i].getPoints();
+            if (pts[0].y == pts[1].y && pts[0].y == posY){
+                atualizaSegmentosAdjacentes(pts, [pts[0].x, newPosY, pts[1].x, newPosY]);
+                linhas[i].setPoints([pts[0].x, newPosY, pts[1].x, newPosY]);
+            }
         }
     }
 }
 
 function moverColuna(posX, newPosX) {
-    for (i=0; i < linhas.length; i++){
-        var pts = linhas[i].getPoints();
-        if (pts[0].x == pts[1].x && pts[0].x == posX){
-            atualizaSegmentosAdjacentes(pts, [newPosX, pts[0].y, newPosX, pts[1].y]);
-            linhas[i].setPoints([newPosX, pts[0].y, newPosX, pts[1].y]);
+    if (!isPosBorda([posX, minY, posX, maxY])){
+        for (i=0; i < linhas.length; i++){
+            var pts = linhas[i].getPoints();
+            if (pts[0].x == pts[1].x && pts[0].x == posX){
+                atualizaSegmentosAdjacentes(pts, [newPosX, pts[0].y, newPosX, pts[1].y]);
+                linhas[i].setPoints([newPosX, pts[0].y, newPosX, pts[1].y]);
+            }
         }
     }
 }
 
 function moverSegmento(ptsAntes, ptsDepois){
-    for (i=0; i<linhas.length; i++){
-        var pts = linhas[i].getPoints();
-            if (pts[0].x == ptsAntes[0].x && pts[0].y == ptsAntes[0].y && pts[1].x == ptsAntes[1].x && pts[1].y == ptsAntes[1].y){
-                atualizaSegmentosAdjacentes(pts, ptsDepois);
-                linhas[i].setPoints(ptsDepois);
-            }
+    if (!isBorda(ptsAntes)){
+        for (i=0; i<linhas.length; i++){
+            var pts = linhas[i].getPoints();
+                if (pts[0].x == ptsAntes[0].x && pts[0].y == ptsAntes[0].y && pts[1].x == ptsAntes[1].x && pts[1].y == ptsAntes[1].y){
+                    atualizaSegmentosAdjacentes(pts, ptsDepois);
+                    linhas[i].setPoints(ptsDepois);
+                }
+        }
     }
 }
 
@@ -365,12 +365,14 @@ function adicionarLinha(pontos){
                 var limEsq = encontraLimiteEsquerda(points[0].x);
                 var limDir = encontraLimiteDireita(points[0].x);
                 var newX = posX < limEsq ? limEsq : (posX > limDir ? limDir : posX);
-                if (movendoLinha) {
-                    if(isColunaMovivel(newX)){
-                        moverColuna(points[0].x, newX);
+            	if (movendoLinha) {
+                    if(!isBorda(points)){
+                        if (isLinhaMovivel(newY)){
+                            moverLinha(points[0].y, newY);
+                        }
                     }
                 }
-            } else {
+            }else {
                 var posY = event.offsetY==undefined?event.layerY:event.offsetY;
                 var limSup = encontraLimiteSuperior(points[0].y);
                 var limInf = encontraLimiteInferior(points[0].y);
@@ -588,15 +590,18 @@ function initGrid(matrizDePontos, uri) {
             var points = shape.getPoints();
 
             // E necessario fazer iteracao inversa sobre o array para nao pular nenhum elemento.
-            for (i = linhas.length - 1; i >= 0; i--) {
-                var points2 = linhas[i].getPoints();
-                if (points2[0].x == points[0].x && 
-                    points2[1].x == points[1].x && 
-                    points2[0].y == points[0].y && 
-                    points2[1].y == points[1].y) {
+            if(!isBorda(points)){
+            
+                for (i = linhas.length - 1; i >= 0; i--) {
+                    var points2 = linhas[i].getPoints();
+                    if (points2[0].x == points[0].x && 
+                        points2[1].x == points[1].x && 
+                        points2[0].y == points[0].y && 
+                        points2[1].y == points[1].y) {
 
-                    linhas[i].remove();
-                    linhas.splice(i,1);
+                        linhas[i].remove();
+                        linhas.splice(i,1);
+                    }
                 }
             }
         }
@@ -606,24 +611,27 @@ function initGrid(matrizDePontos, uri) {
             // Recupera o objeto que foi clicado
             var shape = evt.shape;
             var points = shape.getPoints();
-            if (points[0].x == points[1].x) {
+            if(!isBorda(points)){
+                
+                if (points[0].x == points[1].x) {
 
-                // E necessario fazer iteracao inversa sobre o array para nao pular nenhum elemento.
-                for (i = linhas.length - 1; i >= 0; i--) {
-                    var points2 = linhas[i].getPoints();
-                    if (points2[0].x == points[0].x
-                            && points2[1].x == points[1].x) {
-                        linhas[i].remove();
-                        linhas.splice(i,1);
+                    // E necessario fazer iteracao inversa sobre o array para nao pular nenhum elemento.
+                    for (i = linhas.length - 1; i >= 0; i--) {
+                        var points2 = linhas[i].getPoints();
+                        if (points2[0].x == points[0].x
+                                && points2[1].x == points[1].x) {
+                            linhas[i].remove();
+                            linhas.splice(i,1);
+                        }
                     }
-                }
-            } else if (points[0].y == points[1].y) {
-                for (i = linhas.length - 1; i >= 0; i--) {
-                    var points2 = linhas[i].getPoints();
-                    if (points2[0].y == points[0].y
-                            && points2[1].y == points[1].y) {
-                        linhas[i].remove();
-                        linhas.splice(i,1);
+                } else if (points[0].y == points[1].y) {
+                    for (i = linhas.length - 1; i >= 0; i--) {
+                        var points2 = linhas[i].getPoints();
+                        if (points2[0].y == points[0].y
+                                && points2[1].y == points[1].y) {
+                            linhas[i].remove();
+                            linhas.splice(i,1);
+                        }
                     }
                 }
             }

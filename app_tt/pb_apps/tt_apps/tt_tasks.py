@@ -3,7 +3,6 @@
 from app_tt.pb_apps.pb_task import pb_task
 import ttapps
 from app_tt.core import app
-from app_tt.core import pbclient
 from subprocess import call
 import requests
 import urllib2
@@ -61,6 +60,7 @@ class TTTask1(pb_task):
         next_app_name = curr_app_name[:-1] + "2"
         return ttapps.Apptt_meta(short_name=next_app_name)
 
+
 class TTTask2(pb_task):
     def __init__(self, task_id, app_short_name):
         super(TTTask2, self).__init__(task_id, app_short_name)
@@ -88,8 +88,8 @@ class TTTask2(pb_task):
 
             try:
                 # file with the lines recognitio
-                arch = open("%s/books/%s/metadados/saida/image%s.txt" % (
-                    app.config['TT3_BACKEND'], bookId, imgId))
+                arch = open("%s/books/%s/metadados/saida/image%s_model%s.txt" % (
+                    app.config['TT3_BACKEND'], bookId, imgId, "1"))
                 #get the lines recognitions
                 coord_matrices = self.__splitFile(arch)
                 for matrix_index in range(len(coord_matrices)):
@@ -128,7 +128,6 @@ class TTTask2(pb_task):
         next_app_name = curr_app_name[:-1] + "3"
         return ttapps.Apptt_struct(short_name=next_app_name)
 
-
     def __downloadArchiveImages(self, bookId, imgId, width=550, height=700):
         """
         Download internet archive images to tt3_backend project
@@ -147,15 +146,23 @@ class TTTask2(pb_task):
             fullImgFile.write(url_request.content)
             fullImgFile.close()
 
-            url_request = requests.get(
-                "http://archive.org/download/%s/page/n%s_w%d_h%d" % (
-                bookId, imgId, width, height))
-
             lowImgPath = "%s/books/%s/baixa_resolucao/image%s.png" % (
                 app.config['TT3_BACKEND'], bookId, imgId)
-            lowImgFile = open(lowImgPath, "w")
-            lowImgFile.write(url_request.content)
-            lowImgFile.close()
+
+            command = 'convert %s -resize %dx%d! %s' % (
+                fullImgPath, width, height, lowImgPath)
+
+            call([command], shell=True)  # calls the shell command
+
+            # url_request = requests.get(
+            #     "http://archive.org/download/%s/page/n%s_w%d_h%d" % (
+            #     bookId, imgId, width, height))
+
+            # lowImgPath = "%s/books/%s/baixa_resolucao/image%s.png" % (
+            #     app.config['TT3_BACKEND'], bookId, imgId)
+            # lowImgFile = open(lowImgPath, "w")
+            # lowImgFile.write(url_request.content)
+            # lowImgFile.close()
 
             return True
         except IOError, e:
@@ -168,7 +175,7 @@ class TTTask2(pb_task):
 
         return False
 
-    def __runLinesRecognition(self, bookId, imgId, rotate="", model="1"):
+    def __runLinesRecognition(self, bookId, imgId, rotate, model="1"):
         """
         Call cpp software that recognizes lines into the table and
         writes lines coords into \
@@ -176,12 +183,18 @@ class TTTask2(pb_task):
         :returns: True if the write was successful
         :rtype: bool
         """
-        if(rotate):
-            rotate = "-r"
-
         #command shell to enter into the tt3 backend project and
         #calls the lines recognizer software
-        command = 'cd %s/TableTranscriber/; ./tabletranscriber ' \
+
+        print type(rotate)
+        print rotate
+
+        if rotate:
+            rotate = "-r"
+        else:
+            rotate = "-nr"
+
+        command = 'cd %s/TableTranscriber2/; ./tabletranscriber2 ' \
             '"/books/%s/baixa_resolucao/image%s.png" "model%s" "%s"' % (
             app.config['TT3_BACKEND'], bookId, imgId, model, rotate)
 

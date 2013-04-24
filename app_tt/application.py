@@ -1,11 +1,13 @@
-from flask import Flask, render_template, request, url_for
+from flask import render_template, request, url_for
 from engine.api import blueprint as api
 from view.collaborate import blueprint as collaborate
+from view.tt4 import blueprint as tt4
 from core import app
 
 
 app.register_blueprint(collaborate, url_prefix='/collaborate')
 app.register_blueprint(api, url_prefix='/api')
+app.register_blueprint(tt4, url_prefix='/tt4')
 
 
 @app.route('/')

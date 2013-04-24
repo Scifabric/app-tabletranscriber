@@ -32,8 +32,8 @@
 
 <div class="row skeleton">
   <div id="question" class="span8 offset2">
-      <h2>Question</h2>
-      <p>Tarefa: <span id="task-id" class="label label-warning">#</span></p>
+      <h2>#</h2>
+      <p><span>#</span><span id="task-id" class="label label-warning">#</span></p>
   </div>
 </div>
 
@@ -41,32 +41,30 @@
         
     <div id="container" style="margin: 20px"></div>
     <!--  Radio buttons para definir qual a ação que o usuário -->
-        <button onclick="adicionarNovaLinha();">Nova Linha</button>
-        <button onclick="adicionarNovaColuna();">Nova Coluna</button>
+        <button id="button_addline" onclick="adicionarNovaLinha();">#</button>
+        <button id="button_addcolumn" onclick="adicionarNovaColuna();">#</button>
     <div class="row">
         <!-- Opção remover segmento -->
-            <div class="span3">
+            <div id="button_rmseg" class="span3">
                 <input type="radio" name="acao" id="remover" 
-                value="remover" checked="checked" /> <label for="remover">Remover
-                Segmento</label> 
+                value="remover" checked="checked" /> <label for="remover">#</label> 
             </div>
 
 
             <!-- Opção remover linha -->
-            <div class="span3">
+            <div id="button_rmline" class="span3">
                
                 <input type="radio" name="acao" id="removerLinha" 
-                value="removerLinha" /> <label for="removerLinha">Remover
-                Linha</label> 
+                value="removerLinha" /> <label for="removerLinha">#</label> 
             </div>
 
             <!-- Opção mover linha -->
-            <div class="span3">
+            <div id="button_mvline" class="span3">
                 <input type="radio" name="acao" id="moverLinha" 
-                value="moverLinha" /> <label for="moverLinha">Mover Linha</label>
+                value="moverLinha" /> <label for="moverLinha">#</label>
 
             </div>
-            <button onclick="submitTask()">Concluído</button>
+            <button id="button_finished" onclick="submitTask()">#</button>
         
         </div>
 
@@ -74,7 +72,10 @@
 </div>
 
 <script src="#server/js/kinetic.js"></script>
+<script type="text/javascript" src="#server/js/jquery.i18n.min.js"></script>
 <script src="#server/js/tt3.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="#server/js/tt-struct-i18n.js"></script>
+
 
 <style>
 
@@ -84,6 +85,25 @@ canvas {
 </style>    
     
 <script type="text/javascript" charset="utf-8">
+
+    $(window).load(function(){
+		$("#question h2").text($.i18n._('question'));
+		$("#question span:first").text($.i18n._('task_name'));
+		$("#button_finished").text($.i18n._('button_finished'));
+		$("#button_addline").text($.i18n._('button_addline'));
+        $("#button_addcolumn").text($.i18n._('button_addcolumn'));
+		$("#button_rmseg label").text($.i18n._('button_rmseg'));
+		$("#button_rmline label").text($.i18n._('button_rmline'));
+        $("#button_mvline label").text($.i18n._('button_mvline'));
+		$("#success strong").text($.i18n._('well_done'));
+		$("#success span:nth-child(2)").text($.i18n._('saved'));
+		$("#finish strong").text($.i18n._('congratulations'));
+		$("#finish span:nth-child(2)").text($.i18n._('finished'));
+		$("#error strong").text($.i18n._('error'));
+		$("#error span:nth-child(2)").text($.i18n._('err_msg'));
+        $("#workflowtask span:first").text($.i18n._('workflowtask'));
+		
+    }); //
 
     var task_shortname = "#task_shortname#";
     var endpoint = "/pybossa";
