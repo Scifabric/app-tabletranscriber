@@ -165,6 +165,7 @@
 			var form = $('#image-annotate-edit-form form');
 			var text = {titulo : $('#titulo').val(), subtitulo: $('#subtitulo').val(),
                 conteudo: $('#conteudo').val(), rodape: $('#rodape').val(),
+                outros: $('#outros').val(),
                 girar: $('#girar')[0].checked};
 			$.fn.annotateImage.appendPosition(form, editable);
 			image.mode = 'view';
@@ -243,7 +244,7 @@
 			newNote.left = coords.left;
 			newNote.width = coords.width;
 			newNote.height = coords.height;
-			newNote.text = {titulo: "",subtitulo: "",rodape: "", conteudo : ""};
+			newNote.text = {titulo: "",subtitulo: "",rodape: "", conteudo : "", outros: ""};
 			this.note = newNote;
 		}
 
@@ -269,7 +270,9 @@
                 'Conteúdo: <select size="1" id="conteudo">' +
                 '<option value="0"' + (selected == "0" ? "selected" : "") + ' >Economia</option>' +
                 '<option value="1"' + (selected == "1" ? "selected" : "") + ' >População/Demografia</option>'+ 
-                '<option value="2" ' + (selected == "2" ? "selected" : "") + '>Violência/Criminalidade</option></select>' +
+                '<option value="2" ' + (selected == "2" ? "selected" : "") + '>Violência/Criminalidade</option>' +
+                '<option value="3"' + (selected == "3" ? "selected" : "") + ' >Outros</option></select>' +                    
+                '<input type="text" id="outros" value="' + this.note.text.outros +'">' + '</input><br/>' +
 				'Rodapé: <textarea type="textarea" id="rodape">' + this.note.text.rodape + '</textarea>' +
                 '<input id="girar"' + (girar ? "checked='true'" : "") + 'type="checkbox" value="true"> Girar imagem?</input>' +
                 '</form></div>');
@@ -277,6 +280,24 @@
         this.form = form;
 
 		$('body').append(this.form);
+
+        if(selected == "3"){
+            $("#outros").show();
+        }else{
+            $("#outros").hide();    
+        }
+        $("#conteudo").change(function(){
+                $("#conteudo option:selected").each(function(){
+                    var $option = $(this);
+                    if($option.attr("value") == 3){
+                        $("#outros").show();                            
+                        }else{
+                            $("#outros").attr("value","");
+                            $("#outros").hide();
+                        }
+                });
+        });
+
 		this.form.css('left', (this.area.offset().left + this.area.width() + 7) + 'px');
 		this.form.css('top', parseInt(this.area.offset().top) + 'px');
 
