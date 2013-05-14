@@ -2,28 +2,31 @@ from app_tt.core import app
 import tt_tasks
 import json
 import requests
-import urllib2
 
 
 def get_task(task_id):
-    pb_app = __find_app_by_taskid(task_id)
-    app_short_name = pb_app["short_name"]
-    task_type = app_short_name[-1]
-    task = None
 
-    if task_type == "1":
-        task = tt_tasks.TTTask1(task_id, app_short_name)
+    try:
+        pb_app = __find_app_by_taskid(task_id)
+        app_short_name = pb_app["short_name"]
+        task_type = app_short_name[-1]
+        task = None
 
-    elif task_type == "2":
-        task = tt_tasks.TTTask2(task_id, app_short_name)
+        if task_type == "1":
+            task = tt_tasks.TTTask1(task_id, app_short_name)
 
-    elif task_type == "3":
-        task = tt_tasks.TTTask3(task_id, app_short_name)
+        elif task_type == "2":
+            task = tt_tasks.TTTask2(task_id, app_short_name)
 
-    elif task_type == "4":
-        task = tt_tasks.TTTask4(task_id, app_short_name)
+        elif task_type == "3":
+            task = tt_tasks.TTTask3(task_id, app_short_name)
 
-    return task
+        elif task_type == "4":
+            task = tt_tasks.TTTask4(task_id, app_short_name)
+
+        return task
+    except TaskNotFoundException:
+        return 0
 
 
 def __find_app(**keyargs):
@@ -43,8 +46,18 @@ def __find_app_by_taskid(task_id):
     :returns: The pybossa's app data
     :rtype: dict
     """
-    task = json.loads(urllib2.urlopen("%s/api/task/%s?api_key=%s" % (
-        app.config['PYBOSSA_URL'],
-        task_id, app.config['API_KEY'])).read())  # get task data
 
-    return __find_app(id=task["app_id"])
+    meta_task = requests.get("%s/api/task/%s?api_key=%s" % (
+        app.config['PYBOSSA_URL'],
+        task_id, app.config['API_KEY'])).content
+
+    try:
+        task = json.loads(meta_task)  # get task data
+        return __find_app(id=task["app_id"])
+    except:
+        raise TaskNotFoundException
+
+
+class TaskNotFoundException(Exception):
+    def __init__(self):
+        super(Exception, self).__init__("Task not Found")

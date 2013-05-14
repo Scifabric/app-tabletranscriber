@@ -168,7 +168,8 @@ function loadData( data ) {
 	    }
    else {
         $(".skeleton").hide();
-        $("#finish").fadeIn();
+        //$("#finish").fadeIn();
+         window.open(endpoint + "/app/" + task_shortname.replace("_tt1", "_tt2")  + "/newtask", "_self");
    }
 
 	}

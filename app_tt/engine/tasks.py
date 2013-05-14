@@ -24,12 +24,14 @@ def check_task(task_id):
 @task(name="app_tt.engine.tasks.available_tasks")
 def available_tasks(task_id):
     current_task = task_factory.get_task(task_id)
-    next_app = current_task.get_next_app()
-    available_tasks = next_app.get_tasks()
+    
+    if(current_task):
+        next_app = current_task.get_next_app()
+        available_tasks = next_app.get_tasks()
 
-    for task in available_tasks:
-        if task.state != "completed":
-            return True
+        for task in available_tasks:
+            if task.state != "completed":
+                return True
 
     return False
 

@@ -88,16 +88,17 @@
 var task_shortname = "#task_shortname#";
 var endpoint = "/pybossa";
 
+
 function taskRunDone(taskId){
     return $.ajax({
         url: '/tt/api/'+taskid+'/done',
         success: function(data){
-            enableNextTask(taskId);
+            //enableNextTask(taskId);
         }
     });
 }
 
-function enableNextTask(taskId){
+/*function enableNextTask(taskId){
     $.ajax({
         url: '/tt/api/' + taskId + '/available_tasks',
         success: function(data){
@@ -110,7 +111,7 @@ function enableNextTask(taskId){
     $("#workflowtask").click(function(){
                 window.open(endpoint + "/app/" + task_shortname.replace("_tt2", "_tt3")  + "/newtask", "_self");
     });
-}
+}*/
 
 var spinner = new Throbber({
     color: 'black',
@@ -147,11 +148,27 @@ function loadData( data ) {
 	      clear: false,
 	      notes: notes });
     }
-   else {
-        $(".skeleton").hide();
-        $("#finish").fadeIn();
-    }
+    else {
+        var task_id = $("#task-id").text();
+        console.log(task_id);
 
+        $(".skeleton").hide();
+        $("#finish").fadeIn(100, function(){
+        
+            $.ajax({
+            url: '/tt/api/' + task_id + '/available_tasks',
+            success: function(data){
+                if(data == "True"){
+                    window.open(endpoint + "/app/" + task_shortname.replace("_tt2", "_tt1")  + "/newtask", "_self");
+                }
+                else{
+                    window.open("/tt/collaborate", "_self");
+                }
+            }
+            }); 
+        });
+       
+    }
 }
 
 // Function to submit and save the TaskRun in PyBossa

@@ -125,8 +125,8 @@ class TTTask2(pb_task):
 
     def get_next_app(self):
         curr_app_name = self.app_short_name
-        next_app_name = curr_app_name[:-1] + "3"
-        return ttapps.Apptt_struct(short_name=next_app_name)
+        next_app_name = curr_app_name[:-1] + "1" #TODO: Switch from 1 to 3
+        return ttapps.Apptt_select(short_name=next_app_name)
 
     def __downloadArchiveImages(self, bookId, imgId, width=550, height=700):
         """
