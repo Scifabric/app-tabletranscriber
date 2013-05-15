@@ -39,7 +39,7 @@ class Apptt_meta(app.Apptt):
 
             super(Apptt_meta, self).__init__(
                 "Marcação de tabelas", short_name,
-                "Por favor. Marque e descreva as tabelas.")
+                "Marque e descreva as tabelas ou corrija as marcações.")
 
             super(Apptt_meta, self).set_template(_setUrl_(
                 urllib2.urlopen(
