@@ -1,11 +1,7 @@
-var linhas = new Array();
+$('body').on('contextmenu', '#container', function(e){ return false; });
+	var linhas = new Array();
+	var colunas = new Array();
 	var arr = new Array();
-	var matrizDePontos = new Array();
-	var coordenadasOriginais = new Array();
-	var resultado;
-	var removendo = true;
-	var removendoLinha = false;
-	var movendoLinha = false;
 	var minX;
 	var maxX;
 	var minY;
@@ -16,6 +12,7 @@ var linhas = new Array();
 	var bottomY;
 	var horizontal = 1;
 	var vertical = 2;
+	var posUnidas = new Array();
 
 	var i = 0;
 	var j = 0;
@@ -28,6 +25,22 @@ var linhas = new Array();
 
 	var layer = new Kinetic.Layer();
 
+	function isLinha(pts){
+		return pts[0].y == pts[1].y;	
+	}
+	
+	function isLinhaDaBorda(pts){
+		return isLinha(pts) && pts[0].y == maxY;
+	}
+	
+	function isColuna(pts){
+		return pts[0].x == pts[1].x;	
+	}
+	
+	function isColunaDaBorda(pts){
+		return isColuna(pts) && pts[0].x == maxX;
+	}
+	
 	function salvarAlteracoes() {
 		var leftX;
 		var rightX;
@@ -39,11 +52,11 @@ var linhas = new Array();
 
 		var resultado = new Array();
 
-		while (linhas.length > 0 && z < linhas.length) {
+		var limite = linhas.length;
+		while (linhas.length > 0 && z < limite) {
 			primeiraLinha = linhas[z];
 			pts = primeiraLinha.getPoints();
-			if (isBorda(pts)
-					&& ((pts[0].x == pts[1].x && pts[0].y != 0) || (pts[0].y == pts[1].y && pts[0].x != 0))) {
+			if (isLinhaDaBorda(pts) || isColuna(pts)) {
 				z++;
 			} else {
 
@@ -60,6 +73,7 @@ var linhas = new Array();
 					resultado.push([ leftX, upperY, rightX, bottomY ]);
 				}
 			}
+			limite = linhas.length;
 		}
 
 		return resultado;
@@ -380,7 +394,7 @@ var linhas = new Array();
 		var linha = new Kinetic.Line({
 			points : pontos,
 			stroke : 'red',
-			draggable : false,
+			draggable : true,
 			strokeWidth : 2,
 			dragBoundFunc : function(pos, event) {
 				var points = this.getPoints();
@@ -389,13 +403,10 @@ var linhas = new Array();
 							: event.offsetX;
 					var limEsq = encontraLimiteEsquerda(points[0].x);
 					var limDir = encontraLimiteDireita(points[0].x);
-					console.log("Limite esquerda: " + limEsq + "; Limite direita: " + limDir + "; PosX: " + posX);
 					var newX = posX < limEsq ? limEsq : (posX > limDir ? limDir
 							: posX);
-					if (movendoLinha) {
-						if (isColunaMovivel(newX)) {
-							moverColuna(points[0].x, newX);
-						}
+					if (isColunaMovivel(newX)) {
+						moverColuna(points[0].x, newX);
 					}
 				} else {
 					var posY = event.offsetY == undefined ? event.layerY
@@ -404,10 +415,8 @@ var linhas = new Array();
 					var limInf = encontraLimiteInferior(points[0].y);
 					var newY = posY < limSup ? limSup : (posY > limInf ? limInf
 							: posY);
-					if (movendoLinha) {
-						if (isLinhaMovivel(newY)) {
-							moverLinha(points[0].y, newY);
-						}
+					if (isLinhaMovivel(newY)) {
+						moverLinha(points[0].y, newY);
 					}
 				}
 
@@ -420,21 +429,13 @@ var linhas = new Array();
 		var pts = linha.getPoints();
 		if (pts[0].x == pts[1].x) {
 			linha.on("mouseover", function() {
-				if (movendoLinha) {
-					document.body.style.cursor = "ew-resize";
-				} else if (removendo || removendoLinha) {
-					document.body.style.cursor = "pointer";
-					layer.draw();
-				}
+				document.body.style.cursor = "ew-resize";
+				layer.draw();
 			});
 		} else {
 			linha.on("mouseover", function() {
-				if (movendoLinha) {
-					document.body.style.cursor = "ns-resize";
-				} else if (removendo || removendoLinha) {
-					document.body.style.cursor = "pointer";
-					layer.draw();
-				}
+				document.body.style.cursor = "ns-resize";
+				layer.draw();
 			});
 		}
 
@@ -444,68 +445,39 @@ var linhas = new Array();
 		});
 
 		linha.on("mouseover touchstart", function() {
-			if (movendoLinha || removendoLinha) {
-				var points = this.getPoints();
-				if (points[0].x == points[1].x) {
-					var z;
-					for (z = 0; z < linhas.length; z++) {
-						var points2 = linhas[z].getPoints();
-						if (points2[0].x == points2[1].x
-								&& points[0].x == points2[0].x) {
-							linhas[z].setStroke('green');
-						}
-					}
-				} else if (points[0].y == points[1].y) {
-					var z;
-					for (z = 0; z < linhas.length; z++) {
-						var points2 = linhas[z].getPoints();
-						if (points2[0].y == points2[1].y
-								&& points[0].y == points2[0].y) {
-							linhas[z].setStroke('green');
-						}
+			var points = this.getPoints();
+			if (points[0].x == points[1].x) {
+				var z;
+				for (z = 0; z < linhas.length; z++) {
+					var points2 = linhas[z].getPoints();
+					if (points2[0].x == points2[1].x
+							&& points[0].x == points2[0].x) {
+						linhas[z].setStroke('green');
 					}
 				}
-			} else {
-				this.setStroke('green');
+			} else if (points[0].y == points[1].y) {
+				var z;
+				for (z = 0; z < linhas.length; z++) {
+					var points2 = linhas[z].getPoints();
+					if (points2[0].y == points2[1].y
+							&& points[0].y == points2[0].y) {
+						linhas[z].setStroke('green');
+					}
+				}
 			}
 
-			if (removendo || removendoLinha) {
-				this.setDraggable(false);
-			}
 			layer.draw();
 		});
 		linha.on('mouseout touchend', function() {
 			for (i = 0; i < linhas.length; i++) {
 				linhas[i].setStroke('red');
 			}
-			this.setDraggable(true);
 			layer.draw();
 		});
 		linhas.push(linha);
 		layer.add(linha);
 		stage.add(layer);
 	}
-
-	$(document).ready(function() {
-
-		$("#remover").click(function() {
-			removendo = true;
-			removendoLinha = false;
-			movendoLinha = false;
-		});
-
-		$("#removerLinha").click(function() {
-			removendo = false;
-			removendoLinha = true;
-			movendoLinha = false;
-		});
-
-		$("#moverLinha").click(function() {
-			removendo = false;
-			removendoLinha = false;
-			movendoLinha = true;
-		});
-	});
 
 	function encontraLimiteSuperior(posY) {
 		var posicoesY = new Array();
@@ -578,6 +550,88 @@ var linhas = new Array();
 		});
 		return posicoesX[0];
 	}
+	
+	function uneIntercessaoColuna(posX, posY){
+		var pos1;
+		var pos3;
+		
+		var z;
+		
+		for (z = linhas.length - 1; z >= 0; z--){
+			var points2 = linhas[z].getPoints();
+			if (isColuna(points2) && points2[0].x == posX){
+				if (points2[0].y == posY){
+					pos3 = points2[1].y;
+					linhas[z].remove();
+					linhas.splice(z, 1);
+				}
+				if (points2[1].y == posY){
+					pos1 = points2[0].y;
+					linhas[z].remove();
+					linhas.splice(z, 1);
+				}
+			}
+		}
+		adicionarLinha([posX, pos1, posX, pos3]);
+	}
+	
+	function uneIntercessaoLinha(posX, posY){
+		var pos0;
+		var pos2;
+		
+		var z;
+		
+		for (z = linhas.length - 1; z >= 0; z--){
+			var points2 = linhas[z].getPoints();
+			if (isLinha(points2) && points2[0].y == posY){
+				if (points2[0].x == posX){
+					pos2 = points2[1].x;
+					linhas[z].remove();
+					linhas.splice(z, 1);
+				}
+				if (points2[1].x == posX){
+					pos0 = points2[0].x;
+					linhas[z].remove();
+					linhas.splice(z, 1);
+				}
+			}
+		}
+		adicionarLinha([pos0, posY, pos2, posY]);
+	}
+	
+	function uneIntercessoes(points){
+		var pos1, pos2;
+		if (isLinha(points)){
+			pos0 = points[0].x;
+			pos1 = points[1].x;
+			var posY = points[0].y;
+			var t = $.inArray(pos0, posUnidas);
+			if (t == -1){
+				uneIntercessaoColuna(pos0, posY);
+				posUnidas.push(pos0);
+			}
+			t = $.inArray(pos1, posUnidas);
+			if (t == -1) {
+				uneIntercessaoColuna(pos1, posY);
+				posUnidas.push(pos1);
+			}
+		}
+		else {
+			pos0 = points[0].y;
+			pos1 = points[1].y;
+			var posX = points[0].x;
+			var t = $.inArray(pos0, posUnidas);
+			if (t == -1) {
+				uneIntercessaoLinha(posX, pos0);
+				posUnidas.push(pos0);
+			}
+			t = $.inArray(pos1, posUnidas);
+			if (t == -1) {
+				uneIntercessaoLinha(posX, pos1);
+				posUnidas.push(pos1);
+			}
+		}
+	}
 
 	function initGrid(matrizDePontos, uri) {
 		minX = 2000;
@@ -602,10 +656,10 @@ var linhas = new Array();
 				maxY = bottomY;
 
 			var novasLinhas = new Array();
-			novasLinhas.push([ leftX, upperY, leftX, bottomY ]);
-			novasLinhas.push([ rightX, upperY, rightX, bottomY ]);
 			novasLinhas.push([ leftX, upperY, rightX, upperY ]);
+			novasLinhas.push([ leftX, upperY, leftX, bottomY ]);
 			novasLinhas.push([ leftX, bottomY, rightX, bottomY ]);
+			novasLinhas.push([ rightX, upperY, rightX, bottomY ]);
 
 			for ( var z = 0; z < novasLinhas.length; z++) {
 				if (!verificaExistenciaLinha(novasLinhas[z])) {
@@ -616,34 +670,11 @@ var linhas = new Array();
 
 		layer.on('click', function(evt) {
 
-			// Codigo para remover apenas um segmento da tabela
-			if (removendo) {
-
-				// Recupera o objeto que foi clicado
-				var shape = evt.shape;
-				var points = shape.getPoints();
-
-				// E necessario fazer iteracao inversa sobre o array para nao pular
-				// nenhum elemento.
-				if (!isBorda(points)) {
-
-					for (i = linhas.length - 1; i >= 0; i--) {
-						var points2 = linhas[i].getPoints();
-						if (points2[0].x == points[0].x
-								&& points2[1].x == points[1].x
-								&& points2[0].y == points[0].y
-								&& points2[1].y == points[1].y) {
-
-							linhas[i].remove();
-							linhas.splice(i, 1);
-						}
-					}
-				}
-			}
 			// Codigo para remover todos os segmentos que pertencam a uma mesma
 			// linha
-			else if (removendoLinha) {
-
+			//if (removendoLinha) {
+			if ((evt.which && evt.which == 3) || (evt.button && evt.button == 2)) {
+				posicoesUnidas = new Array();
 				// Recupera o objeto que foi clicado
 				var shape = evt.shape;
 				var points = shape.getPoints();
@@ -659,6 +690,8 @@ var linhas = new Array();
 									&& points2[1].x == points[1].x) {
 								linhas[i].remove();
 								linhas.splice(i, 1);
+								//Finalmente, atualizamos todas aquelas intercessões que não são mais cruzadas.
+								uneIntercessoes(points2);
 							}
 						}
 					} else if (points[0].y == points[1].y) {
@@ -668,9 +701,12 @@ var linhas = new Array();
 									&& points2[1].y == points[1].y) {
 								linhas[i].remove();
 								linhas.splice(i, 1);
+								//Finalmente, atualizamos todas aquelas intercessões que não são mais cruzadas.
+								uneIntercessoes(points2);
 							}
 						}
 					}
+					
 				}
 			}
 			// Apos remover os objetos selecionados, redesenhamos a camada apenas
