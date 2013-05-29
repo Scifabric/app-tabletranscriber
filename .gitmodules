@@ -1,0 +1,3 @@
+[submodule "cv-modules"]
+	path = cv-modules
+	url = https://code.google.com/p/tabletranscriber/
