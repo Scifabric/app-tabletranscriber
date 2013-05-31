@@ -32,8 +32,8 @@ var pt_dict= {
 	    'error': "Erro! ",
 	    'err_msg': "Algo ocorreu errado, por favor contate o administrador do site.",
         'workflowtask' : "Existe um novo tipo de tarefa disponível. Clique para ir.",
-        'progress-from' : "Você está na tarefa:",
-        'progress-to' : "de"
+        'progress-from' : "Você fez: ",
+        'progress-to' : "tarefas de "
 }
 
 var language = navigator.language? navigator.language : navigator.userLanguage;
