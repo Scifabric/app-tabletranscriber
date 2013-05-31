@@ -11,8 +11,7 @@
   <div class="span8 offset2" style="height:50px">
   	
    	<div id="success" class="alert alert-success" style="display:none;">
-	   	<a class="close">x</a>
-	    <p><span><strong>#</strong></span><span>#</span></p>
+	    <p><span>#</span></p>
 	</div>
     <div id="finish" class="alert alert-success" style="display:none;">
       <p><span><strong>#</strong></span><span>#</span></p>
@@ -23,7 +22,6 @@
       <p><span><strong>#</strong></span><span>#</span></p>
   </div>
   <div id="workflowtask" class="alert alert-success" style="display:none; cursor:pointer; position:relative">
-        <a class="close"></a>
        <p><span>#</span></p>
     </div>
 
@@ -43,7 +41,13 @@
           <button id="button_yes" class="btn btn-success" onclick="submitTask('Yes')"><i class="icon icon-white icon-ok"></i></button>
           <button id="button_no" class="btn btn-danger" onclick="submitTask('No')"><i class="icon icon-white icon-remove"></i></button>
           <button id="button_ntk" class="btn" onclick="submitTask('NotKnown')"><i class="icon icon-white icon-refresh"></i></button>
-      </div>
+          <p><span id="progress-from">#</span><span id="done" class="label label-info"></span><span id="progress-to">#</span>
+          <!-- Progress bar for the user -->
+          <span id="total" class="label label-inverse"></span></p>
+            <div class="progress progress-striped">
+            <div id="progress" rel="tooltip" title="#" class="bar" style="width: 0%;"></div>
+            </div>
+        </div>
 </div>
 
 <div class="row skeleton" style="padding: 10px;">
@@ -80,25 +84,36 @@
 
 <script>
 
-
 $(window).load(function(){
 		$("#question h2").text($.i18n._('question'));
 		$("#question span:first").text($.i18n._('task_name'));
 		$("#button_yes").text($.i18n._('button_yes'));
 		$("#button_no").text($.i18n._('button_no'));
 		$("#button_ntk").text($.i18n._('button_ntk'));
-		$("#success strong").text($.i18n._('well_done'));
-		$("#success span:nth-child(2)").text($.i18n._('saved'));
+		$("#success span:nth-child(1)").text($.i18n._('saved'));
 		$("#finish strong").text($.i18n._('congratulations'));
 		$("#finish span:nth-child(2)").text($.i18n._('finished'));
 		$("#error strong").text($.i18n._('error'));
 		$("#error span:nth-child(2)").text($.i18n._('err_msg'));
         $("#workflowtask span:first").text($.i18n._('workflowtask'));
+        $("#progress-from").text($.i18n._('progress-from'));
+        $("#progress-to").text($.i18n._('progress-to'));
 		
 }); //Internationalization using jquery.i18n
 
 var task_shortname = "#task_shortname#";
 var endpoint = "/pybossa";
+
+function loadUserProgress() {
+    pybossa.userProgress(task_shortname).done(function(data){
+        var pct = Math.round((data.done*100)/data.total);
+        $("#progress").css("width", pct.toString() +"%");
+        $("#progress").attr("title", pct.toString() + "% completed!");
+        $("#progress").tooltip({'placement': 'left'}); 
+        $("#total").text(data.total);
+        $("#done").text(data.done);
+    });
+}
 
 function taskRunDone(taskId){
     $.ajax({
@@ -127,7 +142,8 @@ function enableNextTask(taskId){
 
 function loadData( data ) {
 	
-	 if ( !$.isEmptyObject(data.task) ) {
+    if ( !$.isEmptyObject(data.task) ) {
+            loadUserProgress();
 	        $("#task-id").text(data.task.id);
 	        $("#image-link").attr("href", data.task.info.url_b);
 	        $("#image").attr("src",data.task.info.url_m);
