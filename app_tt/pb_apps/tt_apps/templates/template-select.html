@@ -31,7 +31,6 @@
 <div class="row skeleton">
   <div id="question" class="span8 offset2">
       <h2>Question</h2>
-      <p><span>#</span><span id="task-id" class="label label-warning">#</span></p>
   </div>
 </div>
 
@@ -86,7 +85,6 @@
 
 $(window).load(function(){
 		$("#question h2").text($.i18n._('question'));
-		$("#question span:first").text($.i18n._('task_name'));
 		$("#button_yes").text($.i18n._('button_yes'));
 		$("#button_no").text($.i18n._('button_no'));
 		$("#button_ntk").text($.i18n._('button_ntk'));
@@ -144,7 +142,7 @@ function loadData( data ) {
 	
     if ( !$.isEmptyObject(data.task) ) {
             loadUserProgress();
-	        $("#task-id").text(data.task.id);
+		task_id = data.task.id;
 	        $("#image-link").attr("href", data.task.info.url_b);
 	        $("#image").attr("src",data.task.info.url_m);
 	    }
@@ -159,7 +157,7 @@ function loadData( data ) {
 	// Function to submit and save the TaskRun in PyBossa
 	function submitTask(answer) {
 		// Get the task-id
-		taskid = $("#task-id").text();
+		taskid = task_id;
 		
 		// Save the task
 		pybossa.saveTask(taskid, answer).done(function(data) {
