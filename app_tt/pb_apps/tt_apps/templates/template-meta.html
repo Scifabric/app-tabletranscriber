@@ -47,6 +47,13 @@
       <div id="answer" class="span8 offset2">
           <button id="button" class="btn btn-success" onclick="submitTask()"><i class="icon icon-white icon-ok"></i> Salvar essas marcações</button>
           <button id="button" class="btn small" onclick="submitTask('0')"><i class="icon icon-white icon-ok"></i> Não há tabelas</button>
+          <p><span id="progress-from">Voc&ecir; est&aacute; na tarefa: </span><span id="done" class="label label-info"></span><span id="progress-to">de </span>
+          <!-- Progress bar for the user -->
+          <span id="total" class="label label-inverse"></span></p>
+            <div class="progress progress-striped">
+            <div id="progress" rel="tooltip" title="#" class="bar" style="width: 0%;"></div>
+            </div>
+ 
       </div>
 </div>
 
@@ -88,6 +95,16 @@
 var task_shortname = "#task_shortname#";
 var endpoint = "/pybossa";
 
+function loadUserProgress() {
+    pybossa.userProgress(task_shortname).done(function(data){
+        var pct = Math.round((data.done*100)/data.total);
+        $("#progress").css("width", pct.toString() +"%");
+        $("#progress").attr("title", pct.toString() + "% completed!");
+        $("#progress").tooltip({'placement': 'left'}); 
+        $("#total").text(data.total);
+        $("#done").text(data.done);
+    });
+}
 
 function taskRunDone(taskId){
     return $.ajax({
@@ -133,6 +150,7 @@ function loadData( data ) {
 
     if ( !$.isEmptyObject(data.task) ) {
         spinnerStart();
+        loadUserProgress();
         $("#question h2").text(data.question);
         $("#task-id").text(data.task.id);
         $("#table").attr("src",data.task.info.link);
