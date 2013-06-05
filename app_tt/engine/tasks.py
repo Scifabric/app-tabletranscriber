@@ -11,20 +11,37 @@ from app_tt.pb_apps.tt_apps.ttapps import Apptt_struct
 from app_tt.pb_apps.tt_apps import task_factory
 
 BROKER_URL = "amqp://celery:celery@localhost:5672/celery"
-celery = Celery('tasks', backend='amqp', broker=BROKER_URL)
+celery = Celery('tasks', backend='amqp', broker=app.config['BROKER_URL'])
 #celery.config_from_object('app_tt.engine.celeryconfig')
 
 
 @task(name="app_tt.engine.tasks.check_task")
 def check_task(task_id):
+    """
+    Celery queued task that check pybossa's tasks status
+
+    :arg task_id: Integer pybossa task id
+    :returns: If the given pybossa task is finished
+    :rtype: bool
+
+    """
     task = task_factory.get_task(task_id)
     return task.check_answer()
 
 
 @task(name="app_tt.engine.tasks.available_tasks")
 def available_tasks(task_id):
+    """
+    Celery queued task that verify if there next available
+    tasks at the workflow for a given pybossa task
+
+    :arg task_id: Integer pybossa task id
+    :returns: If there are available tasks
+    :rtype: bool
+
+    """
     current_task = task_factory.get_task(task_id)
-    
+
     if(current_task):
         next_app = current_task.get_next_app()
         available_tasks = next_app.get_tasks()
@@ -38,11 +55,13 @@ def available_tasks(task_id):
 
 @task(name="app_tt.engine.tasks.create_apps")
 def create_apps(book_id):
-    """"
-    Creates tt_apps and tt1 tasks
-    :params book_id: Internet archive book id
+    """
+    Celery queued task that creates tt_apps and tt1 tasks
+
+    :arg book_id: Internet archive book id
     :returns: book indicating if the applications were created
     :rtype: bool
+
     """
     imgs = __get_tt_images(book_id)
 
@@ -88,23 +107,37 @@ def create_apps(book_id):
 
 @task(name="app_tt.engine.tasks.close_task")
 def close_task(task_id):
-    #set task state to completed
+    """
+    Celery queued task that set's pybossa task state to completed
+
+    :arg task_id: Integer pybossa task id
+
+    """
     requests.put("%s/api/task/%s?api_key=%s" % (
         app.config['PYBOSSA_URL'], task_id, app.config['API_KEY']),
         data=json.dumps(dict(state="completed")))
 
 
 @task(name="app_tt.engine.tasks.create_task")
-def create_task(task_id, strategy=None):
-        task = task_factory.get_task(task_id)
-        task.add_next_task()
+def create_task(task_id):
+    """
+    Celery queued task that creates a next task following the workflow.
+    For example, if the input is a task_id from a tt1 task,
+    this method will create one tt2 task
+
+    :arg task_id: Integer pybossa task id
+    """
+    task = task_factory.get_task(task_id)
+    task.add_next_task()
 
 
 def __get_tt_images(bookId):
     """
     Get public book images from internet archive server
+
     :returns: A list with dicts containing images urls and index.
     :rtype: list
+
     """
     WIDTH = 550
     HEIGHT = 700
@@ -138,10 +171,12 @@ def __get_tt_images(bookId):
 
 
 def _archiveBookData(bookid):
-    """"
-        Get internet archive book infos
-        :returns: A dict with metadata from internet archive
-        :rtype: dict
+    """
+    Get internet archive book infos
+
+    :arg book_id: Internet archive book id
+    :returns: A dict with metadata from internet archive
+    :rtype: dict
 
     """
     query = "http://archive.org/metadata/" + bookid

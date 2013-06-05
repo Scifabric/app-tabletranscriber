@@ -2,7 +2,7 @@ import urllib2
 import json
 
 from app_tt.core import app as flask_app
-from flask import Blueprint, render_template, redirect, request
+from flask import Blueprint, render_template, request
 from app_tt.util import Pagination
 import requests
 
@@ -34,7 +34,6 @@ def index(page):
     for app in apps:
         book_id = app["short_name"][:-4]
 
-        print app["hidden"]
         if(book_id not in book_stack and app["hidden"] == 0):
             try:
                 app["info"]["title"]
