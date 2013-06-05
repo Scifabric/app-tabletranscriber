@@ -34,8 +34,8 @@ def index(page):
     for app in apps:
         book_id = app["short_name"][:-4]
 
-        
-        if(book_id not in book_stack):
+        print app["hidden"]
+        if(book_id not in book_stack and app["hidden"] == 0):
             try:
                 app["info"]["title"]
                 book_stack.append(book_id)
