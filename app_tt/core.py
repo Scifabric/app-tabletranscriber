@@ -36,6 +36,9 @@ def configure_app(app):
         app.config['RABBIT_PASSWD'],
         app.config['RABBIT_VHOST'])
 
+    app.config['TT3_BACKEND'] = os.path.join(
+            os.path.dirname(here), 'cv-modules')
+
 
 def setup_pbclient(app):
     pbclient.set('endpoint', app.config['PYBOSSA_URL'])
@@ -44,4 +47,3 @@ def setup_pbclient(app):
 app = create_app()
 pbclient = pbclient
 
-print app.config['PYBOSSA_URL']

@@ -34,8 +34,10 @@ class Model:
     def insert_db(self, table, **kwargs):
         """
         Insert row into a table of the db
-        :params table: table to insert the row
-        :params **kwargs: values to be inserted
+
+        :arg table: table to insert the row
+        :arg **kwargs: values(colunm=value) to be inserted,\
+        example: name=myname
         :returns: if the insertion was ok
         :rtype: bool
         """
@@ -55,6 +57,15 @@ class Model:
             return False
 
     def del_where(self, *args):
+        """
+        Deletes a specific row from a given table
+
+        :arg arg[0]: Specific table to delete the row
+        :arg arg[1]: Where left operator
+        :arg arg[2]: Where right operator
+        :returns: If the sql delete operation was ok
+        :rtype: bool
+        """
         db_connection = Connect()
         conn = db_connection.conn
         qry = db_connection.cur()
@@ -70,6 +81,15 @@ class Model:
             return False
 
     def get_cells(self, book_id, page, table):
+        """
+        Get from tt4 db the table cells for a given book, page, table
+
+        :arg book_id: Book id, generally found at internet archive
+        :arg page: Book's page number
+        :arg table: Page's table number
+        :returns: Table cells in a JSON item stored at tt4 DB
+        :rtype: str
+        """
         db_connection = Connect()
         qry = db_connection.cur()
 
@@ -84,6 +104,9 @@ class Model:
         return qry.fetchall()
 
     def get_table_url(self, book_id, page, table):
+        """
+        
+        """
         db_connection = Connect()
         qry = db_connection.cur()
 

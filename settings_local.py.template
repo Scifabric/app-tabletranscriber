@@ -1,3 +1,5 @@
+URL_TEMPLATES = "http://localhost/mb-static" #Static files url
+
 # Pybossa's definitions
 PYBOSSA_HOST = "127.0.0.1" #Pybossa's address
 PYBOSSA_PORT = 80  #Pybossa's server
