@@ -1,8 +1,6 @@
 app_tt Package
 ==============
 
-:mod:`app_tt` Package
----------------------
 
 Subpackages
 -----------

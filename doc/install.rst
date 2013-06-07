@@ -2,6 +2,7 @@
 Instalação do Memória Brasil
 ============================
 
+
 A aplicação Memória Brasil é uma aplicação desenvolvida
 utilizando o micro-framework Flask e componentes de aplicações
 crowdsource para o PyBossa.
@@ -188,7 +189,8 @@ Instalando e configurando o Apache2
 
 .. note::
     Como essa aplicação possui alguns componentes estaticos que precisam ser
-    acessados pelo browser a instalação e configuração do apache é necessária
+    acessados pelas aplicaçães crowdsource que ficam no PyBossa. Portanto a instalação
+    e configuração do apache é necessária
 
 
 Para instalar o apache2 execute o seguinte comando::
@@ -201,7 +203,7 @@ diretório <diretorio-mb>/app_tt/pb_apps/tt_apps/static/::
     sudo touch /etc/apache2/sites-enable/mb-static
     sudo vim /etc/apache2/sites-enabled/mb-static
     #Cole o código abaixo no arquivo mb-static e substitua <diretorio-mb> pelo
-    diretorio onde o memória brasil foi instalado
+    #diretorio onde o memória brasil foi instalado
     Alias /mb-static <diretorio-mb>/app_tt/pb_apps/tt_apps
 
 Por fim reinicie o apache para que as configurações sejam iniciadas::
@@ -220,7 +222,3 @@ Por fim reinicie o apache para que as configurações sejam iniciadas::
      Para instalá-lo basta executar o comando::
 
     sudo apt-get install git
-
-
-
-

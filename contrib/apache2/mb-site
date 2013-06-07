@@ -1,0 +1,14 @@
+<VirtualHost *:80>
+    ServerName example.com
+
+    DocumentRoot /home/user/mb
+    WSGIDaemonProcess mb user=user1 group=group1 threads=5
+    WSGIScriptAlias / /home/user/app-tabletranscriber/contrib/app_tt.wsgi
+
+    <Directory /home/user/app-tabletranscriber>
+        WSGIProcessGroup mb
+        WSGIApplicationGroup %{GLOBAL}
+        Order deny,allow
+        Allow from all
+    </Directory>
+</VirtualHost>
