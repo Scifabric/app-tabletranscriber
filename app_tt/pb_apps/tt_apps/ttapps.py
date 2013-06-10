@@ -83,7 +83,8 @@ class Apptt_struct(app.Apptt):
         dirs = ["alta_resolucao", "baixa_resolucao",
                 "metadados/entrada", "metadados/saida",
                 "metadados/tabelasAlta", "metadados/tabelasBaixa",
-                "transcricoes", "metadados/respostaUsuario"]
+                "transcricoes", "metadados/respostaUsuario",
+                "selections"]
 
         for d in dirs:
             os.makedirs("%s/books/%s/%s" % (path, short_name, d))

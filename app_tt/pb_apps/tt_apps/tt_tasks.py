@@ -125,7 +125,7 @@ class TTTask2(pb_task):
 
     def get_next_app(self):
         curr_app_name = self.app_short_name
-        next_app_name = curr_app_name[:-1] + "1" #TODO: Switch from 1 to 3
+        next_app_name = curr_app_name[:-1] + "1"  #TODO: Switch from 1 to 3
         return ttapps.Apptt_select(short_name=next_app_name)
 
     def __downloadArchiveImages(self, bookId, imgId, width=550, height=700):
@@ -200,6 +200,15 @@ class TTTask2(pb_task):
 
         call([command], shell=True)  # calls the shell command
         #TODO: implements exception strategy
+
+
+
+    def __scale(point, src, dest):
+        scaleX = lambda x, src_w, dest_w: round((dest_w * x)/float(src_w))
+        scaleY = lambda y, src_h, dest_h: round((dest_h * y)/float(src_h))
+
+        return [scaleX(point[0], src[0], dest[0]), scaleY(point[1], src[1], dest[1])]
+
 
     def __url_table(self, bookId, imgId, idx):
         """""
