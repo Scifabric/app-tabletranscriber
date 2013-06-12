@@ -1,6 +1,11 @@
 {% block body %}
+<style type="text/css" media="all">
+    body{
+        margin: 0px;
+    }
+</style>
 
-<link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap/2.1.0/bootstrap.css')}}" type="text/css" />
+<link rel="stylesheet" href="{{ url_for('static', filename='vendor/progress-bootstrap/css/bootstrap.min.css')}}" type="text/css" />
 
 <div class="progress progress-success progress-striped active">
   <div class="bar" style="width: {{progress}}%"></div>
