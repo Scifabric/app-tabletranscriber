@@ -84,7 +84,7 @@ def progress(bookid):
         overall_completed += completed
 
     try:
-        progress = overall_completed/float(overall)
+        progress = (overall_completed/float(overall)) * 100
     except:
         return render_template('/progress.html', progress=0)
 
