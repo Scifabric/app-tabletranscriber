@@ -1,0 +1,9 @@
+{% block body %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap/2.1.0/bootstrap.css')}}" type="text/css" />
+
+<div class="progress progress-success progress-striped active">
+  <div class="bar" style="width: {{progress}}%"></div>
+</div>
+
+{% endblock %}
