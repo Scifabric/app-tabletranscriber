@@ -271,6 +271,6 @@ class TTTask2(pb_task):
 
             return True
         except IOError, e:
-            print str(e)  # TODO: see what to do with the flow in exceptions
+            print "Error: Couldn't open %s to write image%s.txt file" % (bookId, ImgId)  # TODO: see what to do with the flow in exceptions
 
         return False
