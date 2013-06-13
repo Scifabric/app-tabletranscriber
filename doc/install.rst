@@ -72,15 +72,15 @@ Agora para usar o celery precisamos criar um host virtual no rabbitMQ e um usuá
 
 Criando o vhost no RabbitMQ::
     
-    $ rabbitmqctl add_vhost myvhost
+    $ sudo rabbitmqctl add_vhost myvhost
 
 Criando um usuário RabbitMQ::
     
-    $ rabbitmqctl add_user myuser mypassword
+    $ sudo rabbitmqctl add_user myuser mypassword
 
 Adicionando permissões de usuário para o host criado::
     
-    $ rabbitmqctl set_permissions -p myvhost myuser ".*" ".*" ".*"
+    $ sudo rabbitmqctl set_permissions -p myvhost myuser ".*" ".*" ".*"
 
 
 Por fim, inicialize o broker e guarde o usuário e senha criados::
