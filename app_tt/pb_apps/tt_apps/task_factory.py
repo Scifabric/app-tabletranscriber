@@ -5,7 +5,11 @@ import requests
 
 
 def get_task(task_id):
+    """
+    Returns a specific task based in PyBossa task_id
 
+    :params task_id: Pybossa's task_id
+    """
     try:
         pb_app = __find_app_by_taskid(task_id)
         app_short_name = pb_app["short_name"]
@@ -32,6 +36,7 @@ def get_task(task_id):
 def __find_app(**keyargs):
     """""
     Find one pybossa app by a given params
+
     :returns: One pybossa's app data
     :rtype: dict
     """
@@ -43,6 +48,7 @@ def __find_app(**keyargs):
 def __find_app_by_taskid(task_id):
     """""
     Find a pybossa app by a pybossa task id
+
     :returns: The pybossa's app data
     :rtype: dict
     """

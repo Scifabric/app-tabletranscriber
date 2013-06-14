@@ -9,6 +9,7 @@ import urllib2
 from requests import RequestException
 import json
 import sys
+import os
 
 
 """
@@ -18,6 +19,9 @@ import sys
 
 
 class TTTask1(pb_task):
+    """
+    Table Transcriber Task type 1
+    """
     def __init__(self, task_id, app_short_name):
         super(TTTask1, self).__init__(task_id, app_short_name)
 
@@ -62,6 +66,9 @@ class TTTask1(pb_task):
 
 
 class TTTask2(pb_task):
+    """
+    Table Transcriber Task type 2
+    """
     def __init__(self, task_id, app_short_name):
         super(TTTask2, self).__init__(task_id, app_short_name)
 
@@ -88,17 +95,30 @@ class TTTask2(pb_task):
 
             try:
                 # file with the lines recognitio
-                arch = open("%s/books/%s/metadados/saida/image%s_model%s.txt" % (
+                arch = open(
+                    "%s/books/%s/metadados/saida/image%s_model%s.txt" % (
                     app.config['TT3_BACKEND'], bookId, imgId, "1"))
                 #get the lines recognitions
-                coord_matrices = self.__splitFile(arch)
-                for matrix_index in range(len(coord_matrices)):
-                    info = dict(coords=coord_matrices[matrix_index],
-                                page=imgId, img_url=self.__url_table(bookId,
-                                imgId, matrix_index))
-                    tt3_app.add_task(info)  # add task to tt3
-            except IOError, e:
-                print str(e)
+                tables_coords = self.__splitFile(arch)
+                for tableId in range(len(tables_coords)):
+                    self.__runAreaSelection(
+                        bookId, imgId, tableId)
+
+                    image_pieces = self.__getAreaSelection(
+                        bookId, imgId, tableId)
+
+                    print "===== pieces " + str(image_pieces)
+
+                    for image_piece in image_pieces:
+                        info = dict(zoom=image_piece,
+                                    coords=tables_coords[tableId],
+                                    page=imgId, img_url=self.__url_table(
+                                    bookId, imgId, tableId))
+                        tt3_app.add_task(info)  # add task to tt3
+
+            except IOError:
+                print "Error. File image%s_model%s.txt couldn't be opened" % (
+                    imgId, "1")
             #TODO: the task will not be created,
             # routine to solve this must be implemented
             except Exception, e:
@@ -113,7 +133,6 @@ class TTTask2(pb_task):
         if(n_taskruns > 1):
             answer1 = json.loads(task_runs[n_taskruns - 1].info)
             answer2 = json.loads(task_runs[n_taskruns - 2].info)
-            print type(answer2)
 
             if answer1 == answer2:
                 if answer2 != "0":
@@ -125,7 +144,7 @@ class TTTask2(pb_task):
 
     def get_next_app(self):
         curr_app_name = self.app_short_name
-        next_app_name = curr_app_name[:-1] + "1"  #TODO: Switch from 1 to 3
+        next_app_name = curr_app_name[:-1] + "1"  # TODO: Switch from 1 to 3
         return ttapps.Apptt_select(short_name=next_app_name)
 
     def __downloadArchiveImages(self, bookId, imgId, width=550, height=700):
@@ -154,16 +173,6 @@ class TTTask2(pb_task):
 
             call([command], shell=True)  # calls the shell command
 
-            # url_request = requests.get(
-            #     "http://archive.org/download/%s/page/n%s_w%d_h%d" % (
-            #     bookId, imgId, width, height))
-
-            # lowImgPath = "%s/books/%s/baixa_resolucao/image%s.png" % (
-            #     app.config['TT3_BACKEND'], bookId, imgId)
-            # lowImgFile = open(lowImgPath, "w")
-            # lowImgFile.write(url_request.content)
-            # lowImgFile.close()
-
             return True
         except IOError, e:
             print str(e)
@@ -179,15 +188,13 @@ class TTTask2(pb_task):
         """
         Call cpp software that recognizes lines into the table and
         writes lines coords into \
-        <tt3_backend_dir>/books/bookId/metadata/saida/image<imgId>.txt
+        <tt3_backend_dir>/books/bookId/metadados/saida/image<imgId>.txt
+
         :returns: True if the write was successful
         :rtype: bool
         """
         #command shell to enter into the tt3 backend project and
         #calls the lines recognizer software
-
-        print type(rotate)
-        print rotate
 
         if rotate:
             rotate = "-r"
@@ -201,14 +208,63 @@ class TTTask2(pb_task):
         call([command], shell=True)  # calls the shell command
         #TODO: implements exception strategy
 
+        return self.__checkFile(bookId, imgId)
 
+    def __checkFile(self, bookId, imgId):
+        directory = "%s/books/%s/metadados/saida/" % (
+            app.config['TT3_BACKEND'], bookId)
+        output_files = os.listdir(directory)
+        images = [file.split('_')[0] for file in output_files]
+
+        return ("image%s" % imgId) in images
+
+    def __runAreaSelection(self, bookId, imgId, tableId):
+        """
+        Call cpp ZoomingSelection software that splits the
+        tables and write the pieces at
+        <tt3_backend_id>/books/bookId/selections/image<imgId>_tableId.txt
+
+        :returns: True if the execution was ok
+        :rtype: bool
+        """
+
+        command = 'cd %s/ZoomingSelector/; ./zoomingselector ' \
+            '"/books/%s/metadados/tabelasAlta/image%s_%d.png"' % (
+                app.config['TT3_BACKEND'], bookId, imgId, tableId)
+
+        call([command], shell=True)
+
+    def __getAreaSelection(self, bookId, imgId, tableId):
+
+        selections = []
+
+        try:
+            filepath = "%s/books/%s/selections/image%s_%d.txt" % (
+                app.config['TT3_BACKEND'], bookId, imgId, tableId)
+            print "===== filepath " + filepath
+            arch = open(filepath)
+            data = arch.read().strip().split('\n')
+
+            for data_idx in range(1, len(data)):
+                selections.append([
+                    int(coord) for coord in data[data_idx].split(',')])
+
+        except IOError:
+            print "Error! Couldn't open" \
+                "image%s_%d.txt selection file" % (
+                imgId, tableId)
+        
+        except Exception, e:
+            print str(e)
+
+        return selections
 
     def __scale(point, src, dest):
         scaleX = lambda x, src_w, dest_w: round((dest_w * x)/float(src_w))
         scaleY = lambda y, src_h, dest_h: round((dest_h * y)/float(src_h))
 
-        return [scaleX(point[0], src[0], dest[0]), scaleY(point[1], src[1], dest[1])]
-
+        return [scaleX(point[0], src[0], dest[0]),
+                scaleY(point[1], src[1], dest[1])]
 
     def __url_table(self, bookId, imgId, idx):
         """""
@@ -225,6 +281,7 @@ class TTTask2(pb_task):
         where the lines with '#' are the index and the other \
         lines with values separated with ',' are the vectors \
         of the inner matrices
+
         :returns: a list of matrix
         :rtype: list
         """
@@ -240,15 +297,17 @@ class TTTask2(pb_task):
             else:
                 line = line.split(",")
                 for char_idx in range(len(line)):
-                    line[char_idx] = int(line[char_idx])
+                    line[char_idx] = int(line[char_idx])  # int cast
 
                 matrix[matrix_index].append(line)
+
         arch.close()
         return matrix
 
     def __fileOutput(self, answer):
         """""
         Writes tt2 answers into the file input for the lines recognitions
+
         :returns: True if the answer is saved at the file
         :rtype: bool
         """
@@ -270,7 +329,9 @@ class TTTask2(pb_task):
             arch.close()
 
             return True
-        except IOError, e:
-            print "Error: Couldn't open %s to write image%s.txt file" % (bookId, ImgId)  # TODO: see what to do with the flow in exceptions
+        except IOError:
+            print "Error: Couldn't open %s to write image%s.txt file" % (
+                bookId, imgId)
+            # TODO: see what to do with the flow in exceptions
 
         return False

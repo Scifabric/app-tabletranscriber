@@ -23,11 +23,14 @@ class pb_task(object):
         raise NotImplemented("Should have implemented this")
 
     def close_task(self):
-        "Closes current task at pybossa"
+        """
+        Closes current task at pybossa
+        """
         raise NotImplemented("Should have implemented this")
 
     def check_answer(self):
         """Verify if the task's answers are ok to finish it
+
         :returns: A confirmation that the task is ready to be finished
         :rtype: boolean
         """
@@ -37,7 +40,14 @@ class pb_task(object):
         raise NotImplemented("Should have implemented this")
 
     def get_task_runs(self):
-        data = json.loads(requests.get("%s/api/taskrun?task_id=%s" % (app.config['PYBOSSA_URL'], self.task.id)).content)
+        """
+        Get all the task runs for this taskrun
+
+        :returns: A list with TaskRun objects
+        :rtype: list
+        """
+        data = json.loads(requests.get("%s/api/taskrun?task_id=%s" % (
+            app.config['PYBOSSA_URL'], self.task.id)).content)
         return [pbclient.TaskRun(taskrun) for taskrun in data]
 
     def __get_pbtask(self, task_id):
