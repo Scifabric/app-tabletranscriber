@@ -107,8 +107,6 @@ class TTTask2(pb_task):
                     image_pieces = self.__getAreaSelection(
                         bookId, imgId, tableId)
 
-                    print "===== pieces " + str(image_pieces)
-
                     for image_piece in image_pieces:
                         info = dict(zoom=image_piece,
                                     coords=tables_coords[tableId],
@@ -241,7 +239,6 @@ class TTTask2(pb_task):
         try:
             filepath = "%s/books/%s/selections/image%s_%d.txt" % (
                 app.config['TT3_BACKEND'], bookId, imgId, tableId)
-            print "===== filepath " + filepath
             arch = open(filepath)
             data = arch.read().strip().split('\n')
 

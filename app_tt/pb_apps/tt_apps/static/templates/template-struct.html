@@ -53,7 +53,6 @@
 
 <script src="#server/js/kinetic.js"></script>
 <script type="text/javascript" src="#server/js/jquery.i18n.min.js"></script>
-<script src="#server/js/tt3.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" src="#server/js/tt-struct-i18n.js"></script>
 
 
@@ -94,10 +93,10 @@ canvas {
         if ( !$.isEmptyObject(data.task) ) {
          $("#question h2").text(data.question);
          $("#task-id").text(data.task.id);
-         console.log(data.task.info.last_answer);
          var coords = data.task.info.last_answer != undefined ? data.task.info.last_answer.coords : data.task.info.coords;
+         var zoom = data.task.info.zoom;
          img_url = data.task.info.img_url;
-         initGrid(coords, img_url);
+         initGrid(coords, img_url, zoom);
 	    }
    else {
         $(".skeleton").hide();
@@ -145,3 +144,4 @@ $(window).load(function(){
 });
 
 </script>
+<script src="#server/js/tt3.js" type="text/javascript" charset="utf-8"></script>

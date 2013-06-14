@@ -13,6 +13,7 @@ $('body').on('contextmenu', '#container', function(e){ return false; });
 	var horizontal = 1;
 	var vertical = 2;
 	var posUnidas = new Array();
+    var zoom = new Array();
 
 	var i = 0;
 	var j = 0;
@@ -197,11 +198,12 @@ $('body').on('contextmenu', '#container', function(e){ return false; });
 				return false;
 			}
 		}
+
 		return true;
 	}
 
 	function isSegmentoLinhaMovivel(pts, newY) {
-		for (i = 0; i < linhas.length; i++) {
+        for (i = 0; i < linhas.length; i++) {
 			pts2 = linhas[i].getPoints();
 			if (pts2[0].y == pts2[1].y && pts2[0].y == newY) {
 				if ((pts[0].x < pts2[1].x && pts[0].x > pts2[0].x)
@@ -212,8 +214,17 @@ $('body').on('contextmenu', '#container', function(e){ return false; });
 		}
 		return true;
 	}
+
+    function inZoom(posY){ //Jey aqui
+        //console.log({'leftX': leftX, 'upperY': upperY, 'rightX': rightX, 'bottomY': bottomY});
+        console.log("zoom: " + zoom);
+        return (posY >= zoom[1] && posY <= zoom[3]);
+
+
+    }
+
 	function moverLinha(posY, newPosY) {
-		if (!isPosBorda([ minX, posY, maxX, posY ])) {
+		if (!isPosBorda([ minX, posY, maxX, posY ]) && inZoom(posY)) { //Jey aqui
 			for (i = 0; i < linhas.length; i++) {
 				var pts = linhas[i].getPoints();
 				if (pts[0].y == pts[1].y && pts[0].y == posY) {
@@ -415,7 +426,7 @@ $('body').on('contextmenu', '#container', function(e){ return false; });
 					var limInf = encontraLimiteInferior(points[0].y);
 					var newY = posY < limSup ? limSup : (posY > limInf ? limInf
 							: posY);
-					if (isLinhaMovivel(newY)) {
+					if (isLinhaMovivel(newY) && inZoom(newY)) { // Jey aqui
 						moverLinha(points[0].y, newY);
 					}
 				}
@@ -456,15 +467,17 @@ $('body').on('contextmenu', '#container', function(e){ return false; });
 					}
 				}
 			} else if (points[0].y == points[1].y) {
-				var z;
-				for (z = 0; z < linhas.length; z++) {
-					var points2 = linhas[z].getPoints();
-					if (points2[0].y == points2[1].y
-							&& points[0].y == points2[0].y) {
-						linhas[z].setStroke('green');
-					}
-				}
-			}
+                if(inZoom(points[0].y)){ //Jey aqui
+                    var z;
+                    for (z = 0; z < linhas.length; z++) {
+                        var points2 = linhas[z].getPoints();
+                        if (points2[0].y == points2[1].y
+                                && points[0].y == points2[0].y) {
+                            linhas[z].setStroke('green');
+                        }
+                    }
+                }
+            }
 
 			layer.draw();
 		});
@@ -482,6 +495,11 @@ $('body').on('contextmenu', '#container', function(e){ return false; });
 	function encontraLimiteSuperior(posY) {
 		var posicoesY = new Array();
 		var pts2;
+
+        if (posY == zoom[1]){ //Jey aqui
+            return zoom[1];
+        }
+
 		for ( var z = 0; z < linhas.length; z++) {
 			pts2 = linhas[z].getPoints();
 			if (pts2[0].y == pts2[1].y && pts2[0].y < posY) {
@@ -494,6 +512,7 @@ $('body').on('contextmenu', '#container', function(e){ return false; });
 		posicoesY.sort(function(a, b) {
 			return b - a;
 		});
+
 		return posicoesY[0];
 	}
 	
@@ -516,6 +535,11 @@ $('body').on('contextmenu', '#container', function(e){ return false; });
 	}
 
 	function encontraLimiteInferior(posY) {
+
+       if (posY == zoom[3]){ //Jey aqui
+            return zoom[3];
+        }
+
 		var posicoesY = new Array();
 		var pts2;
 		for ( var z = 0; z < linhas.length; z++) {
@@ -633,11 +657,16 @@ $('body').on('contextmenu', '#container', function(e){ return false; });
 		}
 	}
 
-	function initGrid(matrizDePontos, uri) {
+	function initGrid(matrizDePontos, uri, zoom2) {
 		minX = 2000;
 		minY = 2000;
 		maxX = 0;
 		maxY = 0;
+        
+        /*for (var i = 0; i < zoom2.length; i++ ) {
+            zoom.push(zoom2[i])
+        }*/
+        zoom = zoom2;
 
 		for (i = 0; i < matrizDePontos.length; i++) {
 			arr = matrizDePontos[i];
@@ -678,7 +707,7 @@ $('body').on('contextmenu', '#container', function(e){ return false; });
 				// Recupera o objeto que foi clicado
 				var shape = evt.shape;
 				var points = shape.getPoints();
-				if (!isBorda(points)) {
+				if (!isBorda(points) && inZoom(points[1])) { // Jey aqui
 
 					if (points[0].x == points[1].x) {
 
