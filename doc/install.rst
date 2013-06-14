@@ -204,7 +204,7 @@ diretório <diretorio-mb>/app_tt/pb_apps/tt_apps/static/::
     sudo vim /etc/apache2/sites-enabled/mb-static
     #Cole o código abaixo no arquivo mb-static e substitua <diretorio-mb> pelo
     #diretorio onde o memória brasil foi instalado
-    Alias /mb-static <diretorio-mb>/app_tt/pb_apps/tt_apps
+    Alias /mb-static <diretorio-mb>/app_tt/pb_apps/tt_apps/static
 
 Por fim reinicie o apache para que as configurações sejam iniciadas::
 
