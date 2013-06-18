@@ -107,12 +107,21 @@ class TTTask2(pb_task):
                     image_pieces = self.__getAreaSelection(
                         bookId, imgId, tableId)
 
-                    for image_piece in image_pieces:
-                        info = dict(zoom=image_piece,
+                    if(len(image_pieces) > 0):
+                        for image_piece in image_pieces:
+                            info = dict(zoom=image_piece,
+                                        coords=tables_coords[tableId],
+                                        table_id=tableId,
+                                        page=imgId, img_url=self.__url_table(
+                                        bookId, imgId, tableId))
+                            tt3_app.add_task(info)  # add task to tt3_backend
+                    else:
+                        info = dict(zoom=[0,0,0,0],
                                     coords=tables_coords[tableId],
+                                    table_id=tableId,
                                     page=imgId, img_url=self.__url_table(
                                     bookId, imgId, tableId))
-                        tt3_app.add_task(info)  # add task to tt3
+                        tt3_app.add_task(info)
 
             except IOError:
                 print "Error. File image%s_model%s.txt couldn't be opened" % (
@@ -250,7 +259,7 @@ class TTTask2(pb_task):
             print "Error! Couldn't open" \
                 "image%s_%d.txt selection file" % (
                 imgId, tableId)
-        
+
         except Exception, e:
             print str(e)
 
@@ -322,7 +331,7 @@ class TTTask2(pb_task):
                 y1 = table["height"] + y0
                 arch.write(
                     str(x0) + "," + str(y0) + "," +
-                    str(x1) + "," + str(y1))
+                    str(x1) + "," + str(y1) + "\n")
             arch.close()
 
             return True

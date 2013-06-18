@@ -1,4 +1,32 @@
-$('body').on('contextmenu', '#container', function(e){ return false; });
+	$('body').on('contextmenu', '#container', function(e) {
+		return false;
+	});
+
+	// Usada
+	Array.prototype.compare = function(array) {
+		// if the other array is a falsy value, return
+		if (!array)
+			return false;
+
+		// compare lengths - can save a lot of time
+		if (this.length != array.length)
+			return false;
+
+		for ( var i = 0; i < this.length; i++) {
+			// Check if we have nested arrays
+			if (this[i] instanceof Array && array[i] instanceof Array) {
+				// recurse into the nested arrays
+				if (!this[i].compare(array[i]))
+					return false;
+			} else if (this[i] != array[i]) {
+				// Warning - two different object instances will never be equal:
+				// {x:20} != {x:20}
+				return false;
+			}
+		}
+		return true;
+	}
+
 	var linhas = new Array();
 	var colunas = new Array();
 	var arr = new Array();
@@ -13,218 +41,75 @@ $('body').on('contextmenu', '#container', function(e){ return false; });
 	var horizontal = 1;
 	var vertical = 2;
 	var posUnidas = new Array();
+	var adicionandoLinha = false;
+	var adicionandoColuna = false;
     var zoom = new Array();
+	var sortFunction = function(a, b) {
+		pointsA = a.getPoints();
+		pointsB = b.getPoints();
+		posAX = pointsA[0].x;
+		posAY = pointsA[0].y;
+		posBX = pointsB[0].x;
+		posBY = pointsB[0].y;
+
+		if (posAY != posBY)
+			return posAY - posBY;
+		return posAX - posBX;
+	};
 
 	var i = 0;
 	var j = 0;
 
-	var stage = new Kinetic.Stage({
-		container : 'container',
-		width : 800,
-		height : 800
-	});
+	var stage;
 
 	var layer = new Kinetic.Layer();
 
-	function isLinha(pts){
-		return pts[0].y == pts[1].y;	
+	// Usada
+	function isLinha(pts) {
+		return pts[0].y == pts[1].y;
 	}
-	
-	function isLinhaDaBorda(pts){
+
+	// Usada
+	function isMesmaLinha(points1, points2) {
+		return isLinha(points1) && isLinha(points2) && points1[0].y == points2[0].y;
+	}
+
+	// Usada
+	function isLinhaDaBorda(pts) {
 		return isLinha(pts) && pts[0].y == maxY;
 	}
-	
-	function isColuna(pts){
-		return pts[0].x == pts[1].x;	
+
+	// Usada
+	function isColuna(pts) {
+		return pts[0].x == pts[1].x;
 	}
-	
-	function isColunaDaBorda(pts){
+
+	// Usada
+	function isMesmaColuna(points1, points2) {
+		return isColuna(points1) && isColuna(points2)
+				&& points1[0].x == points2[0].x;
+	}
+
+	// Usada
+	function isColunaDaBorda(pts) {
 		return isColuna(pts) && pts[0].x == maxX;
 	}
-	
-	function salvarAlteracoes() {
-		var leftX;
-		var rightX;
-		var upperY;
-		var bottomY;
-		var primeiraLinha;
-		var pts;
-		var z = 0;
 
-		var resultado = new Array();
-
-		var limite = linhas.length;
-		while (linhas.length > 0 && z < limite) {
-			primeiraLinha = linhas[z];
-			pts = primeiraLinha.getPoints();
-			if (isLinhaDaBorda(pts) || isColuna(pts)) {
-				z++;
-			} else {
-
-				leftX = pts[0].x;
-				upperY = pts[0].y;
-				rightX = null;
-				bottomY = null;
-
-				rightX = encontraRightX(leftX, upperY);
-				bottomY = encontraBottomY(leftX, upperY);
-				if (rightX == null || bottomY == null) {
-					linhas.splice(z, 1);
-				} else {
-					resultado.push([ leftX, upperY, rightX, bottomY ]);
-				}
-			}
-			limite = linhas.length;
-		}
-
-		return resultado;
-	}
-
+	// Usada
 	function isBorda(pontos) {
 		return ((pontos[0].x == pontos[1].x && (pontos[0].x == maxX || pontos[0].x == minX)) || (pontos[0].y == pontos[1].y && (pontos[0].y == maxY || pontos[0].y == minY)));
 	}
 
+	// Usada
 	function isPosBorda(pontos) {
+		// var points = [{x:pontos[0],y:pontos[1]},{x:pontos[2],y:pontos[3]}];
+		// return isBorda(points);
 		return ((pontos[0] == pontos[2] && (pontos[0] == maxX || pontos[0] == minX)) || (pontos[1] == pontos[3] && (pontos[1] == maxY || pontos[1] == minY)));
 	}
 
-	function encontraRightX(leftX, upperY) {
-		var z;
-		var pts;
-		var segmentoAtual;
-		segmentoAtual = buscaSegmentoAtual(leftX, upperY, 1);
-		while (segmentoAtual != null && !contemCorte(segmentoAtual, 1)) {
-			leftX = segmentoAtual.getPoints()[1].x;
-			removeSegmento(segmentoAtual);
-			segmentoAtual = buscaSegmentoAtual(leftX, upperY, 1);
-		}
-		if (segmentoAtual != null) {
-			removeSegmento(segmentoAtual);
-			return segmentoAtual.getPoints()[1].x;
-		}
-		return null;
-	}
-
-	function removeSegmento(segmento) {
-		var z;
-		var pts1 = segmento.getPoints();
-		var pts2;
-		var arr1 = [ pts1[0].x, pts1[0].y, pts1[1].x, pts1[1].y ];
-		for (z = linhas.length - 1; z >= 0; z--) {
-			pts2 = linhas[z].getPoints();
-			if (pts1[0].x == pts2[0].x && pts1[0].y == pts2[0].y
-					&& pts1[1].x == pts2[1].x && pts1[1].y == pts2[1].y) {
-				linhas.splice(z, 1);
-			}
-		}
-
-	}
-
-	function contemCorte(segmento, orientacao) {
-		var pts1 = segmento.getPoints();
-		var pts2;
-		for ( var z = 0; z < linhas.length; z++) {
-			pts2 = linhas[z].getPoints();
-			if (orientacao == 1 && pts1[1].x == pts2[0].x && pts1[0].y == pts2[0].y
-					&& pts2[0].x == pts2[1].x) {
-				return true;
-			}
-			if (orientacao == 2 && pts1[1].y == pts2[0].y && pts1[0].x == pts2[0].x
-					&& pts2[0].y == pts2[1].y) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	function buscaSegmentoAtual(leftX, upperY, orientacao) {
-		for ( var z = 0; z < linhas.length; z++) {
-			var pts = linhas[z].getPoints();
-			if (orientacao == horizontal && pts[0].x == leftX && pts[0].y == upperY
-					&& pts[0].y == pts[1].y) {
-				return linhas[z];
-			}
-			if (orientacao == vertical && pts[0].x == leftX && pts[0].y == upperY
-					&& pts[0].x == pts[1].x) {
-				return linhas[z];
-			}
-		}
-		return null;
-	}
-
-	function encontraBottomY(leftX, upperY) {
-		var z;
-		var pts;
-		var segmentoAtual;
-		segmentoAtual = buscaSegmentoAtual(leftX, upperY, 2);
-		while (segmentoAtual != null && !contemCorte(segmentoAtual, 2)) {
-			upperY = segmentoAtual.getPoints()[1].y;
-			removeSegmento(segmentoAtual);
-			segmentoAtual = buscaSegmentoAtual(leftX, upperY, 2);
-		}
-		if (segmentoAtual != null) {
-			removeSegmento(segmentoAtual);
-			return segmentoAtual.getPoints()[1].y;
-		}
-		return null;
-	}
-
-	function isColunaMovivel(newX) {
-		for (i = 0; i < linhas.length; i++) {
-			pts = linhas[i].getPoints();
-			if (pts[0].x == pts[1].x && pts[0].x == newX) {
-				return false;
-			}
-		}
-		return true;
-	}
-	function isSegmentoColunaMovivel(pts, newX) {
-		for (i = 0; i < linhas.length; i++) {
-			pts2 = linhas[i].getPoints();
-			if (pts2[0].x == pts2[1].x && pts2[0].x == newX) {
-				if ((pts[0].y < pts2[1].y && pts[0].y > pts2[0].y)
-						|| (pts[1].y < pts2[1].y && pts[1].y > pts2[0].y)) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
-	function isLinhaMovivel(newY) {
-		for (i = 0; i < linhas.length; i++) {
-			pts = linhas[i].getPoints();
-			if (pts[0].y == pts[1].y && pts[0].y == newY) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	function isSegmentoLinhaMovivel(pts, newY) {
-        for (i = 0; i < linhas.length; i++) {
-			pts2 = linhas[i].getPoints();
-			if (pts2[0].y == pts2[1].y && pts2[0].y == newY) {
-				if ((pts[0].x < pts2[1].x && pts[0].x > pts2[0].x)
-						|| (pts[1].x < pts2[1].x && pts[1].x > pts2[0].x)) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
-    function inZoom(posY){ //Jey aqui
-        //console.log({'leftX': leftX, 'upperY': upperY, 'rightX': rightX, 'bottomY': bottomY});
-        console.log("zoom: " + zoom);
-        return (posY >= zoom[1] && posY <= zoom[3]);
-
-
-    }
-
+	// Usada
 	function moverLinha(posY, newPosY) {
-		if (!isPosBorda([ minX, posY, maxX, posY ]) && inZoom(posY)) { //Jey aqui
+		if (!isPosBorda([ minX, posY, maxX, posY ]) && inZoom(posY) && inZoom(newPosY)) {
 			for (i = 0; i < linhas.length; i++) {
 				var pts = linhas[i].getPoints();
 				if (pts[0].y == pts[1].y && pts[0].y == posY) {
@@ -236,32 +121,22 @@ $('body').on('contextmenu', '#container', function(e){ return false; });
 		}
 	}
 
+	// Usada
 	function moverColuna(posX, newPosX) {
 		if (!isPosBorda([ posX, minY, posX, maxY ])) {
-			for (i = 0; i < linhas.length; i++) {
-				var pts = linhas[i].getPoints();
+			for (i = 0; i < colunas.length; i++) {
+				var pts = colunas[i].getPoints();
 				if (pts[0].x == pts[1].x && pts[0].x == posX) {
 					atualizaSegmentosAdjacentes(pts, [ newPosX, pts[0].y, newPosX,
 							pts[1].y ]);
-					linhas[i].setPoints([ newPosX, pts[0].y, newPosX, pts[1].y ]);
+					colunas[i].setPoints([ newPosX, pts[0].y, newPosX, pts[1].y ]);
 				}
 			}
 		}
 	}
 
-	function moverSegmento(ptsAntes, ptsDepois) {
-		if (!isBorda(ptsAntes)) {
-			for (i = 0; i < linhas.length; i++) {
-				var pts = linhas[i].getPoints();
-				if (pts[0].x == ptsAntes[0].x && pts[0].y == ptsAntes[0].y
-						&& pts[1].x == ptsAntes[1].x && pts[1].y == ptsAntes[1].y) {
-					atualizaSegmentosAdjacentes(pts, ptsDepois);
-					linhas[i].setPoints(ptsDepois);
-				}
-			}
-		}
-	}
-
+	// TODO Essa funcao DEVE ser refatorada.
+	// Usada
 	function atualizaSegmentosAdjacentes(ptsAntes, ptsDepois) {
 		for ( var z = 0; z < linhas.length; z++) {
 			pts = linhas[z].getPoints();
@@ -283,45 +158,142 @@ $('body').on('contextmenu', '#container', function(e){ return false; });
 				linhas[z].setPoints([ pts[0].x, pts[0].y, pts[1].x, ptsDepois[3] ]);
 			}
 		}
+		for ( var z = 0; z < colunas.length; z++) {
+			pts = colunas[z].getPoints();
+			if (ptsAntes[0].x == ptsAntes[1].x && pts[0].y == pts[1].y
+					&& (ptsAntes[0].y == pts[0].y || ptsAntes[1].y == pts[0].y)
+					&& ptsAntes[0].x == pts[0].x) {
+				colunas[z]
+						.setPoints([ ptsDepois[0], pts[0].y, pts[1].x, pts[1].y ]);
+			} else if (ptsAntes[0].x == ptsAntes[1].x && pts[0].y == pts[1].y
+					&& (ptsAntes[0].y == pts[0].y || ptsAntes[1].y == pts[0].y)
+					&& ptsAntes[0].x == pts[1].x) {
+				colunas[z]
+						.setPoints([ pts[0].x, pts[0].y, ptsDepois[2], pts[1].y ]);
+			} else if (ptsAntes[0].y == ptsAntes[1].y && pts[0].x == pts[1].x
+					&& (ptsAntes[0].x == pts[0].x || ptsAntes[1].x == pts[0].x)
+					&& ptsAntes[0].y == pts[0].y) {
+				colunas[z]
+						.setPoints([ pts[0].x, ptsDepois[1], pts[1].x, pts[1].y ]);
+			} else if (ptsAntes[0].y == ptsAntes[1].y && pts[0].x == pts[1].x
+					&& (ptsAntes[0].x == pts[0].x || ptsAntes[1].x == pts[0].x)
+					&& ptsAntes[0].y == pts[1].y) {
+				colunas[z]
+						.setPoints([ pts[0].x, pts[0].y, pts[1].x, ptsDepois[3] ]);
+			}
+		}
 	}
 
+	// Usada
 	function verificaExistenciaLinha(pontos) {
-		for ( var t = 0; t < linhas.length; t++) {
-			var pts = linhas[t].getPoints();
-			if (pts[0].x == pontos[0] && pts[0].y == pontos[1]
-					&& pts[1].x == pontos[2] && pts[1].y == pontos[3]) {
-				return true;
+
+		// Se for uma linha, verifica existencia entre as linhas.
+		if (pontos[1] == pontos[3]) {
+			for ( var t = 0; t < linhas.length; t++) {
+				var pts = linhas[t].getPoints();
+				if (pts[0].x == pontos[0] && pts[0].y == pontos[1]
+						&& pts[1].x == pontos[2] && pts[1].y == pontos[3]) {
+					return true;
+				}
+			}
+		}
+
+		// Se for uma coluna, verifica existencia entre as colunas.
+		else {
+			for ( var t = 0; t < colunas.length; t++) {
+				var pts = colunas[t].getPoints();
+				if (pts[0].x == pontos[0] && pts[0].y == pontos[1]
+						&& pts[1].x == pontos[2] && pts[1].y == pontos[3]) {
+					return true;
+				}
 			}
 		}
 		return false;
 	}
 
+	// Usada
 	function adicionarNovaLinha() {
-		var posY = Math.round((maxY - minY) / 2);
-		while (temLinha(posY) && posY < maxY) {
-			posY += 5;
-		}
-		var intercessoes = encontraIntercessoesVerticais(posY);
-		for ( var z = 0; z < intercessoes.length - 1; z++) {
-			var pontos = [ intercessoes[z], posY, intercessoes[z + 1], posY ];
-			adicionarLinha(pontos);
-			atualizarIntercessao(pontos);
-		}
+		if (adicionandoColuna)
+			adicionandoColuna = false;
+
+        adicionandoLinha = true;
+
+		document.body.style.cursor = "pointer";
 	}
 
-	function adicionarNovaColuna() {
-		var posX = Math.round((maxX - minX) / 2);
-		while (temLinha(posX) && posX < maxX) {
-			posX += 5;
+    function adicionarFocoZoom(zoom){ //Jey
+        var topRect = new Kinetic.Rect({
+            x: minX,
+            y: minY,
+            width: minX + zoom[2],
+            height: minY + zoom[1],
+            fill: 'gray',
+            opacity: 0.5
+        
+        });
+
+        var botRect = new Kinetic.Rect({
+            x: minX,
+            y: zoom[3],
+            width: minX + zoom[2],
+            height: zoom[3] + maxY,
+            fill: 'gray',
+            opacity: 0.5
+        
+        });
+
+        layer.add(topRect);
+        layer.add(botRect);
+    
+    }
+
+   function inZoom(posY){ //Jey aqui
+        //console.log({'leftX': leftX, 'upperY': upperY, 'rightX': rightX, 'bottomY': bottomY});
+        return (posY >= zoom[1] && posY <= zoom[3]);
+    }
+
+	// Usada
+	function criarNovaLinha(posY) {
+		while (temLinha(posY) && posY < maxY) {
+			posY += 2;
 		}
-		var intercessoes = encontraIntercessoesHorizontais(posX);
+        if(inZoom(posY)){
+            var intercessoes = encontraIntercessoesVerticais(posY);
+            for ( var z = 0; z < intercessoes.length - 1; z++) {
+                var pontos = [ intercessoes[z], posY, intercessoes[z + 1], posY ];
+                adicionarSegmento(pontos);
+                atualizarIntercessao(pontos);
+            }
+            adicionandoLinha = false;
+            document.body.style.cursor = "default";
+
+        }
+	}
+
+	// Usada
+	function adicionarNovaColuna() {
+		if (adicionandoLinha)
+			adicionandoLinha = false;
+        adicionandoColuna = true;
+
+		document.body.style.cursor = "pointer";
+	}
+
+	// Usada
+	function criarNovaColuna(posX) {
+		while (temLinha(posX) && posX < maxX) {
+			posX += 2;
+		}
+		var intercessoes = encontrarIntercessoesHorizontais(posX);
 		for ( var z = 0; z < intercessoes.length - 1; z++) {
 			var pontos = [ posX, intercessoes[z], posX, intercessoes[z + 1] ];
-			adicionarLinha(pontos);
+			adicionarSegmento(pontos);
 			atualizarIntercessao(pontos);
 		}
+		adicionandoColuna = false;
 	}
 
+	// Usada
 	function temLinha(posY) {
 		var pts2;
 		for ( var z = 0; z < linhas.length; z++) {
@@ -333,42 +305,44 @@ $('body').on('contextmenu', '#container', function(e){ return false; });
 		return false;
 	}
 
+	// Usada
 	function atualizarIntercessao(pontos) {
 		var pts2;
 		var aAdicionar = new Array();
-		for ( var z = 0; z < linhas.length; z++) {
-			pts2 = linhas[z].getPoints();
-			if (pontos[1] == pontos[3]) {
-				if (pts2[0].x == pts2[1].x) {
-					if (pontos[0] <= pts2[0].x && pontos[2] >= pts2[1].x
-							&& pts2[0].y < pontos[1] && pts2[1].y > pontos[1]) {
-						linhas[z].setPoints([ pts2[0].x, pts2[0].y, pts2[1].x,
-								pontos[1] ]);
-						aAdicionar.push([ pts2[0].x, pontos[1], pts2[1].x,
-								pts2[1].y ]);
-					}
+		// Se for uma linha
+		if (pontos[1] == pontos[3]) {
+			for ( var z = 0; z < colunas.length; z++) {
+				pts2 = colunas[z].getPoints();
+				if (pontos[0] == pts2[0].x && pontos[1] > pts2[0].y
+						&& pontos[3] < pts2[1].y) {
+					colunas[z].setPoints([ pts2[0].x, pts2[0].y, pts2[1].x,
+							pontos[1] ]);
+					aAdicionar.push([ pts2[0].x, pontos[1], pts2[1].x, pts2[1].y ]);
 				}
-			} else if (pontos[0] == pontos[2]) {
-				if (pts2[0].y == pts2[1].y) {
-					if (pontos[1] <= pts2[0].y && pontos[3] >= pts2[1].y
-							&& pts2[0].x < pontos[0] && pts2[1].x > pontos[2]) {
-						linhas[z].setPoints([ pts2[0].x, pts2[0].y, pontos[0],
-								pts2[1].y ]);
-						aAdicionar.push([ pontos[0], pts2[0].y, pts2[1].x,
-								pts2[1].y ]);
-					}
+			}
+		} else if (pontos[0] == pontos[2]) {
+			for ( var z = 0; z < linhas.length; z++) {
+				pts2 = linhas[z].getPoints();
+				if (pontos[1] == pts2[0].y && pontos[0] > pts2[0].x
+						&& pontos[2] < pts2[1].x) {
+					linhas[z].setPoints([ pts2[0].x, pts2[0].y, pontos[0],
+							pts2[1].y ]);
+					aAdicionar.push([ pontos[2], pts2[0].y, pts2[1].x, pts2[1].y ]);
 				}
 			}
 		}
 		for ( var w = 0; w < aAdicionar.length; w++) {
-			adicionarLinha(aAdicionar[w]);
+			if (!verificaExistenciaLinha(aAdicionar[w])) {
+				adicionarSegmento(aAdicionar[w]);
+			}
 		}
 	}
 
+	// Usada
 	function encontraIntercessoesVerticais(altura) {
 		var intercessoes = new Array();
-		for ( var z = 0; z < linhas.length; z++) {
-			var pts2 = linhas[z].getPoints();
+		for ( var z = 0; z < colunas.length; z++) {
+			var pts2 = colunas[z].getPoints();
 			if (pts2[0].x == pts2[1].x) {
 				if (pts2[0].y <= altura && pts2[1].y >= altura) {
 					if (($.inArray(pts2[0].x, intercessoes)) == -1) {
@@ -378,12 +352,13 @@ $('body').on('contextmenu', '#container', function(e){ return false; });
 			}
 		}
 		intercessoes.sort(function(a, b) {
-			return a - b
+			return a - b;
 		});
 		return intercessoes;
 	}
 
-	function encontraIntercessoesHorizontais(distancia) {
+	// Usada
+	function encontrarIntercessoesHorizontais(distancia) {
 		var intercessoes = new Array();
 		for ( var z = 0; z < linhas.length; z++) {
 			var pts2 = linhas[z].getPoints();
@@ -396,113 +371,128 @@ $('body').on('contextmenu', '#container', function(e){ return false; });
 			}
 		}
 		intercessoes.sort(function(a, b) {
-			return a - b
+			return a - b;
 		});
 		return intercessoes;
 	}
 
-	function adicionarLinha(pontos) {
-		var linha = new Kinetic.Line({
+	// Usada
+	function adicionarSegmento(pontos) {
+		var segmento = new Kinetic.Line({
 			points : pontos,
 			stroke : 'red',
 			draggable : true,
 			strokeWidth : 2,
 			dragBoundFunc : function(pos, event) {
 				var points = this.getPoints();
-				if (points[0].x == points[1].x) {
+				if (isColuna(points)) {
 					var posX = event.offsetX == undefined ? event.layerX
 							: event.offsetX;
 					var limEsq = encontraLimiteEsquerda(points[0].x);
 					var limDir = encontraLimiteDireita(points[0].x);
-					var newX = posX < limEsq ? limEsq : (posX > limDir ? limDir
-							: posX);
-					if (isColunaMovivel(newX)) {
-						moverColuna(points[0].x, newX);
-					}
+					var newX = posX <= limEsq ? limEsq + 1
+							: (posX >= limDir ? limDir - 1 : posX);
+					moverColuna(points[0].x, newX);
+
 				} else {
 					var posY = event.offsetY == undefined ? event.layerY
 							: event.offsetY;
 					var limSup = encontraLimiteSuperior(points[0].y);
 					var limInf = encontraLimiteInferior(points[0].y);
-					var newY = posY < limSup ? limSup : (posY > limInf ? limInf
-							: posY);
-					if (isLinhaMovivel(newY) && inZoom(newY)) { // Jey aqui
-						moverLinha(points[0].y, newY);
-					}
+					var newY = posY <= limSup ? limSup + 1
+							: (posY >= limInf ? limInf - 1 : posY);
+					moverLinha(points[0].y, newY);
 				}
 
 				return {
 					x : 0,
 					y : 0
-				}
+				};
 			}
 		});
-		var pts = linha.getPoints();
+		var pts = segmento.getPoints();
 		if (pts[0].x == pts[1].x) {
-			linha.on("mouseover", function() {
-				document.body.style.cursor = "ew-resize";
-				layer.draw();
-			});
-		} else {
-			linha.on("mouseover", function() {
-				document.body.style.cursor = "ns-resize";
-				layer.draw();
-			});
+			if (!isBorda(pts)) {
+				segmento.on("mouseover", function() {
+					if (!(adicionandoLinha || adicionandoColuna))
+						document.body.style.cursor = "ew-resize";
+					layer.draw();
+				});
+			}
+		} else if(inZoom(pts[0].y) && inZoom(pts[1].y)) {
+			if (!isBorda(pts)) {
+				segmento.on("mouseover", function() {
+					if (!(adicionandoLinha || adicionandoColuna))
+						document.body.style.cursor = "ns-resize";
+					layer.draw();
+				});
+			}
 		}
 
-		linha.on("mouseout", function() {
+		segmento.on("mouseout", function() {
 			document.body.style.cursor = "default";
 			layer.draw();
 		});
 
-		linha.on("mouseover touchstart", function() {
-			var points = this.getPoints();
-			if (points[0].x == points[1].x) {
-				var z;
-				for (z = 0; z < linhas.length; z++) {
-					var points2 = linhas[z].getPoints();
-					if (points2[0].x == points2[1].x
-							&& points[0].x == points2[0].x) {
-						linhas[z].setStroke('green');
+		segmento.on("mouseover touchstart",
+				function() {
+					var points = this.getPoints();
+					if (isColuna(points) && !isBorda(points)) {
+						var z;
+						for (z = 0; z < colunas.length; z++) {
+							var points2 = colunas[z].getPoints();
+							if (points2[0].x == points2[1].x
+									&& points[0].x == points2[0].x) {
+								colunas[z].setStroke('green');
+							}
+						}
+					} else if (isLinha(points) && !isBorda(points) && inZoom(points[0].y)) {
+                        var z;
+						for (z = 0; z < linhas.length; z++) {
+							var points2 = linhas[z].getPoints();
+							if (points2[0].y == points2[1].y
+									&& points[0].y == points2[0].y) {
+								linhas[z].setStroke('green');
+							}
+						}
 					}
-				}
-			} else if (points[0].y == points[1].y) {
-                if(inZoom(points[0].y)){ //Jey aqui
-                    var z;
-                    for (z = 0; z < linhas.length; z++) {
-                        var points2 = linhas[z].getPoints();
-                        if (points2[0].y == points2[1].y
-                                && points[0].y == points2[0].y) {
-                            linhas[z].setStroke('green');
-                        }
-                    }
-                }
-            }
 
-			layer.draw();
-		});
-		linha.on('mouseout touchend', function() {
-			for (i = 0; i < linhas.length; i++) {
-				linhas[i].setStroke('red');
+					layer.draw();
+				});
+		segmento.on('mouseout touchend', function() {
+			var points = this.getPoints();
+			if (isColuna(points)) {
+				for (i = 0; i < colunas.length; i++) {
+					colunas[i].setStroke('red');
+				}
+			} else {
+				for (i = 0; i < linhas.length; i++) {
+					linhas[i].setStroke('red');
+				}
 			}
 			layer.draw();
 		});
-		linhas.push(linha);
-		layer.add(linha);
+		if (isLinha(segmento.getPoints())) {
+			linhas.push(segmento);
+		} else {
+			colunas.push(segmento);
+		}
+		layer.add(segmento);
 		stage.add(layer);
 	}
 
+	// Usada
 	function encontraLimiteSuperior(posY) {
 		var posicoesY = new Array();
 		var pts2;
 
-        if (posY == zoom[1]){ //Jey aqui
+        if (posY == zoom[1]){
             return zoom[1];
         }
 
 		for ( var z = 0; z < linhas.length; z++) {
 			pts2 = linhas[z].getPoints();
-			if (pts2[0].y == pts2[1].y && pts2[0].y < posY) {
+			if (pts2[0].y < posY) {
 				posicoesY.push(pts2[0].y);
 			}
 		}
@@ -512,16 +502,16 @@ $('body').on('contextmenu', '#container', function(e){ return false; });
 		posicoesY.sort(function(a, b) {
 			return b - a;
 		});
-
 		return posicoesY[0];
 	}
-	
+
+	// Usada
 	function encontraLimiteEsquerda(posX) {
 		var posicoesX = new Array();
 		var pts2;
-		for ( var z = 0; z < linhas.length; z++) {
-			pts2 = linhas[z].getPoints();
-			if (pts2[0].x == pts2[1].x && pts2[0].x < posX) {
+		for ( var z = 0; z < colunas.length; z++) {
+			pts2 = colunas[z].getPoints();
+			if (pts2[0].x < posX) {
 				posicoesX.push(pts2[0].x);
 			}
 		}
@@ -534,17 +524,18 @@ $('body').on('contextmenu', '#container', function(e){ return false; });
 		return posicoesX[0];
 	}
 
+	// Usada
 	function encontraLimiteInferior(posY) {
 
        if (posY == zoom[3]){ //Jey aqui
             return zoom[3];
-        }
+       }
 
 		var posicoesY = new Array();
 		var pts2;
 		for ( var z = 0; z < linhas.length; z++) {
 			pts2 = linhas[z].getPoints();
-			if (pts2[0].y == pts2[1].y && pts2[0].y > posY) {
+			if (pts2[0].y > posY) {
 				posicoesY.push(pts2[0].y);
 			}
 		}
@@ -557,12 +548,13 @@ $('body').on('contextmenu', '#container', function(e){ return false; });
 		return posicoesY[0];
 	}
 
+	// Usada
 	function encontraLimiteDireita(posX) {
 		var posicoesX = new Array();
 		var pts2;
-		for ( var z = 0; z < linhas.length; z++) {
-			pts2 = linhas[z].getPoints();
-			if (pts2[0].x == pts2[1].x && pts2[0].x > posX) {
+		for ( var z = 0; z < colunas.length; z++) {
+			pts2 = colunas[z].getPoints();
+			if (pts2[0].x > posX) {
 				posicoesX.push(pts2[0].x);
 			}
 		}
@@ -574,63 +566,66 @@ $('body').on('contextmenu', '#container', function(e){ return false; });
 		});
 		return posicoesX[0];
 	}
-	
-	function uneIntercessaoColuna(posX, posY){
+
+	// Usada
+	function uneIntercessaoColuna(posX, posY) {
 		var pos1;
 		var pos3;
-		
+
 		var z;
-		
-		for (z = linhas.length - 1; z >= 0; z--){
-			var points2 = linhas[z].getPoints();
-			if (isColuna(points2) && points2[0].x == posX){
-				if (points2[0].y == posY){
+
+		for (z = colunas.length - 1; z >= 0; z--) {
+			var points2 = colunas[z].getPoints();
+			if (points2[0].x == posX) {
+				if (points2[0].y == posY) {
 					pos3 = points2[1].y;
-					linhas[z].remove();
-					linhas.splice(z, 1);
+					colunas[z].remove();
+					colunas.splice(z, 1);
 				}
-				if (points2[1].y == posY){
+				if (points2[1].y == posY) {
 					pos1 = points2[0].y;
-					linhas[z].remove();
-					linhas.splice(z, 1);
+					colunas[z].remove();
+					colunas.splice(z, 1);
 				}
 			}
 		}
-		adicionarLinha([posX, pos1, posX, pos3]);
+		adicionarSegmento([ posX, pos1, posX, pos3 ]);
 	}
-	
-	function uneIntercessaoLinha(posX, posY){
+
+	// Usada
+	function uneIntercessaoLinha(posX, posY) {
 		var pos0;
 		var pos2;
-		
+
 		var z;
-		
-		for (z = linhas.length - 1; z >= 0; z--){
+
+		for (z = linhas.length - 1; z >= 0; z--) {
 			var points2 = linhas[z].getPoints();
-			if (isLinha(points2) && points2[0].y == posY){
-				if (points2[0].x == posX){
+			if (points2[0].y == posY) {
+				if (points2[0].x == posX) {
 					pos2 = points2[1].x;
 					linhas[z].remove();
 					linhas.splice(z, 1);
 				}
-				if (points2[1].x == posX){
+				if (points2[1].x == posX) {
 					pos0 = points2[0].x;
 					linhas[z].remove();
 					linhas.splice(z, 1);
 				}
 			}
 		}
-		adicionarLinha([pos0, posY, pos2, posY]);
+		adicionarSegmento([ pos0, posY, pos2, posY ]);
 	}
-	
-	function uneIntercessoes(points){
+
+	// Usada
+	function uneIntercessoes(points) {
 		var pos1, pos2;
-		if (isLinha(points)){
+		if (isLinha(points)) {
 			pos0 = points[0].x;
 			pos1 = points[1].x;
 			var posY = points[0].y;
 			var t = $.inArray(pos0, posUnidas);
-			if (t == -1){
+			if (t == -1) {
 				uneIntercessaoColuna(pos0, posY);
 				posUnidas.push(pos0);
 			}
@@ -639,8 +634,7 @@ $('body').on('contextmenu', '#container', function(e){ return false; });
 				uneIntercessaoColuna(pos1, posY);
 				posUnidas.push(pos1);
 			}
-		}
-		else {
+		} else {
 			pos0 = points[0].y;
 			pos1 = points[1].y;
 			var posX = points[0].x;
@@ -657,18 +651,29 @@ $('body').on('contextmenu', '#container', function(e){ return false; });
 		}
 	}
 
-	function initGrid(matrizDePontos, uri, zoom2) {
+	// Usada
+	function existeSegmento(pontos, array) {
+		var z;
+		for (z = 0; z < array.length; z++) {
+			if (pontos.compare(array[z])) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	// Usada
+	function initGrid(matrizDePontos, uri, zoom_input) {
 		minX = 2000;
 		minY = 2000;
 		maxX = 0;
 		maxY = 0;
-        
-        /*for (var i = 0; i < zoom2.length; i++ ) {
-            zoom.push(zoom2[i])
-        }*/
-        zoom = zoom2;
+        zoom = zoom_input;
+
+		var arrayAux = new Array();
 
 		for (i = 0; i < matrizDePontos.length; i++) {
+
 			arr = matrizDePontos[i];
 
 			leftX = arr[0];
@@ -690,59 +695,95 @@ $('body').on('contextmenu', '#container', function(e){ return false; });
 			novasLinhas.push([ leftX, bottomY, rightX, bottomY ]);
 			novasLinhas.push([ rightX, upperY, rightX, bottomY ]);
 
+			// Inicialmente, colocamos todas as coordenadas de todos os
+			// segmentos gerados a partir do arquivo de entrada em arrayAux,
+			// contanto que eles nao existam ainda no mesmo.
 			for ( var z = 0; z < novasLinhas.length; z++) {
-				if (!verificaExistenciaLinha(novasLinhas[z])) {
-					adicionarLinha(novasLinhas[z]);
+				if (!existeSegmento(novasLinhas[z], arrayAux)) {
+					arrayAux.push(novasLinhas[z]);
 				}
 			}
+
 		}
 
+        adicionarFocoZoom(zoom);
+
+		// Definicao da acao que deve ser tomada quando ocorrer um clique no
+		// canvas (botao direito deve remover a linha selecionada).
 		layer.on('click', function(evt) {
 
 			// Codigo para remover todos os segmentos que pertencam a uma mesma
 			// linha
-			//if (removendoLinha) {
+
 			if ((evt.which && evt.which == 3) || (evt.button && evt.button == 2)) {
-				posicoesUnidas = new Array();
+				posUnidas = new Array();
 				// Recupera o objeto que foi clicado
 				var shape = evt.shape;
 				var points = shape.getPoints();
-				if (!isBorda(points) && inZoom(points[1])) { // Jey aqui
+				if (!isBorda(points)) {
 
-					if (points[0].x == points[1].x) {
+					if (isColuna(points)) {
 
-						// E necessario fazer iteracao inversa sobre o array para
+						// Eh necessario fazer iteracao inversa sobre o array para
 						// nao pular nenhum elemento.
-						for (i = linhas.length - 1; i >= 0; i--) {
-							var points2 = linhas[i].getPoints();
-							if (points2[0].x == points[0].x
-									&& points2[1].x == points[1].x) {
-								linhas[i].remove();
-								linhas.splice(i, 1);
-								//Finalmente, atualizamos todas aquelas intercessões que não são mais cruzadas.
+						for (i = colunas.length - 1; i >= 0; i--) {
+							var points2 = colunas[i].getPoints();
+							if (isMesmaColuna(points, points2)) {
+								colunas[i].remove();
+								colunas.splice(i, 1);
+								// Finalmente, atualizamos todas aquelas
+								// intercessões que não são mais cruzadas.
 								uneIntercessoes(points2);
 							}
 						}
-					} else if (points[0].y == points[1].y) {
+					} else if (isLinha(points) && inZoom(points[1].y) && inZoom(points[0].y)) {
 						for (i = linhas.length - 1; i >= 0; i--) {
 							var points2 = linhas[i].getPoints();
-							if (points2[0].y == points[0].y
-									&& points2[1].y == points[1].y) {
+							if (isMesmaLinha(points, points2)) {
 								linhas[i].remove();
 								linhas.splice(i, 1);
-								//Finalmente, atualizamos todas aquelas intercessões que não são mais cruzadas.
+								// Finalmente, atualizamos todas aquelas
+								// intercessões que não são mais cruzadas.
 								uneIntercessoes(points2);
 							}
 						}
 					}
-					
+
 				}
 			}
 			// Apos remover os objetos selecionados, redesenhamos a camada apenas
 			// com os objetos restantes.
 			layer.draw();
 		});
+
+		stage = new Kinetic.Stage({
+			container : 'container',
+			width : maxX,
+			height : maxY
+		});
+
+		for ( var z = 0; z < arrayAux.length; z++) {
+			adicionarSegmento(arrayAux[z]);
+		}
+
+		$("#container").click(function(evt) {
+			if (adicionandoLinha) {
+				var posY = evt.offsetY == undefined ? evt.layerY : evt.offsetY;
+				criarNovaLinha(posY);
+				//adicionandoLinha = false;
+				//document.body.style.cursor = "default";
+			}
+
+			else if (adicionandoColuna) {
+				var posX = evt.offsetX == undefined ? evt.layerX : evt.offsetX;
+				criarNovaColuna(posX);
+				adicionandoColuna = false;
+				document.body.style.cursor = "default";
+			}
+		});
+
 		var imageObj = new Image();
+		imageObj.src = uri;
 		imageObj.onload = function() {
 			var tabela = new Kinetic.Image({
 				x : 0,
@@ -757,13 +798,58 @@ $('body').on('contextmenu', '#container', function(e){ return false; });
 			tabela.moveToBottom();
 
 			// add the layer to the stage
-
 			stage.add(layer);
 
 		};
-		imageObj.src = uri;
 	}
 
+	// Usada
+	function salvarAlteracoes() {
+		var leftX;
+		var rightX;
+		var upperY;
+		var bottomY;
+		var ptsLinha;
+		var ptsColuna;
+		var iteradorLinha;
+		var iteradorColuna;
+		var resultado = new Array();
+
+		linhas.sort(sortFunction);
+		colunas.sort(sortFunction);
+
+		iteradorLinha = 0;
+		iteradorColuna = 0;
+		ptsLinha = linhas[iteradorLinha].getPoints();
+		while (ptsLinha[0].y != maxY) { 
+			ptsColuna = colunas[iteradorColuna].getPoints();
+			
+			// Essa situacao so ocorre quando comecamos a percorrer uma nova linha. 
+			while (ptsColuna[0].y != ptsLinha[0].y) {
+				iteradorColuna++;
+				ptsColuna = colunas[iteradorColuna].getPoints();
+			}
+			
+			leftX = ptsLinha[0].x;
+			rightX = ptsLinha[1].x;
+			upperY = ptsColuna[0].y;
+			bottomY = ptsColuna[1].y;
+			
+			resultado.push([leftX, upperY, rightX, bottomY]);
+			iteradorLinha++;
+			iteradorColuna++;
+			ptsLinha = linhas[iteradorLinha].getPoints();
+		} 
+		
+
+		for (var z=0; z < resultado.length; z++){
+			console.log(resultado[z][0] + ", " + resultado[z][1] + ", " + resultado[z][2] + ", " + resultado[z][3]);
+		}
+
+		return resultado;
+	}
+
+	// Usada 
 	function clearCanvas() {
 		layer.remove();
 	}
