@@ -478,8 +478,6 @@
 			colunas.push(segmento);
 		}
 		layer.add(segmento);
-		stage.add(layer);
-        stage.add(layerZoom);
 	}
 
 	// Usada
