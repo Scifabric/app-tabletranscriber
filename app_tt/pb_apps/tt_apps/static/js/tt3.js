@@ -222,13 +222,14 @@
 	}
 
     function adicionarFocoZoom(zoom){ //Jey
+        var layer = new Kinetic.Layer();
         var topRect = new Kinetic.Rect({
             x: minX,
             y: minY,
             width: minX + zoom[2],
             height: minY + zoom[1],
-            fill: 'gray',
-            opacity: 0.5
+            fill: '#000',
+            opacity: 0.6
         
         });
 
@@ -237,14 +238,14 @@
             y: zoom[3],
             width: minX + zoom[2],
             height: zoom[3] + maxY,
-            fill: 'gray',
-            opacity: 0.5
+            fill: '#000',
+            opacity: 0.6
         
         });
 
         layer.add(topRect);
         layer.add(botRect);
-    
+        return layer;
     }
 
    function inZoom(posY){ //Jey aqui
@@ -706,8 +707,6 @@
 
 		}
 
-        adicionarFocoZoom(zoom);
-
 		// Definicao da acao que deve ser tomada quando ocorrer um clique no
 		// canvas (botao direito deve remover a linha selecionada).
 		layer.on('click', function(evt) {
@@ -756,11 +755,15 @@
 			layer.draw();
 		});
 
+        var layerZoom = adicionarFocoZoom(zoom);
+
 		stage = new Kinetic.Stage({
 			container : 'container',
 			width : maxX,
 			height : maxY
 		});
+
+        console.log(layerZoom);
 
 		for ( var z = 0; z < arrayAux.length; z++) {
 			adicionarSegmento(arrayAux[z]);
@@ -799,7 +802,7 @@
 
 			// add the layer to the stage
 			stage.add(layer);
-
+            stage.add(layerZoom);
 		};
 	}
 
