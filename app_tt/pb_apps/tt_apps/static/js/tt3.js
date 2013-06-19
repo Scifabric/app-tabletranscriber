@@ -222,7 +222,7 @@
 	}
 
     function adicionarFocoZoom(zoom){ //Jey
-        var layer = new Kinetic.Layer();
+        layerZoom = new Kinetic.Layer();
         var topRect = new Kinetic.Rect({
             x: minX,
             y: minY,
@@ -243,9 +243,8 @@
         
         });
 
-        layer.add(topRect);
-        layer.add(botRect);
-        return layer;
+        layerZoom.add(topRect);
+        layerZoom.add(botRect);
     }
 
    function inZoom(posY){ //Jey aqui
@@ -480,6 +479,7 @@
 		}
 		layer.add(segmento);
 		stage.add(layer);
+        stage.add(layerZoom);
 	}
 
 	// Usada
@@ -755,7 +755,7 @@
 			layer.draw();
 		});
 
-        var layerZoom = adicionarFocoZoom(zoom);
+        adicionarFocoZoom(zoom);
 
 		stage = new Kinetic.Stage({
 			container : 'container',
