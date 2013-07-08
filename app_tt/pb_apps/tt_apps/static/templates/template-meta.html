@@ -108,7 +108,7 @@ function loadUserProgress() {
 
 function taskRunDone(taskId){
     return $.ajax({
-        url: '/tt/api/'+taskid+'/done',
+        url: '/mb/api/'+taskid+'/done',
         success: function(data){
             //enableNextTask(taskId);
         }
@@ -117,7 +117,7 @@ function taskRunDone(taskId){
 
 /*function enableNextTask(taskId){
     $.ajax({
-        url: '/tt/api/' + taskId + '/available_tasks',
+        url: '/mb/api/' + taskId + '/available_tasks',
         success: function(data){
             if(data == "True"){
                 $("#workflowtask").fadeIn(200);
@@ -174,13 +174,13 @@ function loadData( data ) {
         $("#finish").fadeIn(100, function(){
         
             $.ajax({
-            url: '/tt/api/' + task_id + '/available_tasks',
+            url: '/mb/api/' + task_id + '/available_tasks',
             success: function(data){
                 if(data == "True"){
                     window.open(endpoint + "/app/" + task_shortname.replace("_tt2", "_tt1")  + "/newtask", "_self");
                 }
                 else{
-                    window.open("/tt/collaborate", "_self");
+                    window.open("/mb/collaborate", "_self");
                 }
             }
             }); 

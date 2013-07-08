@@ -115,7 +115,7 @@ function loadUserProgress() {
 
 function taskRunDone(taskId){
     $.ajax({
-        url: '/tt/api/'+taskId+'/done',
+        url: '/mb/api/'+taskId+'/done',
         success: function(data){
                 enableNextTask(taskId);
             }
@@ -124,7 +124,7 @@ function taskRunDone(taskId){
 
 function enableNextTask(taskId){
     $.ajax({
-        url: '/tt/api/' + taskId + '/available_tasks',
+        url: '/mb/api/' + taskId + '/available_tasks',
         success: function(data){
             if(data == "True"){
                 $("#workflowtask").fadeIn(200);
@@ -136,7 +136,6 @@ function enableNextTask(taskId){
                 window.open(endpoint + "/app/" + task_shortname.replace("_tt1", "_tt2")  + "/newtask", "_self");
     });
 }
-
 
 function loadData( data ) {
 	
