@@ -1,0 +1,25 @@
+<VirtualHost *:80>
+    ServerName example.com
+    DocumentRoot /home/user/pybossa/pybossa
+    WSGIDaemonProcess pybossa user=user1 group=group1 threads=5
+    WSGIScriptAlias /pybossa /home/user/pybossa/contrib/pybossa.wsgi
+
+    <Directory /home/user/pybossa>
+        WSGIProcessGroup pybossa
+        WSGIApplicationGroup %{GLOBAL}
+        Order deny,allow
+        Allow from all
+    </Directory>
+
+        WSGIDaemonProcess mb user=user1 group=group1 threads=5
+        WSGIScriptAlias /mb /home/user/app-tabletranscriber/contrib/app_tt.wsgi
+
+    <Directory /home/user/app-tabletranscriber>
+
+        WSGIProcessGroup mb
+        WSGIApplicationGroup %{GLOBAL}
+        Order deny,allow
+        Allow from all
+    </Directory>
+
+</VirtualHost>

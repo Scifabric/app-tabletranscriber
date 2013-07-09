@@ -44,7 +44,7 @@ forma::
 
         DocumentRoot /home/user/mb
         WSGIDaemonProcess mb user=user1 group=group1 threads=5
-        WSGIScriptAlias / /home/user/app-tabletranscriber/contrib/app_tt.wsgi
+        WSGIScriptAlias /mb /home/user/app-tabletranscriber/contrib/app_tt.wsgi
 
         <Directory /home/user/app-tabletranscriber>
             WSGIProcessGroup mb
