@@ -94,7 +94,7 @@ class TTTask2(pb_task):
                                        answer[0]["text"]["girar"])
 
             try:
-                # file with the lines recognitio
+                # file with the lines recognized
                 arch = open(
                     "%s/books/%s/metadados/saida/image%s_model%s.txt" % (
                     app.config['TT3_BACKEND'], bookId, imgId, "1"))
@@ -137,12 +137,14 @@ class TTTask2(pb_task):
     def check_answer(self):
         task_runs = self.get_task_runs()
         n_taskruns = len(task_runs)  # task_runs goes from 0 to n-1
+        print("Teste 1")
         if(n_taskruns > 1):
             answer1 = json.loads(task_runs[n_taskruns - 1].info)
             answer2 = json.loads(task_runs[n_taskruns - 2].info)
-
+            print("Teste 2")
             if answer1 == answer2:
                 if answer2 != "0":
+                    print("Teste 3")
                     return self.__fileOutput(answer2)
                 elif answer2 == "0":  # There is one error at TTTask1 answer
                     pass
@@ -322,6 +324,8 @@ class TTTask2(pb_task):
         imgId = self.task.info["page"]
 
         try:
+            print("File path:" + "%s/books/%s/metadados/entrada/image%s.txt" % (
+                app.config["TT3_BACKEND"], bookId, imgId), "a")
             arch = open("%s/books/%s/metadados/entrada/image%s.txt" % (
                 app.config["TT3_BACKEND"], bookId, imgId), "a")
             for table in answer:
