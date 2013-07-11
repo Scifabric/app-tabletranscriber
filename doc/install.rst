@@ -119,7 +119,7 @@ Pronto, o BD foi criado, agora saia do usuário postgres::
     
     $ exit
 
-Agora com o BD criado execute o script que criará as tabelas necessárias::
+Agora com o BD criado e estando com o ambiente virtual ativo, execute o script que criará as tabelas necessárias::
 
     $ python create_db.py
 
