@@ -30,6 +30,7 @@ class Apptt_select(app.Apptt):
                         flask_app.config['URL_TEMPLATES']
                         + "/templates"
                         + "/long_description-select.html")), short_name))
+            print "Create task type 1"
 
 
 class Apptt_meta(app.Apptt):
@@ -54,10 +55,12 @@ class Apptt_meta(app.Apptt):
                         flask_app.config['URL_TEMPLATES']
                         + "/templates"
                         + "/long_description-meta.html")), short_name))
+            print "Create task type 2"
 
 
 class Apptt_struct(app.Apptt):
     def __init__(self, **keyargs):
+        print ("TT3_BACKEND: " + flask_app.config['TT3_BACKEND'])
         if "short_name" in keyargs.keys():
             short_name = keyargs['short_name']
 
@@ -76,6 +79,7 @@ class Apptt_struct(app.Apptt):
                 self.__create_dirs(
                     short_name[:-4],
                     flask_app.config['TT3_BACKEND'])
+                print "Create task type 3"
             except OSError, e:
                 print str(e)
 

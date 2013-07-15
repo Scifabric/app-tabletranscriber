@@ -280,7 +280,7 @@ class TTTask2(pb_task):
         :returns: a indexed book table image
         :rtype: str
         """
-        return "%s/books/%s/metadados/tabelasBaixa/image%s_%d.png" % (
+        return "%s/cv-modules/books/%s/metadados/tabelasBaixa/image%s_%d.png" % (
             app.config['URL_TEMPLATES'], bookId, imgId, idx)
 
     def __splitFile(self, arch):
