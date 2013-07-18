@@ -109,14 +109,14 @@ class TTTask2(pb_task):
 
                     if(len(image_pieces) > 0):
                         for image_piece in image_pieces:
-                            info = dict(zoom=image_piece,
+                            info = dict(hasZoom=True, zoom=image_piece,
                                         coords=tables_coords[tableId],
                                         table_id=tableId,
                                         page=imgId, img_url=self.__url_table(
                                         bookId, imgId, tableId))
                             tt3_app.add_task(info)  # add task to tt3_backend
                     else:
-                        info = dict(zoom=[0,0,0,0],
+                        info = dict(hasZoom=False,
                                     coords=tables_coords[tableId],
                                     table_id=tableId,
                                     page=imgId, img_url=self.__url_table(

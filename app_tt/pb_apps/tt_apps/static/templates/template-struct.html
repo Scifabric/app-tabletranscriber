@@ -12,11 +12,13 @@
 	</div>
     <div id="finish" class="alert alert-success" style="display:none;">
       <p><span><strong>#</strong></span><span>#</span></p>
+      <!--
       <br/>
       <div class="alert-actions">
               <a id="back" class="btn small" href="/">#</a>
               <a id="other_apps" class="btn small" href="/app">#</a>
       </div>
+      -->
     </div>
     <div id="error" class="alert alert-error" style="display:none;">
       <a class="close">x</a>
@@ -39,16 +41,13 @@
 
 <div class="row skeleton">
         
-    <div id="container" style="margin: 20px"></div>
-    <!--  Radio buttons para definir qual a ação que o usuário -->
+    	<div id="container" style="margin: 20px"></div>
+	<!--  Radio buttons para definir qual a ação que o usuário -->
         <button id="button_addline" onclick="adicionarNovaLinha();">#</button>
         <button id="button_addcolumn" onclick="adicionarNovaColuna();">#</button>
-    <div class="row">
+	<div class="row">
             <button id="button_finished" onclick="submitTask()">#</button>
-        
         </div>
-
-
 </div>
 
 <script src="#server/js/kinetic.js"></script>
@@ -91,21 +90,21 @@ canvas {
     function loadData( data ) {
 
         if ( !$.isEmptyObject(data.task) ) {
-         $("#question h2").text(data.question);
-         $("#task-id").text(data.task.id);
-         var coords = data.task.info.last_answer != undefined ? data.task.info.last_answer.coords : data.task.info.coords;
-         var zoom = data.task.info.zoom;
-         img_url = data.task.info.img_url;
-         initGrid(coords, img_url, zoom);
-	    }
-   else {
-        $(".skeleton").hide();
-        $("#finish").fadeIn();
-   }
-
+		 $("#question h2").text(data.question);
+		 $("#task-id").text(data.task.id);
+		 var coords = data.task.info.last_answer != undefined ? data.task.info.last_answer.coords : data.task.info.coords;
+		 var zoom = data.task.info.zoom;
+		 var hasZoom = data.task.info.hasZoom;
+		 img_url = data.task.info.img_url;
+		 initGrid(coords, img_url, hasZoom, zoom);
+         } else {
+	        $(".skeleton").hide();
+        	$("#finish").fadeIn();
 	}
 
-	// Function to submit and save the TaskRun in PyBossa
+     }
+
+// Function to submit and save the TaskRun in PyBossa
 function submitTask() {
         // Get grid infos
 

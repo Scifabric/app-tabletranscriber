@@ -43,7 +43,8 @@
 	var posUnidas = new Array();
 	var adicionandoLinha = false;
 	var adicionandoColuna = false;
-    var zoom = new Array();
+   	var zoom = new Array();
+	var hasZoom = false;
 	var sortFunction = function(a, b) {
 		pointsA = a.getPoints();
 		pointsB = b.getPoints();
@@ -213,11 +214,11 @@
 
 	// Usada
 	function adicionarNovaLinha() {
-		if (adicionandoColuna)
+		if (adicionandoColuna) {
 			adicionandoColuna = false;
+		}
 
-        adicionandoLinha = true;
-
+        	adicionandoLinha = true;
 		document.body.style.cursor = "pointer";
 	}
 
@@ -249,7 +250,7 @@
 
    function inZoom(posY){ //Jey aqui
         //console.log({'leftX': leftX, 'upperY': upperY, 'rightX': rightX, 'bottomY': bottomY});
-        return (posY >= zoom[1] && posY <= zoom[3]);
+        return !hasZoom || (posY >= zoom[1] && posY <= zoom[3]);
     }
 
 	// Usada
@@ -257,25 +258,27 @@
 		while (temLinha(posY) && posY < maxY) {
 			posY += 2;
 		}
-        if(inZoom(posY)){
-            var intercessoes = encontraIntercessoesVerticais(posY);
-            for ( var z = 0; z < intercessoes.length - 1; z++) {
-                var pontos = [ intercessoes[z], posY, intercessoes[z + 1], posY ];
-                adicionarSegmento(pontos);
-                atualizarIntercessao(pontos);
-            }
-            adicionandoLinha = false;
-            document.body.style.cursor = "default";
 
-        }
+		console.log("In Zoom: " + inZoom(posY));
+
+	        if (inZoom(posY)) {
+	            var intercessoes = encontraIntercessoesVerticais(posY);
+	            for ( var z = 0; z < intercessoes.length - 1; z++) {
+	                var pontos = [ intercessoes[z], posY, intercessoes[z + 1], posY ];
+	                adicionarSegmento(pontos);
+	                atualizarIntercessao(pontos);
+	            }
+                    adicionandoLinha = false;
+                    document.body.style.cursor = "default";
+        	}
 	}
 
 	// Usada
 	function adicionarNovaColuna() {
-		if (adicionandoLinha)
+		if (adicionandoLinha) {
 			adicionandoLinha = false;
-        adicionandoColuna = true;
-
+		}
+	        adicionandoColuna = true;
 		document.body.style.cursor = "pointer";
 	}
 
@@ -285,12 +288,16 @@
 			posX += 2;
 		}
 		var intercessoes = encontrarIntercessoesHorizontais(posX);
+		// console.log("intercessoes: " + intercessoes);
 		for ( var z = 0; z < intercessoes.length - 1; z++) {
 			var pontos = [ posX, intercessoes[z], posX, intercessoes[z + 1] ];
+			// console.log("Adicionando segmento");
 			adicionarSegmento(pontos);
+			// console.log("Atualizando intercessao");
 			atualizarIntercessao(pontos);
 		}
 		adicionandoColuna = false;
+                document.body.style.cursor = "default";	
 	}
 
 	// Usada
@@ -378,6 +385,9 @@
 
 	// Usada
 	function adicionarSegmento(pontos) {
+
+		console.log("Segmento: " + pontos);
+
 		var segmento = new Kinetic.Line({
 			points : pontos,
 			stroke : 'red',
@@ -419,7 +429,7 @@
 					layer.draw();
 				});
 			}
-		} else if(inZoom(pts[0].y) && inZoom(pts[1].y)) {
+		} else if (inZoom(pts[0].y) && inZoom(pts[1].y)) {
 			if (!isBorda(pts)) {
 				segmento.on("mouseover", function() {
 					if (!(adicionandoLinha || adicionandoColuna))
@@ -478,6 +488,7 @@
 			colunas.push(segmento);
 		}
 		layer.add(segmento);
+		layer.draw();
 	}
 
 	// Usada
@@ -662,12 +673,17 @@
 	}
 
 	// Usada
-	function initGrid(matrizDePontos, uri, zoom_input) {
+	function initGrid(matrizDePontos, uri, hasZoom, zoom_input) {
 		minX = 2000;
 		minY = 2000;
 		maxX = 0;
 		maxY = 0;
-        zoom = zoom_input;
+		hasZoom = hasZoom;
+
+		if (hasZoom) {
+		        zoom = zoom_input;
+			console.log("initGrid: " + zoom);
+		}
 
 		var arrayAux = new Array();
 
@@ -711,6 +727,7 @@
 
 			// Codigo para remover todos os segmentos que pertencam a uma mesma
 			// linha
+			console.log("click direito")
 
 			if ((evt.which && evt.which == 3) || (evt.button && evt.button == 2)) {
 				posUnidas = new Array();
@@ -768,18 +785,21 @@
 		}
 
 		$("#container").click(function(evt) {
+
+			console.log("click esquerdo")
+
 			if (adicionandoLinha) {
 				var posY = evt.offsetY == undefined ? evt.layerY : evt.offsetY;
+				console.log("pos Y:" + posY)
+
 				criarNovaLinha(posY);
-				//adicionandoLinha = false;
-				//document.body.style.cursor = "default";
 			}
 
 			else if (adicionandoColuna) {
 				var posX = evt.offsetX == undefined ? evt.layerX : evt.offsetX;
+				console.log("pos X:" + posX)
+
 				criarNovaColuna(posX);
-				adicionandoColuna = false;
-				document.body.style.cursor = "default";
 			}
 		});
 
