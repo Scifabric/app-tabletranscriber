@@ -111,12 +111,12 @@ function taskRunDone(taskId){
     return $.ajax({
         url: '/mb/api/'+taskid+'/done',
         success: function(data){
-            //enableNextTask(taskId);
+            enableNextTask(taskId);
         }
     });
 }
 
-/*function enableNextTask(taskId){
+function enableNextTask(taskId){
     $.ajax({
         url: '/mb/api/' + taskId + '/available_tasks',
         success: function(data){
@@ -129,7 +129,7 @@ function taskRunDone(taskId){
     $("#workflowtask").click(function(){
                 window.open(endpoint + "/app/" + task_shortname.replace("_tt2", "_tt3")  + "/newtask", "_self");
     });
-}*/
+}
 
 var spinner = new Throbber({
     color: 'black',

@@ -1,0 +1,18 @@
+Metadata-Version: 1.1
+Name: tt
+Version: 0.1.0
+Summary: Transcription application using pybossa.
+Home-page: UNKNOWN
+Author: LSD
+Author-email: UNKNOWN
+License: MIT
+Description: .
+            
+Platform: UNKNOWN
+Classifier: Development Status :: 
+Classifier: Environment :: Console
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Topic :: Software Development :: Libraries :: Python Modules

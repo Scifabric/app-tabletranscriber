@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 app-tabletranscriber
 ====================
 
@@ -74,3 +75,9 @@ Creating Tasks
 ==============
 
 //Will be here SOON!
+=======
+app-tabletranscriber-dev
+========================
+
+app-tabletranscriber-dev
+>>>>>>> ba1193023123596cabaf16ff3d8821112097e879

@@ -1,0 +1,7 @@
+Flask==0.8
+Flask-Testing
+psycopg2
+celery
+requests
+supervisor
+pybossa_client
