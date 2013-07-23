@@ -32,56 +32,83 @@
   </div> <!-- End Success and Error Messages for the user -->
 </div>
 
-<div class="row skeleton">
-  <div id="question" class="span8 offset2">
-      <h2>#</h2>
-      <p><span>#</span><span id="task-id" class="label label-warning">#</span></p>
-  </div>
-</div>
+<div class="skeleton" style="margin-top: 30px; margin-bottom: 30px"> <!-- Start Skeleton -->
+    <h1 id="question"></h1> <!-- The question will be loaded here -->
+    <p><span>#</span><span id="task-id" class="label label-warning">#</span></p>
+</div><!-- End of Skeleton -->
 
-<div class="row skeleton">
-        
-    	<div id="container" style="margin: 20px"></div>
+
+<div class="skeleton">
+
+	<!-- <img id="loading" src="#server/images/loading.gif"/> -->
+	<div id="container" style="position: relative;" data-toggle="context" data-target="#context-menu">
+		<div id="context-menu" style="position: absolute;" >
+		  <ul id="remover-menu" class="dropdown-menu" role="menu">
+		    <li class="menu-item"><a tabindex="1" href="#">Remover linha/coluna</a></li>
+		    <li class="menu-item"><a tabindex="2" href="#">Remover segmento</a></li>
+		  </ul>
+		</div>
+	    	<div id="canvas-container" style="margin: 10px"></div>
+	</div>
+
 	<!--  Radio buttons para definir qual a ação que o usuário -->
-        <button id="button_addline" onclick="adicionarNovaLinha();">#</button>
-        <button id="button_addcolumn" onclick="adicionarNovaColuna();">#</button>
-	<div class="row">
-            <button id="button_finished" onclick="submitTask()">#</button>
-        </div>
+	<div id="adicionar_linha_coluna" style="display: block; margin-bottom: 10px" >
+	        <button id="button_addline" style="float: left; margin-right: 10px" onclick="adicionarNovaLinha();">#</button>
+	        <button id="button_addcolumn" style="margin-right: 80px" onclick="adicionarNovaColuna();">#</button>
+	        <button id="button_finished" onclick="submitTask()">#</button>
+	</div>
 </div>
 
 <script src="#server/js/kinetic.js"></script>
 <script type="text/javascript" src="#server/js/jquery.i18n.min.js"></script>
 <script type="text/javascript" src="#server/js/tt-struct-i18n.js"></script>
-
+<script type="text/javascript" src="#server/js/throbber/throbber.js" ></script>
+<script type="text/javascript" src="#server/js/bootstrap-contextmenu.js"></script>
+<script type="text/javascript" charset="utf-8" src="#server/js/tt3.js"></script>
 
 <style>
 
 canvas {
 	border: 1px solid #9C9898;
 }
+
+#loading {
+	position: absolute;
+	z-index: 10000;
+	width: 100px;
+	height: 100px;
+}
 </style>    
     
 <script type="text/javascript" charset="utf-8">
 
     $(window).load(function(){
-		$("#question h2").text($.i18n._('question'));
+		$("#question").text($.i18n._('question'));
 		$("#question span:first").text($.i18n._('task_name'));
 		$("#button_finished").text($.i18n._('button_finished'));
 		$("#button_addline").text($.i18n._('button_addline'));
-        $("#button_addcolumn").text($.i18n._('button_addcolumn'));
+       		$("#button_addcolumn").text($.i18n._('button_addcolumn'));
 		$("#button_rmseg label").text($.i18n._('button_rmseg'));
 		$("#button_rmline label").text($.i18n._('button_rmline'));
-        $("#button_mvline label").text($.i18n._('button_mvline'));
+	        $("#button_mvline label").text($.i18n._('button_mvline'));
 		$("#success strong").text($.i18n._('well_done'));
 		$("#success span:nth-child(2)").text($.i18n._('saved'));
 		$("#finish strong").text($.i18n._('congratulations'));
 		$("#finish span:nth-child(2)").text($.i18n._('finished'));
 		$("#error strong").text($.i18n._('error'));
 		$("#error span:nth-child(2)").text($.i18n._('err_msg'));
-        $("#workflowtask span:first").text($.i18n._('workflowtask'));
-		
-    }); //
+      	        $("#workflowtask span:first").text($.i18n._('workflowtask'));	
+    });
+
+    $(".menu-item").click(function () {
+        var str = $(this).text();
+	if (str == "Remover segmento") {
+		handleRemoverSegmentoEvent();
+	} else {
+		handleRemoverLinhaColunaEvent();
+	}
+	$("#remover-menu").hide();
+    });
 
     var task_shortname = "#task_shortname#";
     var endpoint = "/pybossa";
@@ -89,8 +116,9 @@ canvas {
 
     function loadData( data ) {
 
+
         if ( !$.isEmptyObject(data.task) ) {
-		 $("#question h2").text(data.question);
+		 $("#question").text(data.question);
 		 $("#task-id").text(data.task.id);
 		 var coords = data.task.info.last_answer != undefined ? data.task.info.last_answer.coords : data.task.info.coords;
 		 var zoom = data.task.info.zoom;
@@ -112,25 +140,24 @@ function submitTask() {
 
         var answer = {'img_url' : img_url, 'coords': gridCoords};
         console.log(answer);
-		// Get the task-id
-		taskid = $("#task-id").text();
+	// Get the task-id
+	taskid = $("#task-id").text();
 		
-		// Save the task
-		pybossa.saveTask(taskid, answer).done(function(data) {
-            //Call tt workflow api.
-            //taskRunDone(taskid);
-            clearCanvas();
+	// Save the task
+	pybossa.saveTask(taskid, answer).done(function(data) {
+        //Call tt workflow api.
+        //taskRunDone(taskid);
+        clearCanvas();
 
-          // $.blockUI({message: $("#success"),
-          //              css: {height: $("#success").height()}
-          //  });
+        // $.blockUI({message: $("#success"),
+        //              css: {height: $("#success").height()}
+        //  });
 			// Load a new task
-            pybossa.newTask(task_shortname).done(function(data) {
-
+        pybossa.newTask(task_shortname).done(function(data) {
 				loadData(data);
 			});
-		});
-	}
+	});
+}
 
 pybossa.setEndpoint(endpoint);
 
@@ -143,4 +170,3 @@ $(window).load(function(){
 });
 
 </script>
-<script src="#server/js/tt3.js" type="text/javascript" charset="utf-8"></script>
