@@ -46,7 +46,7 @@
 	var adicionandoColuna = false;
    	var zoom = new Array();
 	var hasZoom = false;
-	var sortFunction = function(a, b) {
+	var sortLinesFunction = function(a, b) {
 		pointsA = a.getPoints();
 		pointsB = b.getPoints();
 		posAX = pointsA[0].x;
@@ -58,6 +58,20 @@
 			return posAY - posBY;
 		return posAX - posBX;
 	};
+
+	var sortColumnsFunction = function(a, b) {
+                pointsA = a.getPoints();
+                pointsB = b.getPoints();
+                posAX = pointsA[0].x;
+                posAY = pointsA[0].y;
+                posBX = pointsB[0].x;
+                posBY = pointsB[0].y;
+
+                if (posAX != posBX)
+                        return posAX - posBX;
+                return posAY - posBY;
+        };
+
 	var element2Remove;
 
 	var i = 0;
@@ -618,6 +632,9 @@
 				}
 			}
 		}
+
+		console.log("Pos X:" + posX + " Pos Y:" + posY);
+		console.log("Pos 1:" + pos1 + " Pos 3:" + pos3);
 		adicionarSegmento([ posX, pos1, posX, pos3 ]);
 	}
 
@@ -628,9 +645,11 @@
 
 		var z;
 
+
 		for (z = linhas.length - 1; z >= 0; z--) {
 			var points2 = linhas[z].getPoints();
 			if (points2[0].y == posY) {
+
 				if (points2[0].x == posX) {
 					pos2 = points2[1].x;
 					linhas[z].remove();
@@ -643,6 +662,9 @@
 				}
 			}
 		}
+
+		console.log("Pos X:" + posX + " Pos Y:" + posY);
+		console.log("Pos 0:" + pos0 + " Pos 2:" + pos2);
 		adicionarSegmento([ pos0, posY, pos2, posY ]);
 	}
 
@@ -702,8 +724,15 @@
 				if (isBorda(segmentoLinha.getPoints())) {
 					segmentoLinha = encontraSegmentoLinhaInferior(points);
 				}
-				linhas2Remove.push(segmentoLinha);
+				
+				if ($.inArray(segmentoLinha, linhas2Remove) == -1) {
+					linhas2Remove.push(segmentoLinha);
+				}
 			}
+		}
+
+		for (var i = 0; i < linhas2Remove.length; i++) {
+			removerLinha(linhas2Remove[i]);
 		}
 
 		var colunas2Remove = new Array();
@@ -718,10 +747,6 @@
 				}
 				colunas2Remove.push(segmentoColuna);
 			}
-		}
-
-		for (var i = 0; i < linhas2Remove.length; i++) {
-			removerLinha(linhas2Remove[i]);
 		}
 
 		for (var i = 0; i < colunas2Remove.length; i++) {
@@ -764,10 +789,12 @@
 	}
 
 	function removerLinha(segmento) {
+		posUnidas = new Array();
 		var points = segmento.getPoints();
-		for (i = linhas.length - 1; i >= 0; i--) {
+		for (var i = linhas.length - 1; i >= 0; i--) {
 			var points2 = linhas[i].getPoints();
 			if (isMesmaLinha(points, points2)) {
+					
 				linhas[i].remove();
 				linhas.splice(i, 1);
 				// Finalmente, atualizamos todas aquelas
@@ -778,6 +805,7 @@
 	}
 
 	function removerColuna(segmento) {
+		posUnidas = new Array();
 		var points = segmento.getPoints();
 
 		// Eh necessario fazer iteracao inversa sobre o array para
@@ -846,7 +874,7 @@
 			// linha
 
 			if ((evt.which && evt.which == 3) || (evt.button && evt.button == 2)) {
-				posUnidas = new Array();
+
 				// Recupera o objeto que foi clicado
 				var shape = evt.targetNode;
 				if (typeof shape == "undefined" || shape.getClassName() != "Line") return;
@@ -923,7 +951,7 @@
 	}
 
 	function handleRemoverSegmentoEvent() {
-		points = element2Remove.getPoints();
+		var points = element2Remove.getPoints();
 		if (!isBorda(points)) {
 
 			if (isColuna(points)) {
@@ -966,7 +994,8 @@
 	}
 
 	function handleRemoverLinhaColunaEvent() {
-		points = element2Remove.getPoints();
+		var points = element2Remove.getPoints();
+		console.log(points);
 		if (!isBorda(points)) {
 
 			if (isColuna(points)) {
@@ -976,6 +1005,24 @@
 			}
 		}
 	}
+
+        function findColunaPerpendicular(ptsLinha){
+        	for (var z = 0; z < colunas.length; z++){
+			var points = colunas[z].getPoints();
+			if (ptsLinha[0].y == points[0].y && ptsLinha[1].x == points[1].x) return z;
+		}
+
+		return -1;
+        }
+
+	function findLinhaPerpendicular(ptsColuna){
+                for (var z = 0; z < linhas.length; z++){
+                        var points = linhas[z].getPoints();
+                        if (ptsColuna[1].x == points[1].x && ptsColuna[1].y == points[1].y) return z;
+                }
+
+                return -1;
+        }
 
 	// Usada
 	function salvarAlteracoes() {
@@ -987,31 +1034,40 @@
 		var ptsColuna;
 		var iteradorLinha;
 		var iteradorColuna;
+		var idx_linhaPerpendicular;
 		var resultado = new Array();
 
-		linhas.sort(sortFunction);
-		colunas.sort(sortFunction);
+		linhas.sort(sortLinesFunction);
+		colunas.sort(sortColumnsFunction);
 
 		iteradorLinha = 0;
 		iteradorColuna = 0;
 		ptsLinha = linhas[iteradorLinha].getPoints();
-		while (ptsLinha[0].y < maxY) { 
+		while (ptsLinha[0].y < maxY) {
+
+			leftX = ptsLinha[0].x;
+			upperY = ptsLinha[0].y;
+
+			// Procurar pela linha limitada por uma coluna perpendicular.
+			while ((iteradorColuna = findColunaPerpendicular(ptsLinha)) == -1 && ptsLinha[0].y == upperY){
+				iteradorLinha++;
+				ptsLinha = linhas[iteradorLinha].getPoints();
+			}
+
+			rightX = ptsLinha[1].x;
+
 			ptsColuna = colunas[iteradorColuna].getPoints();
 			
-			// Essa situacao so ocorre quando comecamos a percorrer uma nova linha. 
-			while (ptsColuna[0].y != ptsLinha[0].y) {
+			// Procurar pela coluna limitada por uma linha perpendicular.
+			while (idx_linhaPerpendicular = findLinhaPerpendicular(ptsColuna) == -1 && ptsColuna[0].x == rightX) {
 				iteradorColuna++;
 				ptsColuna = colunas[iteradorColuna].getPoints();
 			}
 			
-			leftX = ptsLinha[0].x;
-			rightX = ptsLinha[1].x;
-			upperY = ptsColuna[0].y;
 			bottomY = ptsColuna[1].y;
 			
 			resultado.push([leftX, upperY, rightX, bottomY]);
 			iteradorLinha++;
-			iteradorColuna++;
 			ptsLinha = linhas[iteradorLinha].getPoints();
 		} 
 		

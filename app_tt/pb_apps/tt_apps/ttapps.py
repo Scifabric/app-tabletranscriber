@@ -12,8 +12,15 @@ class Apptt_select(app.Apptt):
         if "short_name" in keyargs.keys():
             short_name = keyargs['short_name']
 
+	    if "title" in keyargs.keys():
+     	        title = keyargs['title'] + " "
+	    else:
+		title = ""
+	    
+	    app_name = title + unicode("Seleção", "utf-8")
+
             super(Apptt_select, self).__init__(
-                "Seleção de tabelas",
+                app_name,
                 short_name,
                 "Por favor. Selecione as páginas com tabela.")
 
@@ -38,8 +45,15 @@ class Apptt_meta(app.Apptt):
         if "short_name" in keyargs.keys():
             short_name = keyargs['short_name']
 
+	    if "title" in keyargs.keys():
+     	        title = keyargs['title'] + " "
+	    else:
+		title = ""
+	    
+	    app_name = title + unicode("Marcação", "utf-8")
+
             super(Apptt_meta, self).__init__(
-                "Marcação de tabelas", short_name,
+                app_name, short_name,
                 "Marque e descreva as tabelas ou corrija as marcações.")
 
             super(Apptt_meta, self).set_template(_setUrl_(
@@ -60,12 +74,19 @@ class Apptt_meta(app.Apptt):
 
 class Apptt_struct(app.Apptt):
     def __init__(self, **keyargs):
-        print ("TT3_BACKEND: " + flask_app.config['TT3_BACKEND'])
+
         if "short_name" in keyargs.keys():
             short_name = keyargs['short_name']
 
+	    if "title" in keyargs.keys():
+     	        title = keyargs['title'] + " "
+	    else:
+		title = ""
+	    
+	    app_name = title + unicode("Estrutura", "utf-8")
+
             super(Apptt_struct, self).__init__(
-                "Estrutura das tabelas", short_name,
+                app_name, short_name,
                 "Por favor. Corrija as linhas e colunas da tabela.")
 
             super(Apptt_struct, self).set_template(_setUrl_(

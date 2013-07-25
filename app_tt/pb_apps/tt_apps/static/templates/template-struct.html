@@ -32,11 +32,18 @@
   </div> <!-- End Success and Error Messages for the user -->
 </div>
 
-<div class="skeleton" style="margin-top: 30px; margin-bottom: 30px"> <!-- Start Skeleton -->
-    <h1 id="question"></h1> <!-- The question will be loaded here -->
-    <p><span>#</span><span id="task-id" class="label label-warning">#</span></p>
+<div class="row skeleton">  <!-- Start Skeleton -->
+	<div class="span7">
+	    <h1 id="question"></h1> <!-- The question will be loaded here -->
+	<!-- <p><span>#</span><span id="task-id" class="label label-warning">#</span></p> -->
+	    <p><span id="progress-from">#</span><span id="done" class="label label-info" style="margin-right: 5px"></span><span id="progress-to">#</span>
+	    <!-- Progress bar for the user -->
+	    <span id="total" class="label label-inverse"></span></p>
+	    <div class="progress progress-striped">
+	     	  <div id="progress" rel="tooltip" title="#" class="bar" style="width: 0%;"></div>
+	    </div>
+	</div>
 </div><!-- End of Skeleton -->
-
 
 <div class="skeleton">
 
@@ -52,10 +59,10 @@
 	</div>
 
 	<!--  Radio buttons para definir qual a ação que o usuário -->
-	<div id="adicionar_linha_coluna" style="display: block; margin-bottom: 10px" >
-	        <button id="button_addline" style="float: left; margin-right: 10px" onclick="adicionarNovaLinha();">#</button>
-	        <button id="button_addcolumn" style="margin-right: 80px" onclick="adicionarNovaColuna();">#</button>
-	        <button id="button_finished" onclick="submitTask()">#</button>
+	<div id="adicionar_linha_coluna" style="display: none; margin-bottom: 10px" >
+	        <button id="button_addline" class="btn" style="float: left; margin-right: 10px" onclick="adicionarNovaLinha();">#</button>
+	        <button id="button_addcolumn" class="btn" style="margin-right: 80px" onclick="adicionarNovaColuna();">#</button>
+	        <button id="button_finished" class="btn btn-success" onclick="submitTask()">#</button>
 	</div>
 </div>
 
@@ -97,8 +104,22 @@ canvas {
 		$("#finish span:nth-child(2)").text($.i18n._('finished'));
 		$("#error strong").text($.i18n._('error'));
 		$("#error span:nth-child(2)").text($.i18n._('err_msg'));
-      	        $("#workflowtask span:first").text($.i18n._('workflowtask'));	
+      	        $("#workflowtask span:first").text($.i18n._('workflowtask'));
+		$("#progress-from").text($.i18n._('progress-from'));
+		$("#progress-to").text($.i18n._('progress-to'));
     });
+
+    function loadUserProgress() {
+	pybossa.userProgress(task_shortname).done(function(data){
+		var pct = Math.round((data.done*100)/data.total);
+		$("#progress").css("width", pct.toString() +"%");
+		$("#progress").attr("title", pct.toString() + "% completed!");
+		$("#progress").tooltip({'placement': 'left'}); 
+		$("#total").text(data.total);
+		$("#done").text(data.done);
+	});
+    }
+
 
     $(".menu-item").click(function () {
         var str = $(this).text();
@@ -118,6 +139,7 @@ canvas {
 
 
         if ( !$.isEmptyObject(data.task) ) {
+                 loadUserProgress();
 		 $("#question").text(data.question);
 		 $("#task-id").text(data.task.id);
 		 var coords = data.task.info.last_answer != undefined ? data.task.info.last_answer.coords : data.task.info.coords;
@@ -125,6 +147,7 @@ canvas {
 		 var hasZoom = data.task.info.hasZoom;
 		 img_url = data.task.info.img_url;
 		 initGrid(coords, img_url, hasZoom, zoom);
+		 $("#adicionar_linha_coluna").show();
          } else {
 	        $(".skeleton").hide();
         	$("#finish").fadeIn();
