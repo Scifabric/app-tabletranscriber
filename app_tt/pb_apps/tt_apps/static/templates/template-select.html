@@ -40,12 +40,12 @@
           <button id="button_yes" class="btn btn-success" onclick="submitTask('Yes')"><i class="icon icon-white icon-ok"></i></button>
           <button id="button_no" class="btn btn-danger" onclick="submitTask('No')"><i class="icon icon-white icon-remove"></i></button>
           <button id="button_ntk" class="btn" onclick="submitTask('NotKnown')"><i class="icon icon-white icon-refresh"></i></button>
-          <p><span id="progress-from">#</span><span id="done" class="label label-info"></span><span id="progress-to">#</span>
+          <p><span id="progress-from">#</span><span id="done" class="label label-info" style="margin-right: 5px"></span><span id="progress-to">#</span>
           <!-- Progress bar for the user -->
           <span id="total" class="label label-inverse"></span></p>
-            <div class="progress progress-striped">
-            <div id="progress" rel="tooltip" title="#" class="bar" style="width: 0%;"></div>
-            </div>
+          <div class="progress progress-striped">
+          	<div id="progress" rel="tooltip" title="#" class="bar" style="width: 0%;"></div>
+          </div>
         </div>
 </div>
 
@@ -93,9 +93,9 @@ $(window).load(function(){
 		$("#finish span:nth-child(2)").text($.i18n._('finished'));
 		$("#error strong").text($.i18n._('error'));
 		$("#error span:nth-child(2)").text($.i18n._('err_msg'));
-        $("#workflowtask span:first").text($.i18n._('workflowtask'));
-        $("#progress-from").text($.i18n._('progress-from'));
-        $("#progress-to").text($.i18n._('progress-to'));
+       		$("#workflowtask span:first").text($.i18n._('workflowtask'));
+		$("#progress-from").text($.i18n._('progress-from'));
+		$("#progress-to").text($.i18n._('progress-to'));
 		
 }); //Internationalization using jquery.i18n
 
@@ -140,41 +140,40 @@ function enableNextTask(taskId){
 function loadData( data ) {
 	
     if ( !$.isEmptyObject(data.task) ) {
-            loadUserProgress();
+                loadUserProgress();
 		task_id = data.task.id;
 	        $("#image-link").attr("href", data.task.info.url_b);
 	        $("#image").attr("src",data.task.info.url_m);
-	    }
+   }
    else {
         $(".skeleton").hide();
         //$("#finish").fadeIn();
          window.open(endpoint + "/app/" + task_shortname.replace("_tt1", "_tt2")  + "/newtask", "_self");
    }
 
-	}
+}
 
-	// Function to submit and save the TaskRun in PyBossa
-	function submitTask(answer) {
-		// Get the task-id
-		taskid = task_id;
-		
-		// Save the task
-		pybossa.saveTask(taskid, answer).done(function(data) {
-            //Call tt workflow api.
-            taskRunDone(taskid);
+// Function to submit and save the TaskRun in PyBossa
+function submitTask(answer) {
+	// Get the task-id
+	taskid = task_id;
+	
+	// Save the task
+	pybossa.saveTask(taskid, answer).done(function(data) {
+        //Call tt workflow api.
+        taskRunDone(taskid);
 
-           $.blockUI({message: $("#success"),
-                        css: {height: $("#success").height()}
-            });
-			// Load a new task
-            pybossa.newTask(task_shortname).done(function(data) {
-
-				loadData(data);
-			});
+   	$.blockUI({message: $("#success"),
+                css: {height: $("#success").height()}
+   	});
+		// Load a new task
+	pybossa.newTask(task_shortname).done(function(data) {
+			loadData(data);
 		});
-	}
+	});
+}
 
-    pybossa.setEndpoint(endpoint);
-    pybossa.newTask(task_shortname).done( function( data ) { loadData( data ) });
+pybossa.setEndpoint(endpoint);
+pybossa.newTask(task_shortname).done( function( data ) { loadData( data ) });
     
 </script>

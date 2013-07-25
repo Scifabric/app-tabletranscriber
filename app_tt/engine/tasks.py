@@ -66,9 +66,10 @@ def create_apps(book_id):
     imgs = __get_tt_images(book_id)
 
     if(imgs):
-        tt_select = Apptt_select(short_name=book_id + "_tt1")
-        tt_meta = Apptt_meta(short_name=book_id + "_tt2")
-        tt_struct = Apptt_struct(short_name=book_id + "_tt3")
+	
+        tt_select = Apptt_select(short_name=book_id + "_tt1", title=__get_book_title(book_id))
+        tt_meta = Apptt_meta(short_name=book_id + "_tt2", title=__get_book_title(book_id))
+        tt_struct = Apptt_struct(short_name=book_id + "_tt3", title=__get_book_title(book_id))
 
         bookInfo = _archiveBookData(book_id)
 
@@ -130,6 +131,24 @@ def create_task(task_id):
     task = task_factory.get_task(task_id)
     task.add_next_task()
 
+
+
+def __get_book_title(bookId):
+
+    print('Contacting archive.org')
+
+    url = "http://archive.org/metadata/"
+    query = url + bookId
+    urlobj = urllib2.urlopen(query)
+    data = urlobj.read()
+    urlobj.close()
+    output = json.loads(data)
+    title = ""
+
+    if output:
+        title = output['metadata']['title']
+
+    return title
 
 def __get_tt_images(bookId):
     """

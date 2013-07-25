@@ -12,14 +12,14 @@ var default_dict = {
     'error': "Error! ",
     'err_msg': "Something went wrong, please contact the site administrators.",
     'workflowtask' : "There is a new kind of task available. Click to Try it.",
-    'progress-from' : "You have completed:",
+    'progress-from' : "You have completed: ",
     'progress-to' : "tasks from"
 }
 
 var en_US_dict = default_dict;
 
 var pt_dict= {
-		'question': "Existe uma tabela nessa página?",
+	    'question': "Existe uma tabela nessa página?",
 	    'button_yes': "Sim",
 	    'button_no':  "Não",
 	    'button_ntk': "Não sei",
@@ -31,9 +31,9 @@ var pt_dict= {
 	    'other_apps': "ou, verificar outras aplicações",
 	    'error': "Erro! ",
 	    'err_msg': "Algo ocorreu errado, por favor contate o administrador do site.",
-        'workflowtask' : "Existe um novo tipo de tarefa disponível. Clique para ir.",
-        'progress-from' : "Você fez: ",
-        'progress-to' : "tarefas de "
+            'workflowtask' : "Existe um novo tipo de tarefa disponível. Clique para ir.",
+            'progress-from' : "Você fez: ",
+            'progress-to' : "tarefas de "
 }
 
 var language = navigator.language? navigator.language : navigator.userLanguage;
