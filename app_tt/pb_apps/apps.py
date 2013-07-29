@@ -41,12 +41,16 @@ class Apptt(object):
                 return app.id
 
         print("The application is not registered in PyBOSSA. Creating it...")
+        
+        print("request: " + self.pybossa_url + '/api/app?api_key=' +
+                self.api_key)
+        
         # Setting the POST action
         request = urllib2.Request(self.pybossa_url + '/api/app?api_key=' +
                 self.api_key)
         request.add_data(data)
         request.add_header('Content-type', 'application/json')
-
+        
         # Create the app in PyBOSSA
         output = json.loads(urllib2.urlopen(request).read())
         if (output['id'] is not None):

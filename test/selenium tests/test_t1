@@ -46,6 +46,11 @@
 	<td>xpath=//*[@id=&quot;button&quot;]</td>
 	<td></td>
 </tr>
+<tr>
+	<td>setCursorPosition</td>
+	<td></td>
+	<td>22.5 , 141</td>
+</tr>
 
 </tbody></table>
 </body>

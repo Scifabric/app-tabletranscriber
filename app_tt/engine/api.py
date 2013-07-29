@@ -42,7 +42,6 @@ def check_task_done(task_id):
     :returns: If task is finished
 
     """
-    print("Teste 1: " + task_id)
     done = check_task.delay(task_id)
     done = done.get()
     print done
