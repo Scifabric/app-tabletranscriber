@@ -2,14 +2,14 @@
 "http://www.w3.org/TR/html4/strict.dtd">
 
 
-<div class="row">
+<div class="row" style="margin-left: 10px;">
 
-  <div class="span8 offset2" style="height:50px">
+  <div class="span6" style="height:50px">
 
-   	<div id="success" class="alert alert-success" style="display:none;">
+    <div id="success" class="alert alert-success" style="display:none;">
 	   	<a class="close">x</a>
 	    <p><span><strong>#</strong></span><span>#</span></p>
-	</div>
+    </div>
     <div id="finish" class="alert alert-success" style="display:none;">
       <p><span><strong>#</strong></span><span>#</span></p>
       <!--
@@ -21,25 +21,21 @@
       -->
     </div>
     <div id="error" class="alert alert-error" style="display:none;">
-      <a class="close">x</a>
-      <p><span><strong>#</strong></span><span>#</span></p>
-  </div>
-  <div id="workflowtask" class="alert alert-success" style="display:none; cursor:pointer;">
-        <a class="close"></a>
-       <p><span>#</span></p>
+         <a class="close">x</a>
+         <p><span><strong>#</strong></span><span>#</span></p>
     </div>
-
+    <div id="workflowtask" class="alert alert-success" style="display:none; text-align: center; cursor:pointer; position:relative; margin-top: 5px;"></div>
   </div> <!-- End Success and Error Messages for the user -->
 </div>
 
 <div class="row skeleton">  <!-- Start Skeleton -->
-	<div class="span7">
+	<div class="span9">
 	    <h1 id="question"></h1> <!-- The question will be loaded here -->
-	    <p><span>#</span><span id="task-id" class="label label-warning">#</span></p> 
+	<!-- <p><span>#</span><span id="task-id" class="label label-warning">#</span></p> -->
 	    <p><span id="progress-from">#</span><span id="done" class="label label-info" style="margin-right: 5px"></span><span id="progress-to">#</span>
 	    <!-- Progress bar for the user -->
 	    <span id="total" class="label label-inverse"></span></p>
-	    <div class="progress progress-striped">
+	    <div class="progress progress-striped" style="width: 520px">
 	     	  <div id="progress" rel="tooltip" title="#" class="bar" style="width: 0%;"></div>
 	    </div>
 	</div>
@@ -48,29 +44,30 @@
 <div class="skeleton">
 
 	<!-- <img id="loading" src="#server/images/loading.gif"/> -->
-	<div id="container" style="position: relative;" data-toggle="context" data-target="#context-menu">
-		<div id="context-menu" style="position: absolute;" >
-		  <ul id="remover-menu" class="dropdown-menu" role="menu">
-		    <li class="menu-item"><a tabindex="1" href="#">Remover linha/coluna</a></li>
-		    <li class="menu-item"><a tabindex="2" href="#">Remover segmento</a></li>
+
+		<div id="context-menu">
+		  <ul id="remover-menu" class="dropdown-menu">
+		    <li><a id="remover-linha-coluna" class="menu-item" tabindex="1" href="#">Remover linha/coluna</a></li>
+		    <li><a id="remover-segmento" class="menu-item" tabindex="2" href="#">Remover segmento</a></li>
+		    <li><a id="adicionar-linha" class="menu-item" tabindex="3" href="#">Adicionar linha</a></li>
+		    <li><a id="adicionar-coluna" class="menu-item" tabindex="4" href="#">Adicionar coluna</a></li>
 		  </ul>
 		</div>
-	    	<div id="canvas-container" style="margin: 10px"></div>
-	</div>
+	    	<div id="canvas-container" style="margin-left: 10px; float: left;"></div>
 
-	<!--  Radio buttons para definir qual a ação que o usuário -->
-	<div id="adicionar_linha_coluna" style="display: none; margin-bottom: 10px" >
-	        <button id="button_addline" class="btn" style="float: left; margin-right: 10px" onclick="adicionarNovaLinha();">#</button>
-	        <button id="button_addcolumn" class="btn" style="margin-right: 80px" onclick="adicionarNovaColuna();">#</button>
-	        <button id="button_finished" class="btn btn-success" onclick="submitTask()">#</button>
-	</div>
+		<div id="adicionar_linha_coluna" style="display: none; margin-bottom: 10px; float: right; width: 400px" >
+			<div class="alert alert-info"> 
+				<h5 id="task-info"><strong> Instru&ccedil;&otilde;es</strong><br><ul><li> Clique com o bot&atilde;o direito sobre um segmento para remov&ecirc;-lo;</li><li>Clique com o botão direito numa regi&atilde;o da tabela para adicionar um segmento;</li><li>Clique e arraste um segmento para ajustar sua posi&ccedil;&atilde;o.</li></ul></h5>
+			</div>
+			<button class="btn btn-success" style="height: 80px; width: 260px; font-size: 20px; margin-left: 65px;" onclick="submitTask()"><i class="icon icon-white icon-thumbs-up" style="margin-right:10px;"></i><span id="button_finished">#</span></button>
+		</div>
 </div>
 
 <script src="#server/js/kinetic.js"></script>
 <script type="text/javascript" src="#server/js/jquery.i18n.min.js"></script>
 <script type="text/javascript" src="#server/js/tt-struct-i18n.js"></script>
 <script type="text/javascript" src="#server/js/throbber/throbber.js" ></script>
-<script type="text/javascript" src="#server/js/bootstrap-contextmenu.js"></script>
+<script type="text/javascript" src="http://malsup.github.com/jquery.blockUI.js"></script>
 <script type="text/javascript" charset="utf-8" src="#server/js/tt3.js"></script>
 
 <style>
@@ -89,6 +86,8 @@ canvas {
     
 <script type="text/javascript" charset="utf-8">
 
+    var taskid;
+
     $(window).load(function(){
 		$("#question").text($.i18n._('question'));
 		$("#question span:first").text($.i18n._('task_name'));
@@ -104,7 +103,7 @@ canvas {
 		$("#finish span:nth-child(2)").text($.i18n._('finished'));
 		$("#error strong").text($.i18n._('error'));
 		$("#error span:nth-child(2)").text($.i18n._('err_msg'));
-      	        $("#workflowtask span:first").text($.i18n._('workflowtask'));
+      	        $("#workflowtask").text($.i18n._('workflowtask'));
 		$("#progress-from").text($.i18n._('progress-from'));
 		$("#progress-to").text($.i18n._('progress-to'));
     });
@@ -120,14 +119,46 @@ canvas {
 	});
     }
 
+    function taskRunDone(taskId){
+        $.ajax({
+            url: '/mb/api/' + taskId + '/done',
+            success: function(data){
+                    enableNextTask(taskId);
+                }
+            });
+    }
+
+    function enableNextTask(taskId){
+        $("#workflowtask").fadeIn(200);
+    }
+
+    $("#workflowtask").click(function(){
+		var random_task_type = Math.round(Math.random()) + 1;
+                window.open(endpoint + "/app/" + task_shortname.replace("_tt3", "_tt" + random_task_type)  + "/newtask", "_self");
+    });
+
+    $('body').on('click', function(e) {
+	    $("#remover-menu").hide();
+    });
 
     $(".menu-item").click(function () {
         var str = $(this).text();
 	if (str == "Remover segmento") {
-		handleRemoverSegmentoEvent();
-	} else {
+		var successful = handleRemoverSegmentoEvent();
+		if (!successful) alert("Não é possível remover este segmento.");
+
+	} else if (str == "Remover linha/coluna") {
 		handleRemoverLinhaColunaEvent();
+	} else if (str == "Adicionar linha") {
+		handleAdicionarLinhaEvent();
+	} else if (str == "Adicionar coluna"){
+		handleAdicionarColunaEvent();
 	}
+
+	$("#remover-linha-coluna").blur();
+	$("#remover-segmento").blur();
+	$("#adicionar-linha").blur();
+	$("#adicionar-coluna").blur();
 	$("#remover-menu").hide();
     });
 
@@ -135,20 +166,24 @@ canvas {
     var endpoint = "/pybossa";
     var img_url;
 
-    function loadData( data ) {
+    function loadData(data) {
 
 
         if ( !$.isEmptyObject(data.task) ) {
                  loadUserProgress();
-		 $("#question").text(data.question);
-		 $("#task-id").text(data.task.id);
-		 console.log("data: " + data.task);
+   	         var hasZoom = data.task.info.hasZoom;
+		 var question = $.i18n._('question');
+		 if (hasZoom) question = $.i18n._('question_with_focus');
+
+		 $("#question").text(question);
+		 taskid = data.task.id;
 		 var coords = data.task.info.last_answer != undefined ? data.task.info.last_answer.coords : data.task.info.coords;
 		 var zoom = data.task.info.zoom;
-		 var hasZoom = data.task.info.hasZoom;
 		 img_url = data.task.info.img_url;
-		 initGrid(coords, img_url, hasZoom, zoom);
-		 $("#adicionar_linha_coluna").show();
+		 setTimeout(function(){
+				 initGrid(coords, img_url, hasZoom, zoom);
+				 $.unblockUI(); $("#adicionar_linha_coluna").show();
+		}, 0);
          } else {
 	        $(".skeleton").hide();
         	$("#finish").fadeIn();
@@ -156,45 +191,38 @@ canvas {
 
      }
 
-// Function to submit and save the TaskRun in PyBossa
-function submitTask() {
-        // Get grid infos
+     // Function to submit and save the TaskRun in PyBossa
+     function submitTask() {
+             
+	// Get grid infos
+        var segmentos = salvarAlteracoes();
 
-        var gridCoords = salvarAlteracoes();
+        var answer = {'img_url': img_url, 'segmentos': segmentos};
 
-        var answer = {'img_url' : img_url, 'coords': gridCoords};
-        console.log(answer);
-	// Get the task-id
-	taskid = $("#task-id").text();
-		
-        console.log("taskid: " + taskid);
+        $.blockUI({message: $("#success"),
+	              css: {height: $("#success").height()}
+	});
+
 	// Save the task
 	pybossa.saveTask(taskid, answer).done(function(data) {
-		//Call tt workflow api.
-        //taskRunDone(taskid);
-        clearCanvas();
+	        //Call tt workflow api.
+	        taskRunDone(taskid);
+        	clearCanvas();
 
-        // $.blockUI({message: $("#success"),
-        //              css: {height: $("#success").height()}
-        //  });
-			// Load a new task
-			console.log("OKOK");
-        pybossa.newTask(task_shortname).done(function(data) {
-        	console.log("OKOK2");	
-        	loadData(data);
-			});
-			
+		// Load a new task
+		pybossa.newTask(task_shortname).done(function(data) {
+					loadData(data);
+		});
 	});
-}
+     }
 
-pybossa.setEndpoint(endpoint);
+     pybossa.setEndpoint(endpoint);
 
-$(window).load(function(){
-        pybossa.newTask(task_shortname).done(
-            function( data ) {
-                loadData( data )
-                });
-        
-});
+     $(window).load(function(){
+             pybossa.newTask(task_shortname).done(
+                 function( data ) {
+                     loadData( data );
+             }); 
+     });
 
 </script>
