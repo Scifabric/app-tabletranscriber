@@ -12,7 +12,7 @@ var default_dict = {
     'error': "Error! ",
     'err_msg': "Something went wrong, please contact the site administrators.",
     'workflowtask' : "There is a new kind of task available. Click to try it.",
-    'progress-from' : "You have completed: ",
+    'progress-from' : "You have completed ",
     'progress-to' : "tasks from"
 }
 

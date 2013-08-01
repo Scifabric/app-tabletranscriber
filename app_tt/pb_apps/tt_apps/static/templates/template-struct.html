@@ -87,6 +87,7 @@ canvas {
 <script type="text/javascript" charset="utf-8">
 
     var taskid;
+    var lastTask;
 
     $(window).load(function(){
 		$("#question").text($.i18n._('question'));
@@ -110,6 +111,7 @@ canvas {
 
     function loadUserProgress() {
 	pybossa.userProgress(task_shortname).done(function(data){
+		lastTask = (data.done + 1) == data.total;
 		var pct = Math.round((data.done*100)/data.total);
 		$("#progress").css("width", pct.toString() +"%");
 		$("#progress").attr("title", pct.toString() + "% completed!");
@@ -182,13 +184,17 @@ canvas {
 		 img_url = data.task.info.img_url;
 		 setTimeout(function(){
 				 initGrid(coords, img_url, hasZoom, zoom);
-				 $.unblockUI(); $("#adicionar_linha_coluna").show();
+				 $.unblockUI();
+				 $("#adicionar_linha_coluna").show();
 		}, 0);
          } else {
+		$.unblockUI();
 	        $(".skeleton").hide();
-        	$("#finish").fadeIn();
+        	$("#finish").fadeIn(200);
+		setTimeout(function(){
+			$("#finish").fadeOut(200);
+		}, 1500);
 	}
-
      }
 
      // Function to submit and save the TaskRun in PyBossa
@@ -199,11 +205,10 @@ canvas {
 
         var answer = {'img_url': img_url, 'segmentos': segmentos};
 
-        $.blockUI({message: $("#success"),
-	              css: {height: $("#success").height()}
+	$.blockUI({message: $("#success"),
+		      css: {height: $("#success").height()}
 	});
 
-	// Save the task
 	pybossa.saveTask(taskid, answer).done(function(data) {
 	        //Call tt workflow api.
 	        taskRunDone(taskid);
@@ -211,7 +216,7 @@ canvas {
 
 		// Load a new task
 		pybossa.newTask(task_shortname).done(function(data) {
-					loadData(data);
+			loadData(data);
 		});
 	});
      }

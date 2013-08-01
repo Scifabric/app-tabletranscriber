@@ -17,7 +17,7 @@ var en_US_dict = {
     'other_apps': "or, Check other applications",
     'error': "Error! ",
     'err_msg': "Something went wrong, please contact the site administrators.",
-    'workflowtask' : "There are other types of task available. Click to try it.",
+    'workflowtask' : "There are other types of tasks available. Click to try it.",
     'progress-from' : "You have completed: ",
     'progress-to' : "tasks from"
 }
@@ -41,7 +41,7 @@ var pt_dict= {
     'other_apps': "ou, verificar outras aplicações",
     'error': "Erro! ",
     'err_msg': "Algo ocorreu errado, por favor contate o administrador do site.",
-    'workflowtask' : "Há outros tipos de tarefa disponíveis. Clique para ir.",
+    'workflowtask' : "Há outros tipos de tarefas disponíveis. Clique para ir.",
     'progress-from' : "Você fez ",
     'progress-to' : "tarefas de "
     

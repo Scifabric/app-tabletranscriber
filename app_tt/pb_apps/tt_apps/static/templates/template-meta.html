@@ -174,19 +174,24 @@ function loadData( data ) {
         $(".skeleton").hide();
         $("#finish").fadeIn(100, function(){
         
-            $.ajax({
-            url: '/mb/api/' + task_id + '/available_tasks',
-            success: function(data){
-                if(data == "True"){
-                    window.open(endpoint + "/app/" + task_shortname.replace("_tt2", "_tt1")  + "/newtask", "_self");
-                }
-                else{
-                    window.open("/mb/collaborate", "_self");
-                }
-            }
-            }); 
+	    if (task_id != "") {
+		    $.ajax({
+		    url: '/mb/api/' + task_id + '/available_tasks',
+		    success: function(data){
+			if(data == "True"){
+			    window.open(endpoint + "/app/" + task_shortname.replace("_tt2", "_tt1")  + "/newtask", "_self");
+			}
+			else{
+			    window.open("/mb/collaborate", "_self");
+			}
+		    }
+		    }); 
+	    } else {
+		    setTimeout(function(){
+			window.open(endpoint + "/app/" + task_shortname.replace("_tt2", "_tt1")  + "/newtask", "_self");
+		    }, 1500);
+	    }
         });
-       
     }
 }
 

@@ -160,7 +160,11 @@ function loadData( data ) {
     else {
         $(".skeleton").hide();
         $("#divsuccess").css('display','show');
-        $("#finish").fadeIn();
+        $("#finish").fadeIn(200);
+
+	setTimeout(function(){
+		window.open(endpoint + "/app/" + task_shortname.replace("_tt2", "_tt1")  + "/newtask", "_self");
+	}, 1500);
     }
 }
 
