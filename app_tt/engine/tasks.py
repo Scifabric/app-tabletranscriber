@@ -66,10 +66,11 @@ def create_apps(book_id):
     imgs = __get_tt_images(book_id)
 
     if(imgs):
-	
-        tt_select = Apptt_select(short_name=book_id + "_tt1", title=__get_book_title(book_id))
-        tt_meta = Apptt_meta(short_name=book_id + "_tt2", title=__get_book_title(book_id))
-        tt_struct = Apptt_struct(short_name=book_id + "_tt3", title=__get_book_title(book_id))
+	book_title = __get_book_title(book_id);
+
+        tt_select = Apptt_select(short_name=book_id + "_tt1", title=book_title)
+        tt_meta = Apptt_meta(short_name=book_id + "_tt2", title=book_title)
+        tt_struct = Apptt_struct(short_name=book_id + "_tt3", title=book_title)
 
         bookInfo = _archiveBookData(book_id)
 
