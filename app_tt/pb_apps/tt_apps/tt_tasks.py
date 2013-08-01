@@ -137,14 +137,11 @@ class TTTask2(pb_task):
     def check_answer(self):
         task_runs = self.get_task_runs()
         n_taskruns = len(task_runs)  # task_runs goes from 0 to n-1
-        print("Teste 1")
         if(n_taskruns > 1):
             answer1 = json.loads(task_runs[n_taskruns - 1].info)
             answer2 = json.loads(task_runs[n_taskruns - 2].info)
-            print("Teste 2")
             if answer1 == answer2:
                 if answer2 != "0":
-                    print("Teste 3")
                     return self.__fileOutput(answer2)
                 elif answer2 == "0":  # There is one error at TTTask1 answer
                     pass
@@ -173,10 +170,10 @@ class TTTask2(pb_task):
             fullImgFile = open(fullImgPath, "w")
             fullImgFile.write(url_request.content)
             fullImgFile.close()
-
+            
             lowImgPath = "%s/books/%s/baixa_resolucao/image%s.png" % (
                 app.config['TT3_BACKEND'], bookId, imgId)
-
+            
             command = 'convert %s -resize %dx%d! %s' % (
                 fullImgPath, width, height, lowImgPath)
 
@@ -209,11 +206,13 @@ class TTTask2(pb_task):
             rotate = "-r"
         else:
             rotate = "-nr"
-
+            
         command = 'cd %s/TableTranscriber2/; ./tabletranscriber2 ' \
             '"/books/%s/baixa_resolucao/image%s.png" "model%s" "%s"' % (
             app.config['TT3_BACKEND'], bookId, imgId, model, rotate)
-
+            
+        print("command: " + command)
+            
         call([command], shell=True)  # calls the shell command
         #TODO: implements exception strategy
 
@@ -329,10 +328,10 @@ class TTTask2(pb_task):
             arch = open("%s/books/%s/metadados/entrada/image%s.txt" % (
                 app.config["TT3_BACKEND"], bookId, imgId), "a")
             for table in answer:
-                x0 = table["left"]
-                x1 = table["width"] + x0
-                y0 = table["top"]
-                y1 = table["height"] + y0
+                x0 = int(table["left"])
+                x1 = int(table["width"] + x0)
+                y0 = int(table["top"])
+                y1 = int(table["height"] + y0)
                 arch.write(
                     str(x0) + "," + str(y0) + "," +
                     str(x1) + "," + str(y1) + "\n")
