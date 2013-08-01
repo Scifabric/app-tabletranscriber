@@ -37,7 +37,7 @@ def configure_app(app):
         app.config['RABBIT_VHOST'])
 
     app.config['TT3_BACKEND'] = os.path.join(
-            os.path.dirname(here), 'app_tt/pb_apps/tt_apps/static/cv-modules')
+            os.path.dirname(here), 'cv-modules')
 
 
 def setup_pbclient(app):

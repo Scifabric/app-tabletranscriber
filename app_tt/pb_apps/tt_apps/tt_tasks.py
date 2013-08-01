@@ -150,8 +150,8 @@ class TTTask2(pb_task):
 
     def get_next_app(self):
         curr_app_name = self.app_short_name
-        next_app_name = curr_app_name[:-1] + "1"  # TODO: Switch from 1 to 3
-        return ttapps.Apptt_select(short_name=next_app_name)
+        next_app_name = curr_app_name[:-1] + "3"
+        return ttapps.Apptt_struct(short_name=next_app_name)
 
     def __downloadArchiveImages(self, bookId, imgId, width=550, height=700):
         """
@@ -279,7 +279,7 @@ class TTTask2(pb_task):
         :returns: a indexed book table image
         :rtype: str
         """
-        return "%s/cv-modules/books/%s/metadados/tabelasBaixa/image%s_%d.png" % (
+        return "%s/books/%s/metadados/tabelasBaixa/image%s_%d.png" % (
             app.config['URL_TEMPLATES'], bookId, imgId, idx)
 
     def __splitFile(self, arch):
@@ -344,3 +344,30 @@ class TTTask2(pb_task):
             # TODO: see what to do with the flow in exceptions
 
         return False
+
+class TTTask3(pb_task):
+    """
+    Table Transcriber Task type 3
+    """
+    def __init__(self, task_id, app_short_name):
+        super(TTTask3, self).__init__(task_id, app_short_name)
+
+    def add_next_task(self):
+        #Verify the answer of the question to create a new task
+	#TODO create TT4 tasks
+	pass
+ 
+
+    def close_task(self):
+        pass
+
+    def check_answer(self):
+	#TODO check if all zoom areas were completed
+        return False
+
+    def get_next_app(self):
+        curr_app_name = self.app_short_name
+        next_app_name = curr_app_name[:-1] + "4"
+        return ttapps.Apptt_meta(short_name=next_app_name)
+
+

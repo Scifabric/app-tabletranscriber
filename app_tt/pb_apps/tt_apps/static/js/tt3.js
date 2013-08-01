@@ -39,8 +39,8 @@
 	var rightX;
 	var upperY;
 	var bottomY;
-	var horizontal = 1;
-	var vertical = 2;
+	var posXAdicao;
+	var posYAdicao;
 	var posUnidas;
 	var adicionandoLinha = false;
 	var adicionandoColuna = false;
@@ -74,11 +74,7 @@
 
 	var element2Remove;
 
-	var i = 0;
-	var j = 0;
-
 	var stage;
-
 	var layer;
 
 	function initVariables() {
@@ -90,8 +86,8 @@
 		adicionandoLinha = false;
 		adicionandoColuna = false;
 		hasZoom = false;
-		i = 0;
-		j = 0;
+		posXAdicao = 0;
+		posYAdicao = 0;
 		layer = new Kinetic.Layer();
 		minX = 2000;
 		minY = 2000;
@@ -147,7 +143,7 @@
 	// Usada
 	function moverLinha(posY, newPosY) {
 		if (!isPosBorda([ minX, posY, maxX, posY ]) && inZoom(posY) && inZoom(newPosY)) {
-			for (i = 0; i < linhas.length; i++) {
+			for (var i = 0; i < linhas.length; i++) {
 				var pts = linhas[i].getPoints();
 				if (pts[0].y == pts[1].y && pts[0].y == posY) {
 					atualizaSegmentosAdjacentes(pts, [ pts[0].x, newPosY, pts[1].x,
@@ -161,7 +157,7 @@
 	// Usada
 	function moverColuna(posX, newPosX) {
 		if (!isPosBorda([ posX, minY, posX, maxY ])) {
-			for (i = 0; i < colunas.length; i++) {
+			for (var i = 0; i < colunas.length; i++) {
 				var pts = colunas[i].getPoints();
 				if (pts[0].x == pts[1].x && pts[0].x == posX) {
 					atualizaSegmentosAdjacentes(pts, [ newPosX, pts[0].y, newPosX,
@@ -175,7 +171,7 @@
 	// TODO Essa funcao DEVE ser refatorada.
 	// Usada
 	function atualizaSegmentosAdjacentes(ptsAntes, ptsDepois) {
-		for ( var z = 0; z < linhas.length; z++) {
+		for (var z = 0; z < linhas.length; z++) {
 			pts = linhas[z].getPoints();
 			if (ptsAntes[0].x == ptsAntes[1].x && pts[0].y == pts[1].y
 					&& (ptsAntes[0].y == pts[0].y || ptsAntes[1].y == pts[0].y)
@@ -195,7 +191,7 @@
 				linhas[z].setPoints([ pts[0].x, pts[0].y, pts[1].x, ptsDepois[3] ]);
 			}
 		}
-		for ( var z = 0; z < colunas.length; z++) {
+		for (var z = 0; z < colunas.length; z++) {
 			pts = colunas[z].getPoints();
 			if (ptsAntes[0].x == ptsAntes[1].x && pts[0].y == pts[1].y
 					&& (ptsAntes[0].y == pts[0].y || ptsAntes[1].y == pts[0].y)
@@ -248,7 +244,6 @@
 		return false;
 	}
 
-	// Usada
 	function adicionarNovaLinha() {
 		if (adicionandoColuna) {
 			adicionandoColuna = false;
@@ -267,7 +262,7 @@
 		    width: minX + zoom[2],
 		    height: minY + zoom[1],
 		    fill: '#000',
-		    opacity: 0.6,
+		    opacity: 0.6
 
 		});
 
@@ -297,17 +292,16 @@
 
 	        if (inZoom(posY)) {
 	            var intercessoes = encontraIntercessoesVerticais(posY);
-	            for ( var z = 0; z < intercessoes.length - 1; z++) {
+	            for (var z = 0; z < intercessoes.length - 1; z++) {
 	                var pontos = [ intercessoes[z], posY, intercessoes[z + 1], posY ];
 	                adicionarSegmento(pontos);
 	                atualizarIntercessao(pontos);
 	            }
                     adicionandoLinha = false;
-                    document.body.style.cursor = "default";
+                    //document.body.style.cursor = "default";
         	}
 	}
 
-	// Usada
 	function adicionarNovaColuna() {
 		if (adicionandoLinha) {
 			adicionandoLinha = false;
@@ -318,11 +312,13 @@
 
 	// Usada
 	function criarNovaColuna(posX) {
+		// revisar
 		while (temLinha(posX) && posX < maxX) {
 			posX += 2;
 		}
 		var intercessoes = encontrarIntercessoesHorizontais(posX);
-		for ( var z = 0; z < intercessoes.length - 1; z++) {
+
+		for (var z = 0; z < intercessoes.length - 1; z++) {
 			var pontos = [ posX, intercessoes[z], posX, intercessoes[z + 1] ];
 
 			adicionarSegmento(pontos);
@@ -335,7 +331,7 @@
 	// Usada
 	function temLinha(posY) {
 		var pts2;
-		for ( var z = 0; z < linhas.length; z++) {
+		for (var z = 0; z < linhas.length; z++) {
 			pts2 = linhas[z].getPoints();
 			if (pts2[0].y == pts2[1].y && pts2[0].y == posY) {
 				return true;
@@ -350,20 +346,18 @@
 		var aAdicionar = new Array();
 		// Se for uma linha
 		if (pontos[1] == pontos[3]) {
-			for ( var z = 0; z < colunas.length; z++) {
+			for (var z = 0; z < colunas.length; z++) {
 				pts2 = colunas[z].getPoints();
-				if (pontos[0] == pts2[0].x && pontos[1] > pts2[0].y
-						&& pontos[3] < pts2[1].y) {
+				if (verificaSeColunaCruzaLinha(pontos, pts2)) {
 					colunas[z].setPoints([ pts2[0].x, pts2[0].y, pts2[1].x,
 							pontos[1] ]);
 					aAdicionar.push([ pts2[0].x, pontos[1], pts2[1].x, pts2[1].y ]);
 				}
 			}
 		} else if (pontos[0] == pontos[2]) {
-			for ( var z = 0; z < linhas.length; z++) {
+			for (var z = 0; z < linhas.length; z++) {
 				pts2 = linhas[z].getPoints();
-				if (pontos[1] == pts2[0].y && pontos[0] > pts2[0].x
-						&& pontos[2] < pts2[1].x) {
+				if (verificaSeLinhaCruzaColuna(pts2, pontos)) {
 					linhas[z].setPoints([ pts2[0].x, pts2[0].y, pontos[0],
 							pts2[1].y ]);
 					aAdicionar.push([ pontos[2], pts2[0].y, pts2[1].x, pts2[1].y ]);
@@ -377,10 +371,20 @@
 		}
 	}
 
+	function verificaSeLinhaCruzaColuna(pontosLinha, pontosColuna) {
+		return (pontosColuna[1] == pontosLinha[0].y && pontosColuna[0] > pontosLinha[0].x && pontosColuna[2] < pontosLinha[1].x) ||
+			(pontosColuna[3] == maxY && pontosColuna[3] == pontosLinha[0].y && pontosColuna[0] > pontosLinha[0].x && pontosColuna[2] < pontosLinha[1].x);
+	}
+
+	function verificaSeColunaCruzaLinha(pontosLinha, pontosColuna) {
+		return (pontosLinha[0] == pontosColuna[0].x && pontosLinha[1] > pontosColuna[0].y && pontosLinha[3] < pontosColuna[1].y) ||
+			(pontosLinha[2] == maxX && pontosLinha[2] == pontosColuna[0].x && pontosLinha[1] > pontosColuna[0].y && pontosLinha[3] < pontosColuna[1].y);
+	}
+
 	// Usada
 	function encontraIntercessoesVerticais(altura) {
 		var intercessoes = new Array();
-		for ( var z = 0; z < colunas.length; z++) {
+		for (var z = 0; z < colunas.length; z++) {
 			var pts2 = colunas[z].getPoints();
 			if (pts2[0].x == pts2[1].x) {
 				if (pts2[0].y <= altura && pts2[1].y >= altura) {
@@ -399,7 +403,7 @@
 	// Usada
 	function encontrarIntercessoesHorizontais(distancia) {
 		var intercessoes = new Array();
-		for ( var z = 0; z < linhas.length; z++) {
+		for (var z = 0; z < linhas.length; z++) {
 			var pts2 = linhas[z].getPoints();
 			if (pts2[0].y == pts2[1].y) {
 				if (pts2[0].x <= distancia && pts2[1].x >= distancia) {
@@ -438,8 +442,11 @@
 				} else {
 					var posY = event.offsetY == undefined ? event.layerY
 							: event.offsetY;
-					var limSup = encontraLimiteSuperior(points[0].y) + minDistance;
-					var limInf = encontraLimiteInferior(points[0].y) - minDistance;
+					var limSup = encontraLimiteSuperior(points[0].y);
+					var limInf = encontraLimiteInferior(points[0].y);
+					
+					limSup = limSup == zoom[1] ? limSup : limSup + minDistance;
+					limInf = limInf == zoom[3] ? limInf : limInf - minDistance;	
 
 					var newY = posY <= limSup ? limSup
 							: (posY >= limInf? limInf : posY);
@@ -480,8 +487,7 @@
 				function() {
 					var points = this.getPoints();
 					if (isColuna(points) && !isBorda(points)) {
-						var z;
-						for (z = 0; z < colunas.length; z++) {
+						for (var z = 0; z < colunas.length; z++) {
 							var points2 = colunas[z].getPoints();
 							if (points2[0].x == points2[1].x
 									&& points[0].x == points2[0].x) {
@@ -489,8 +495,7 @@
 							}
 						}
 					} else if (isLinha(points) && !isBorda(points) && inZoom(points[0].y)) {
-                        var z;
-						for (z = 0; z < linhas.length; z++) {
+						for (var z = 0; z < linhas.length; z++) {
 							var points2 = linhas[z].getPoints();
 							if (points2[0].y == points2[1].y
 									&& points[0].y == points2[0].y) {
@@ -498,17 +503,16 @@
 							}
 						}
 					}
-
 					layer.draw();
 				});
 		segmento.on('mouseout touchend', function() {
 			var points = this.getPoints();
 			if (isColuna(points)) {
-				for (i = 0; i < colunas.length; i++) {
+				for (var i = 0; i < colunas.length; i++) {
 					colunas[i].setStroke('red');
 				}
 			} else {
-				for (i = 0; i < linhas.length; i++) {
+				for (var i = 0; i < linhas.length; i++) {
 					linhas[i].setStroke('red');
 				}
 			}
@@ -528,11 +532,11 @@
 		var posicoesY = new Array();
 		var pts2;
 
-      		if (posY == zoom[1]){
-	            return zoom[1];
+      		if (hasZoom && posY == zoom[1]){
+	            return posY;
         	}
 
-		for ( var z = 0; z < linhas.length; z++) {
+		for (var z = 0; z < linhas.length; z++) {
 			pts2 = linhas[z].getPoints();
 			if (pts2[0].y < posY) {
 				posicoesY.push(pts2[0].y);
@@ -551,7 +555,7 @@
 	function encontraLimiteEsquerda(posX) {
 		var posicoesX = new Array();
 		var pts2;
-		for ( var z = 0; z < colunas.length; z++) {
+		for (var z = 0; z < colunas.length; z++) {
 			pts2 = colunas[z].getPoints();
 			if (pts2[0].x < posX) {
 				posicoesX.push(pts2[0].x);
@@ -569,13 +573,13 @@
 	// Usada
 	function encontraLimiteInferior(posY) {
 
-       		if (posY == zoom[3]){ //Jey aqui
-	            return zoom[3];
+       		if (hasZoom && posY == zoom[3]) {
+	            return posY;
 	        }
 
 		var posicoesY = new Array();
 		var pts2;
-		for ( var z = 0; z < linhas.length; z++) {
+		for (var z = 0; z < linhas.length; z++) {
 			pts2 = linhas[z].getPoints();
 			if (pts2[0].y > posY) {
 				posicoesY.push(pts2[0].y);
@@ -595,7 +599,7 @@
 	function encontraLimiteDireita(posX) {
 		var posicoesX = new Array();
 		var pts2;
-		for ( var z = 0; z < colunas.length; z++) {
+		for (var z = 0; z < colunas.length; z++) {
 			pts2 = colunas[z].getPoints();
 			if (pts2[0].x > posX) {
 				posicoesX.push(pts2[0].x);
@@ -615,9 +619,7 @@
 		var pos1;
 		var pos3;
 
-		var z;
-
-		for (z = colunas.length - 1; z >= 0; z--) {
+		for (var z = colunas.length - 1; z >= 0; z--) {
 			var points2 = colunas[z].getPoints();
 			if (points2[0].x == posX) {
 				if (points2[0].y == posY) {
@@ -633,8 +635,6 @@
 			}
 		}
 
-		console.log("Pos X:" + posX + " Pos Y:" + posY);
-		console.log("Pos 1:" + pos1 + " Pos 3:" + pos3);
 		adicionarSegmento([ posX, pos1, posX, pos3 ]);
 	}
 
@@ -643,10 +643,7 @@
 		var pos0;
 		var pos2;
 
-		var z;
-
-
-		for (z = linhas.length - 1; z >= 0; z--) {
+		for (var z = linhas.length - 1; z >= 0; z--) {
 			var points2 = linhas[z].getPoints();
 			if (points2[0].y == posY) {
 
@@ -663,25 +660,24 @@
 			}
 		}
 
-		console.log("Pos X:" + posX + " Pos Y:" + posY);
-		console.log("Pos 0:" + pos0 + " Pos 2:" + pos2);
 		adicionarSegmento([ pos0, posY, pos2, posY ]);
 	}
 
 	// Usada
 	function uneIntercessoes(points) {
 		var pos1, pos2;
+
 		if (isLinha(points)) {
 			pos0 = points[0].x;
 			pos1 = points[1].x;
 			var posY = points[0].y;
 			var t = $.inArray(pos0, posUnidas);
-			if (t == -1) {
+			if (t == -1 && !temContinuacaoLinha(points[0], points)) {
 				uneIntercessaoColuna(pos0, posY);
 				posUnidas.push(pos0);
 			}
 			t = $.inArray(pos1, posUnidas);
-			if (t == -1) {
+			if (t == -1 && !temContinuacaoLinha(points[1], points)) {
 				uneIntercessaoColuna(pos1, posY);
 				posUnidas.push(pos1);
 			}
@@ -690,22 +686,40 @@
 			pos1 = points[1].y;
 			var posX = points[0].x;
 			var t = $.inArray(pos0, posUnidas);
-			if (t == -1) {
+			if (t == -1 && !temContinuacaoColuna(points[0], points)) {
 				uneIntercessaoLinha(posX, pos0);
 				posUnidas.push(pos0);
 			}
 			t = $.inArray(pos1, posUnidas);
-			if (t == -1) {
+			if (t == -1 && !temContinuacaoColuna(points[1], points)) {
 				uneIntercessaoLinha(posX, pos1);
 				posUnidas.push(pos1);
 			}
 		}
 	}
 
+	function temContinuacaoLinha(points, linha) {
+		return temContinuacao(linhas, points, linha);
+	}
+
+	function temContinuacaoColuna(points, coluna) {
+		return temContinuacao(colunas, points, coluna);
+	}
+
+	function temContinuacao(segmentos, points, segmento) {
+
+		for (var i = 0; i< segmentos.length; i++) {
+			var pointsSegmento = segmentos[i].getPoints();
+			if (equalsPoints(pointsSegmento[0], points) || equalsPoints(pointsSegmento[1], points))  return true; 		
+		}
+		
+		return false;
+	}
+
 	// Usada
 	function existeSegmento(pontos, array) {
 		var z;
-		for (z = 0; z < array.length; z++) {
+		for (var z = 0; z < array.length; z++) {
 			if (pontos.compare(array[z])) {
 				return true;
 			}
@@ -715,9 +729,10 @@
 
 	function filterRectangles() {
 		var linhas2Remove = new Array();
+		var colunas2Remove = new Array();
 
 		// remove linhas com uma distancia minima
-		for (i = colunas.length - 1; i >= 0; i--) {
+		for (var i = colunas.length - 1; i >= 0; i--) {
 			var points = colunas[i].getPoints();
 			if ((points[1].y - points[0].y) < minDistance) {
 				var segmentoLinha = encontraSegmentoLinhaSuperior(points);
@@ -731,14 +746,8 @@
 			}
 		}
 
-		for (var i = 0; i < linhas2Remove.length; i++) {
-			removerLinha(linhas2Remove[i]);
-		}
-
-		var colunas2Remove = new Array();
-
 		// remove colunas com uma distancia minima
-		for (i = linhas.length - 1; i >= 0; i--) {
+		for (var i = linhas.length - 1; i >= 0; i--) {
 			var points = linhas[i].getPoints();
 			if ((points[1].x - points[0].x) < minDistance) {
 				var segmentoColuna = encontraSegmentoColunaSuperior(points);
@@ -746,7 +755,18 @@
 					segmentoColuna = encontraSegmentoColunaInferior(points);
 				}
 				colunas2Remove.push(segmentoColuna);
+				continue;
 			}
+
+			if (!inZoom(points[0].y)) {
+				if (!isBorda(points) && $.inArray(linhas[i], linhas2Remove) == -1) {
+					linhas2Remove.push(linhas[i]);
+				}
+			}
+		}
+
+		for (var i = 0; i < linhas2Remove.length; i++) {
+			removerLinha(linhas2Remove[i]);
 		}
 
 		for (var i = 0; i < colunas2Remove.length; i++) {
@@ -788,6 +808,8 @@
 		}
 	}
 
+	// Codigo para remover todos os segmentos que pertencam a uma mesma
+	// linha
 	function removerLinha(segmento) {
 		posUnidas = new Array();
 		var points = segmento.getPoints();
@@ -804,13 +826,16 @@
 		}
 	}
 
+	// Codigo para remover todos os segmentos que pertencam a uma mesma
+	// coluna
 	function removerColuna(segmento) {
+
 		posUnidas = new Array();
 		var points = segmento.getPoints();
 
 		// Eh necessario fazer iteracao inversa sobre o array para
 		// nao pular nenhum elemento.
-		for (i = colunas.length - 1; i >= 0; i--) {
+		for (var i = colunas.length - 1; i >= 0; i--) {
 			var points2 = colunas[i].getPoints();
 			if (isMesmaColuna(points, points2)) {
 				colunas[i].remove();
@@ -823,17 +848,17 @@
 	}
 
 	// Usada
-	function initGrid(matrizDePontos, uri, hasZoom, zoom_input) {
-		hasZoom = hasZoom;
+	function initGrid(matrizDePontos, uri, zoomEnabled, zoom_input) {
 		initVariables();
+		hasZoom = zoomEnabled;
 
-		if (hasZoom) {
+		if (zoomEnabled) {
 		        zoom = zoom_input;
 		}
 
 		var arrayAux = new Array();
 
-		for (i = 0; i < matrizDePontos.length; i++) {
+		for (var i = 0; i < matrizDePontos.length; i++) {
 
 			arr = matrizDePontos[i];
 
@@ -859,48 +884,16 @@
 			// Inicialmente, colocamos todas as coordenadas de todos os
 			// segmentos gerados a partir do arquivo de entrada em arrayAux,
 			// contanto que eles nao existam ainda no mesmo.
-			for ( var z = 0; z < novasLinhas.length; z++) {
+			for (var z = 0; z < novasLinhas.length; z++) {
 				if (!existeSegmento(novasLinhas[z], arrayAux)) {
 					arrayAux.push(novasLinhas[z]);
 				}
 			}
 		}
 
-		// Definicao da acao que deve ser tomada quando ocorrer um clique no
-		// canvas (botao direito deve remover a linha selecionada).
-		layer.on('click', function(evt) {
-
-			// Codigo para remover todos os segmentos que pertencam a uma mesma
-			// linha
-
-			if ((evt.which && evt.which == 3) || (evt.button && evt.button == 2)) {
-
-				// Recupera o objeto que foi clicado
-				var shape = evt.targetNode;
-				if (typeof shape == "undefined" || shape.getClassName() != "Line") return;
-
-				var points = shape.getPoints();
-
-				var posX = evt.offsetX == undefined ? evt.layerX
-						: evt.offsetX;
-				var posY = evt.offsetY == undefined ? evt.layerY
-						: evt.offsetY;
-
-				$("#context-menu").css("top", posY - 70);
-				$("#context-menu").css("left", posX);
-				$("#context-menu").css("position", "relative");
-
-				$("#remover-menu").show();
-				element2Remove = shape;
-			}
-			// Apos remover os objetos selecionados, redesenhamos a camada apenas
-			// com os objetos restantes.
-			layer.draw();
-		});
-
-		
-
-	        adicionarFocoZoom(zoom);
+		if (zoomEnabled) {
+			adicionarFocoZoom(zoom);
+		}
 
 		if (typeof stage == "undefined") {
 			stage = new Kinetic.Stage({
@@ -910,7 +903,59 @@
 			});
 		}
 
-		for ( var z = 0; z < arrayAux.length; z++) {
+		// Definicao da acao que deve ser tomada quando ocorrer um clique no
+		// canvas (botao direito deve remover a linha selecionada).
+		stage.on('click', function(evt) {
+			$("#remover-menu").hide();
+
+			if ((evt.which && evt.which == 3) || (evt.button && evt.button == 2)) {
+
+				// Ajuste vertical para mostrar o context menu no local correto.
+				// Necessário verificar se esse ajuste é o mesmo para qualquer navegador/SO.
+				var ajusteVertical = 70; //70px
+
+				// Recupera o objeto que foi clicado
+				var shape = evt.targetNode;
+				if (typeof shape == "undefined") return;
+
+				var posX = evt.offsetX == undefined ? evt.layerX
+						: evt.offsetX;
+				var posY = evt.offsetY == undefined ? evt.layerY
+						: evt.offsetY;
+
+				if (hasZoom && (posY < zoom[1] || posY > zoom[3])) return;
+
+				$("#context-menu").css("top", posY - ajusteVertical);
+				$("#context-menu").css("left", posX);
+				$("#context-menu").css("position", "relative");
+
+				if (shape.getClassName() == "Line") {
+
+					$("#adicionar-linha").css("display", "none");
+					$("#adicionar-coluna").css("display", "none");
+					$("#remover-linha-coluna").show();
+					$("#remover-segmento").show();
+
+					element2Remove = shape;
+
+				} else {
+
+					$("#remover-linha-coluna").css("display", "none");
+					$("#remover-segmento").css("display", "none");
+					$("#adicionar-linha").show();
+					$("#adicionar-coluna").show();
+					
+					// Armazenamos a posição do click para poder ter a referência de onde adicionar
+					// a nova linha/coluna.
+					posXAdicao = posX;
+					posYAdicao = posY;
+				}
+
+				$("#remover-menu").show();
+			}
+		});
+
+		for (var z = 0; z < arrayAux.length; z++) {
 			adicionarSegmento(arrayAux[z]);
 		}
 
@@ -946,33 +991,50 @@
 
 			// add the layer to the stage
 			stage.add(layer);
-                        stage.add(layerZoom);
+			if (hasZoom) stage.add(layerZoom);
 		};
+	}
+
+	function handleAdicionarLinhaEvent() {
+		criarNovaLinha(posYAdicao);
+	}
+
+	function handleAdicionarColunaEvent() {
+		criarNovaColuna(posXAdicao);
 	}
 
 	function handleRemoverSegmentoEvent() {
 		var points = element2Remove.getPoints();
+
 		if (!isBorda(points)) {
 
 			if (isColuna(points)) {
-				removerSegmentoColuna(element2Remove);
+				return removerSegmentoColuna(element2Remove);
 			} else if (isLinha(points) && inZoom(points[1].y) && inZoom(points[0].y)) {
-				removerSegmentoLinha(element2Remove);
+				return removerSegmentoLinha(element2Remove);
 			}
 		}
 	}
 
 	function removerSegmentoColuna(segmento) {
 		var points = segmento.getPoints();
-		for (i = colunas.length - 1; i >= 0; i--) {
+
+		if (!validaIntersecoes(points)) {
+			return false;
+		}
+
+		posUnidas = new Array();
+		for (var i = colunas.length - 1; i >= 0; i--) {
 			var points2 = colunas[i].getPoints();
 			if (equalsSegmento(points, points2)) {
 				colunas[i].remove();
 				colunas.splice(i, 1);
-				//uneIntercessoes(points2);
+				uneIntercessoes(points2);
 				break;
 			}
 		}
+	        layer.draw();
+		return true;
 	}
 
 	function equalsSegmento(points, points2) {
@@ -981,21 +1043,63 @@
 	}
 
 	function removerSegmentoLinha(segmento) {
+
 		var points = segmento.getPoints();
-		for (i = linhas.length - 1; i >= 0; i--) {
+
+		if (!validaIntersecoes(points)) {
+			return;
+		}
+
+		posUnidas = new Array();
+		for (var i = linhas.length - 1; i >= 0; i--) {
 			var points2 = linhas[i].getPoints();
 			if (equalsSegmento(points, points2)) {
 				linhas[i].remove();
 				linhas.splice(i, 1);
-				//uneIntercessoes(points2);
+
+				uneIntercessoes(points2);
 				break;
 			}
 		}
+	        layer.draw();
+		return true;
+	}
+
+	function validaIntersecoes(points) {
+
+		var countIntersecoes = 0;
+		var segmentos = new Array();
+		
+		if (isLinha(points)) {
+			segmentos = colunas;
+		} else {
+			segmentos = linhas;
+		}
+
+		for (var i = 0; i < segmentos.length; i++) {
+			pts2 = segmentos[i].getPoints();
+
+			if (verificaSeTocaExtremidade(points, pts2)) {
+				countIntersecoes++;
+			}
+		}
+
+		return countIntersecoes == 4;
+	}
+
+	function verificaSeTocaExtremidade(segmento1, segmento2) {
+		return equalsPoints(segmento1[0], segmento2[0]) || equalsPoints(segmento1[0], segmento2[1]) ||
+			equalsPoints(segmento1[1], segmento2[0]) || equalsPoints(segmento1[1], segmento2[1]);
+
+	}
+
+	function equalsPoints(point1, point2) {
+		return point1.x == point2.x && point1.y == point2.y;
 	}
 
 	function handleRemoverLinhaColunaEvent() {
 		var points = element2Remove.getPoints();
-		console.log(points);
+
 		if (!isBorda(points)) {
 
 			if (isColuna(points)) {
@@ -1026,57 +1130,63 @@
 
 	// Usada
 	function salvarAlteracoes() {
-		var leftX;
-		var rightX;
-		var upperY;
-		var bottomY;
-		var ptsLinha;
-		var ptsColuna;
-		var iteradorLinha;
-		var iteradorColuna;
-		var idx_linhaPerpendicular;
-		var resultado = new Array();
 
 		linhas.sort(sortLinesFunction);
 		colunas.sort(sortColumnsFunction);
 
-		iteradorLinha = 0;
-		iteradorColuna = 0;
-		ptsLinha = linhas[iteradorLinha].getPoints();
-		while (ptsLinha[0].y < maxY) {
+		var segmento;
 
-			leftX = ptsLinha[0].x;
-			upperY = ptsLinha[0].y;
+		var segmentosASalvar = new Array();
 
-			// Procurar pela linha limitada por uma coluna perpendicular.
-			while ((iteradorColuna = findColunaPerpendicular(ptsLinha)) == -1 && ptsLinha[0].y == upperY){
-				iteradorLinha++;
-				ptsLinha = linhas[iteradorLinha].getPoints();
-			}
+		for (var i = 0; i < colunas.length; i++){
+			// Recupera os pontos da linha.
+			var coluna = colunas[i].getPoints();
 
-			rightX = ptsLinha[1].x;
-
-			ptsColuna = colunas[iteradorColuna].getPoints();
-			
-			// Procurar pela coluna limitada por uma linha perpendicular.
-			while (idx_linhaPerpendicular = findLinhaPerpendicular(ptsColuna) == -1 && ptsColuna[0].x == rightX) {
-				iteradorColuna++;
-				ptsColuna = colunas[iteradorColuna].getPoints();
-			}
-			
-			bottomY = ptsColuna[1].y;
-			
-			resultado.push([leftX, upperY, rightX, bottomY]);
-			iteradorLinha++;
-			ptsLinha = linhas[iteradorLinha].getPoints();
-		} 
+			// Transformação para o padrão "[ x1, y1, x2, y2]".
+			segmento = [ coluna[0].x, coluna[0].y, coluna[1].x, coluna[1].y ];
 		
+			// Se o final da coluna estiver tocando a borda acima do zoom, 
+			// significa que a coluna está fora do zoom e não deve ser salva.
+			if ( segmento[3] == zoom[1] ) continue;
 
-		for (var z = 0; z < resultado.length; z++) {
-			console.log(resultado[z][0] + ", " + resultado[z][1] + ", " + resultado[z][2] + ", " + resultado[z][3]);
+			// Se o início da coluna estiver tocando a borda abaixo do zoom, 
+		        // significa que a coluna está fora do zoom e não deve ser salva.
+		        if ( segmento[1] == zoom[3] ) continue;
+
+			// Se o início da coluna estiver acima da borda de cima do zoom, 
+		        // significa que a coluna deve ser redimensionada.
+		        if ( segmento[1] < zoom[1] ) segmento[1] = zoom[1];
+
+			// Se o final da coluna estiver abaixo da borda de baixo do zoom, 
+		        // significa que a coluna deve ser redimensionada.
+		        if ( segmento[3] > zoom[3] ) segmento[3] = zoom[3];
+
+			// Adiciona a coluna aos segmentos que devem ser salvos.
+			segmentosASalvar.push(segmento);
 		}
 
-		return resultado;
+		for (var i = 0; i < linhas.length; i++){
+			// Recupera os pontos da coluna.
+			var linha = linhas[i].getPoints();
+
+			// Transformação para o padrão "[ x1, y1, x2, y2]".
+		        segmento = [ linha[0].x, linha[0].y, linha[1].x, linha[1].y ];
+		        
+			// Se a linha estiver acima da borda superior do zoom, significa
+			// que a linha está fora do zoom e não deve ser salva.
+		        if ( segmento[1] < zoom[1] ) continue;
+
+			// Se a linha estiver abaixo da borda inferior do zoom, significa
+		        // que a linha está fora do zoom e não deve ser salva.
+		        if ( segmento[3] > zoom[3] ) continue;
+
+			// Como as linhas, com exceção das que fazem parte das bordas
+			// sempre pertencem ao zoom, elas não precisam ser redimensionadas.
+			// Resta, então, apenas salvá-las.
+			segmentosASalvar.push(segmento);
+		}
+
+		return segmentosASalvar;
 	}
 
 	// Usada 

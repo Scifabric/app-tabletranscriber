@@ -47,7 +47,7 @@
       <div id="answer" class="span8 offset2">
           <button id="button" class="btn btn-success" onclick="submitTask()"><i class="icon icon-white icon-ok"></i> Salvar essas marcações</button>
           <button id="button" class="btn small" onclick="submitTask('0')"><i class="icon icon-white icon-ok"></i> Não há tabelas</button>
-          <p><span id="progress-from">Voc&ecirc; fez: </span><span id="done" class="label label-info" style="margin-right: 5px"></span><span id="progress-to">tarefas de </span>
+          <p><span id="progress-from">Voc&ecirc; fez </span><span id="done" class="label label-info" style="margin-right: 5px"></span><span id="progress-to">tarefas de </span>
           <!-- Progress bar for the user -->
           <span id="total" class="label label-inverse"></span></p>
             <div class="progress progress-striped">
@@ -174,19 +174,24 @@ function loadData( data ) {
         $(".skeleton").hide();
         $("#finish").fadeIn(100, function(){
         
-            $.ajax({
-            url: '/mb/api/' + task_id + '/available_tasks',
-            success: function(data){
-                if(data == "True"){
-                    window.open(endpoint + "/app/" + task_shortname.replace("_tt2", "_tt1")  + "/newtask", "_self");
-                }
-                else{
-                    window.open("/mb/collaborate", "_self");
-                }
-            }
-            }); 
+	    if (task_id != "") {
+		    $.ajax({
+		    url: '/mb/api/' + task_id + '/available_tasks',
+		    success: function(data){
+			if(data == "True"){
+			    window.open(endpoint + "/app/" + task_shortname.replace("_tt2", "_tt1")  + "/newtask", "_self");
+			}
+			else{
+			    window.open("/mb/collaborate", "_self");
+			}
+		    }
+		    }); 
+	    } else {
+		    setTimeout(function(){
+			window.open(endpoint + "/app/" + task_shortname.replace("_tt2", "_tt1")  + "/newtask", "_self");
+		    }, 1500);
+	    }
         });
-       
     }
 }
 

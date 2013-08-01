@@ -1,6 +1,7 @@
 var en_US_dict = { 
-    'question': "Please. Fix the table",
-    'button_finished': "Done",
+    'question': "Please. Fix the lines and columns from the table.",
+    'question_with_focus': "Please. Fix the lines and columns from the focused area in table.",
+    'button_finished': "Save fixes",
     'button_rmline':  "Delete line",
     'button_rmseg': "Delete sement",
     'button_addline': "Add line",
@@ -16,14 +17,15 @@ var en_US_dict = {
     'other_apps': "or, Check other applications",
     'error': "Error! ",
     'err_msg': "Something went wrong, please contact the site administrators.",
-    'workflowtask' : "There is a new kind of task available. Click to Try it.",
+    'workflowtask' : "There are other types of tasks available. Click to try it.",
     'progress-from' : "You have completed: ",
     'progress-to' : "tasks from"
 }
 
 var pt_dict= {
     'question': "Por favor. Corrija as linhas e colunas da tabela.",
-    'button_finished': "Concluído",
+    'question_with_focus': "Por favor. Corrija as linhas e colunas da área em foco da tabela.",
+    'button_finished': "Salvar correções",
     'button_rmline':  "Remover linha",
     'button_rmseg': "Remover segmento",
     'button_addline': "Adicionar linha",
@@ -39,8 +41,8 @@ var pt_dict= {
     'other_apps': "ou, verificar outras aplicações",
     'error': "Erro! ",
     'err_msg': "Algo ocorreu errado, por favor contate o administrador do site.",
-    'workflowtask' : "Existe um novo tipo de tarefa disponível. Clique para ir.",
-    'progress-from' : "Você fez: ",
+    'workflowtask' : "Há outros tipos de tarefas disponíveis. Clique para ir.",
+    'progress-from' : "Você fez ",
     'progress-to' : "tarefas de "
     
 }
