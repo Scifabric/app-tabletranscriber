@@ -13,7 +13,7 @@ import tabletranscriber.tasks.tests.util.Util;
 
 public class deleteTaskRunsType2 {
 
-    public static void run() {
+    public static void main(String[] args) {
 
         Connection con = null;
         Statement st = null;

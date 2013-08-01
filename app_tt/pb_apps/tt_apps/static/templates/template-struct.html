@@ -142,7 +142,6 @@ canvas {
                  loadUserProgress();
 		 $("#question").text(data.question);
 		 $("#task-id").text(data.task.id);
-		 console.log("data: " + data.task);
 		 var coords = data.task.info.last_answer != undefined ? data.task.info.last_answer.coords : data.task.info.coords;
 		 var zoom = data.task.info.zoom;
 		 var hasZoom = data.task.info.hasZoom;
@@ -167,7 +166,6 @@ function submitTask() {
 	// Get the task-id
 	taskid = $("#task-id").text();
 		
-        console.log("taskid: " + taskid);
 	// Save the task
 	pybossa.saveTask(taskid, answer).done(function(data) {
 		//Call tt workflow api.
@@ -178,9 +176,7 @@ function submitTask() {
         //              css: {height: $("#success").height()}
         //  });
 			// Load a new task
-			console.log("OKOK");
         pybossa.newTask(task_shortname).done(function(data) {
-        	console.log("OKOK2");	
         	loadData(data);
 			});
 			

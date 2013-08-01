@@ -30,12 +30,13 @@ public class test_t1 {
 		selenium.click("xpath=/html/body/div[2]/form/div[4]/input");
 		selenium.waitForPageToLoad("30000");
 		
-		selenium.open("/pybossa/app/anuario1916pb_tt1/newtask");
-		//selenium.click("xpath=/html/body/div[2]/section[2]/div/div/div/p[2]/a[2]");
+//		selenium.open("/pybossa/app/anuario1916pb_tt1/newtask");
+		selenium.open("/pybossa/app/caracterizaoeten2001bras_tt1/newtask");
 		
 		for(int i = 0; i < NUMBER_OF_TASKS_T1_BY_USER; i++) {
 			selenium.click("button_yes");
-			assertEquals("PyBossa · Application: Annuario Estatistico da Parahyba do Norte 1916 Seleção · Contribute", selenium.getTitle());
+//			assertEquals("PyBossa · Application: Annuario Estatistico da Parahyba do Norte 1916 Seleção · Contribute", selenium.getTitle());
+			assertEquals("PyBossa · Application: Caracterização e tendências da rede urbana do Brasil: configurações atuais e tendências da rede urbana Seleção · Contribute", selenium.getTitle());
 		}
 		
 		selenium.close();
@@ -49,12 +50,13 @@ public class test_t1 {
 		selenium.click("xpath=/html/body/div[2]/form/div[4]/input");
 		selenium.waitForPageToLoad("30000");
 		
-		selenium.open("/pybossa/app/anuario1916pb_tt1/newtask");
-//		selenium.click("xpath=/html/body/div[2]/section[2]/div/div/div/p[2]/a[2]");
+//		selenium.open("/pybossa/app/anuario1916pb_tt1/newtask");
+		selenium.open("/pybossa/app/caracterizaoeten2001bras_tt1/newtask");
 		
 		for(int i = 0; i < NUMBER_OF_TASKS_T1_BY_USER; i++) {
 			selenium.click("button_yes");
-			assertEquals("PyBossa · Application: Annuario Estatistico da Parahyba do Norte 1916 Seleção · Contribute", selenium.getTitle());
+//			assertEquals("PyBossa · Application: Annuario Estatistico da Parahyba do Norte 1916 Seleção · Contribute", selenium.getTitle());
+			assertEquals("PyBossa · Application: Caracterização e tendências da rede urbana do Brasil: configurações atuais e tendências da rede urbana Seleção · Contribute", selenium.getTitle());
 		}
 	}
 	
@@ -66,12 +68,13 @@ public class test_t1 {
 		selenium.click("xpath=/html/body/div[2]/form/div[4]/input");
 		selenium.waitForPageToLoad("30000");
 		
-		selenium.open("/pybossa/app/anuario1916pb_tt1/newtask");
-//		selenium.click("xpath=/html/body/div[2]/section[2]/div/div/div/p[2]/a[2]");
+//		selenium.open("/pybossa/app/anuario1916pb_tt1/newtask");
+		selenium.open("/pybossa/app/caracterizaoeten2001bras_tt1/newtask");
 		
 		for(int i = 0; i < NUMBER_OF_TASKS_T1_BY_USER; i++) {
 			selenium.click("button_yes");
-			assertEquals("PyBossa · Application: Annuario Estatistico da Parahyba do Norte 1916 Seleção · Contribute", selenium.getTitle());
+//			assertEquals("PyBossa · Application: Annuario Estatistico da Parahyba do Norte 1916 Seleção · Contribute", selenium.getTitle());
+			assertEquals("PyBossa · Application: Caracterização e tendências da rede urbana do Brasil: configurações atuais e tendências da rede urbana Seleção · Contribute", selenium.getTitle());
 		}
 	}
 	

@@ -23,7 +23,7 @@ public class test_t2 {
 	
 	@Test
 	public void deleteTaskRunsType2() {
-		tabletranscriber.tasks.tests.setup.delete_tasks_runs.deleteTaskRunsType2.run();
+		//tabletranscriber.tasks.tests.setup.delete_tasks_runs.deleteTaskRunsType2.run();
 	}
 
 	@Test

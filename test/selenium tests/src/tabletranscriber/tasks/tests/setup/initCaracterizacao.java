@@ -32,4 +32,9 @@ public class initCaracterizacao {
 	public void tearDown() throws Exception {
 		selenium.stop();
 	}
+	
+	@After
+	public void selectBookPages() {
+		selectBookPagesInDB.run();
+	}
 }
