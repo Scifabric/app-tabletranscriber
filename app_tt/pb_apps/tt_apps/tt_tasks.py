@@ -326,7 +326,7 @@ class TTTask2(pb_task):
             print("File path:" + "%s/books/%s/metadados/entrada/image%s.txt" % (
                 app.config["TT3_BACKEND"], bookId, imgId), "a")
             arch = open("%s/books/%s/metadados/entrada/image%s.txt" % (
-                app.config["TT3_BACKEND"], bookId, imgId), "a")
+                app.config["TT3_BACKEND"], bookId, imgId), "w")
             for table in answer:
                 x0 = int(table["left"])
                 x1 = int(table["width"] + x0)
