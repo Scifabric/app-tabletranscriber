@@ -125,12 +125,12 @@ canvas {
         $.ajax({
             url: '/mb/api/' + taskId + '/done',
             success: function(data){
-                    enableNextTask(taskId);
+                    enableNextTask();
                 }
             });
     }
 
-    function enableNextTask(taskId){
+    function enableNextTask(){
         $("#workflowtask").fadeIn(200);
     }
 
@@ -179,7 +179,7 @@ canvas {
 
 		 $("#question").text(question);
 		 taskid = data.task.id;
-		 var coords = data.task.info.last_answer != undefined ? data.task.info.last_answer.coords : data.task.info.coords;
+		 var coords = data.task.info.coords;
 		 var zoom = data.task.info.zoom;
 		 img_url = data.task.info.img_url;
 		 setTimeout(function(){
@@ -191,9 +191,10 @@ canvas {
 		$.unblockUI();
 	        $(".skeleton").hide();
         	$("#finish").fadeIn(200);
+                enableNextTask();
 		setTimeout(function(){
 			$("#finish").fadeOut(200);
-		}, 1500);
+		}, 3000);
 	}
      }
 

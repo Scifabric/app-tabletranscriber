@@ -895,13 +895,15 @@
 			adicionarFocoZoom(zoom);
 		}
 
-		if (typeof stage == "undefined") {
-			stage = new Kinetic.Stage({
-				container : 'canvas-container',
-				width : maxX,
-				height : maxY
-			});
+		if (typeof stage != "undefined") {
+			$(".kineticjs-content").remove();
 		}
+
+		stage = new Kinetic.Stage({
+			container : 'canvas-container',
+			width : maxX,
+			height : maxY
+		});
 
 		// Definicao da acao que deve ser tomada quando ocorrer um clique no
 		// canvas (botao direito deve remover a linha selecionada).

@@ -96,6 +96,13 @@ class Apptt_struct(app.Apptt):
                         + "/templates/template-struct.html")),
                 short_name))
 
+            super(Apptt_struct, self).set_long_description(_setUrl_(
+                urllib2.urlopen(
+                    urllib2.Request(
+                        flask_app.config['URL_TEMPLATES']
+                        + "/templates"
+                        + "/long_description-struct.html")), short_name))
+
             try:
                 self.__create_dirs(
                     short_name[:-4],
