@@ -53,13 +53,13 @@
 		    <li><a id="adicionar-coluna" class="menu-item" tabindex="4" href="#">Adicionar coluna</a></li>
 		  </ul>
 		</div>
-	    	<div id="canvas-container" style="margin-left: 10px; float: left;"></div>
+	    	<div id="canvas-container" style="margin-left: 10px; margin-bottom: 20px; float: left;"></div>
 
-		<div id="adicionar_linha_coluna" style="display: none; margin-bottom: 10px; float: right; width: 400px" >
-			<div class="alert alert-info"> 
+		<div id="adicionar_linha_coluna" style="display: none; float: right; width: 400px" >
+			<div id="instrucoes" class="alert alert-info"> 
 				<h5 id="task-info"><strong> Instru&ccedil;&otilde;es</strong><br><ul><li> Clique com o bot&atilde;o direito sobre um segmento para remov&ecirc;-lo;</li><li>Clique com o botão direito numa regi&atilde;o da tabela para adicionar um segmento;</li><li>Clique e arraste um segmento para ajustar sua posi&ccedil;&atilde;o.</li></ul></h5>
 			</div>
-			<button class="btn btn-success" style="height: 80px; width: 260px; font-size: 20px; margin-left: 65px;" onclick="submitTask()"><i class="icon icon-white icon-thumbs-up" style="margin-right:10px;"></i><span id="button_finished">#</span></button>
+			<button id="button_finished" class="btn btn-success" style="height: 80px; width: 260px; font-size: 20px; margin-left: 65px;" onclick="submitTask()"><i class="icon icon-white icon-thumbs-up" style="margin-right:10px;"></i><span>#</span></button>
 		</div>
 </div>
 
@@ -92,7 +92,7 @@ canvas {
     $(window).load(function(){
 		$("#question").text($.i18n._('question'));
 		$("#question span:first").text($.i18n._('task_name'));
-		$("#button_finished").text($.i18n._('button_finished'));
+		$("#button_finished span:first").text($.i18n._('button_finished'));
 		$("#button_addline").text($.i18n._('button_addline'));
        		$("#button_addcolumn").text($.i18n._('button_addcolumn'));
 		$("#button_rmseg label").text($.i18n._('button_rmseg'));
@@ -179,23 +179,42 @@ canvas {
 
 		 $("#question").text(question);
 		 taskid = data.task.id;
-		 var coords = data.task.info.coords;
+		 // FIX
+		 var coords = data.task.info.last_answer != undefined ? data.task.info.last_answer.coords : data.task.info.coords;
 		 var zoom = data.task.info.zoom;
 		 img_url = data.task.info.img_url;
 		 setTimeout(function(){
 				 initGrid(coords, img_url, hasZoom, zoom);
-				 $.unblockUI();
-				 $("#adicionar_linha_coluna").show();
+				 configureUI();
+
 		}, 0);
          } else {
 		$.unblockUI();
 	        $(".skeleton").hide();
         	$("#finish").fadeIn(200);
-                enableNextTask();
 		setTimeout(function(){
 			$("#finish").fadeOut(200);
+			enableNextTask();
 		}, 3000);
 	}
+     }
+
+     function configureUI() {
+	$.unblockUI();
+
+	// A tabela foi rotacionada
+	if (getMaxX() > 510) {
+	   $("#adicionar_linha_coluna").css("width", "auto");
+	   $("#adicionar_linha_coluna").css("float", "left");
+
+	   $("#instrucoes").css("width", "380px");
+	   $("#instrucoes").css("display", "inline-block");
+	   $("#instrucoes").css("float", "left");
+
+	   $("#button_finished").css("margin-left", "15px");
+	}
+
+	$("#adicionar_linha_coluna").show();
      }
 
      // Function to submit and save the TaskRun in PyBossa

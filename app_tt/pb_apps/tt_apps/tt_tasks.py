@@ -140,13 +140,39 @@ class TTTask2(pb_task):
         if(n_taskruns > 1):
             answer1 = json.loads(task_runs[n_taskruns - 1].info)
             answer2 = json.loads(task_runs[n_taskruns - 2].info)
-            if answer1 == answer2:
+
+	    print(answer1)
+	    print(answer2)
+
+            if self.__compare_answers(answer1, answer2):
                 if answer2 != "0":
                     return self.__fileOutput(answer2)
                 elif answer2 == "0":  # There is one error at TTTask1 answer
                     pass
         else:
             return False
+
+    def __compare_answers(self, answer1, answer2):
+
+	threshold = 2
+	
+	if len(answer1) != len(answer2):
+            return False
+
+	for i in range(0, len(answer1)):
+	    table1 = answer1[i]
+	    table2 = answer2[i]
+
+            for answer_type in table1.keys():
+                a1_value = table1[answer_type]
+                a2_value = table2[answer_type]
+                if answer_type in ["top", "left", "width", "height"]:
+                    if a2_value < (a1_value - threshold) or a2_value > (a1_value + threshold):
+                        return False
+                else:
+                    if a1_value != a2_value:
+                        return False
+        return True
 
     def get_next_app(self):
         curr_app_name = self.app_short_name
@@ -164,18 +190,27 @@ class TTTask2(pb_task):
             url_request = requests.get(
                 "http://archive.org/download/%s/page/n%s" % (
                 bookId, imgId))
-            fullImgPath = "%s/books/%s/alta_resolucao/image%s.png" % (
+            fullImgPathInit = "%s/books/%s/alta_resolucao/image%s.jpg" % (
+                app.config['TT3_BACKEND'], bookId, imgId)
+            fullImgPathFinal = "%s/books/%s/alta_resolucao/image%s.png" % (
                 app.config['TT3_BACKEND'], bookId, imgId)
 
-            fullImgFile = open(fullImgPath, "w")
+            fullImgFile = open(fullImgPathInit, "w")
             fullImgFile.write(url_request.content)
             fullImgFile.close()
-            
+	    
+	    # shell command to convert jpg to png
+            command = 'convert %s %s; rm %s' % (
+                fullImgPathInit, fullImgPathFinal, fullImgPathInit)
+
+	    print("Command: " + command)
+            call([command], shell=True)  # calls the shell command
+
             lowImgPath = "%s/books/%s/baixa_resolucao/image%s.png" % (
                 app.config['TT3_BACKEND'], bookId, imgId)
             
-            command = 'convert %s -resize %dx%d! %s' % (
-                fullImgPath, width, height, lowImgPath)
+            command = 'convert %s -resize %dx%d %s' % (
+                fullImgPathFinal, width, height, lowImgPath)
 
             call([command], shell=True)  # calls the shell command
 

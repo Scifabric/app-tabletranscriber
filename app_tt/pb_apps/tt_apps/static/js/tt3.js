@@ -1196,3 +1196,7 @@
 		stage.removeChildren();
 		stage.remove();
 	}
+
+	function getMaxX() {
+		return maxX;
+	}

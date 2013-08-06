@@ -29,7 +29,7 @@ class Apptt(object):
         info = dict(newtask="%s/app/%s/newtask" % (flask_app.config['PYBOSSA_URL'], self.short_name))
         data = dict(name=self.name, short_name=self.short_name,
                 description=self.description, hidden=0,
-                info=info)
+                info=info, category_id=1)
         data = json.dumps(data)
 
         # Checking which apps have been already registered in the DB
