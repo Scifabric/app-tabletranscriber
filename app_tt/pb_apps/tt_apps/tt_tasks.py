@@ -79,9 +79,10 @@ class TTTask2(pb_task):
                 app.config['PYBOSSA_URL'], self.task.id, sys.maxint)).read())
 
         task_run = task_runs[len(task_runs) - 1]  # Get the last answer
-        answer = json.loads(task_run["info"])
+	answer = task_run["info"]
+        answer_json = json.loads(answer)
 
-        if(answer != 0):
+        if (answer != "0" and answer != "[]"):
 
             tt3_app_short_name = self.app_short_name[:-1] + "3"
             tt3_app = ttapps.Apptt_struct(short_name=tt3_app_short_name)
@@ -91,7 +92,7 @@ class TTTask2(pb_task):
 
             self.__downloadArchiveImages(bookId, imgId)
             self.__runLinesRecognition(bookId, imgId,
-                                       answer[0]["text"]["girar"])
+                                       answer_json[0]["text"]["girar"])
 
             try:
                 # file with the lines recognized
@@ -138,15 +139,15 @@ class TTTask2(pb_task):
         task_runs = self.get_task_runs()
         n_taskruns = len(task_runs)  # task_runs goes from 0 to n-1
         if(n_taskruns > 1):
-            answer1 = json.loads(task_runs[n_taskruns - 1].info)
-            answer2 = json.loads(task_runs[n_taskruns - 2].info)
 
-	    print(answer1)
-	    print(answer2)
+	    answer1 = task_runs[n_taskruns - 1].info
+	    answer2 = task_runs[n_taskruns - 2].info
+            answer1_json = json.loads(answer1)
+            answer2_json = json.loads(answer2)
 
-            if self.__compare_answers(answer1, answer2):
-                if answer2 != "0":
-                    return self.__fileOutput(answer2)
+            if self.__compare_answers(answer1_json, answer2_json):
+                if answer2 != "0" and answer2 != "[]":
+                    return self.__fileOutput(answer2_json)
                 elif answer2 == "0":  # There is one error at TTTask1 answer
                     pass
         else:

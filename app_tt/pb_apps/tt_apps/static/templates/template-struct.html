@@ -179,12 +179,19 @@ canvas {
 
 		 $("#question").text(question);
 		 taskid = data.task.id;
-		 // FIX
-		 var coords = data.task.info.last_answer != undefined ? data.task.info.last_answer.coords : data.task.info.coords;
+	
+		 var isPreviousAnswer = false;
+		 var coords = data.task.info.coords;
+
+		 if (data.task.info.last_answer != undefined) {
+			coords = data.task.info.last_answer;
+			isPreviousAnswer = true;
+		 }
+
 		 var zoom = data.task.info.zoom;
 		 img_url = data.task.info.img_url;
 		 setTimeout(function(){
-				 initGrid(coords, img_url, hasZoom, zoom);
+				 initGrid(coords, img_url, isPreviousAnswer, hasZoom, zoom);
 				 configureUI();
 
 		}, 0);
@@ -223,7 +230,7 @@ canvas {
 	// Get grid infos
         var segmentos = salvarAlteracoes();
 
-        var answer = {'img_url': img_url, 'segmentos': segmentos};
+	var answer = $.extend({'img_url': img_url}, segmentos);
 
 	$.blockUI({message: $("#success"),
 		      css: {height: $("#success").height()}

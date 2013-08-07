@@ -848,7 +848,7 @@
 	}
 
 	// Usada
-	function initGrid(matrizDePontos, uri, zoomEnabled, zoom_input) {
+	function initGrid(matrizDePontos, uri, isPreviousAnswer, zoomEnabled, zoom_input) {
 		initVariables();
 		hasZoom = zoomEnabled;
 
@@ -858,35 +858,45 @@
 
 		var arrayAux = new Array();
 
-		for (var i = 0; i < matrizDePontos.length; i++) {
+		if (isPreviousAnswer) {
+			arrayAux = arrayAux.concat(matrizDePontos.linhas);
+			arrayAux = arrayAux.concat(matrizDePontos.colunas);
+			maxX = matrizDePontos.maxX;
+			maxY = matrizDePontos.maxY;
+			minX = 0;
+			minY = 0;
+		} else {
 
-			arr = matrizDePontos[i];
+			for (var i = 0; i < matrizDePontos.length; i++) {
 
-			leftX = arr[0];
-			if (leftX < minX)
-				minX = leftX;
-			upperY = arr[1];
-			if (upperY < minY)
-				minY = upperY;
-			rightX = arr[2];
-			if (rightX > maxX)
-				maxX = rightX;
-			bottomY = arr[3];
-			if (bottomY > maxY)
-				maxY = bottomY;
+				arr = matrizDePontos[i];
 
-			var novasLinhas = new Array();
-			novasLinhas.push([ leftX, upperY, rightX, upperY ]);
-			novasLinhas.push([ leftX, upperY, leftX, bottomY ]);
-			novasLinhas.push([ leftX, bottomY, rightX, bottomY ]);
-			novasLinhas.push([ rightX, upperY, rightX, bottomY ]);
+				leftX = arr[0];
+				if (leftX < minX)
+					minX = leftX;
+				upperY = arr[1];
+				if (upperY < minY)
+					minY = upperY;
+				rightX = arr[2];
+				if (rightX > maxX)
+					maxX = rightX;
+				bottomY = arr[3];
+				if (bottomY > maxY)
+					maxY = bottomY;
 
-			// Inicialmente, colocamos todas as coordenadas de todos os
-			// segmentos gerados a partir do arquivo de entrada em arrayAux,
-			// contanto que eles nao existam ainda no mesmo.
-			for (var z = 0; z < novasLinhas.length; z++) {
-				if (!existeSegmento(novasLinhas[z], arrayAux)) {
-					arrayAux.push(novasLinhas[z]);
+				var novasLinhas = new Array();
+				novasLinhas.push([ leftX, upperY, rightX, upperY ]);
+				novasLinhas.push([ leftX, upperY, leftX, bottomY ]);
+				novasLinhas.push([ leftX, bottomY, rightX, bottomY ]);
+				novasLinhas.push([ rightX, upperY, rightX, bottomY ]);
+
+				// Inicialmente, colocamos todas as coordenadas de todos os
+				// segmentos gerados a partir do arquivo de entrada em arrayAux,
+				// contanto que eles nao existam ainda no mesmo.
+				for (var z = 0; z < novasLinhas.length; z++) {
+					if (!existeSegmento(novasLinhas[z], arrayAux)) {
+						arrayAux.push(novasLinhas[z]);
+					}
 				}
 			}
 		}
@@ -956,6 +966,7 @@
 				$("#remover-menu").show();
 			}
 		});
+
 
 		for (var z = 0; z < arrayAux.length; z++) {
 			adicionarSegmento(arrayAux[z]);
@@ -1138,7 +1149,8 @@
 
 		var segmento;
 
-		var segmentosASalvar = new Array();
+		var linhasASalvar = new Array();
+		var colunasASalvar = new Array();
 
 		for (var i = 0; i < colunas.length; i++){
 			// Recupera os pontos da linha.
@@ -1147,6 +1159,7 @@
 			// Transformação para o padrão "[ x1, y1, x2, y2]".
 			segmento = [ coluna[0].x, coluna[0].y, coluna[1].x, coluna[1].y ];
 		
+			/*
 			// Se o final da coluna estiver tocando a borda acima do zoom, 
 			// significa que a coluna está fora do zoom e não deve ser salva.
 			if ( segmento[3] == zoom[1] ) continue;
@@ -1161,10 +1174,10 @@
 
 			// Se o final da coluna estiver abaixo da borda de baixo do zoom, 
 		        // significa que a coluna deve ser redimensionada.
-		        if ( segmento[3] > zoom[3] ) segmento[3] = zoom[3];
+		        if ( segmento[3] > zoom[3] ) segmento[3] = zoom[3];*/
 
 			// Adiciona a coluna aos segmentos que devem ser salvos.
-			segmentosASalvar.push(segmento);
+			linhasASalvar.push(segmento);
 		}
 
 		for (var i = 0; i < linhas.length; i++){
@@ -1174,6 +1187,7 @@
 			// Transformação para o padrão "[ x1, y1, x2, y2]".
 		        segmento = [ linha[0].x, linha[0].y, linha[1].x, linha[1].y ];
 		        
+			/*
 			// Se a linha estiver acima da borda superior do zoom, significa
 			// que a linha está fora do zoom e não deve ser salva.
 		        if ( segmento[1] < zoom[1] ) continue;
@@ -1184,11 +1198,11 @@
 
 			// Como as linhas, com exceção das que fazem parte das bordas
 			// sempre pertencem ao zoom, elas não precisam ser redimensionadas.
-			// Resta, então, apenas salvá-las.
-			segmentosASalvar.push(segmento);
+			// Resta, então, apenas salvá-las.*/
+			colunasASalvar.push(segmento);
 		}
 
-		return segmentosASalvar;
+		return {'linhas' : linhasASalvar, 'colunas' : colunasASalvar, 'maxX' : getMaxX(), 'maxY': getMaxY()};
 	}
 
 	// Usada 
@@ -1199,4 +1213,8 @@
 
 	function getMaxX() {
 		return maxX;
+	}
+
+	function getMaxY() {
+		return maxY;
 	}
