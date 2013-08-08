@@ -180,7 +180,7 @@ class TTTask2(pb_task):
         next_app_name = curr_app_name[:-1] + "3"
         return ttapps.Apptt_struct(short_name=next_app_name)
 
-    def __downloadArchiveImages(self, bookId, imgId, width=550, height=700):
+    def __downloadArchiveImages(self, bookId, imgId, width=550, height=700, max_width=1650, max_height=2100):
         """
         Download internet archive images to tt3_backend project
         :returns: True if the download was successful
@@ -188,31 +188,33 @@ class TTTask2(pb_task):
         """
 
         try:
-            url_request = requests.get(
-                "http://archive.org/download/%s/page/n%s" % (
-                bookId, imgId))
-            fullImgPathInit = "%s/books/%s/alta_resolucao/image%s.jpg" % (
-                app.config['TT3_BACKEND'], bookId, imgId)
-            fullImgPathFinal = "%s/books/%s/alta_resolucao/image%s.png" % (
-                app.config['TT3_BACKEND'], bookId, imgId)
 
-            fullImgFile = open(fullImgPathInit, "w")
+            url_request = requests.get(
+                "http://archive.org/download/%s/page/n%s_w%s_h%s" % (
+                bookId, imgId, max_width, max_height))
+
+            fullImgPath = "%s/books/%s/alta_resolucao/image%s" % (
+                app.config['TT3_BACKEND'], bookId, imgId)
+            fullImgPathJPG = fullImgPath + ".jpg"
+            fullImgPathPNG = fullImgPath + ".png"
+
+            fullImgFile = open(fullImgPathJPG, "w")
             fullImgFile.write(url_request.content)
             fullImgFile.close()
 	    
 	    # shell command to convert jpg to png
-            command = 'convert %s %s; rm %s' % (
-                fullImgPathInit, fullImgPathFinal, fullImgPathInit)
+            command = 'convert %s -resize %dx%d! %s; rm %s;' % (
+                fullImgPathJPG, max_width, max_height, fullImgPathPNG, fullImgPathJPG)
+
+	    # create image with low resolution
+            lowImgPath = "%s/books/%s/baixa_resolucao/image%s" % (
+                app.config['TT3_BACKEND'], bookId, imgId)
+            lowImgPathPNG = lowImgPath + ".png"
+
+            command += 'convert %s -resize %dx%d! %s' % (
+                fullImgPathPNG, width, height, lowImgPathPNG)
 
 	    print("Command: " + command)
-            call([command], shell=True)  # calls the shell command
-
-            lowImgPath = "%s/books/%s/baixa_resolucao/image%s.png" % (
-                app.config['TT3_BACKEND'], bookId, imgId)
-            
-            command = 'convert %s -resize %dx%d %s' % (
-                fullImgPathFinal, width, height, lowImgPath)
-
             call([command], shell=True)  # calls the shell command
 
             return True
