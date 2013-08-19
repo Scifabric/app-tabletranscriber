@@ -31,7 +31,7 @@ public class selectBookPagesInDB {
             int firstID = Integer.parseInt(rs.getString(1));
             
             // de acordo com paginas do livro
-            int arrayOfOriginalIDs_ANUARIO[] = {64,65,181,183/*,11,12,13,14,15*/};
+//            int arrayOfOriginalIDs_ANUARIO[] = {64,65,181,183/*,11,12,13,14,15*/};
             int arrayOfOriginalIDs_CARACTERIZACAO[] = {51,131,132,133,139};
             
             ArrayList<Integer> arrayOfFinalIDs = new ArrayList<Integer>();
