@@ -203,7 +203,7 @@ class TTTask2(pb_task):
             fullImgFile.close()
 	    
 	    # shell command to convert jpg to png
-            command = 'convert %s -resize %dx%d! %s; rm %s;' % (
+            command = 'convert %s -resize %dx%d! %s; rm %s; ' % (
                 fullImgPathJPG, max_width, max_height, fullImgPathPNG, fullImgPathJPG)
 
 	    # create image with low resolution

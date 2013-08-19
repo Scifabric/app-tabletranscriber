@@ -116,6 +116,7 @@ class Apptt_struct(app.Apptt):
                 "metadados/entrada", "metadados/saida",
                 "metadados/tabelasAlta", "metadados/tabelasBaixa",
                 "transcricoes", "metadados/respostaUsuario",
+                "metadados/modelPreview",
                 "selections"]
 
         for d in dirs:
