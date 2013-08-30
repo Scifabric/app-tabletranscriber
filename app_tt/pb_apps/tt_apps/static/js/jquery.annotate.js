@@ -4,10 +4,10 @@
 	$.fn.annotateImage = function(options) {
 		///	<summary>
 		///		Creates annotations on the given image.
-		///     Images are loaded from the "getUrl" propety passed into the options.
+		///     Images are loaded from the "getUrl" property passed into the options.
 		///	</summary>
 		var opts = $.extend({}, $.fn.annotateImage.defaults, options);
-		var image = this;
+//		var image = this;
 
 		this.image = this;
 		
@@ -99,9 +99,9 @@
 		///	</summary>    
 		$("#image-annotate-edit-form").remove();
 		$(".image-annotate-canvas").remove();
-		var toDestroy = undefined
+		var toDestroy = undefined;
         for (var i = 0; i < image.notes.length; i++) {
-			toDestroy = image.notes[image.notes[i]]
+			toDestroy = image.notes[image.notes[i]];
             if(toDestroy != undefined) toDestroy.destroy();
 		}
 		image.notes = new Array();
@@ -164,9 +164,12 @@
 		ok.click(function() {
 			var form = $('#image-annotate-edit-form form');
 			var text = {titulo : $('#titulo').val(), subtitulo: $('#subtitulo').val(),
-                conteudo: $('#conteudo').val(), rodape: $('#rodape').val(),
+                assunto: $('#assunto').val(), fontes: $('#fontes').val(),
                 outros: $('#outros').val(),
-                girar: $('#girar')[0].checked};
+                girar: $('#girar')[0].checked,
+                nao_girar: $('#nao_girar')[0].checked,
+                mista: $('#mista')[0].checked};
+			
 			$.fn.annotateImage.appendPosition(form, editable);
 			image.mode = 'view';
 
@@ -244,7 +247,7 @@
 			newNote.left = coords.left;
 			newNote.width = coords.width;
 			newNote.height = coords.height;
-			newNote.text = {titulo: "",subtitulo: "",rodape: "", conteudo : "", outros: ""};
+			newNote.text = {titulo: "",subtitulo: "",fontes: "", assunto : "", outros: ""};
 			this.note = newNote;
 		}
 
@@ -260,34 +263,47 @@
 		image.canvas.children('.image-annotate-view').hide();
 		image.canvas.children('.image-annotate-edit').show();
 
-        var selected = this.note.text.conteudo;
+        var selected = this.note.text.assunto;
         var girar = this.note.text.girar;
+        var nao_girar = this.note.text.nao_girar;
+        var mista = this.note.text.mista;
 		
         // Add the note (which we'll load with the form afterwards)
 		var form = $('<div id="image-annotate-edit-form">' + 
                 '<form>	Título: <textarea type="textarea" id="titulo" rows="0">' + this.note.text.titulo + '</textarea><br/>' + 
 				'Subtítulo: <textarea type="textarea" id="subtitulo">' + this.note.text.subtitulo + '</textarea><br/>' +
-                'Conteúdo: <select size="1" id="conteudo">' +
+                'Assunto: <select size="1" id="assunto">' +
                 '<option value="0"' + (selected == "0" ? "selected" : "") + ' >Economia</option>' +
                 '<option value="1"' + (selected == "1" ? "selected" : "") + ' >População/Demografia</option>'+ 
                 '<option value="2" ' + (selected == "2" ? "selected" : "") + '>Violência/Criminalidade</option>' +
                 '<option value="3"' + (selected == "3" ? "selected" : "") + ' >Outros</option></select>' +                    
                 '<input type="text" id="outros" value="' + this.note.text.outros +'">' + '</input><br/>' +
-				'Rodapé: <textarea type="textarea" id="rodape">' + this.note.text.rodape + '</textarea>' +
-                '<input id="girar"' + (girar ? "checked='true'" : "") + 'type="checkbox" value="true"> Girar imagem?</input>' +
+				'Fontes: <textarea type="textarea" id="fontes">' + this.note.text.fontes + '</textarea>' +
+				'<p><input id="nao_girar"' + (nao_girar ? "checked='true'" : "") + 'name="radio" type="radio" value="true" class="radiocheckbox" checked="true"> Tabela possui orientação horizontal</input></p>' +
+                '<p><input id="girar"' + (girar ? "checked='true'" : "") + 'name="radio" type="radio" value="true" class="radiocheckbox"> Tabela possui orientação vertical</input></p>' + 
+                '<p><input id="mista"' + (mista ? "checked='true'" : "") + 'name="radio" type="radio" value="true" class="radiocheckbox"> Tabela possui orientação mista</input></p>' +
                 '</form></div>');
 		
         this.form = form;
 
 		$('body').append(this.form);
-
+		
+		// mutual exclusivity of radio buttons
+		$('.radiocheckbox').click(function () {
+            checkedState = $(this).attr('checked');
+             $(this).parent('form').children('.checkbox:checked').each(function () {
+                 $(this).attr('checked', false);
+             });
+             $(this).attr('checked', checkedState);
+		});
+		
         if(selected == "3"){
             $("#outros").show();
         }else{
             $("#outros").hide();    
         }
-        $("#conteudo").change(function(){
-                $("#conteudo option:selected").each(function(){
+        $("#assunto").change(function(){
+                $("#assunto option:selected").each(function(){
                     var $option = $(this);
                     if($option.attr("value") == 3){
                         $("#outros").show();                            
@@ -622,8 +638,8 @@
 	$.fn.annotateImage.exportJsonData = function(){
 		jsonData = noteS;
 		// for (var i = 0; i < noteS.length; i++) {
-		// 	jsonData.push({data: {titulo: noteS[i].text.titulo, subtitulo: noteS[i].text.subtitulo, conteudo: noteS[i].text.conteudo,
-                    // rodape: noteS[i].text.rodape}, coords: {x1: noteS[i].left, y1:noteS[i].top, x2: noteS[i].left + noteS[i].width , y2: noteS[i].top + noteS[i].height}});
+		// 	jsonData.push({data: {titulo: noteS[i].text.titulo, subtitulo: noteS[i].text.subtitulo, assunto: noteS[i].text.assunto,
+                    // fontes: noteS[i].text.fontes}, coords: {x1: noteS[i].left, y1:noteS[i].top, x2: noteS[i].left + noteS[i].width , y2: noteS[i].top + noteS[i].height}});
 		// }
         // console.log(jsonData);
 		

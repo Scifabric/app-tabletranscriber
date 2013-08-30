@@ -89,10 +89,11 @@ class TTTask2(pb_task):
 
             bookId = self.app_short_name[:-4]
             imgId = self.task.info["page"]
-
+            
+            rotate = answer_json[0]["text"]["girar"]
+                        
             self.__downloadArchiveImages(bookId, imgId)
-            self.__runLinesRecognition(bookId, imgId,
-                                       answer_json[0]["text"]["girar"])
+            self.__runLinesRecognition(bookId, imgId, rotate)
 
             try:
                 # file with the lines recognized
@@ -103,7 +104,7 @@ class TTTask2(pb_task):
                 tables_coords = self.__splitFile(arch)
                 for tableId in range(len(tables_coords)):
                     self.__runAreaSelection(
-                        bookId, imgId, tableId)
+                        bookId, imgId, tableId, rotate)
 
                     image_pieces = self.__getAreaSelection(
                         bookId, imgId, tableId)
@@ -228,7 +229,7 @@ class TTTask2(pb_task):
 
         return False
 
-    def __runLinesRecognition(self, bookId, imgId, rotate, model="1"):
+    def __runLinesRecognition(self, bookId, imgId, modeRotation, model="1"):
         """
         Call cpp software that recognizes lines into the table and
         writes lines coords into \
@@ -240,19 +241,48 @@ class TTTask2(pb_task):
         #command shell to enter into the tt3 backend project and
         #calls the lines recognizer software
 
-        if rotate:
+        if modeRotation[0]: # rotated table
             rotate = "-r"
-        else:
-            rotate = "-nr"
-            
-        command = 'cd %s/TableTranscriber2/; ./tabletranscriber2 ' \
+            command = 'cd %s/TableTranscriber2/; ./tabletranscriber2 ' \
             '"/books/%s/baixa_resolucao/image%s.png" "model%s" "%s"' % (
             app.config['TT3_BACKEND'], bookId, imgId, model, rotate)
             
-        print("command: " + command)
+            print("command: " + command)
             
-        call([command], shell=True)  # calls the shell command
-        #TODO: implements exception strategy
+            call([command], shell=True)  # calls the shell command
+            #TODO: implements exception strategy
+        
+        elif modeRotation[1]: # not rotated table
+            rotate = "-nr"
+            command = 'cd %s/TableTranscriber2/; ./tabletranscriber2 ' \
+            '"/books/%s/baixa_resolucao/image%s.png" "model%s" "%s"' % (
+            app.config['TT3_BACKEND'], bookId, imgId, model, rotate)
+            
+            print("command: " + command)
+            
+            call([command], shell=True)  # calls the shell command
+            #TODO: implements exception strategy
+            
+        elif modeRotation[2]: # table with different orientations
+            rotate = "-r"
+            command = 'cd %s/TableTranscriber2/; ./tabletranscriber2 ' \
+                '"/books/%s/baixa_resolucao/image%s.png" "model%s" "%s"' % (
+                app.config['TT3_BACKEND'], bookId, imgId, model, rotate)
+                
+            print("command: " + command)
+                
+            call([command], shell=True)  # calls the shell command
+            #TODO: implements exception strategy
+            
+            rotate = "-nr"
+            command = 'cd %s/TableTranscriber2/; ./tabletranscriber2 ' \
+                '"/books/%s/baixa_resolucao/image%s.png" "model%s" "%s"' % (
+                app.config['TT3_BACKEND'], bookId, imgId, model, rotate)
+                
+            print("command: " + command)
+                
+            call([command], shell=True)  # calls the shell command
+            #TODO: implements exception strategy
 
         return self.__checkFile(bookId, imgId)
 
@@ -264,7 +294,7 @@ class TTTask2(pb_task):
 
         return ("image%s" % imgId) in images
 
-    def __runAreaSelection(self, bookId, imgId, tableId):
+    def __runAreaSelection(self, bookId, imgId, tableId, rotate):
         """
         Call cpp ZoomingSelection software that splits the
         tables and write the pieces at
@@ -273,11 +303,15 @@ class TTTask2(pb_task):
         :returns: True if the execution was ok
         :rtype: bool
         """
-
-        command = 'cd %s/ZoomingSelector/; ./zoomingselector ' \
-            '"/books/%s/metadados/tabelasAlta/image%s_%d.png"' % (
-                app.config['TT3_BACKEND'], bookId, imgId, tableId)
-
+        if not rotate:
+            command = 'cd %s/ZoomingSelector/; ./zoomingselector ' \
+            '"/books/%s/metadados/tabelasAlta/image%s_%d.png" %s' % (
+                app.config['TT3_BACKEND'], bookId, imgId, tableId, "-nr")
+        else:
+           command = 'cd %s/ZoomingSelector/; ./zoomingselector ' \
+            '"/books/%s/metadados/tabelasAlta/image%s_%d.png" %s' % (
+                app.config['TT3_BACKEND'], bookId, imgId, tableId, "-r") 
+        
         call([command], shell=True)
 
     def __getAreaSelection(self, bookId, imgId, tableId):

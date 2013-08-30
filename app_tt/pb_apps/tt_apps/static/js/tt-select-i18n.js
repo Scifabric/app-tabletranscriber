@@ -1,8 +1,8 @@
 var default_dict = { 
     'question': "Is there a table in this page?",
-    'button_yes': "Yes",
-    'button_no':  "No",
-    'button_ntk': "I don't know",
+    'button_yes': " Yes",
+    'button_no':  " No",
+    'button_ntk': " I don't know",
     'task_name': "Task: ",
     'saved': "Your answer has been saved",
     'congratulations': "Congratulations! ",
@@ -14,15 +14,15 @@ var default_dict = {
     'workflowtask' : "There is a new kind of task available. Click to try it.",
     'progress-from' : "You have completed ",
     'progress-to' : "tasks from"
-}
+};
 
 var en_US_dict = default_dict;
 
 var pt_dict= {
 	    'question': "Existe uma tabela nessa página?",
-	    'button_yes': "Sim",
-	    'button_no':  "Não",
-	    'button_ntk': "Não sei",
+	    'button_yes': " Sim",
+	    'button_no':  " Não",
+	    'button_ntk': " Não sei",
 	    'task_name': "Tarefa: ",
 	    'saved': "Sua resposta foi salva",
 	    'congratulations': "Parabéns! ",
@@ -34,7 +34,7 @@ var pt_dict= {
             'workflowtask' : "Existe um novo tipo de tarefa disponível. Clique para ir.",
             'progress-from' : "Você fez ",
             'progress-to' : "tarefas de "
-}
+};
 
 var language = navigator.language? navigator.language : navigator.userLanguage;
 

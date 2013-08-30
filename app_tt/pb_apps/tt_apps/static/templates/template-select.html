@@ -1,179 +1,288 @@
 <style type="text/css">
-    .ttImage{
-		width: 550px;
-		height: 700px; 
-		border: 1px solid;   
-    }
+.ttImage {
+	width: 550px;
+	height: 700px;
+	border: 1px solid;
+}
 </style>
 
 <div class="row">
 
-  <div class="span8 offset2" style="height:50px">
-  	
-   	<div id="success" class="alert alert-success" style="display:none;">
-	    <p><span>#</span></p>
+	<div class="span8 offset2" style="height: 50px">
+
+		<div id="success" class="alert alert-success" style="display: none;">
+			<p>
+				<span>#</span>
+			</p>
+		</div>
+		<div id="finish" class="alert alert-success" style="display: none;">
+			<p>
+				<span><strong>#</strong></span><span>#</span>
+			</p>
+			<br />
+		</div>
+		<div id="error" class="alert alert-error" style="display: none;">
+			<a class="close">x</a>
+			<p>
+				<span><strong>#</strong></span><span>#</span>
+			</p>
+		</div>
+		<div id="workflowtask" class="alert alert-success"
+			style="display: none; cursor: pointer; position: relative">
+			<p>
+				<span>#</span>
+			</p>
+		</div>
+
 	</div>
-    <div id="finish" class="alert alert-success" style="display:none;">
-      <p><span><strong>#</strong></span><span>#</span></p>
-      <br/>
-    </div>
-    <div id="error" class="alert alert-error" style="display:none;">
-      <a class="close">x</a>
-      <p><span><strong>#</strong></span><span>#</span></p>
-  </div>
-  <div id="workflowtask" class="alert alert-success" style="display:none; cursor:pointer; position:relative">
-       <p><span>#</span></p>
-  </div>
-
-  </div> <!-- End Success and Error Messages for the user -->
+	<!-- End Success and Error Messages for the user -->
 </div>
 
 <div class="row skeleton">
-  <div id="question" class="span8 offset2">
-      <h2>Question</h2>
-  </div>
+	<div id="question" class="span8 offset2">
+		<h2>Question</h2>
+	</div>
 </div>
 
 <div class="row skeleton">
-      <!-- Answer buttons -->
-      <div id="answer" class="span8 offset2">
-          <button id="button_yes" class="btn btn-success" onclick="submitTask('Yes')"><i class="icon icon-white icon-ok"></i></button>
-          <button id="button_no" class="btn btn-danger" onclick="submitTask('No')"><i class="icon icon-white icon-remove"></i></button>
-          <button id="button_ntk" class="btn" onclick="submitTask('NotKnown')"><i class="icon icon-white icon-refresh"></i></button>
-          <p><span id="progress-from">#</span><span id="done" class="label label-info" style="margin-right: 5px"></span><span id="progress-to">#</span>
-          <!-- Progress bar for the user -->
-          <span id="total" class="label label-inverse"></span></p>
-          <div class="progress progress-striped">
-          	<div id="progress" rel="tooltip" title="#" class="bar" style="width: 0%;"></div>
-          </div>
-        </div>
+	<!-- Answer buttons -->
+	<div id="answer" class="span8 offset2">
+		<button id="button_yes" class="btn btn-success"
+			onclick="submitTask('Yes')">
+			<i class="icon icon-white icon-ok"></i>
+		</button>
+		<button id="button_no" class="btn btn-danger"
+			onclick="submitTask('No')">
+			<i class="icon icon-white icon-remove"></i>
+		</button>
+		<button id="button_ntk" class="btn" onclick="submitTask('NotKnown')"></button>
+		<button id="button_help" class="btn help" data-toggle="modal"
+			onclick="showHelpSelect()"></button>
+
+		<p>
+			<span id="progress-from">#</span><span id="done"
+				class="label label-info" style="margin-right: 5px"></span><span
+				id="progress-to">#</span>
+			<!-- Progress bar for the user -->
+			<span id="total" class="label label-inverse"></span>
+		</p>
+		<div class="progress progress-striped">
+			<div id="progress" rel="tooltip" title="#" class="bar"
+				style="width: 0%;"></div>
+		</div>
+	</div>
 </div>
 
 <div class="row skeleton" style="padding: 10px;">
-   <div class="span8 offset2">	
-    <a id="image-link" href="#" target="_blank">
-      <img id="image" class=ttImage src="#" onload="$.unblockUI();">
-    </a>
-    
-  </div>
+	<div class="span8 offset2">
+		<a id="image-link" href="#" target="_blank"> <img id="image"
+			class=ttImage src="#" onload="$.unblockUI();">
+		</a>
+
+	</div>
 </div>
 
 <div class="row skeleton">
-<div id="disqus_thread" class="span8 offset2"></div>
+	<div id="disqus_thread" class="span8 offset2"></div>
+</div>
+
+<div id="helpModalSelect" class="modal hide fade" tabindex="-1"
+	role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+	style="display: none">
+
+	<div class="modal-header">
+		<button class="close" data-dismiss="modal" aria-hidden="true">
+			<i class="icon-white icon-remove"></i>
+		</button>
+		<h3 id="myModalLabel">
+			<strong>Tutorial de Seleção de Tabelas</strong>
+		</h3>
+	</div>
+
+	<div class="modal-body">
+		<h2>O que deve ser feito?</h2>
+		<p>A tarefa consiste em selecionar as páginas em que existe pelo
+			menos uma tabela.</p>
+		<br>
+		<p>
+			<strong style="color: red">Atenção</strong>
+		</p>
+		<p>- Caso esteja visível apenas uma parte da tabela confirme que
+			existe uma tabela na página.</p>
+		<p>- Caso você tenha alguma dúvida se existe ou não uma tabela na
+			página, envie um feedback com sua dúvida no campo logo abaixo da
+			página.</p>
+		<br>
+		<h2>O que devo considerar uma tabela?</h2>
+		<p>Você deve considerar uma tabela qualquer estrutura que possua
+			dados sobre economia, geografia, demografia ou outra matéria para
+			fins estatísticos.</p>
+		<p style="color:red">Índices e sumários dos livros não são considerados
+			tabelas válidas para nossa aplicação.</p>
+		<br>
+	</div>
+
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Fechar</button>
+	</div>
 </div>
 
 <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'lsdpybossa'; // required: replace example with your forum shortname
-    //var disqus_developer = 1;
+	/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+	var disqus_shortname = 'lsdpybossa'; // required: replace example with your forum shortname
+	//var disqus_developer = 1;
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
+	/* * * DON'T EDIT BELOW THIS LINE * * */
+	(function() {
+		var dsq = document.createElement('script');
+		dsq.type = 'text/javascript';
+		dsq.async = true;
+		dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document
+				.getElementsByTagName('body')[0]).appendChild(dsq);
+	})();
 </script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+<noscript>
+	Please enable JavaScript to view the <a
+		href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+</noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span
+	class="logo-disqus">Disqus</span></a>
 
 <script type="text/javascript" src="#server/js/jquery.i18n.min.js"></script>
 <script type="text/javascript" src="#server/js/tt-select-i18n.js"></script>
-<script type="text/javascript" src="http://malsup.github.com/jquery.blockUI.js"></script>
+<script type="text/javascript" src="#server/js/jquery.blockUI.js"></script>
+<script type="text/javascript"
+	src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 
 <script>
+	function showHelpSelect() {
+		$("#helpModalSelect").modal();
+	}
+</script>
 
-$(window).load(function(){
+<script>
+	$(window).load(function() {
 		$("#question h2").text($.i18n._('question'));
+
 		$("#button_yes").text($.i18n._('button_yes'));
+		$("#button_yes").button({
+			icons : {
+				primary : "icon icon-white icon-ok"
+			}
+		});
+
 		$("#button_no").text($.i18n._('button_no'));
+		$("#button_no").button({
+			icons : {
+				primary : "icon icon-white icon-remove"
+			}
+		});
+
 		$("#button_ntk").text($.i18n._('button_ntk'));
+
+		$('#button_help').button({
+			icons : {
+				primary : 'icon-white icon-question-sign'
+			}
+		});
+
 		$("#success span:nth-child(1)").text($.i18n._('saved'));
 		$("#finish strong").text($.i18n._('congratulations'));
 		$("#finish span:nth-child(2)").text($.i18n._('finished'));
 		$("#error strong").text($.i18n._('error'));
 		$("#error span:nth-child(2)").text($.i18n._('err_msg'));
-       		$("#workflowtask span:first").text($.i18n._('workflowtask'));
+		$("#workflowtask span:first").text($.i18n._('workflowtask'));
 		$("#progress-from").text($.i18n._('progress-from'));
 		$("#progress-to").text($.i18n._('progress-to'));
-		
-}); //Internationalization using jquery.i18n
 
-var task_shortname = "#task_shortname#";
-var endpoint = "/pybossa";
+	}); //Internationalization using jquery.i18n
 
-function loadUserProgress() {
-    pybossa.userProgress(task_shortname).done(function(data){
-        var pct = Math.round((data.done*100)/data.total);
-        $("#progress").css("width", pct.toString() +"%");
-        $("#progress").attr("title", pct.toString() + "% completed!");
-        $("#progress").tooltip({'placement': 'left'}); 
-        $("#total").text(data.total);
-        $("#done").text(data.done);
-    });
-}
+	var task_shortname = "#task_shortname#";
+	var endpoint = "/pybossa";
 
-function taskRunDone(taskId){
-    $.ajax({
-        url: '/mb/api/'+taskId+'/done',
-        success: function(data){
-                enableNextTask(taskId);
-            }
-        });
-}
-
-function enableNextTask(taskId){
-    $.ajax({
-        url: '/mb/api/' + taskId + '/available_tasks',
-        success: function(data) {
-            if (data == "True") {
-                $("#workflowtask").fadeIn(200);
-            }
-        }
-    });
-
-    $("#workflowtask").click(function(){
-                window.open(endpoint + "/app/" + task_shortname.replace("_tt1", "_tt2")  + "/newtask", "_self");
-    });
-}
-
-function loadData( data ) {
-	
-    if ( !$.isEmptyObject(data.task) ) {
-                loadUserProgress();
-		task_id = data.task.id;
-	        $("#image-link").attr("href", data.task.info.url_b);
-	        $("#image").attr("src",data.task.info.url_m);
-   }
-   else {
-        $(".skeleton").hide();
-        //$("#finish").fadeIn();
-         window.open(endpoint + "/app/" + task_shortname.replace("_tt1", "_tt2")  + "/newtask", "_self");
-   }
-
-}
-
-// Function to submit and save the TaskRun in PyBossa
-function submitTask(answer) {
-	// Get the task-id
-	taskid = task_id;
-	
-	// Save the task
-	pybossa.saveTask(taskid, answer).done(function(data) {
-        //Call tt workflow api.
-        taskRunDone(taskid);
-
-   	$.blockUI({message: $("#success"),
-                css: {height: $("#success").height()}
-   	});
-		// Load a new task
-	pybossa.newTask(task_shortname).done(function(data) {
-			loadData(data);
+	function loadUserProgress() {
+		pybossa.userProgress(task_shortname).done(function(data) {
+			var pct = Math.round((data.done * 100) / data.total);
+			$("#progress").css("width", pct.toString() + "%");
+			$("#progress").attr("title", pct.toString() + "% completed!");
+			$("#progress").tooltip({
+				'placement' : 'left'
+			});
+			$("#total").text(data.total);
+			$("#done").text(data.done);
 		});
-	});
-}
+	}
 
-pybossa.setEndpoint(endpoint);
-pybossa.newTask(task_shortname).done( function( data ) { loadData( data ) });
-    
+	function taskRunDone(taskId) {
+		$.ajax({
+			url : '/mb/api/' + taskId + '/done',
+			success : function(data) {
+				enableNextTask(taskId);
+			}
+		});
+	}
+
+	function enableNextTask(taskId) {
+		$.ajax({
+			url : '/mb/api/' + taskId + '/available_tasks',
+			success : function(data) {
+				if (data == "True") {
+					$("#workflowtask").fadeIn(200);
+				}
+			}
+		});
+
+		$("#workflowtask").click(
+				function() {
+					window.open(endpoint + "/app/"
+							+ task_shortname.replace("_tt1", "_tt2")
+							+ "/newtask", "_self");
+				});
+	}
+
+	function loadData(data) {
+
+		if (!$.isEmptyObject(data.task)) {
+			loadUserProgress();
+			task_id = data.task.id;
+			$("#image-link").attr("href", data.task.info.url_b);
+			$("#image").attr("src", data.task.info.url_m);
+		} else {
+			$(".skeleton").hide();
+			//$("#finish").fadeIn();
+			window.open(endpoint + "/app/"
+					+ task_shortname.replace("_tt1", "_tt2") + "/newtask",
+					"_self");
+		}
+
+	}
+
+	// Function to submit and save the TaskRun in PyBossa
+	function submitTask(answer) {
+		// Get the task-id
+		taskid = task_id;
+
+		// Save the task
+		pybossa.saveTask(taskid, answer).done(function(data) {
+			//Call tt workflow api.
+			taskRunDone(taskid);
+
+			$.blockUI({
+				message : $("#success"),
+				css : {
+					height : $("#success").height()
+				}
+			});
+			// Load a new task
+			pybossa.newTask(task_shortname).done(function(data) {
+				loadData(data);
+			});
+		});
+	}
+
+	pybossa.setEndpoint(endpoint);
+	pybossa.newTask(task_shortname).done(function(data) {
+		loadData(data)
+	});
 </script>
