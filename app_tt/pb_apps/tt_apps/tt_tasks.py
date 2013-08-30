@@ -155,16 +155,15 @@ class TTTask2(pb_task):
             return False
 
     def __compare_answers(self, answer1, answer2):
-
-	threshold = 2
-	
-	if len(answer1) != len(answer2):
-            return False
-
-	for i in range(0, len(answer1)):
-	    table1 = answer1[i]
-	    table2 = answer2[i]
-
+    	threshold = 2
+    	
+    	if len(answer1) != len(answer2):
+                return False
+    
+    	for i in range(0, len(answer1)):
+    	    table1 = answer1[i]
+    	    table2 = answer2[i]
+    
             for answer_type in table1.keys():
                 a1_value = table1[answer_type]
                 a2_value = table2[answer_type]
@@ -229,7 +228,7 @@ class TTTask2(pb_task):
 
         return False
 
-    def __runLinesRecognition(self, bookId, imgId, modeRotation, model="1"):
+    def __runLinesRecognition(self, bookId, imgId, rotate, model="1"):
         """
         Call cpp software that recognizes lines into the table and
         writes lines coords into \
@@ -241,7 +240,7 @@ class TTTask2(pb_task):
         #command shell to enter into the tt3 backend project and
         #calls the lines recognizer software
 
-        if modeRotation[0]: # rotated table
+        if rotate: # rotated table
             rotate = "-r"
             command = 'cd %s/TableTranscriber2/; ./tabletranscriber2 ' \
             '"/books/%s/baixa_resolucao/image%s.png" "model%s" "%s"' % (
@@ -252,7 +251,7 @@ class TTTask2(pb_task):
             call([command], shell=True)  # calls the shell command
             #TODO: implements exception strategy
         
-        elif modeRotation[1]: # not rotated table
+        else: # not rotated table
             rotate = "-nr"
             command = 'cd %s/TableTranscriber2/; ./tabletranscriber2 ' \
             '"/books/%s/baixa_resolucao/image%s.png" "model%s" "%s"' % (
@@ -263,27 +262,6 @@ class TTTask2(pb_task):
             call([command], shell=True)  # calls the shell command
             #TODO: implements exception strategy
             
-        elif modeRotation[2]: # table with different orientations
-            rotate = "-r"
-            command = 'cd %s/TableTranscriber2/; ./tabletranscriber2 ' \
-                '"/books/%s/baixa_resolucao/image%s.png" "model%s" "%s"' % (
-                app.config['TT3_BACKEND'], bookId, imgId, model, rotate)
-                
-            print("command: " + command)
-                
-            call([command], shell=True)  # calls the shell command
-            #TODO: implements exception strategy
-            
-            rotate = "-nr"
-            command = 'cd %s/TableTranscriber2/; ./tabletranscriber2 ' \
-                '"/books/%s/baixa_resolucao/image%s.png" "model%s" "%s"' % (
-                app.config['TT3_BACKEND'], bookId, imgId, model, rotate)
-                
-            print("command: " + command)
-                
-            call([command], shell=True)  # calls the shell command
-            #TODO: implements exception strategy
-
         return self.__checkFile(bookId, imgId)
 
     def __checkFile(self, bookId, imgId):
