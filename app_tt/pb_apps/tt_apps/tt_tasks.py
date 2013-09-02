@@ -404,15 +404,15 @@ class TTTask3(pb_task):
 
     def add_next_task(self):
         #Verify the answer of the question to create a new task
-	#TODO create TT4 tasks
-	pass
+	    #TODO create TT4 tasks
+	    pass
  
 
     def close_task(self):
         pass
 
     def check_answer(self):
-	#TODO check if all zoom areas were completed
+	    #TODO check if all zoom areas were completed
         return False
 
     def get_next_app(self):
