@@ -184,7 +184,7 @@ canvas {
 		 var coords = data.task.info.coords;
 
 		 if (data.task.info.last_answer != undefined) {
-			coords = data.task.info.last_answer;
+			coords = $.parseJSON(data.task.info.last_answer);
 			isPreviousAnswer = true;
 		 }
 
@@ -230,8 +230,8 @@ canvas {
 	// Get grid infos
         var segmentos = salvarAlteracoes();
 
-	var answer = $.extend({'img_url': img_url}, segmentos);
-
+	var answer = JSON.stringify($.extend({'img_url': img_url}, segmentos));
+	
 	$.blockUI({message: $("#success"),
 		      css: {height: $("#success").height()}
 	});

@@ -32,13 +32,13 @@ public class selectBookPagesInDB {
             
             // de acordo com paginas do livro
 //            int arrayOfOriginalIDs_ANUARIO[] = {64,65,181,183/*,11,12,13,14,15*/};
-            int arrayOfOriginalIDs_CARACTERIZACAO[] = {51,131,132,133,139};
+//            int arrayOfOriginalIDs_CARACTERIZACAO[] = {51,131,132,133,139};
             
             ArrayList<Integer> arrayOfFinalIDs = new ArrayList<Integer>();
             
-            for(int i = 0; i < arrayOfOriginalIDs_CARACTERIZACAO.length; i++) {
-            	arrayOfFinalIDs.add(firstID + arrayOfOriginalIDs_CARACTERIZACAO[i]);
-            	System.out.println("final IDs: " + (firstID + arrayOfOriginalIDs_CARACTERIZACAO[i] - 1));
+            for(int i = 10; i < 400; i++) {
+            	arrayOfFinalIDs.add(firstID + i);
+            	System.out.println("final IDs: " + (firstID + i - 1));
             }
             
             String arrayFinalIDsToString = "(" + arrayOfFinalIDs.get(0);

@@ -12,7 +12,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import com.thoughtworks.selenium.Selenium;
 
 public class test_t1 {
-	private final int NUMBER_OF_TASKS_T1_BY_USER = 3;
+	private final int NUMBER_OF_TASKS_T1_BY_USER = 10;
 	private Selenium selenium;
 
 	@Before
@@ -35,7 +35,7 @@ public class test_t1 {
 		
 		for(int i = 0; i < NUMBER_OF_TASKS_T1_BY_USER; i++) {
 			selenium.click("button_yes");
-			assertEquals("PyBossa · Application: Annuario Estatistico da Parahyba do Norte 1916 Seleção · Contribute", selenium.getTitle());
+//			assertEquals("PyBossa · Application: Annuario Estatistico da Parahyba do Norte 1916 Seleção · Contribute", selenium.getTitle());
 //			assertEquals("PyBossa · Application: Caracterização e tendências da rede urbana do Brasil: configurações atuais e tendências da rede urbana Seleção · Contribute", selenium.getTitle());
 		}
 		
@@ -55,7 +55,7 @@ public class test_t1 {
 		
 		for(int i = 0; i < NUMBER_OF_TASKS_T1_BY_USER; i++) {
 			selenium.click("button_yes");
-			assertEquals("PyBossa · Application: Annuario Estatistico da Parahyba do Norte 1916 Seleção · Contribute", selenium.getTitle());
+//			assertEquals("PyBossa · Application: Annuario Estatistico da Parahyba do Norte 1916 Seleção · Contribute", selenium.getTitle());
 //			assertEquals("PyBossa · Application: Caracterização e tendências da rede urbana do Brasil: configurações atuais e tendências da rede urbana Seleção · Contribute", selenium.getTitle());
 		}
 	}
@@ -73,7 +73,7 @@ public class test_t1 {
 		
 		for(int i = 0; i < NUMBER_OF_TASKS_T1_BY_USER; i++) {
 			selenium.click("button_yes");
-			assertEquals("PyBossa · Application: Annuario Estatistico da Parahyba do Norte 1916 Seleção · Contribute", selenium.getTitle());
+//			assertEquals("PyBossa · Application: Annuario Estatistico da Parahyba do Norte 1916 Seleção · Contribute", selenium.getTitle());
 //			assertEquals("PyBossa · Application: Caracterização e tendências da rede urbana do Brasil: configurações atuais e tendências da rede urbana Seleção · Contribute", selenium.getTitle());
 		}
 	}

@@ -26,7 +26,7 @@ class TTTask1(pb_task):
         super(TTTask1, self).__init__(task_id, app_short_name)
 
     def add_next_task(self):
-        #Verify the answer of the question to create a new task
+        # Verify the answer of the question to create a new task
         if(self.task.info["answer"] == "Yes"):
             info = dict(link=self.task.info["url_m"],
                         page=self.task.info["page"])
@@ -51,7 +51,7 @@ class TTTask1(pb_task):
 
             if(answers[answer] == N_ANSWER and answer != "NotKnown"):
                 self.task.info["answer"] = answer
-                #put the answer into task info
+                # put the answer into task info
                 requests.put("%s/api/task/%s?api_key=%s" % (
                     app.config['PYBOSSA_URL'], self.task.id,
                     app.config['API_KEY']),
@@ -73,7 +73,7 @@ class TTTask2(pb_task):
         super(TTTask2, self).__init__(task_id, app_short_name)
 
     def add_next_task(self):
-        #Get the list of task_runs
+        # Get the list of task_runs
         task_runs = json.loads(urllib2.urlopen(
             "%s/api/taskrun?task_id=%s&limit=%d" % (
                 app.config['PYBOSSA_URL'], self.task.id, sys.maxint)).read())
@@ -100,7 +100,7 @@ class TTTask2(pb_task):
                 arch = open(
                     "%s/books/%s/metadados/saida/image%s_model%s.txt" % (
                     app.config['TT3_BACKEND'], bookId, imgId, "1"))
-                #get the lines recognitions
+                # get the lines recognitions
                 tables_coords = self.__splitFile(arch)
                 for tableId in range(len(tables_coords)):
                     self.__runAreaSelection(
@@ -128,7 +128,7 @@ class TTTask2(pb_task):
             except IOError:
                 print "Error. File image%s_model%s.txt couldn't be opened" % (
                     imgId, "1")
-            #TODO: the task will not be created,
+            # TODO: the task will not be created,
             # routine to solve this must be implemented
             except Exception, e:
                 print str(e)
@@ -139,13 +139,13 @@ class TTTask2(pb_task):
     def check_answer(self):
         task_runs = self.get_task_runs()
         n_taskruns = len(task_runs)  # task_runs goes from 0 to n-1
+        
         if(n_taskruns > 1):
-
-	    answer1 = task_runs[n_taskruns - 1].info
-	    answer2 = task_runs[n_taskruns - 2].info
+    	    answer1 = task_runs[n_taskruns - 1].info
+    	    answer2 = task_runs[n_taskruns - 2].info
             answer1_json = json.loads(answer1)
             answer2_json = json.loads(answer2)
-
+    
             if self.__compare_answers(answer1_json, answer2_json):
                 if answer2 != "0" and answer2 != "[]":
                     return self.__fileOutput(answer2_json)
@@ -220,7 +220,7 @@ class TTTask2(pb_task):
             return True
         except IOError, e:
             print str(e)
-        #TODO: Implement strategies for exceptions cases
+        # TODO: Implement strategies for exceptions cases
         except RequestException, e:
             print str(e)
         except Exception, e:
@@ -237,10 +237,10 @@ class TTTask2(pb_task):
         :returns: True if the write was successful
         :rtype: bool
         """
-        #command shell to enter into the tt3 backend project and
-        #calls the lines recognizer software
+        # command shell to enter into the tt3 backend project and
+        # calls the lines recognizer software
 
-        if rotate: # rotated table
+        if rotate:  # rotated table
             rotate = "-r"
             command = 'cd %s/TableTranscriber2/; ./tabletranscriber2 ' \
             '"/books/%s/baixa_resolucao/image%s.png" "model%s" "%s"' % (
@@ -249,9 +249,9 @@ class TTTask2(pb_task):
             print("command: " + command)
             
             call([command], shell=True)  # calls the shell command
-            #TODO: implements exception strategy
+            # TODO: implements exception strategy
         
-        else: # not rotated table
+        else:  # not rotated table
             rotate = "-nr"
             command = 'cd %s/TableTranscriber2/; ./tabletranscriber2 ' \
             '"/books/%s/baixa_resolucao/image%s.png" "model%s" "%s"' % (
@@ -260,7 +260,7 @@ class TTTask2(pb_task):
             print("command: " + command)
             
             call([command], shell=True)  # calls the shell command
-            #TODO: implements exception strategy
+            # TODO: implements exception strategy
             
         return self.__checkFile(bookId, imgId)
 
@@ -281,14 +281,19 @@ class TTTask2(pb_task):
         :returns: True if the execution was ok
         :rtype: bool
         """
-        if not rotate:
-            command = 'cd %s/ZoomingSelector/; ./zoomingselector ' \
-            '"/books/%s/metadados/tabelasAlta/image%s_%d.png" %s' % (
-                app.config['TT3_BACKEND'], bookId, imgId, tableId, "-nr")
-        else:
-           command = 'cd %s/ZoomingSelector/; ./zoomingselector ' \
-            '"/books/%s/metadados/tabelasAlta/image%s_%d.png" %s' % (
-                app.config['TT3_BACKEND'], bookId, imgId, tableId, "-r") 
+        
+        #if not rotate:
+            #command = 'cd %s/ZoomingSelector/; ./zoomingselector ' \
+            #'"/books/%s/metadados/tabelasAlta/image%s_%d.png" %s' % (
+                #app.config['TT3_BACKEND'], bookId, imgId, tableId, "-nr")
+        #else:
+         #  command = 'cd %s/ZoomingSelector/; ./zoomingselector ' \
+          #  '"/books/%s/metadados/tabelasAlta/image%s_%d.png" %s' % (
+           #     app.config['TT3_BACKEND'], bookId, imgId, tableId, "-r") 
+        
+        command = 'cd %s/ZoomingSelector/; ./zoomingselector ' \
+        '"/books/%s/metadados/tabelasAlta/image%s_%d.png"' % (
+        app.config['TT3_BACKEND'], bookId, imgId, tableId)
         
         call([command], shell=True)
 
@@ -317,8 +322,8 @@ class TTTask2(pb_task):
         return selections
 
     def __scale(point, src, dest):
-        scaleX = lambda x, src_w, dest_w: round((dest_w * x)/float(src_w))
-        scaleY = lambda y, src_h, dest_h: round((dest_h * y)/float(src_h))
+        scaleX = lambda x, src_w, dest_w: round((dest_w * x) / float(src_w))
+        scaleY = lambda y, src_h, dest_h: round((dest_h * y) / float(src_h))
 
         return [scaleX(point[0], src[0], dest[0]),
                 scaleY(point[1], src[1], dest[1])]
@@ -383,7 +388,7 @@ class TTTask2(pb_task):
                 y0 = int(table["top"])
                 y1 = int(table["height"] + y0)
                 arch.write(
-                    str(x0) + "," + str(y0) + "," +
+                    str(x0) + "," + str(y0) + "," + 
                     str(x1) + "," + str(y1) + "\n")
             arch.close()
 
@@ -403,8 +408,8 @@ class TTTask3(pb_task):
         super(TTTask3, self).__init__(task_id, app_short_name)
 
     def add_next_task(self):
-        #Verify the answer of the question to create a new task
-	    #TODO create TT4 tasks
+        # Verify the answer of the question to create a new task
+	    # TODO create TT4 tasks
 	    pass
  
 
@@ -412,7 +417,27 @@ class TTTask3(pb_task):
         pass
 
     def check_answer(self):
-	    #TODO check if all zoom areas were completed
+        task_runs = self.get_task_runs()
+        n_taskruns = len(task_runs)  # task_runs goes from 0 to n-1
+        
+        if(n_taskruns > 1):
+            answer1 = task_runs[n_taskruns - 1].info
+            answer2 = task_runs[n_taskruns - 2].info
+            
+            print (answer1)
+            
+            answer1_json = json.loads(answer1)
+            answer2_json = json.loads(answer2)
+            
+            if(self.__compare_answers(answer1_json, answer2_json)):
+                return True
+            else:
+                return False
+        else:
+            return False
+        
+	    # TODO check if all zoom areas were completed
+        
         return False
 
     def get_next_app(self):
@@ -420,4 +445,45 @@ class TTTask3(pb_task):
         next_app_name = curr_app_name[:-1] + "4"
         return ttapps.Apptt_meta(short_name=next_app_name)
 
+    def __compare_answers(self, answer1, answer2):
+        if len(answer1) != len(answer2):
+            return False
+        
+        col1 = answer1['colunas']
+        lin1 = answer1['linhas']
+        
+        col2 = answer2['colunas']
+        lin2 = answer2['linhas']
+        
+        if (len(col1) != len(col2) or len(lin1) != len(lin2)):
+            return False
+        else:
+            r1 = self.__compareCols(col1, col2) 
+            r2 = self.__compareLin(lin1, lin2)
+            print ("r1: " + str(r1))
+            print ("r2: " + str(r2))
+            
+            if (r1 and r2):
+                return True
+            else:
+                return False
 
+    def __compareCols(self, column1, column2):
+        threshold = 5
+        
+        for i in range(0,len(column1)):
+            for j in range(0, 4):
+                if (column1[i][j] > (column2[i][j] + threshold) or column1[i][j] < (column2[i][j] - threshold)):
+                    return False
+                    
+        return True
+    
+    def __compareLin(self, line1, line2):
+        threshold = 5
+        
+        for i in range(0, len(line1)):
+            for j in range(0, 4):
+                if (line1[i][j] > (line2[i][j] + threshold) or line1[i][j] < (line2[i][j] - threshold)):
+                    return False
+        
+        return True
