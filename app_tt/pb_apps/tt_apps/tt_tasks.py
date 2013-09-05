@@ -460,8 +460,8 @@ class TTTask3(pb_task):
         else:
             r1 = self.__compareCols(col1, col2) 
             r2 = self.__compareLin(lin1, lin2)
-            print ("r1: " + str(r1))
-            print ("r2: " + str(r2))
+            #print ("r1: " + str(r1))
+            #print ("r2: " + str(r2))
             
             if (r1 and r2):
                 return True
