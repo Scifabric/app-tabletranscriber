@@ -274,22 +274,13 @@ class TTTask2(pb_task):
 
     def __runAreaSelection(self, bookId, imgId, tableId, rotate):
         """
-        Call cpp ZoomingSelection software that splits the
+        Call cpp ZoomingSelector software that splits the
         tables and write the pieces at
         <tt3_backend_id>/books/bookId/selections/image<imgId>_tableId.txt
 
         :returns: True if the execution was ok
         :rtype: bool
         """
-        
-        #if not rotate:
-            #command = 'cd %s/ZoomingSelector/; ./zoomingselector ' \
-            #'"/books/%s/metadados/tabelasAlta/image%s_%d.png" %s' % (
-                #app.config['TT3_BACKEND'], bookId, imgId, tableId, "-nr")
-        #else:
-         #  command = 'cd %s/ZoomingSelector/; ./zoomingselector ' \
-          #  '"/books/%s/metadados/tabelasAlta/image%s_%d.png" %s' % (
-           #     app.config['TT3_BACKEND'], bookId, imgId, tableId, "-r") 
         
         command = 'cd %s/ZoomingSelector/; ./zoomingselector ' \
         '"/books/%s/metadados/tabelasAlta/image%s_%d.png"' % (
@@ -408,10 +399,71 @@ class TTTask3(pb_task):
         super(TTTask3, self).__init__(task_id, app_short_name)
 
     def add_next_task(self):
-        # Verify the answer of the question to create a new task
-	    # TODO create TT4 tasks
-	    pass
- 
+        try:
+            if(not self.task.info['hasZoom']):
+                # TODO ==> rodar OCR (TesseractExecutor)
+                    
+                # 1. inserir carregar respostas de TesseractExecutor
+                # 2. verificar niveis de confianca para ocrzacoes de celulas
+                # 3. inserir respostas em T4
+                
+                tt4_app_short_name = self.app_short_name[:-1] + "4"
+                tt4_app = ttapps.Apptt_transcribe(short_name=tt4_app_short_name)
+            
+            else:
+                similarTasks = __searchSimilarTasks(self)
+                
+                if(not __validateTaskGroup(self,similarTasks)):
+                    return
+                else:
+                    tableGrid = __joinTaskGroupAnswers(self, similarTasks)
+                    
+                    # TODO ==> rodar OCR (TesseractExecutor)
+                    
+                    # 1. inserir carregar respostas de TesseractExecutor
+                    # 2. verificar niveis de confianca para ocrzacoes de celulas
+                    # 3. inserir respostas em T4
+                    
+                    tt4_app_short_name = self.app_short_name[:-1] + "4"
+                    tt4_app = ttapps.Apptt_transcribe(short_name=tt4_app_short_name)
+        
+        except Exception, e:
+            print str(e)
+    
+    """
+      Search similar tasks to this task in pybossa task table
+    """        
+    def __searchSimilarTasks(self):
+        img_url = self.task.info['img_url']
+        table_id = self.task.info['table_id']
+        
+        similarTasks = null
+        tasks = get_tasks()
+        for t in tasks:
+            if (t.task.info['img_url'] == img_url and t.task.info['table_id'] == table_id):
+                similarTasks.append(t)
+        
+        return similarTasks
+    
+    def __get_tasks(self):
+        return pbclient.get_tasks(self.app_id, sys.maxint)
+        
+    """
+      Verify if all tasks, that are similar to this task, and this task
+      are completed.
+    """
+    def __validateTaskGroup(self, similarTasks):
+        for t in similarTasks:
+            if(not t.task.state == "completed" and self.task.state == "completed"):
+                return False
+        return True
+
+    """
+      Join all answers of task_runs to return a table grid.
+    """
+    def __joinTaskGroupAnswers(self, similarTasks):
+        #TODO
+        return
 
     def close_task(self):
         pass
@@ -428,15 +480,12 @@ class TTTask3(pb_task):
             
             answer1_json = json.loads(answer1)
             answer2_json = json.loads(answer2)
-            
             if(self.__compare_answers(answer1_json, answer2_json)):
                 return True
             else:
                 return False
         else:
             return False
-        
-	    # TODO check if all zoom areas were completed
         
         return False
 

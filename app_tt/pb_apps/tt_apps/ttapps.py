@@ -123,6 +123,39 @@ class Apptt_struct(app.Apptt):
             os.makedirs("%s/books/%s/%s" % (path, short_name, d))
 
 
+class Apptt_transcribe(app.Apptt):
+    def __init__(self, **keyargs):
+
+        if "short_name" in keyargs.keys():
+            short_name = keyargs['short_name']
+
+        if "title" in keyargs.keys():
+            title = keyargs['title'] + " "
+        else:
+         	title = ""
+        
+        app_name = title + unicode("Reconhecimento Optico", "utf-8")
+
+        super(Apptt_transcribe, self).__init__(
+            app_name, short_name,
+            "Por favor. Corrija as células da tabela.")
+
+        super(Apptt_transcribe, self).set_template(_setUrl_(
+            urllib2.urlopen(
+                urllib2.Request(
+                    flask_app.config['URL_TEMPLATES']
+                    + "/templates/template-transcribe.html")),
+            short_name))
+
+        super(Apptt_transcribe, self).set_long_description(_setUrl_(
+            urllib2.urlopen(
+                urllib2.Request(
+                    flask_app.config['URL_TEMPLATES']
+                    + "/templates"
+                    + "/long_description-transcribe.html")), short_name))
+
+        print "Create task type 4"
+
 def _setUrl_(arch, short_name, server=flask_app.config['URL_TEMPLATES']):
     text = ""
     for line in arch.readlines():
