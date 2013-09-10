@@ -7,7 +7,7 @@ from core import app
 
 app.register_blueprint(collaborate, url_prefix='/collaborate')
 app.register_blueprint(api, url_prefix='/api')
-app.register_blueprint(tt4, url_prefix='/tt4')
+#app.register_blueprint(tt4, url_prefix='/tt4')
 
 
 @app.route('/')

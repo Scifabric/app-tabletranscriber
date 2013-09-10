@@ -114,6 +114,9 @@
 <script type="text/javascript">
 spinner.appendTo (document.getElementById('throbber'));
 
+var task_shortname = "#task_shortname#";
+var endpoint = "/pybossa";
+
 function loadData(data){
 	  if ( !$.isEmptyObject(data.task) ) {
 	        $("#question h2").text(data.question);
@@ -128,8 +131,9 @@ function loadData(data){
 	  viewer($("#table").attr("value"));
 	  last_answer = data.task.info.last_answer;
 	  createTable();
-	
-	
 }
-pybossa.newTask("tt-transcribe").done( function( data ) { loadData( data ) });
+
+pybossa.setEndpoint(endpoint);
+
+pybossa.newTask(task_shortname).done( function( data ) { loadData( data ) });
 </script>

@@ -409,14 +409,15 @@ class TTTask3(pb_task):
                 
                 tt4_app_short_name = self.app_short_name[:-1] + "4"
                 tt4_app = ttapps.Apptt_transcribe(short_name=tt4_app_short_name)
-            
-            else:
-                similarTasks = __searchSimilarTasks(self)
+                tt4_app.add_task("info tt4 without zoom")
                 
-                if(not __validateTaskGroup(self,similarTasks)):
+            else:
+                similarTasks = self.__searchSimilarTasks()
+                
+                if(not self.__validateTaskGroup(similarTasks)):
                     return
                 else:
-                    tableGrid = __joinTaskGroupAnswers(self, similarTasks)
+                    tableGrid = self.__joinTaskGroupAnswers(similarTasks)
                     
                     # TODO ==> rodar OCR (TesseractExecutor)
                     
@@ -426,7 +427,8 @@ class TTTask3(pb_task):
                     
                     tt4_app_short_name = self.app_short_name[:-1] + "4"
                     tt4_app = ttapps.Apptt_transcribe(short_name=tt4_app_short_name)
-        
+                    tt4_app.add_task("info tt4 with zoom")
+                    
         except Exception, e:
             print str(e)
     
@@ -437,8 +439,8 @@ class TTTask3(pb_task):
         img_url = self.task.info['img_url']
         table_id = self.task.info['table_id']
         
-        similarTasks = null
-        tasks = get_tasks()
+        similarTasks = None
+        tasks = self.__get_tasks()
         for t in tasks:
             if (t.task.info['img_url'] == img_url and t.task.info['table_id'] == table_id):
                 similarTasks.append(t)
@@ -475,8 +477,6 @@ class TTTask3(pb_task):
         if(n_taskruns > 1):
             answer1 = task_runs[n_taskruns - 1].info
             answer2 = task_runs[n_taskruns - 2].info
-            
-            print (answer1)
             
             answer1_json = json.loads(answer1)
             answer2_json = json.loads(answer2)

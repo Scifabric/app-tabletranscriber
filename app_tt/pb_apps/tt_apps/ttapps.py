@@ -130,15 +130,15 @@ class Apptt_transcribe(app.Apptt):
             short_name = keyargs['short_name']
 
         if "title" in keyargs.keys():
-            title = keyargs['title'] + " "
+            	title = keyargs['title'] + " "
         else:
-         	title = ""
-        
-        app_name = title + unicode("Reconhecimento Optico", "utf-8")
-
+            title = ""
+         	
+        app_name = title + unicode("Transcrição", "utf-8")
+    
         super(Apptt_transcribe, self).__init__(
             app_name, short_name,
-            "Por favor. Corrija as células da tabela.")
+            "Por favor. Corrija o conteúdo das células da tabela.")
 
         super(Apptt_transcribe, self).set_template(_setUrl_(
             urllib2.urlopen(
@@ -189,6 +189,8 @@ if __name__ == "__main__":
             template_type = "template-meta.html"
         elif app_type == "_tt3":
             template_type = "template-struct.html"
+        elif app_type == "_tt4":
+        	template_type = "template-transcribe.html"
 
         if template_type:
             new_template = _setUrl_(

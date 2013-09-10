@@ -71,7 +71,8 @@ def create_apps(book_id):
         tt_select = Apptt_select(short_name=book_id + "_tt1", title=book_title)
         tt_meta = Apptt_meta(short_name=book_id + "_tt2", title=book_title)
         tt_struct = Apptt_struct(short_name=book_id + "_tt3", title=book_title)
-
+        tt_transcribe = Apptt_transcribe(short_name=book_id + "_tt4", title=book_title)
+        
         bookInfo = _archiveBookData(book_id)
 
         tt_select.add_app_infos(dict(thumbnail=bookInfo["img"]))
@@ -93,7 +94,8 @@ def create_apps(book_id):
         tt_meta.add_app_infos(bookInfo)
         tt_select.add_app_infos(bookInfo)
         tt_struct.add_app_infos(bookInfo)
-
+        tt_transcribe.add_app_infos(bookInfo)
+        
         if len(tt_select.get_tasks()) == 0:
             for img in imgs:
                 tt_select.add_task(img)
