@@ -35,7 +35,7 @@
 	    <p><span id="progress-from">#</span><span id="done" class="label label-info" style="margin-right: 5px"></span><span id="progress-to">#</span>
 	    <!-- Progress bar for the user -->
 	    <span id="total" class="label label-inverse"></span></p>
-	    <div class="progress progress-striped" style="width: 520px">
+	    <div class="progress progress-striped" style="width: 520px; margin-bottom: 10px;">
 	     	  <div id="progress" rel="tooltip" title="#" class="bar" style="width: 0%;"></div>
 	    </div>
 	</div>
@@ -43,32 +43,104 @@
 
 <div class="skeleton">
 
-	<!-- <img id="loading" src="#server/images/loading.gif"/> -->
+	<div id="toolbar" class="btn-group">
+		<button id="button_select" class="btn" rel="tooltip" title="Habilita a ferramenta de seleção de segmentos" onclick="handleSelectionToolEvent()"><img class="icon" style="width: 20px" src="#server/images/select_tool.png"></img></button>
+		<button id="button_area" class="btn" rel="tooltip" title="Habilita a ferramenta de seleção em área" onclick="handleAreaSelectionToolEvent()"><img class="icon" style="width: 20px" src="#server/images/area_tool.png"></img></button>
+		<button id="button_add" class="btn" rel="tooltip" title="Habilita a ferramenta de adição de segmentos" onclick="handleAddToolEvent()"><img class="icon" style="width: 16px" src="#server/images/add_tool.png"></img></button>
+		<button id="button_split" class="btn" rel="tooltip" title="Habilita a ferramenta de partição de segmentos" onclick="handleSplitToolEvent()"><img class="icon" style="width: 18px" src="#server/images/split_tool.png"></img></button>
+		<button id="button_remove" class="btn" rel="tooltip" title="Remove os segmentos selecionadas (Atalho DEL)" onclick="handleRemoveToolEvent()"><i class="icon icon-trash"></i></button>
+		<button id="button_help" class="btn" rel="tooltip" title="Abre a tela de ajuda" onclick="showHelpStruct()"><i class="icon icon-question-sign"></i></button>
+	</div>
 
-		<div id="context-menu">
-		  <ul id="remover-menu" class="dropdown-menu">
-		    <li><a id="remover-linha-coluna" class="menu-item" tabindex="1" href="#">Remover linha/coluna</a></li>
-		    <li><a id="remover-segmento" class="menu-item" tabindex="2" href="#">Remover segmento</a></li>
-		    <li><a id="adicionar-linha" class="menu-item" tabindex="3" href="#">Adicionar linha</a></li>
-		    <li><a id="adicionar-coluna" class="menu-item" tabindex="4" href="#">Adicionar coluna</a></li>
-		  </ul>
-		</div>
-	    	<div id="canvas-container" style="margin-left: 10px; margin-bottom: 20px; float: left;"></div>
+    	<div id="canvas-container" style="float: left;"></div>
 
-		<div id="adicionar_linha_coluna" style="display: none; float: right; width: 400px" >
-			<div id="instrucoes" class="alert alert-info"> 
-				<h5 id="task-info"><strong> Instru&ccedil;&otilde;es</strong><br><ul><li> Clique com o bot&atilde;o direito sobre um segmento para remov&ecirc;-lo;</li><li>Clique com o botão direito numa regi&atilde;o da tabela para adicionar um segmento;</li><li>Clique e arraste um segmento para ajustar sua posi&ccedil;&atilde;o.</li></ul></h5>
-			</div>
-			<button id="button_finished" class="btn btn-success" style="height: 80px; width: 260px; font-size: 20px; margin-left: 65px;" onclick="submitTask()"><i class="icon icon-white icon-thumbs-up" style="margin-right:10px;"></i><span>#</span></button>
+	<div id="task-info" style="display: none;" >
+		<div id="instruction" class="alert alert-info"> 
+			<h5 id="task-instruction"><strong> Instru&ccedil;&otilde;es b&aacute;sicas</strong><br>
+				<ul>
+					<li>Use a ferramenta <img class="icon" style="width: 20px" src="#server/images/select_tool.png"></img> para selecionar e ajustar a posição de um segmento;</li>
+					<li>Use a ferramenta <img class="icon" style="width: 20px" src="#server/images/area_tool.png"></img> para selecionar segmentos de uma área;</li>
+					<li>Clique na lixeira <i class="icon icon-trash" style="color:#333333; font-size: 18px;"></i>  ou use a tecla DEL para remover os segmentos selecionados;</li>
+					<li>Com a ferramenta <img class="icon" style="width: 16px; margin-bottom: 2px;" src="#server/images/add_tool.png"></img> habilitada, clique e arraste o mouse para adicionar uma linha ou coluna;</li>
+					<li> Use a ferramenta <img class="icon" style="width: 18px; margin-bottom: 2px;" src="#server/images/split_tool.png"></img> para dividir o segmento na intersecção mais próxima;</li>
+					<li>Clique em <i class=" icon-question-sign" style="color:#333333"></i>  para soluções de dúvidas e atalhos avançados.</li>
+				</ul>
+			</h5>
 		</div>
+		<button id="button_finished" class="btn btn-success" onclick="submitTask()"><i class="icon icon-white icon-thumbs-up" style="margin-right:10px;"></i><span>#</span></button>
+	</div>
 </div>
 
-<script src="#server/js/kinetic.js"></script>
-<script type="text/javascript" src="#server/js/jquery.i18n.min.js"></script>
-<script type="text/javascript" src="#server/js/tt-struct-i18n.js"></script>
-<script type="text/javascript" src="#server/js/throbber/throbber.js" ></script>
-<script type="text/javascript" src="http://malsup.github.com/jquery.blockUI.js"></script>
-<script type="text/javascript" charset="utf-8" src="#server/js/tt3.js"></script>
+<div id="helpModalStruct" class="modal hide fade" tabindex="-1"
+	role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+	style="display: none">
+
+	<div class="modal-header">
+		<button class="close" data-dismiss="modal" aria-hidden="true">
+			<i class="icon-white icon-remove"></i>
+		</button>
+		<h3 id="myModalLabel">
+			<strong>Tutorial de Correção da Estrutura das Tabelas</strong>
+		</h3>
+	</div>
+
+	<div class="modal-body">
+		<h2>O que deve ser feito?</h2>
+		<p>A tarefa consiste em corrigir as linhas e colunas de uma tabela ou
+		de uma seção em foco da tabela. Precisamos que você marque a estrutura da tabela para que
+		posteriormente façamos o reconhecimento óptico do conteúdo de cada célula da tabela.</p>
+		<p>A grade apresentada pode não ser muito bem desenhada devido à falta de padronização existente
+		na criação das tabelas historicamente. A maioria das tabelas do projeto são tabelas
+		antigas, datadas desde o século XIX.</p>
+		<br>
+		<p>
+		<strong style="color:red;">Atenção</strong>
+		</p>
+		<ul>
+			<li><strong> Caso uma célula esteja cortada, marque os lados da célula que conseguir visualizar
+		na tarefa.</strong></li>
+			<li> Observe o cabeçalho da tabela, geralmente eles não possuem uma estrutura bem definida.</li>
+			<li> Não se esqueça de observar se existem ou não subcélulas na tabela: elas também
+			devem ser marcadas.</li>
+			<li> Ainda que a célula não possua nenhum conteúdo, privilegie a formação da tabela e a
+			marque-a também.</li>
+			<li> Caso você tenha alguma dúvida envie um feedback com sua dúvida no campo logo abaixo da
+			página.</li>
+		</ul>
+		<br>
+		<h2>Como devo marcar a estrutura da tabela?</h2>
+		<p>Inicialmente será apresentado uma grade com as linhas e colunas identificadas
+		por um software de visão computacional. Você pode mover, dividir e apagar as linhas e colunas
+		fornecidas, e adicionar novas para identificar a estrutura completa da tabela.</p>
+		<br>
+		<h2>Ferramentas de edição</h2>
+			<dl>
+			  <dt>Seleção de segmentos <img class="icon" style="width: 20px" src="#server/images/select_tool.png"></img></dt>
+			  <dd>Ferramenta que permite selecionar linhas e colunas através do clique simples.<p> É possível selecionar mais de uma linha ou coluna se o SHIFT estiver pressionado.</p></dd>
+			</dl>
+			<dl>
+			  <dt>Seleção em área <img class="icon" style="width: 20px" src="#server/images/area_tool.png"></img></dt>
+			  <dd>Ferramenta que permite selecionar as linhas e colunas de uma região. Clique e arraste o mouse para demarcar a região a ser selecionada. <p><strong>Observação:</strong> um segmento só será selecionado se o mesmo estiver completamente na área de seleção.<p></dd>
+			</dl>
+			<dl>
+			  <dt>Remoção de segmentos <i class="icon icon-trash" style="color:#333333; font-size: 18px;"></i></dt>
+			  <dd>Ferramenta que remove os segmentos selecionados. Essa função pode ser usada alternativamente através do atalho DEL.</dd>
+			</dl>
+			<dl>
+			  <dt>Adição de segmentos <img class="icon" style="width: 16px; margin-bottom: 2px;" src="#server/images/add_tool.png"></dt>
+			  <dd>Ferramenta para desenho de novas linhas e colunas. Clique e arraste o mouse sobre uma região da tabela para criá-las. <p>Se o segmento desenhado for predominantemente horizontal, uma linha será criada. Caso esse segmento tenda a uma orientação vertical, uma coluna.</p></dd>
+			</dl>
+			<dl>
+			  <dt>Partição de segmentos <img class="icon" style="width: 18px; margin-bottom: 2px;" src="#server/images/split_tool.png"></img></dt>
+			  <dd>Ferramenta que divide uma linha ou coluna no ponto de intersecção mais próximo. Quando particionados, os sub-segmentos podem ser manipulados independentemente.</dd>
+			</dl>
+		<br>
+	</div>
+
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Fechar</button>
+	</div>
+</div>
 
 <style>
 
@@ -82,12 +154,101 @@ canvas {
 	width: 100px;
 	height: 100px;
 }
-</style>    
-    
+
+#toolbar {
+	margin-bottom: 10px;
+}
+
+#toolbar button {
+	width: 55px;
+	height: 35px;
+	font-size: 18px;
+}
+
+#toolbar .tooltip-inner {
+	max-width: none;
+}
+
+div.container {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.task-info {
+	float: right;
+	width: 400px;
+}
+
+.button-finished {
+	height: 80px;
+	width: 260px;
+	font-size: 20px;
+	margin-left: 65px;
+}
+
+.task-info-rotated {
+	float: left;
+	width: auto;
+}
+
+.instruction-rotated {
+	float: left;
+	width: 380px;
+	display: inline-block;
+}
+
+.button-finished-rotated {
+	height: 80px;
+	width: 260px;
+	font-size: 20px;
+	margin-left: 15px;
+	float: left;
+}
+
+</style>
+
+<!--<div class="row skeleton">
+<div id="disqus_thread" class="span8 offset2"></div>
+</div>
+
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'lsdpybossa'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>-->
+
+<script src="#server/js/kinetic.js"></script>
+<script type="text/javascript" src="#server/js/jquery.i18n.min.js"></script>
+<script type="text/javascript" src="#server/js/tt-struct-i18n.js"></script>
+<script type="text/javascript" src="#server/js/throbber/throbber.js" ></script>
+<script type="text/javascript" src="http://malsup.github.com/jquery.blockUI.js"></script>
+<script type="text/javascript" charset="utf-8" src="#server/js/tt3.js"></script>
+
+
 <script type="text/javascript" charset="utf-8">
 
     var taskid;
-    var lastTask;
+    var serverName = "#server";
+    var maxCanvasWidth = 540;
+    var taskInfoHeight = $("#task-info").height();
+	
+    function showHelpStruct() {
+	$('#helpModalStruct').modal();
+    }
+
+    $("[rel=tooltip]").tooltip();
 
     $(window).load(function(){
 		$("#question").text($.i18n._('question'));
@@ -111,7 +272,7 @@ canvas {
 
     function loadUserProgress() {
 	pybossa.userProgress(task_shortname).done(function(data){
-		lastTask = (data.done + 1) == data.total;
+		var lastTask = (data.done + 1) == data.total;
 		var pct = Math.round((data.done*100)/data.total);
 		$("#progress").css("width", pct.toString() +"%");
 		$("#progress").attr("title", pct.toString() + "% completed!");
@@ -135,34 +296,18 @@ canvas {
     }
 
     $("#workflowtask").click(function(){
-		var random_task_type = Math.round(Math.random()) + 1;
-                window.open(endpoint + "/app/" + task_shortname.replace("_tt3", "_tt" + random_task_type)  + "/newtask", "_self");
+	var random_task_type = Math.round(Math.random()) + 1;
+	window.open(endpoint + "/app/" + task_shortname.replace("_tt3", "_tt" + random_task_type)  + "/newtask", "_self");
     });
 
     $('body').on('click', function(e) {
-	    $("#remover-menu").hide();
+	handleBodyClickEvent(e);
     });
 
-    $(".menu-item").click(function () {
-        var str = $(this).text();
-	if (str == "Remover segmento") {
-		var successful = handleRemoverSegmentoEvent();
-		if (!successful) alert("Não é possível remover este segmento.");
-
-	} else if (str == "Remover linha/coluna") {
-		handleRemoverLinhaColunaEvent();
-	} else if (str == "Adicionar linha") {
-		handleAdicionarLinhaEvent();
-	} else if (str == "Adicionar coluna"){
-		handleAdicionarColunaEvent();
-	}
-
-	$("#remover-linha-coluna").blur();
-	$("#remover-segmento").blur();
-	$("#adicionar-linha").blur();
-	$("#adicionar-coluna").blur();
-	$("#remover-menu").hide();
+    $('body').on('mouseup', function(e) {
+	handleMouseUpEvent(e);
     });
+
 
     var task_shortname = "#task_shortname#";
     var endpoint = "/pybossa";
@@ -180,21 +325,10 @@ canvas {
 		 $("#question").text(question);
 		 taskid = data.task.id;
 	
-		 var isPreviousAnswer = false;
-		 var coords = data.task.info.coords;
-
-		 if (data.task.info.last_answer != undefined) {
-			coords = $.parseJSON(data.task.info.last_answer);
-			isPreviousAnswer = true;
-		 }
-
-		 var zoom = data.task.info.zoom;
-		 img_url = data.task.info.img_url;
-		 setTimeout(function(){
-				 initGrid(coords, img_url, isPreviousAnswer, hasZoom, zoom);
-				 configureUI();
-
-		}, 0);
+		 setTimeout(function() {
+			initGrid(data.task.info, maxCanvasWidth, taskInfoHeight, serverName);
+			configureUI();
+		 }, 0);
          } else {
 		$.unblockUI();
 	        $(".skeleton").hide();
@@ -210,28 +344,31 @@ canvas {
 	$.unblockUI();
 
 	// A tabela foi rotacionada
-	if (getMaxX() > 510) {
-	   $("#adicionar_linha_coluna").css("width", "auto");
-	   $("#adicionar_linha_coluna").css("float", "left");
+	if (getCanvasWidth() > maxCanvasWidth) {
+		$('#task-info').removeClass('task-info');
+		$('#button_finished').removeClass('button-finished');
 
-	   $("#instrucoes").css("width", "380px");
-	   $("#instrucoes").css("display", "inline-block");
-	   $("#instrucoes").css("float", "left");
+		$('#task-info').addClass('task-info-rotated');
+		$('#instruction').addClass('instruction-rotated');
+		$('#button_finished').addClass('button-finished-rotated');
 
-	   $("#button_finished").css("margin-left", "15px");
+	} else {
+		$('#task-info').removeClass('task-info-rotated');
+		$('#instruction').removeClass('instruction-rotated');
+		$('#button_finished').removeClass('button-finished-rotated');
+
+		$('#task-info').addClass('task-info');
+		$('#button_finished').addClass('button-finished');
 	}
 
-	$("#adicionar_linha_coluna").show();
+	$("#task-info").show();
      }
 
      // Function to submit and save the TaskRun in PyBossa
      function submitTask() {
-             
-	// Get grid infos
-        var segmentos = salvarAlteracoes();
 
-	var answer = JSON.stringify($.extend({'img_url': img_url}, segmentos));
-	
+	var answer = getGridLinesAnswer();
+
 	$.blockUI({message: $("#success"),
 		      css: {height: $("#success").height()}
 	});
