@@ -54,7 +54,7 @@
 
     	<div id="canvas-container" style="float: left;"></div>
 
-	<div id="task-info" style="display: none;" >
+	<div id="task-info" class="task-info" style="display: none;">
 		<div id="instruction" class="alert alert-info"> 
 			<h5 id="task-instruction"><strong> Instru&ccedil;&otilde;es b&aacute;sicas</strong><br>
 				<ul>
@@ -181,6 +181,7 @@ div.container {
 .task-info {
 	float: right;
 	width: 400px;
+	height: 400px;
 }
 
 .button-finished {
@@ -233,18 +234,19 @@ div.container {
 <script type="text/javascript" src="#server/js/jquery.i18n.min.js"></script>
 <script type="text/javascript" src="#server/js/tt-struct-i18n.js"></script>
 <script type="text/javascript" src="#server/js/throbber/throbber.js" ></script>
-<script type="text/javascript" src="http://malsup.github.com/jquery.blockUI.js"></script>
+<script type="text/javascript" src="#server/js/jquery.blockUI.js"></script>
 <script type="text/javascript" charset="utf-8" src="#server/js/tt3.js"></script>
 
 
 <script type="text/javascript" charset="utf-8">
+
     var taskid;
     var serverName = "#server";
     var maxCanvasWidth = 540;
-    var taskInfoHeight = $("#task-info").height();
+    var maxCanvasHeight = $("#task-info").height();
 	
     function showHelpStruct() {
-		$('#helpModalStruct').modal();
+	    $('#helpModalStruct').modal();
     }
 
     $("[rel=tooltip]").tooltip();
@@ -310,28 +312,24 @@ div.container {
 
     var task_shortname = "#task_shortname#";
     var endpoint = "/pybossa";
-    var img_url;
 
     function loadData(data) {
-        if ( !$.isEmptyObject(data.task) ) {
-             loadUserProgress();
-   	         
-             var hasZoom = data.task.info.hasZoom;
-		     var question = $.i18n._('question');
-		 
-		     if (hasZoom) question = $.i18n._('question_with_focus');
 
-		     $("#question").text(question);
-		     taskid = data.task.id;
-	
-		 setTimeout(function() { 
-			 initGrid(data.task.info, maxCanvasWidth, taskInfoHeight, serverName);
-			 configureUI();
-		 	}, 0);
-        } 
-        
+        if ( !$.isEmptyObject(data.task) ) {
+            loadUserProgress();
+   	         
+            var hasZoom = data.task.info.hasZoom;
+		    var question = $.i18n._('question');
+		 
+		    if (hasZoom) question = $.i18n._('question_with_focus');
+
+		    $("#question").text(question);
+		    taskid = data.task.id;
+		    
+		    initGrid(data.task.info, maxCanvasWidth, maxCanvasHeight, serverName);
+	  	    configureUI();
+        }
         else {
-			$.unblockUI();
 	        $(".skeleton").hide();
         	$("#finish").fadeIn(200);
 			setTimeout(function() {
@@ -342,8 +340,6 @@ div.container {
      }
 
      function configureUI() {
-		$.unblockUI();
-
 		// A tabela foi rotacionada
 		if (getCanvasWidth() > maxCanvasWidth) {
 			$('#task-info').removeClass('task-info');
@@ -367,31 +363,22 @@ div.container {
 
      // Function to submit and save the TaskRun in PyBossa
      function submitTask() {
-
 		var answer = getGridLinesAnswer();
-	
-		$.blockUI({message: $("#success"),
-			css: {height: $("#success").height()}
-		});
-	
-		pybossa.saveTask(taskid, answer).done(function(data) {
-		    //Call tt workflow api.
-		    taskRunDone(taskid);
-	        clearCanvas();
-	
-			// Load a new task
-			pybossa.newTask(task_shortname).done(function(data) {
-				loadData(data);
-			});
-		});
-     }
+		
+		pybossa.saveTask(taskid, answer).done(function(data) {   
+		 	pybossa.newTask(task_shortname).done(function(data) {
+				 loadData(data);
+			 });
+		});     
+	 }
 
-     
-	pybossa.setEndpoint(endpoint);
+     pybossa.setEndpoint(endpoint);
 
-	$(window).load(function() {
-		pybossa.newTask(task_shortname).done(function(data) {
-			loadData(data);
-		});
-	});
+     $(window).load(function(){
+             pybossa.newTask(task_shortname).done(
+                 function( data ) {
+                     loadData( data );
+             }); 
+     });
+
 </script>
