@@ -366,7 +366,21 @@ div.container {
 		var answer = getGridLinesAnswer();
 		
 		pybossa.saveTask(taskid, answer).done(function(data) {   
-		 	pybossa.newTask(task_shortname).done(function(data) {
+			//Call tt workflow api.
+	        taskRunDone(taskid);
+			
+	        clearCanvas();
+			
+			$.blockUI({message: $("#success"),
+				          css: {height: $("#success").height()}
+			});
+				
+		    setTimeout(function() {
+		      	$.unblockUI();
+		    }, 1500);
+			
+		    // Load new task
+			pybossa.newTask(task_shortname).done(function(data) {
 				 loadData(data);
 			 });
 		});     
