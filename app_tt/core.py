@@ -36,7 +36,7 @@ def configure_app(app):
         app.config['RABBIT_PASSWD'],
         app.config['RABBIT_VHOST'])
 
-    app.config['TT3_BACKEND'] = os.path.join(
+    app.config['CV_MODULES'] = os.path.join(
             os.path.dirname(here), 'cv-modules')
 
 

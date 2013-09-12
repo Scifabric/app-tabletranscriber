@@ -29,6 +29,7 @@ def get_task(task_id):
             task = tt_tasks.TTTask4(task_id, app_short_name)
 
         return task
+    
     except TaskNotFoundException:
         return 0
 

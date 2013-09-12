@@ -238,14 +238,13 @@ div.container {
 
 
 <script type="text/javascript" charset="utf-8">
-
     var taskid;
     var serverName = "#server";
     var maxCanvasWidth = 540;
     var taskInfoHeight = $("#task-info").height();
 	
     function showHelpStruct() {
-	$('#helpModalStruct').modal();
+		$('#helpModalStruct').modal();
     }
 
     $("[rel=tooltip]").tooltip();
@@ -255,57 +254,57 @@ div.container {
 		$("#question span:first").text($.i18n._('task_name'));
 		$("#button_finished span:first").text($.i18n._('button_finished'));
 		$("#button_addline").text($.i18n._('button_addline'));
-       		$("#button_addcolumn").text($.i18n._('button_addcolumn'));
+        $("#button_addcolumn").text($.i18n._('button_addcolumn'));
 		$("#button_rmseg label").text($.i18n._('button_rmseg'));
 		$("#button_rmline label").text($.i18n._('button_rmline'));
-	        $("#button_mvline label").text($.i18n._('button_mvline'));
+	    $("#button_mvline label").text($.i18n._('button_mvline'));
 		$("#success strong").text($.i18n._('well_done'));
 		$("#success span:nth-child(2)").text($.i18n._('saved'));
 		$("#finish strong").text($.i18n._('congratulations'));
 		$("#finish span:nth-child(2)").text($.i18n._('finished'));
 		$("#error strong").text($.i18n._('error'));
 		$("#error span:nth-child(2)").text($.i18n._('err_msg'));
-      	        $("#workflowtask").text($.i18n._('workflowtask'));
+      	$("#workflowtask").text($.i18n._('workflowtask'));
 		$("#progress-from").text($.i18n._('progress-from'));
 		$("#progress-to").text($.i18n._('progress-to'));
     });
 
     function loadUserProgress() {
-	pybossa.userProgress(task_shortname).done(function(data){
-		var lastTask = (data.done + 1) == data.total;
-		var pct = Math.round((data.done*100)/data.total);
-		$("#progress").css("width", pct.toString() +"%");
-		$("#progress").attr("title", pct.toString() + "% completed!");
-		$("#progress").tooltip({'placement': 'left'}); 
-		$("#total").text(data.total);
-		$("#done").text(data.done);
-	});
+		pybossa.userProgress(task_shortname).done(function(data) {
+			var lastTask = (data.done + 1) == data.total;
+			var pct = Math.round((data.done*100)/data.total);
+			$("#progress").css("width", pct.toString() +"%");
+			$("#progress").attr("title", pct.toString() + "% completed!");
+			$("#progress").tooltip({'placement': 'left'}); 
+			$("#total").text(data.total);
+			$("#done").text(data.done);
+		});
     }
 
     function taskRunDone(taskId){
         $.ajax({
             url: '/mb/api/' + taskId + '/done',
-            success: function(data){
-                    enableNextTask();
-                }
-            });
+            success: function(data) { 
+                enableNextTask();
+            }
+        });
     }
 
     function enableNextTask(){
         $("#workflowtask").fadeIn(200);
     }
 
-    $("#workflowtask").click(function(){
-	var random_task_type = Math.round(Math.random()) + 1;
-	window.open(endpoint + "/app/" + task_shortname.replace("_tt3", "_tt" + random_task_type)  + "/newtask", "_self");
+    $("#workflowtask").click(function() {
+		var random_task_type = Math.round(Math.random()) + 1;
+		window.open(endpoint + "/app/" + task_shortname.replace("_tt3", "_tt" + random_task_type)  + "/newtask", "_self");
     });
 
     $('body').on('click', function(e) {
-	handleBodyClickEvent(e);
+		handleBodyClickEvent(e);
     });
 
     $('body').on('mouseup', function(e) {
-	handleMouseUpEvent(e);
+		handleMouseUpEvent(e);
     });
 
 
@@ -314,84 +313,85 @@ div.container {
     var img_url;
 
     function loadData(data) {
-
-
         if ( !$.isEmptyObject(data.task) ) {
-                 loadUserProgress();
-   	         var hasZoom = data.task.info.hasZoom;
-		 var question = $.i18n._('question');
-		 if (hasZoom) question = $.i18n._('question_with_focus');
+             loadUserProgress();
+   	         
+             var hasZoom = data.task.info.hasZoom;
+		     var question = $.i18n._('question');
+		 
+		     if (hasZoom) question = $.i18n._('question_with_focus');
 
-		 $("#question").text(question);
-		 taskid = data.task.id;
+		     $("#question").text(question);
+		     taskid = data.task.id;
 	
-		 setTimeout(function() {
-			initGrid(data.task.info, maxCanvasWidth, taskInfoHeight, serverName);
-			configureUI();
-		 }, 0);
-         } else {
-		$.unblockUI();
+		 setTimeout(function() { 
+			 initGrid(data.task.info, maxCanvasWidth, taskInfoHeight, serverName);
+			 configureUI();
+		 	}, 0);
+        } 
+        
+        else {
+			$.unblockUI();
 	        $(".skeleton").hide();
         	$("#finish").fadeIn(200);
-		setTimeout(function(){
-			$("#finish").fadeOut(200);
-			enableNextTask();
-		}, 3000);
-	}
+			setTimeout(function() {
+				$("#finish").fadeOut(200);
+				enableNextTask();
+			}, 3000);
+		}
      }
 
      function configureUI() {
-	$.unblockUI();
+		$.unblockUI();
 
-	// A tabela foi rotacionada
-	if (getCanvasWidth() > maxCanvasWidth) {
-		$('#task-info').removeClass('task-info');
-		$('#button_finished').removeClass('button-finished');
-
-		$('#task-info').addClass('task-info-rotated');
-		$('#instruction').addClass('instruction-rotated');
-		$('#button_finished').addClass('button-finished-rotated');
-
-	} else {
-		$('#task-info').removeClass('task-info-rotated');
-		$('#instruction').removeClass('instruction-rotated');
-		$('#button_finished').removeClass('button-finished-rotated');
-
-		$('#task-info').addClass('task-info');
-		$('#button_finished').addClass('button-finished');
-	}
-
-	$("#task-info").show();
+		// A tabela foi rotacionada
+		if (getCanvasWidth() > maxCanvasWidth) {
+			$('#task-info').removeClass('task-info');
+			$('#button_finished').removeClass('button-finished');
+	
+			$('#task-info').addClass('task-info-rotated');
+			$('#instruction').addClass('instruction-rotated');
+			$('#button_finished').addClass('button-finished-rotated');
+	
+		}
+		else {
+			$('#task-info').removeClass('task-info-rotated');
+			$('#instruction').removeClass('instruction-rotated');
+			$('#button_finished').removeClass('button-finished-rotated');
+	
+			$('#task-info').addClass('task-info');
+			$('#button_finished').addClass('button-finished');
+		}
+		$("#task-info").show();
      }
 
      // Function to submit and save the TaskRun in PyBossa
      function submitTask() {
 
-	var answer = getGridLinesAnswer();
+		var answer = getGridLinesAnswer();
+	
+		$.blockUI({message: $("#success"),
+			css: {height: $("#success").height()}
+		});
+	
+		pybossa.saveTask(taskid, answer).done(function(data) {
+		    //Call tt workflow api.
+		    taskRunDone(taskid);
+	        clearCanvas();
+	
+			// Load a new task
+			pybossa.newTask(task_shortname).done(function(data) {
+				loadData(data);
+			});
+		});
+     }
 
-	$.blockUI({message: $("#success"),
-		      css: {height: $("#success").height()}
-	});
+     
+	pybossa.setEndpoint(endpoint);
 
-	pybossa.saveTask(taskid, answer).done(function(data) {
-	        //Call tt workflow api.
-	        taskRunDone(taskid);
-        	clearCanvas();
-
-		// Load a new task
+	$(window).load(function() {
 		pybossa.newTask(task_shortname).done(function(data) {
 			loadData(data);
 		});
 	});
-     }
-
-     pybossa.setEndpoint(endpoint);
-
-     $(window).load(function(){
-             pybossa.newTask(task_shortname).done(
-                 function( data ) {
-                     loadData( data );
-             }); 
-     });
-
 </script>

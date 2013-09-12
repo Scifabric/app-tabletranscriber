@@ -69,7 +69,7 @@ def index(page):
 @blueprint.route('/progress/<string(maxlength=255):bookid>')
 def progress(bookid):
 
-    tt_suffix = ['_tt1', '_tt2', '_tt3']  #TODO: Add tt4 when it's ready
+    tt_suffix = ['_tt1', '_tt2', '_tt3', '_tt4']  #TODO: Add tt4 when it's ready
     overall = 0
     overall_completed = 0
     for suffix in tt_suffix:

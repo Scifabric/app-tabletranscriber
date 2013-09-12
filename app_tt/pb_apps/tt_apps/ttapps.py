@@ -37,6 +37,7 @@ class Apptt_select(app.Apptt):
                         flask_app.config['URL_TEMPLATES']
                         + "/templates"
                         + "/long_description-select.html")), short_name))
+            
             print "Create task type 1"
 
 
@@ -106,8 +107,10 @@ class Apptt_struct(app.Apptt):
             try:
                 self.__create_dirs(
                     short_name[:-4],
-                    flask_app.config['TT3_BACKEND'])
+                    flask_app.config['CV_MODULES'])
+            
                 print "Create task type 3"
+            
             except OSError, e:
                 print str(e)
 

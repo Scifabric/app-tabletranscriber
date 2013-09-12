@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from app_tt.pb_apps.pb_task import pb_task
+from app_tt.core import pbclient
 import ttapps
 from app_tt.core import app
 from subprocess import call
@@ -99,7 +100,7 @@ class TTTask2(pb_task):
                 # file with the lines recognized
                 arch = open(
                     "%s/books/%s/metadados/saida/image%s_model%s.txt" % (
-                    app.config['TT3_BACKEND'], bookId, imgId, "1"))
+                    app.config['CV_MODULES'], bookId, imgId, "1"))
                 # get the lines recognitions
                 tables_coords = self.__splitFile(arch)
                 for tableId in range(len(tables_coords)):
@@ -194,7 +195,7 @@ class TTTask2(pb_task):
                 bookId, imgId, max_width, max_height))
 
             fullImgPath = "%s/books/%s/alta_resolucao/image%s" % (
-                app.config['TT3_BACKEND'], bookId, imgId)
+                app.config['CV_MODULES'], bookId, imgId)
             fullImgPathJPG = fullImgPath + ".jpg"
             fullImgPathPNG = fullImgPath + ".png"
 
@@ -208,7 +209,7 @@ class TTTask2(pb_task):
 
 	    # create image with low resolution
             lowImgPath = "%s/books/%s/baixa_resolucao/image%s" % (
-                app.config['TT3_BACKEND'], bookId, imgId)
+                app.config['CV_MODULES'], bookId, imgId)
             lowImgPathPNG = lowImgPath + ".png"
 
             command += 'convert %s -resize %dx%d! %s' % (
@@ -244,7 +245,7 @@ class TTTask2(pb_task):
             rotate = "-r"
             command = 'cd %s/TableTranscriber2/; ./tabletranscriber2 ' \
             '"/books/%s/baixa_resolucao/image%s.png" "model%s" "%s"' % (
-            app.config['TT3_BACKEND'], bookId, imgId, model, rotate)
+            app.config['CV_MODULES'], bookId, imgId, model, rotate)
             
             print("command: " + command)
             
@@ -255,7 +256,7 @@ class TTTask2(pb_task):
             rotate = "-nr"
             command = 'cd %s/TableTranscriber2/; ./tabletranscriber2 ' \
             '"/books/%s/baixa_resolucao/image%s.png" "model%s" "%s"' % (
-            app.config['TT3_BACKEND'], bookId, imgId, model, rotate)
+            app.config['CV_MODULES'], bookId, imgId, model, rotate)
             
             print("command: " + command)
             
@@ -266,7 +267,7 @@ class TTTask2(pb_task):
 
     def __checkFile(self, bookId, imgId):
         directory = "%s/books/%s/metadados/saida/" % (
-            app.config['TT3_BACKEND'], bookId)
+            app.config['CV_MODULES'], bookId)
         output_files = os.listdir(directory)
         images = [file.split('_')[0] for file in output_files]
 
@@ -284,7 +285,7 @@ class TTTask2(pb_task):
         
         command = 'cd %s/ZoomingSelector/; ./zoomingselector ' \
         '"/books/%s/metadados/tabelasAlta/image%s_%d.png"' % (
-        app.config['TT3_BACKEND'], bookId, imgId, tableId)
+        app.config['CV_MODULES'], bookId, imgId, tableId)
         
         call([command], shell=True)
 
@@ -294,11 +295,11 @@ class TTTask2(pb_task):
 
         try:
             filepath = "%s/books/%s/selections/image%s_%d.txt" % (
-                app.config['TT3_BACKEND'], bookId, imgId, tableId)
+                app.config['CV_MODULES'], bookId, imgId, tableId)
             arch = open(filepath)
             data = arch.read().strip().split('\n')
 
-            for data_idx in range(1, len(data)):
+            for data_idx in range(0, len(data)):
                 selections.append([
                     int(coord) for coord in data[data_idx].split(',')])
 
@@ -370,9 +371,9 @@ class TTTask2(pb_task):
 
         try:
             print("File path:" + "%s/books/%s/metadados/entrada/image%s.txt" % (
-                app.config["TT3_BACKEND"], bookId, imgId), "a")
+                app.config["CV_MODULES"], bookId, imgId), "a")
             arch = open("%s/books/%s/metadados/entrada/image%s.txt" % (
-                app.config["TT3_BACKEND"], bookId, imgId), "w")
+                app.config["CV_MODULES"], bookId, imgId), "w")
             for table in answer:
                 x0 = int(table["left"])
                 x1 = int(table["width"] + x0)
@@ -536,3 +537,26 @@ class TTTask3(pb_task):
                     return False
         
         return True
+
+class TTTask4(pb_task):
+    """
+    Table Transcriber Task type 4
+    """
+    def __init__(self, task_id, app_short_name):
+        super(TTTask4, self).__init__(task_id, app_short_name)
+        
+    def add_next_task(self):
+        #TODO
+        return
+    
+    def close_task(self):
+        pass
+    
+    def check_answer(self):
+        #TODO  
+        return
+    
+    def get_next_app(self):
+        curr_app_name = self.app_short_name
+        next_app_name = curr_app_name[:-1] + "4"
+        return ttapps.Apptt_struct(short_name=next_app_name)

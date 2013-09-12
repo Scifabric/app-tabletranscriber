@@ -53,6 +53,7 @@ class Apptt(object):
         
         # Create the app in PyBOSSA
         output = json.loads(urllib2.urlopen(request).read())
+        
         if (output['id'] is not None):
             return output['id']
         else:

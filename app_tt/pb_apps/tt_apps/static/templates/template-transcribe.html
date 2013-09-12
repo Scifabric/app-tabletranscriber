@@ -91,7 +91,7 @@
 
 <!-- JQuery for tt-transcriber -->
 <script type="text/javascript" src="#server/js/jquery.mousewheel.js"></script>
-<script type="text/javascript" src="#server/js/jquery.iviewer.js"></script>
+<script type="text/javascript" src="#server/js/jquery.mod.iviewer.js"></script>
 <script type="text/javascript" src="#server/js/tabletranscriber.js"></script>
 
 <!--JS for jQuerySheet-->
@@ -106,34 +106,71 @@
 	href="#server/css/jquery.sheet.css" />
 
 <!-- CSS for tt-transcriber -->
-<link rel="stylesheet" href="#server/css/jquery.iviewer.css" />
+<link rel="stylesheet" href="#server/css/jquery.mod.iviewer.css" />
 <link rel="stylesheet" href="#server/css/tt-transcribe.css" />
 
 
 
 <script type="text/javascript">
-spinner.appendTo (document.getElementById('throbber'));
-
-var task_shortname = "#task_shortname#";
-var endpoint = "/pybossa";
-
-function loadData(data){
-	  if ( !$.isEmptyObject(data.task) ) {
-	        $("#question h2").text(data.question);
-	        $("#task-id").text(data.task.id);
-	        $("#table").attr("value",data.task.info.link);
-	    }
-	   else {
-	        $(".skeleton").hide();
-	        $("#finish").fadeIn();
-	    }
+	spinner.appendTo (document.getElementById('throbber'));
 	
-	  viewer($("#table").attr("value"));
-	  last_answer = data.task.info.last_answer;
-	  createTable();
-}
+	var task_shortname = "#task_shortname#";
+	var endpoint = "/pybossa";
+	var taskid;
+    var serverName = "#server";
+	
+	function loadData(data){
+		  if ( !$.isEmptyObject(data.task) ) {
+		        $("#question h2").text(data.question);
+		        $("#task-id").text(data.task.id);
+		        $("#table").attr("value", data.task.info.link);
+		    }
+		   else {
+		        $(".skeleton").hide();
+		        $("#finish").fadeIn();
+		    }
+		
+		  viewer($("#table").attr("value"));
+		  last_answer = data.task.info.last_answer;
+		  createTable();
+	}
+	
+	function taskRunDone(taskId){
+        $.ajax({
+            url: '/mb/api/' + taskId + '/done',
+            success: function(data) { 
+//                 enableNextTask();
+            }
+        });
+    }
+	
+// 	$("#workflowtask").click(function() {
+// 		var random_task_type = Math.round(Math.random()) + 1;
+// 		window.open(endpoint + "/app/" + task_shortname.replace("_tt3", "_tt" + random_task_type)  + "/newtask", "_self");
+//     });
+	
+	// Function to submit and save the TaskRun in PyBossa
+//     function submitTask() {
 
-pybossa.setEndpoint(endpoint);
-
-pybossa.newTask(task_shortname).done( function( data ) { loadData( data ) });
+// 		var answer = getGridLinesAnswer();
+	
+// 		$.blockUI({message: $("#success"),
+// 			css: {height: $("#success").height()}
+// 		});
+	
+// 		pybossa.saveTask(taskid, answer).done(function(data) {
+// 		    //Call tt workflow api.
+// 		    taskRunDone(taskid);
+// 	        clearCanvas();
+	
+// 			// Load a new task
+// 			pybossa.newTask(task_shortname).done(function(data) {
+// 				loadData(data);
+// 			});
+// 		});
+//     }
+	
+	pybossa.setEndpoint(endpoint);
+	
+	pybossa.newTask(task_shortname).done( function( data ) { loadData( data ) });
 </script>

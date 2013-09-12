@@ -8,6 +8,7 @@ from app_tt.core import app
 from app_tt.pb_apps.tt_apps.ttapps import Apptt_select
 from app_tt.pb_apps.tt_apps.ttapps import Apptt_meta
 from app_tt.pb_apps.tt_apps.ttapps import Apptt_struct
+from app_tt.pb_apps.tt_apps.ttapps import Apptt_transcribe
 from app_tt.pb_apps.tt_apps import task_factory
 
 BROKER_URL = "amqp://celery:celery@localhost:5672/celery"
@@ -90,7 +91,14 @@ def create_apps(book_id):
                 thumbnail=app.config['URL_TEMPLATES']
                 + "/images/tutorial-meta-struct"
                 + "/model0_1.png"))
-
+        
+        tt_transcribe.add_app_infos(
+            dict(
+                 sched="incremental",
+                 thumbnail=app.config['URL_TEMPLATES']
+                 + "/images"
+                 + "/long_description.png"))
+        
         tt_meta.add_app_infos(bookInfo)
         tt_select.add_app_infos(bookInfo)
         tt_struct.add_app_infos(bookInfo)
