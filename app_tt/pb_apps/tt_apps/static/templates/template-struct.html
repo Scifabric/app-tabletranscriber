@@ -54,7 +54,7 @@
 
     	<div id="canvas-container" style="float: left;"></div>
 
-	<div id="task-info" style="display: none;" >
+	<div id="task-info" class="task-info" style="display: none;">
 		<div id="instruction" class="alert alert-info"> 
 			<h5 id="task-instruction"><strong> Instru&ccedil;&otilde;es b&aacute;sicas</strong><br>
 				<ul>
@@ -181,6 +181,7 @@ div.container {
 .task-info {
 	float: right;
 	width: 400px;
+	height: 400px;
 }
 
 .button-finished {
@@ -233,7 +234,7 @@ div.container {
 <script type="text/javascript" src="#server/js/jquery.i18n.min.js"></script>
 <script type="text/javascript" src="#server/js/tt-struct-i18n.js"></script>
 <script type="text/javascript" src="#server/js/throbber/throbber.js" ></script>
-<script type="text/javascript" src="http://malsup.github.com/jquery.blockUI.js"></script>
+<script type="text/javascript" src="#server/js/jquery.blockUI.js"></script>
 <script type="text/javascript" charset="utf-8" src="#server/js/tt3.js"></script>
 
 
@@ -242,7 +243,7 @@ div.container {
     var taskid;
     var serverName = "#server";
     var maxCanvasWidth = 540;
-    var taskInfoHeight = $("#task-info").height();
+    var maxCanvasHeight = $("#task-info").height();
 	
     function showHelpStruct() {
 	$('#helpModalStruct').modal();
@@ -308,13 +309,10 @@ div.container {
 	handleMouseUpEvent(e);
     });
 
-
     var task_shortname = "#task_shortname#";
     var endpoint = "/pybossa";
-    var img_url;
 
     function loadData(data) {
-
 
         if ( !$.isEmptyObject(data.task) ) {
                  loadUserProgress();
@@ -325,12 +323,9 @@ div.container {
 		 $("#question").text(question);
 		 taskid = data.task.id;
 	
-		 setTimeout(function() {
-			initGrid(data.task.info, maxCanvasWidth, taskInfoHeight, serverName);
-			configureUI();
-		 }, 0);
+		 initGrid(data.task.info, maxCanvasWidth, maxCanvasHeight, serverName);
+		 configureUI();
          } else {
-		$.unblockUI();
 	        $(".skeleton").hide();
         	$("#finish").fadeIn(200);
 		setTimeout(function(){
@@ -341,7 +336,7 @@ div.container {
      }
 
      function configureUI() {
-	$.unblockUI();
+	//$.unblockUI();
 
 	// A tabela foi rotacionada
 	if (getCanvasWidth() > maxCanvasWidth) {
@@ -369,14 +364,18 @@ div.container {
 
 	var answer = getGridLinesAnswer();
 
-	$.blockUI({message: $("#success"),
-		      css: {height: $("#success").height()}
-	});
-
 	pybossa.saveTask(taskid, answer).done(function(data) {
 	        //Call tt workflow api.
 	        taskRunDone(taskid);
+
         	clearCanvas();
+		$.blockUI({message: $("#success"),
+		      css: {height: $("#success").height()}
+		});
+
+		setTimeout(function() {
+			$.unblockUI();
+		}, 1500);
 
 		// Load a new task
 		pybossa.newTask(task_shortname).done(function(data) {

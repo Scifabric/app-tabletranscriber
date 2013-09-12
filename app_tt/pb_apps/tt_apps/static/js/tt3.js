@@ -20,19 +20,16 @@
 	var highlightColor;
 	var unhighlightColor;
 
-	var selecaoAtivada;
-	var selecaoAreaAtivada;
-	var adicaoAtivada;
-	var separarAtivado;
+	var toolBarState;
+	var splitToolCursor;
 
-	var selecionandoArea;
 	var selecionandoSegmento;
 	var desenhandoSegmento;
+	var isMouseDown;
 
-	var splitToolCursor;
+	var mouseOverQueue;
 	var novoSegmento;
 	var selectionArea;
-	var mouseOverElement;
 
    	var zoom;
 	var hasZoom;
@@ -76,10 +73,12 @@
 		colunas = new Array();
 		segmentosUnidos = new Array();
 	   	zoom = new Array();
+		mouseOverQueue = new Array();
 
 		resetToolBar();
 		enableSelectionTool(true);
 
+		isMouseDown = false;
 		hasZoom = false;
 		imageLayer = new Kinetic.Layer();
 		linhasLayer = new Kinetic.Layer();
@@ -89,16 +88,15 @@
 
 		segWidth = 2.5
 		// distancia minima entre linhas e colunas (em pixels)
-		minDistance = 5;
+		minDistance = 7.5;
 		// ajuste para que as linhas nas bordas aparecam completamente
 		shiftOnCanvas = 25;
 		unhighlightColor = "#CD3300";
 		highlightColor = "#339ACD";
 
-		splitToolCursor = "url('" + serverName + "/images/split_tool.png') 10 8, auto";
-
 		hasZoom = taskInfo.hasZoom;
 		img_url = taskInfo.img_url;
+		splitToolCursor = "url('" + serverName + "/images/split_tool.png') 10 8, auto";
 
 		if (hasZoom) zoom = taskInfo.zoom;
 
@@ -114,7 +112,6 @@
 		enableAddTool(false);
 		enableSplitTool(false);
 
-		selecionandoArea = false;
 		selecionandoSegmento = false;
 		desenhandoSegmento = false;
 	}
@@ -442,7 +439,8 @@
 		return intercessoes;
 	}
 
-	
+	var queue = new Array();
+
 	function adicionarSegmento(pontos) {
 
 		var kineticLine = new Kinetic.Line({
@@ -450,12 +448,26 @@
 			stroke : unhighlightColor,
 			strokeWidth : segWidth,
 			draggable: true,
+			drawHitFunc: function(canvas) {
+			  var x1 = this.getPoints()[0].x;
+			  var y1 = this.getPoints()[0].y;
+			  var x2 = this.getPoints()[1].x;
+			  var y2 = this.getPoints()[1].y;
+			  var context = canvas.getContext();
+			  context.beginPath();
+			  
+			  // a rectangle around the line
+			  var linePad = minDistance - segWidth;
+			  context.moveTo(x1-linePad,y1-linePad);
+			  context.lineTo(x2+linePad,y1-linePad);
+			  context.lineTo(x2+linePad,y2+linePad);
+			  context.lineTo(x1-linePad,y2+linePad);
+			  context.closePath();
+			  canvas.fillStroke(this);
+			},
 			dragBoundFunc: function(pos, event) {
-				if (typeof event == 'undefined' || separarAtivado) return {x : this.getAbsolutePosition().x, y : this.getAbsolutePosition().y};
-
-				if (selecionandoSegmento) {
-					clearSelection();
-					selecionandoSegmento = false;
+				if (typeof event == 'undefined' || isSplitToolActive() || isAreaToolActive()) {
+					return {x : this.getAbsolutePosition().x, y : this.getAbsolutePosition().y};
 				}
 
 				var points = this.getPoints();
@@ -479,6 +491,10 @@
 					moverLinha(seg, newY);
 				}
 
+				if (selecionandoSegmento) {
+					clearSelection();
+					selecionandoSegmento = false;
+				}
 				highlightSegmento(seg);
 				document.body.style.cursor = "move";
 				layersRedraw();
@@ -486,54 +502,53 @@
 			}
 		});
 
-		// refatorar condicoes booleanas
 		kineticLine.on("mouseover touchstart",
-				function() {
-
+				function(evt) {
 					var points = this.getPoints();
+					var mouseOverElement = getSegmento(points);
+					mouseOverQueue.push(mouseOverElement);
 
-					if (isBorda(points) || selecaoAreaAtivada) return;
+					if (isMouseDown || isAreaToolActive() || isBorda(points)) return;
 
-					mouseOverElement = getSegmento(points);
-
-					if (selecionandoSegmento && this.getStroke() == highlightColor) {
-						document.body.style.cursor = "move";
-						return;
-					} 
-
-					if (!separarAtivado) {
+					if (isSelectionToolActive() || isAddToolActive()) {
 						document.body.style.cursor = "pointer";
 					}
 
-					if (selecionandoSegmento) {
-						return;	
+					if (selecionandoSegmento && this.getStroke() == highlightColor) {
+						document.body.style.cursor = "move";
 					}
 
-					highlightSegmento(mouseOverElement);
-					layersRedraw();
+					if (!selecionandoSegmento) {
+						highlightSegmento(mouseOverElement);
+						layersRedraw();
+					}
 		});
 
 		kineticLine.on('mouseout touchend', function(evt) {
+			var points = this.getPoints();
+			mouseOverQueue.shift();
 
-			mouseOverElement = undefined;
+			if (isMouseDown || isAreaToolActive() || isBorda(points)) return;
 
-			if (selecaoAreaAtivada) return;
+			if (isAddToolActive()) {
+				document.body.style.cursor = "crosshair";
+			}
 
-			if (adicaoAtivada) document.body.style.cursor = "crosshair";
-
-			if (!adicaoAtivada && !separarAtivado && !evt.shiftKey) {
+			if (isSelectionToolActive() && !isMouseOverAnElement()) {
 				document.body.style.cursor = "default";
 			}
 
-			if (selecionandoSegmento) return;
-
-			var points = this.getPoints();
-			if (isColuna(points)) {
-				clearColunasSelection();
-			} else {
-				clearLinhasSelection();
+			if (!selecionandoSegmento) {
+				if (!isMouseOverAnElement()) {
+					clearSelection();
+				} else {
+					var mouseOverElement = getSegmento(points);
+					if (typeof mouseOverElement != "undefined") {
+						unhighlightSegmento(mouseOverElement);
+						layersRedraw();
+					}
+				}
 			}
-			layersRedraw();
 		});
 
 		var segmento = new Segmento(kineticLine, pointsLayer);
@@ -545,7 +560,6 @@
 			colunas.push(segmento);
 			colunasLayer.add(kineticLine);
 		}
-		layersRedraw();
 		return segmento;
 	}
 
@@ -782,7 +796,7 @@
 		return lines;
 	}
 
-	function filterRectangles() {
+	function filterLines() {
 		// remove colunas com uma distancia minima
 		for (var i = colunas.length - 1; i >= 0; i--) {
 			var points = colunas[i].getPoints();
@@ -792,7 +806,6 @@
 				removeSegmentoColuna(nearColumns[z]);
 			}
 		}
-
 		// remove linhas com uma distancia minima
 		for (var i = linhas.length - 1; i >= 0; i--) {
 			var points = linhas[i].getPoints();
@@ -873,7 +886,6 @@
 		if (typeof stage != "undefined") {
 			$(".kineticjs-content").remove();
 		}
-
 		createStage(matrizDePontos, maxCanvasWidth, maxCanvasHeight, isLastAnswer);
 	}
 
@@ -953,17 +965,14 @@
 				height : getTableMaxY() - shiftOnCanvas
 			});
 
-			// add the shape to the layer
 			imageLayer.add(tabela);
 			tabela.moveToBottom();
 
-			// add the layer to the stage
 			stage.add(imageLayer);
 			stage.add(colunasLayer);
 			stage.add(linhasLayer);
 			stage.add(pointsLayer);
 			stage.add(selectionLayer);
-
 
 			if (hasZoom) {
 				adicionarFocoZoom(zoom);
@@ -975,6 +984,7 @@
 	}
 
 	function loadGrid(matrizDePontos, isLastAnswer) {
+
 		for (var i = 0; i < matrizDePontos.length; i++) {
 			var arr = matrizDePontos[i];
 			var leftX = arr[0] + shiftOnCanvas;
@@ -984,50 +994,54 @@
 
 			if (isLastAnswer) {
 				adicionarSegmento([{'x': leftX, 'y': upperY}, {'x': rightX, 'y': bottomY}]);
-				continue;
+			} else {
+				var cellLines = new Array();
+				cellLines.push([{'x': leftX, 'y': upperY}, {'x': rightX, 'y': upperY}]);
+				cellLines.push([{'x': leftX, 'y': upperY}, {'x': leftX, 'y': bottomY}]);
+				cellLines.push([{'x': leftX, 'y': bottomY}, {'x': rightX, 'y': bottomY}]);
+				cellLines.push([{'x': rightX, 'y': upperY}, {'x': rightX, 'y': bottomY}]);
+
+				adicionaSegmentosDaCelula(cellLines);
 			}
+		}
 
-			var novasLinhas = new Array();
+		if (!isLastAnswer) filterLines();
+		layersRedraw();
+	}
 
-			novasLinhas.push([{'x': leftX, 'y': upperY}, {'x': rightX, 'y': upperY}]);
-			novasLinhas.push([{'x': leftX, 'y': upperY}, {'x': leftX, 'y': bottomY}]);
-			novasLinhas.push([{'x': leftX, 'y': bottomY}, {'x': rightX, 'y': bottomY}]);
-			novasLinhas.push([{'x': rightX, 'y': upperY}, {'x': rightX, 'y': bottomY}]);
+	function adicionaSegmentosDaCelula(cellLines) {
+		for (var z = 0; z < cellLines.length; z++) {
+			var posLinha = cellLines[z];
+			var indexSegmento = findSegmentoThatContains(posLinha);
 
-			for (var z = 0; z < novasLinhas.length; z++) {
-				var posLinha = novasLinhas[z];
-				var indexSegmento = findSegmentoThatContains(posLinha);
+			if (indexSegmento == -1) {
+				if (isLinha(posLinha)) {
+					indexContinuacao = findContinuacaoDaLinha(posLinha);
 
-				if (indexSegmento == -1) {
-					if (isLinha(posLinha)) {
-						indexContinuacao = findContinuacaoDaLinha(posLinha);
-
-						if (indexContinuacao == -1) {
-							adicionarSegmento(posLinha);
-						} else {
-							var continuacao = linhas[indexContinuacao];
-							var points = continuacao.getPoints();
-							continuacao.remove();
-							linhas.splice(indexContinuacao, 1);
-							adicionarSegmento([{'x': points[0].x, 'y': points[0].y}, {'x': posLinha[1].x, 'y': posLinha[1].y}]);
-						}
+					if (indexContinuacao == -1) {
+						adicionarSegmento(posLinha);
 					} else {
-						indexContinuacao = findContinuacaoDaColuna(posLinha);
+						var continuacao = linhas[indexContinuacao];
+						var points = continuacao.getPoints();
+						continuacao.remove();
+						linhas.splice(indexContinuacao, 1);
+						adicionarSegmento([{'x': points[0].x, 'y': points[0].y}, {'x': posLinha[1].x, 'y': posLinha[1].y}]);
+					}
+				} else {
+					indexContinuacao = findContinuacaoDaColuna(posLinha);
 
-						if (indexContinuacao == -1) {
-							adicionarSegmento(posLinha);
-						} else {
-							var continuacao = colunas[indexContinuacao];
-							var points = continuacao.getPoints();
-							continuacao.remove();
-							colunas.splice(indexContinuacao, 1);
-							adicionarSegmento([{'x': points[0].x, 'y': points[0].y}, {'x': posLinha[1].x, 'y': posLinha[1].y}]);
-						}
+					if (indexContinuacao == -1) {
+						adicionarSegmento(posLinha);
+					} else {
+						var continuacao = colunas[indexContinuacao];
+						var points = continuacao.getPoints();
+						continuacao.remove();
+						colunas.splice(indexContinuacao, 1);
+						adicionarSegmento([{'x': points[0].x, 'y': points[0].y}, {'x': posLinha[1].x, 'y': posLinha[1].y}]);
 					}
 				}
 			}
 		}
-		filterRectangles();
 	}
 
 	// Event Handling
@@ -1035,19 +1049,8 @@
 		if (typeof evt.keyCode != "undefined" && evt.keyCode == 46) {
 			handleRemoveToolEvent();
 		}
-
-		if (evt.shiftKey) {
-			document.body.style.cursor = "pointer";
-		}
 	};
 
-	document.onkeyup = function (evt) { 
-		if (typeof evt.keyCode != "undefined" && evt.keyCode == 16){
-			document.body.style.cursor = "default";
-		}
-	}
-
-	// Toolbar
 	function handleAreaSelectionToolEvent() {
 		resetToolBar();
 		enableAreaSelectionTool(true);
@@ -1060,7 +1063,7 @@
 		} else {
 			$('#button_area').removeClass('active');
 		}
-		selecaoAreaAtivada = enable;
+		toolBarState = "AREA";
 	}
 
 	function handleSelectionToolEvent() {
@@ -1075,7 +1078,7 @@
 		} else {
 			$('#button_select').removeClass('active');
 		}
-		selecaoAtivada = enable;
+		toolBarState = "SELECTION";
 	}
 
 	function handleAddToolEvent() {
@@ -1090,7 +1093,7 @@
 		} else {
 			$('#button_add').removeClass('active');
 		}
-		adicaoAtivada = enable;
+		toolBarState = "ADD";
 	}
 
 	function handleSplitToolEvent() {
@@ -1106,7 +1109,23 @@
 		} else {
 			$('#button_split').removeClass('active');
 		}
-		separarAtivado = enable;
+		toolBarState = "SPLIT";
+	}
+
+	function isAddToolActive() {
+		return toolBarState == "ADD";
+	}
+
+	function isSplitToolActive() {
+		return toolBarState == "SPLIT";
+	}
+
+	function isSelectionToolActive() {
+		return toolBarState == "SELECTION";
+	}
+
+	function isAreaToolActive() {
+		return toolBarState == "AREA";
 	}
 
 	function handleRemoveToolEvent() {
@@ -1119,8 +1138,8 @@
 			alert("Não é possível remover este(s) segmento(s).");
 		}
 		
-		// substituir por metodo
 		selecionandoSegmento = false;
+		layersRedraw();
 	}
 
 	$('body').on('mousedown', function(e) {
@@ -1128,24 +1147,30 @@
 	});
 
 	function handleMouseDownEvent(evt) {
-		if (evt.which != 1) return;
+		if (!isRightMouseClick(evt)) return;
 
-		if (adicaoAtivada && !isMouseOverAnElement()) {
+		isMouseDown = true;
+		if (isAddToolActive() && !isMouseOverAnElement()) {
 			desenhandoSegmento = true;
-		}
-
-		if (selecaoAreaAtivada) {
-			selecionandoArea = true;
 		}
 	}
 
 	function isMouseOverAnElement() {
-		return typeof mouseOverElement != "undefined";
+		return mouseOverQueue.length != 0;
 	}
 
-	function separaSegmento(segmento, mouseX, mouseY) {
-		
+	function getMouseOverElement() {
+		return mouseOverQueue[0];
+	}
+
+	function separaSegmento(mouseX, mouseY) {
 		clearSelection();
+
+		if (!isMouseOverAnElement()) {
+			return;
+		}
+
+		var segmento = getMouseOverElement();
 		var segPoints = segmento.getPoints();
 		var newSeg;
 
@@ -1172,7 +1197,6 @@
 				highlightSegmento(newSeg);
 			}
 		}
-
 		highlightSegmento(segmento);
 		layersRedraw();
 	}
@@ -1195,81 +1219,75 @@
 		return closest;
 	}
 
+	function isRightMouseClick(evt) {
+		return evt.which == 1;
+	}
+
+	function isClickOnCanvas(evt) {
+		return evt.target.tagName == "CANVAS";
+	}
+
 	function handleMouseUpEvent(evt) {
+		if (!isRightMouseClick(evt)) return;
 
-		if (evt.which != 1) return;
+		isMouseDown = false;
+		desenhandoSegmento = false;
+		selecionandoSegmento = false;
 
-
-		var posX = getMousePosX(evt);
-		var posY = getMousePosY(evt);
-
-		// separa segmento
-		if (separarAtivado) {
-			if (isMouseOverAnElement()) separaSegmento(getSegmento(mouseOverElement.getPoints()), posX, posY);
+		if (isSplitToolActive()) {
+			var posX = getMousePosX(evt);
+			var posY = getMousePosY(evt);
+			separaSegmento(posX, posY);
 			return;
 		}
 
-		//cria novo segmento
-		desenhandoSegmento = false;
-
-		if (adicaoAtivada && typeof novoSegmento != 'undefined') {
+		if (isAddToolActive() && typeof novoSegmento != 'undefined') {
 			var points = novoSegmento.getPoints();
 			novoSegmento.remove();
 			novoSegmento = undefined;
-
-			var seg = criaNovoSegmento(points);
-			clickOnSegmento(evt, seg);
+			criaNovoSegmento(evt, points);
 			return;
 		}
 
-		selecionandoArea = false;
-		if (selecaoAreaAtivada && typeof selectionArea != 'undefined') {
-			selectArea(selectionArea);
+		if (isAreaToolActive() && typeof selectionArea != 'undefined') {
+			var initPos = selectionArea.getAbsolutePosition();
+			var finalPosX = initPos.x + selectionArea.getWidth();
+			var finalPosY = initPos.y + selectionArea.getHeight();
+
 			selectionArea.remove();
 			selectionArea = undefined;
-			layersRedraw();
-			return
-		}
-
-		if (evt.target.tagName != "CANVAS") return;
-
-		if (isMouseOverAnElement()) {
-			clickOnSegmento(evt, mouseOverElement);
-			console.log(mouseOverElement.getPoints());
+			selectArea(initPos.x, initPos.y, finalPosX, finalPosY);
 			return;
 		}
 
-		if (!adicaoAtivada) {
-			document.body.style.cursor = "default";
+		if ((isSelectionToolActive() || isAddToolActive()) && isMouseOverAnElement()) {
+			selecionaSegmento(evt, getMouseOverElement());
+			return;
 		}
 
-		selecionandoSegmento = false;
 		clearSelection();
 	}
 
-	function selectArea(selectionArea) {
+	function selectArea(initPosX, initPosY, finalPosX, finalPosY) {
 		clearSelection();
 
-		var initPos = selectionArea.getAbsolutePosition();
-		var finalPosX = initPos.x + selectionArea.getWidth();
-		var finalPosY = initPos.y + selectionArea.getHeight();
 
 		var maxX, maxY, minX, minY;
 
-		if (initPos.x > finalPosX) {
-			maxX = initPos.x;
+		if (initPosX > finalPosX) {
+			maxX = initPosX;
 			minX = finalPosX;
 		} else {
 			maxX = finalPosX;
-			minX = initPos.x;
+			minX = initPosX;
 		}
 
-		if (initPos.y > finalPosY) {
-			maxY = initPos.y;
+		if (initPosY > finalPosY) {
+			maxY = initPosY;
 			minY = finalPosY;
 		} else {
 			maxY = finalPosY;
-			minY = initPos.y;
+			minY = initPosY;
 		}
 
 		var area = [minX, minY, maxX, maxY];
@@ -1285,6 +1303,7 @@
 				highlightSegmento(colunas[i]);
 			}
 		}
+		layersRedraw();
 	}
 
 	function isSegmentInArea(points, area) {
@@ -1300,22 +1319,18 @@
 	}
 
 	function getMousePosX(evt) {
-//		var localEvt = typeof evt.originalEvent == "undefined" ? evt : evt.originalEvent;
-//		return (typeof localEvt.offsetX == "undefined") ? localEvt.layerX
-//				: localEvt.offsetX;
-		return (typeof evt.offsetX == "undefined") ? evt.layerX
-				: evt.offsetX;
+		var localEvt = typeof evt.originalEvent == "undefined" ? evt : evt.originalEvent;
+		return (typeof localEvt.offsetX == "undefined") ? localEvt.layerX
+				: localEvt.offsetX;
 	}
 
 	function getMousePosY(evt) {
-		/*var localEvt = typeof evt.originalEvent == "undefined" ? evt : evt.originalEvent;
+		var localEvt = typeof evt.originalEvent == "undefined" ? evt : evt.originalEvent;
 		return (typeof localEvt.offsetY == "undefined") ? localEvt.layerY
-				: localEvt.offsetY;*/
-		return (typeof evt.offsetY == "undefined") ? evt.layerY
-				: evt.offsetY;
+				: localEvt.offsetY;
 	}
 
-	function criaNovoSegmento(points) {
+	function criaNovoSegmento(evt, points) {
 
 		var deltaX = Math.abs(points[1].x - points[0].x);
 		var deltaY = Math.abs(points[1].y - points[0].y);
@@ -1340,20 +1355,24 @@
 			var finalX = points[1].x;
 			seg = criarNovaLinha(posY, initX, finalX);
 		}
-		return seg;
+		selecionaSegmento(evt, seg);
+		layersRedraw();
 	}
 
 	function isMousePosOffBorders(pos) {
-		return (pos.x < minX || pos.x > maxX) ||
-			(pos.y < minY || pos.y > maxY);
+		return (pos.x <  getTableMinX() || pos.x >  getTableMaxX()) ||
+			(pos.y <  getTableMinY() || pos.y >  getTableMaxY());
 	}
 
 	function handleMouseMoveEvent(evt) {
 
-		if (evt.which != 1) return;
+		if (isAreaToolActive()) {
+			document.body.style.cursor = "crosshair";
+		}
 
-		//mudar desenhando & selecionando pra isMousedown boolean
-		if (adicaoAtivada && desenhandoSegmento) {
+		if (!isMouseDown) return;
+
+		if (isAddToolActive() && desenhandoSegmento) {
 			var mousePos = stage.getMousePosition();
 
 			if (isMousePosOffBorders(mousePos)) return;
@@ -1371,11 +1390,9 @@
 			var points =  novoSegmento.getPoints();
 			novoSegmento.setPoints([points[0].x, points[0].y, newX, newY]);
 			layersRedraw();
-			return;
 		}
 
-		if (selecaoAreaAtivada && selecionandoArea) {
-
+		if (isAreaToolActive()) {
 			var mousePos = stage.getMousePosition();
 
 			if (typeof selectionArea == 'undefined') {
@@ -1404,11 +1421,10 @@
 			selectionArea.setHeight(deltaY);
 			selectionLayer.moveToTop();	
 			layersRedraw();
-			return;
 		}
 	}
 
-	function clickOnSegmento(evt, seg) {
+	function selecionaSegmento(evt, seg) {
 
 		if (isMouseOverAnElement()) {
 			document.body.style.cursor = "move";
@@ -1506,7 +1522,6 @@
 				break;
 			}
 		}
-	        layersRedraw();
 		return true;
 	}
 
@@ -1527,7 +1542,6 @@
 				break;
 			}
 		}
-	       	layersRedraw();
 		return true;
 	}
 
@@ -1634,15 +1648,15 @@
 		var linhasASalvar = new Array();
 		var colunasASalvar = new Array();
 
-		for (var i = 0; i < colunas.length; i++){
-			var coluna = colunas[i].getPoints();
-			var segmento = [ coluna[0].x - shiftOnCanvas, coluna[0].y - shiftOnCanvas, coluna[1].x - shiftOnCanvas, coluna[1].y - shiftOnCanvas];
-			linhasASalvar.push(segmento);
-		}
-
 		for (var i = 0; i < linhas.length; i++){
 			var linha = linhas[i].getPoints();
 		        var segmento = [ linha[0].x - shiftOnCanvas, linha[0].y - shiftOnCanvas, linha[1].x - shiftOnCanvas, linha[1].y - shiftOnCanvas];
+			linhasASalvar.push(segmento);
+		}
+
+		for (var i = 0; i < colunas.length; i++){
+			var coluna = colunas[i].getPoints();
+			var segmento = [ coluna[0].x - shiftOnCanvas, coluna[0].y - shiftOnCanvas, coluna[1].x - shiftOnCanvas, coluna[1].y - shiftOnCanvas];
 			colunasASalvar.push(segmento);
 		}
 
