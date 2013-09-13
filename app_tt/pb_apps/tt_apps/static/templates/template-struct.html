@@ -4,70 +4,138 @@
 
 <div class="row" style="margin-left: 10px;">
 
-  <div class="span6" style="height:50px">
+	<div class="span6" style="height: 50px">
 
-    <div id="success" class="alert alert-success" style="display:none;">
-	   	<a class="close">x</a>
-	    <p><span><strong>#</strong></span><span>#</span></p>
-    </div>
-    <div id="finish" class="alert alert-success" style="display:none;">
-      <p><span><strong>#</strong></span><span>#</span></p>
-      <!--
+		<div id="success" class="alert alert-success" style="display: none;">
+			<a class="close">x</a>
+			<p>
+				<span><strong>#</strong></span><span>#</span>
+			</p>
+		</div>
+		<div id="finish" class="alert alert-success" style="display: none;">
+			<p>
+				<span><strong>#</strong></span><span>#</span>
+			</p>
+			<!--
       <br/>
       <div class="alert-actions">
               <a id="back" class="btn small" href="/">#</a>
               <a id="other_apps" class="btn small" href="/app">#</a>
       </div>
       -->
-    </div>
-    <div id="error" class="alert alert-error" style="display:none;">
-         <a class="close">x</a>
-         <p><span><strong>#</strong></span><span>#</span></p>
-    </div>
-    <div id="workflowtask" class="alert alert-success" style="display:none; text-align: center; cursor:pointer; position:relative; margin-top: 5px;"></div>
-  </div> <!-- End Success and Error Messages for the user -->
+		</div>
+		<div id="error" class="alert alert-error" style="display: none;">
+			<a class="close">x</a>
+			<p>
+				<span><strong>#</strong></span><span>#</span>
+			</p>
+		</div>
+		<div id="workflowtask" class="alert alert-success"
+			style="display: none; text-align: center; cursor: pointer; position: relative; margin-top: 5px;"></div>
+	</div>
+	<!-- End Success and Error Messages for the user -->
 </div>
 
-<div class="row skeleton">  <!-- Start Skeleton -->
+<div class="row skeleton">
+	<!-- Start Skeleton -->
 	<div class="span9">
-	    <h1 id="question"></h1> <!-- The question will be loaded here -->
-	<!-- <p><span>#</span><span id="task-id" class="label label-warning">#</span></p> -->
-	    <p><span id="progress-from">#</span><span id="done" class="label label-info" style="margin-right: 5px"></span><span id="progress-to">#</span>
-	    <!-- Progress bar for the user -->
-	    <span id="total" class="label label-inverse"></span></p>
-	    <div class="progress progress-striped" style="width: 520px; margin-bottom: 10px;">
-	     	  <div id="progress" rel="tooltip" title="#" class="bar" style="width: 0%;"></div>
-	    </div>
+		<h1 id="question"></h1>
+		<!-- The question will be loaded here -->
+		<!-- <p><span>#</span><span id="task-id" class="label label-warning">#</span></p> -->
+		<p>
+			<span id="progress-from">#</span><span id="done"
+				class="label label-info" style="margin-right: 5px"></span><span
+				id="progress-to">#</span>
+			<!-- Progress bar for the user -->
+			<span id="total" class="label label-inverse"></span>
+		</p>
+		<div class="progress progress-striped"
+			style="width: 520px; margin-bottom: 10px;">
+			<div id="progress" rel="tooltip" title="#" class="bar"
+				style="width: 0%;"></div>
+		</div>
 	</div>
-</div><!-- End of Skeleton -->
+</div>
+<!-- End of Skeleton -->
 
 <div class="skeleton">
 
 	<div id="toolbar" class="btn-group">
-		<button id="button_select" class="btn" rel="tooltip" title="Habilita a ferramenta de seleção de segmentos" onclick="handleSelectionToolEvent()"><img class="icon" style="width: 20px" src="#server/images/select_tool.png"></img></button>
-		<button id="button_area" class="btn" rel="tooltip" title="Habilita a ferramenta de seleção em área" onclick="handleAreaSelectionToolEvent()"><img class="icon" style="width: 20px" src="#server/images/area_tool.png"></img></button>
-		<button id="button_add" class="btn" rel="tooltip" title="Habilita a ferramenta de adição de segmentos" onclick="handleAddToolEvent()"><img class="icon" style="width: 16px" src="#server/images/add_tool.png"></img></button>
-		<button id="button_split" class="btn" rel="tooltip" title="Habilita a ferramenta de partição de segmentos" onclick="handleSplitToolEvent()"><img class="icon" style="width: 18px" src="#server/images/split_tool.png"></img></button>
-		<button id="button_remove" class="btn" rel="tooltip" title="Remove os segmentos selecionadas (Atalho DEL)" onclick="handleRemoveToolEvent()"><i class="icon icon-trash"></i></button>
-		<button id="button_help" class="btn" rel="tooltip" title="Abre a tela de ajuda" onclick="showHelpStruct()"><i class="icon icon-question-sign"></i></button>
+		<button id="button_select" class="btn" rel="tooltip"
+			title="Habilita a ferramenta de seleção de segmentos"
+			onclick="handleSelectionToolEvent()">
+			<img class="icon" style="width: 20px"
+				src="#server/images/select_tool.png"></img>
+		</button>
+		<button id="button_area" class="btn" rel="tooltip"
+			title="Habilita a ferramenta de seleção em área"
+			onclick="handleAreaSelectionToolEvent()">
+			<img class="icon" style="width: 20px"
+				src="#server/images/area_tool.png"></img>
+		</button>
+		<button id="button_add" class="btn" rel="tooltip"
+			title="Habilita a ferramenta de adição de segmentos"
+			onclick="handleAddToolEvent()">
+			<img class="icon" style="width: 16px"
+				src="#server/images/add_tool.png"></img>
+		</button>
+		<button id="button_split" class="btn" rel="tooltip"
+			title="Habilita a ferramenta de partição de segmentos"
+			onclick="handleSplitToolEvent()">
+			<img class="icon" style="width: 18px"
+				src="#server/images/split_tool.png"></img>
+		</button>
+		<button id="button_remove" class="btn" rel="tooltip"
+			title="Remove os segmentos selecionadas (Atalho DEL)"
+			onclick="handleRemoveToolEvent()">
+			<i class="icon icon-trash"></i>
+		</button>
+		<button id="button_help" class="btn" rel="tooltip"
+			title="Abre a tela de ajuda" onclick="showHelpStruct()">
+			<i class="icon icon-question-sign"></i>
+		</button>
 	</div>
 
-    	<div id="canvas-container" style="float: left;"></div>
+	<div id="canvas-container" style="float: left;"></div>
 
 	<div id="task-info" class="task-info" style="display: none;">
-		<div id="instruction" class="alert alert-info"> 
-			<h5 id="task-instruction"><strong> Instru&ccedil;&otilde;es b&aacute;sicas</strong><br>
+		<div id="instruction" class="alert alert-info">
+			<h5 id="task-instruction">
+				<strong> Instru&ccedil;&otilde;es b&aacute;sicas</strong><br>
 				<ul>
-					<li>Use a ferramenta <img class="icon" style="width: 20px" src="#server/images/select_tool.png"></img> para selecionar e ajustar a posição de um segmento;</li>
-					<li>Use a ferramenta <img class="icon" style="width: 20px" src="#server/images/area_tool.png"></img> para selecionar segmentos de uma área;</li>
-					<li>Clique na lixeira <i class="icon icon-trash" style="color:#333333; font-size: 18px;"></i>  ou use a tecla DEL para remover os segmentos selecionados;</li>
-					<li>Com a ferramenta <img class="icon" style="width: 16px; margin-bottom: 2px;" src="#server/images/add_tool.png"></img> habilitada, clique e arraste o mouse para adicionar uma linha ou coluna;</li>
-					<li> Use a ferramenta <img class="icon" style="width: 18px; margin-bottom: 2px;" src="#server/images/split_tool.png"></img> para dividir o segmento na intersecção mais próxima;</li>
-					<li>Clique em <i class=" icon-question-sign" style="color:#333333"></i>  para soluções de dúvidas e atalhos avançados.</li>
+					<li>Use a ferramenta <img class="icon" style="width: 20px"
+						src="#server/images/select_tool.png"></img> para selecionar e
+						ajustar a posição de um segmento;
+					</li>
+					<li>Use a ferramenta <img class="icon" style="width: 20px"
+						src="#server/images/area_tool.png"></img> para selecionar
+						segmentos de uma área;
+					</li>
+					<li>Clique na lixeira <i class="icon icon-trash"
+						style="color: #333333; font-size: 18px;"></i> ou use a tecla DEL
+						para remover os segmentos selecionados;
+					</li>
+					<li>Com a ferramenta <img class="icon"
+						style="width: 16px; margin-bottom: 2px;"
+						src="#server/images/add_tool.png"></img> habilitada, clique e
+						arraste o mouse para adicionar uma linha ou coluna;
+					</li>
+					<li>Use a ferramenta <img class="icon"
+						style="width: 18px; margin-bottom: 2px;"
+						src="#server/images/split_tool.png"></img> para dividir o segmento
+						na intersecção mais próxima;
+					</li>
+					<li>Clique em <i class=" icon-question-sign"
+						style="color: #333333"></i> para soluções de dúvidas e atalhos
+						avançados.
+					</li>
 				</ul>
 			</h5>
 		</div>
-		<button id="button_finished" class="btn btn-success" onclick="submitTask()"><i class="icon icon-white icon-thumbs-up" style="margin-right:10px;"></i><span>#</span></button>
+		<button id="button_finished" class="btn btn-success"
+			onclick="submitTask()">
+			<i class="icon icon-white icon-thumbs-up" style="margin-right: 10px;"></i><span>#</span>
+		</button>
 	</div>
 </div>
 
@@ -86,54 +154,96 @@
 
 	<div class="modal-body">
 		<h2>O que deve ser feito?</h2>
-		<p>A tarefa consiste em corrigir as linhas e colunas de uma tabela ou
-		de uma seção em foco da tabela. Precisamos que você marque a estrutura da tabela para que
-		posteriormente façamos o reconhecimento óptico do conteúdo de cada célula da tabela.</p>
-		<p>A grade apresentada pode não ser muito bem desenhada devido à falta de padronização existente
-		na criação das tabelas historicamente. A maioria das tabelas do projeto são tabelas
-		antigas, datadas desde o século XIX.</p>
+		<p>A tarefa consiste em corrigir as linhas e colunas de uma tabela
+			ou de uma seção em foco da tabela. Precisamos que você marque a
+			estrutura da tabela para que posteriormente façamos o reconhecimento
+			óptico do conteúdo de cada célula da tabela.</p>
+		<p>A grade apresentada pode não ser muito bem desenhada devido à
+			falta de padronização existente na criação das tabelas
+			historicamente. A maioria das tabelas do projeto são tabelas antigas,
+			datadas desde o século XIX.</p>
 		<br>
 		<p>
-		<strong style="color:red;">Atenção</strong>
+			<strong style="color: red;">Atenção</strong>
 		</p>
 		<ul>
-			<li><strong> Caso uma célula esteja cortada, marque os lados da célula que conseguir visualizar
-		na tarefa.</strong></li>
-			<li> Observe o cabeçalho da tabela, geralmente eles não possuem uma estrutura bem definida.</li>
-			<li> Não se esqueça de observar se existem ou não subcélulas na tabela: elas também
-			devem ser marcadas.</li>
-			<li> Ainda que a célula não possua nenhum conteúdo, privilegie a formação da tabela e a
-			marque-a também.</li>
-			<li> Caso você tenha alguma dúvida envie um feedback com sua dúvida no campo logo abaixo da
-			página.</li>
+			<li><strong> Caso uma célula esteja cortada, marque os
+					lados da célula que conseguir visualizar na tarefa.</strong></li>
+			<li>Observe o cabeçalho da tabela, geralmente eles não possuem
+				uma estrutura bem definida.</li>
+			<li>Não se esqueça de observar se existem ou não subcélulas na
+				tabela: elas também devem ser marcadas.</li>
+			<li>Ainda que a célula não possua nenhum conteúdo, privilegie a
+				formação da tabela e a marque-a também.</li>
+			<li>Caso você tenha alguma dúvida envie um feedback com sua
+				dúvida no campo logo abaixo da página.</li>
 		</ul>
 		<br>
 		<h2>Como devo marcar a estrutura da tabela?</h2>
-		<p>Inicialmente será apresentado uma grade com as linhas e colunas identificadas
-		por um software de visão computacional. Você pode mover, dividir e apagar as linhas e colunas
-		fornecidas, e adicionar novas para identificar a estrutura completa da tabela.</p>
+		<p>Inicialmente será apresentado uma grade com as linhas e colunas
+			identificadas por um software de visão computacional. Você pode
+			mover, dividir e apagar as linhas e colunas fornecidas, e adicionar
+			novas para identificar a estrutura completa da tabela.</p>
 		<br>
 		<h2>Ferramentas de edição</h2>
-			<dl>
-			  <dt>Seleção de segmentos <img class="icon" style="width: 20px" src="#server/images/select_tool.png"></img></dt>
-			  <dd>Ferramenta que permite selecionar linhas e colunas através do clique simples.<p> É possível selecionar mais de uma linha ou coluna se o SHIFT estiver pressionado.</p></dd>
-			</dl>
-			<dl>
-			  <dt>Seleção em área <img class="icon" style="width: 20px" src="#server/images/area_tool.png"></img></dt>
-			  <dd>Ferramenta que permite selecionar as linhas e colunas de uma região. Clique e arraste o mouse para demarcar a região a ser selecionada. <p><strong>Observação:</strong> um segmento só será selecionado se o mesmo estiver completamente na área de seleção.<p></dd>
-			</dl>
-			<dl>
-			  <dt>Remoção de segmentos <i class="icon icon-trash" style="color:#333333; font-size: 18px;"></i></dt>
-			  <dd>Ferramenta que remove os segmentos selecionados. Essa função pode ser usada alternativamente através do atalho DEL.</dd>
-			</dl>
-			<dl>
-			  <dt>Adição de segmentos <img class="icon" style="width: 16px; margin-bottom: 2px;" src="#server/images/add_tool.png"></dt>
-			  <dd>Ferramenta para desenho de novas linhas e colunas. Clique e arraste o mouse sobre uma região da tabela para criá-las. <p>Se o segmento desenhado for predominantemente horizontal, uma linha será criada. Caso esse segmento tenda a uma orientação vertical, uma coluna.</p></dd>
-			</dl>
-			<dl>
-			  <dt>Partição de segmentos <img class="icon" style="width: 18px; margin-bottom: 2px;" src="#server/images/split_tool.png"></img></dt>
-			  <dd>Ferramenta que divide uma linha ou coluna no ponto de intersecção mais próximo. Quando particionados, os sub-segmentos podem ser manipulados independentemente.</dd>
-			</dl>
+		<dl>
+			<dt>
+				Seleção de segmentos <img class="icon" style="width: 20px"
+					src="#server/images/select_tool.png"></img>
+			</dt>
+			<dd>
+				Ferramenta que permite selecionar linhas e colunas através do clique
+				simples.
+				<p>É possível selecionar mais de uma linha ou coluna se o SHIFT
+					estiver pressionado.</p>
+			</dd>
+		</dl>
+		<dl>
+			<dt>
+				Seleção em área <img class="icon" style="width: 20px"
+					src="#server/images/area_tool.png"></img>
+			</dt>
+			<dd>
+				Ferramenta que permite selecionar as linhas e colunas de uma região.
+				Clique e arraste o mouse para demarcar a região a ser selecionada.
+				<p>
+					<strong>Observação:</strong> um segmento só será selecionado se o
+					mesmo estiver completamente na área de seleção.
+				<p>
+			</dd>
+		</dl>
+		<dl>
+			<dt>
+				Remoção de segmentos <i class="icon icon-trash"
+					style="color: #333333; font-size: 18px;"></i>
+			</dt>
+			<dd>Ferramenta que remove os segmentos selecionados. Essa função
+				pode ser usada alternativamente através do atalho DEL.</dd>
+		</dl>
+		<dl>
+			<dt>
+				Adição de segmentos <img class="icon"
+					style="width: 16px; margin-bottom: 2px;"
+					src="#server/images/add_tool.png">
+			</dt>
+			<dd>
+				Ferramenta para desenho de novas linhas e colunas. Clique e arraste
+				o mouse sobre uma região da tabela para criá-las.
+				<p>Se o segmento desenhado for predominantemente horizontal, uma
+					linha será criada. Caso esse segmento tenda a uma orientação
+					vertical, uma coluna.</p>
+			</dd>
+		</dl>
+		<dl>
+			<dt>
+				Partição de segmentos <img class="icon"
+					style="width: 18px; margin-bottom: 2px;"
+					src="#server/images/split_tool.png"></img>
+			</dt>
+			<dd>Ferramenta que divide uma linha ou coluna no ponto de
+				intersecção mais próximo. Quando particionados, os sub-segmentos
+				podem ser manipulados independentemente.</dd>
+		</dl>
 		<br>
 	</div>
 
@@ -143,7 +253,6 @@
 </div>
 
 <style>
-
 canvas {
 	border: 1px solid #9C9898;
 }
@@ -209,7 +318,6 @@ div.container {
 	margin-left: 15px;
 	float: left;
 }
-
 </style>
 
 <!--<div class="row skeleton">
@@ -233,166 +341,171 @@ div.container {
 <script src="#server/js/kinetic.js"></script>
 <script type="text/javascript" src="#server/js/jquery.i18n.min.js"></script>
 <script type="text/javascript" src="#server/js/tt-struct-i18n.js"></script>
-<script type="text/javascript" src="#server/js/throbber/throbber.js" ></script>
+<script type="text/javascript" src="#server/js/throbber/throbber.js"></script>
 <script type="text/javascript" src="#server/js/jquery.blockUI.js"></script>
 <script type="text/javascript" charset="utf-8" src="#server/js/tt3.js"></script>
 
 
 <script type="text/javascript" charset="utf-8">
+	var taskid;
+	var serverName = "#server";
+	var maxCanvasWidth = 540;
+	var maxCanvasHeight = $("#task-info").height();
 
-    var taskid;
-    var serverName = "#server";
-    var maxCanvasWidth = 540;
-    var maxCanvasHeight = $("#task-info").height();
-	
-    function showHelpStruct() {
-	    $('#helpModalStruct').modal();
-    }
+	function showHelpStruct() {
+		$('#helpModalStruct').modal();
+	}
 
-    $("[rel=tooltip]").tooltip();
+	$("[rel=tooltip]").tooltip();
 
-    $(window).load(function(){
+	$(window).load(function() {
 		$("#question").text($.i18n._('question'));
 		$("#question span:first").text($.i18n._('task_name'));
 		$("#button_finished span:first").text($.i18n._('button_finished'));
 		$("#button_addline").text($.i18n._('button_addline'));
-        $("#button_addcolumn").text($.i18n._('button_addcolumn'));
+		$("#button_addcolumn").text($.i18n._('button_addcolumn'));
 		$("#button_rmseg label").text($.i18n._('button_rmseg'));
 		$("#button_rmline label").text($.i18n._('button_rmline'));
-	    $("#button_mvline label").text($.i18n._('button_mvline'));
+		$("#button_mvline label").text($.i18n._('button_mvline'));
 		$("#success strong").text($.i18n._('well_done'));
 		$("#success span:nth-child(2)").text($.i18n._('saved'));
 		$("#finish strong").text($.i18n._('congratulations'));
 		$("#finish span:nth-child(2)").text($.i18n._('finished'));
 		$("#error strong").text($.i18n._('error'));
 		$("#error span:nth-child(2)").text($.i18n._('err_msg'));
-      	$("#workflowtask").text($.i18n._('workflowtask'));
+		$("#workflowtask").text($.i18n._('workflowtask'));
 		$("#progress-from").text($.i18n._('progress-from'));
 		$("#progress-to").text($.i18n._('progress-to'));
-    });
+	});
 
-    function loadUserProgress() {
+	function loadUserProgress() {
 		pybossa.userProgress(task_shortname).done(function(data) {
 			var lastTask = (data.done + 1) == data.total;
-			var pct = Math.round((data.done*100)/data.total);
-			$("#progress").css("width", pct.toString() +"%");
+			var pct = Math.round((data.done * 100) / data.total);
+			$("#progress").css("width", pct.toString() + "%");
 			$("#progress").attr("title", pct.toString() + "% completed!");
-			$("#progress").tooltip({'placement': 'left'}); 
+			$("#progress").tooltip({
+				'placement' : 'left'
+			});
 			$("#total").text(data.total);
 			$("#done").text(data.done);
 		});
-    }
+	}
 
-    function taskRunDone(taskId){
-        $.ajax({
-            url: '/mb/api/' + taskId + '/done',
-            success: function(data) { 
-                enableNextTask();
-            }
-        });
-    }
+	function taskRunDone(taskId) {
+		$.ajax({
+			url : '/mb/api/' + taskId + '/done',
+			success : function(data) {
+				enableNextTask();
+			}
+		});
+	}
 
-    function enableNextTask(){
-        $("#workflowtask").fadeIn(200);
-    }
+	function enableNextTask() {
+		$("#workflowtask").fadeIn(200);
+	}
 
-    $("#workflowtask").click(function() {
-		var random_task_type = Math.round(Math.random()) + 1;
-		window.open(endpoint + "/app/" + task_shortname.replace("_tt3", "_tt" + random_task_type)  + "/newtask", "_self");
-    });
+	$("#workflowtask").click(
+			function() {
+				var random_task_type = Math.round(Math.random()) + 1;
+				window.open(endpoint
+						+ "/app/"
+						+ task_shortname.replace("_tt3", "_tt"
+								+ random_task_type) + "/newtask", "_self");
+			});
 
-    $('body').on('click', function(e) {
+	$('body').on('click', function(e) {
 		handleBodyClickEvent(e);
-    });
+	});
 
-    $('body').on('mouseup', function(e) {
+	$('body').on('mouseup', function(e) {
 		handleMouseUpEvent(e);
-    });
+	});
 
+	var task_shortname = "#task_shortname#";
+	var endpoint = "/pybossa";
 
-    var task_shortname = "#task_shortname#";
-    var endpoint = "/pybossa";
+	function loadData(data) {
 
-    function loadData(data) {
+		if (!$.isEmptyObject(data.task)) {
+			loadUserProgress();
 
-        if ( !$.isEmptyObject(data.task) ) {
-            loadUserProgress();
-   	         
-            var hasZoom = data.task.info.hasZoom;
-		    var question = $.i18n._('question');
-		 
-		    if (hasZoom) question = $.i18n._('question_with_focus');
+			var hasZoom = data.task.info.hasZoom;
+			var question = $.i18n._('question');
 
-		    $("#question").text(question);
-		    taskid = data.task.id;
-		    
-		    initGrid(data.task.info, maxCanvasWidth, maxCanvasHeight, serverName);
-	  	    configureUI();
-        }
-        else {
-	        $(".skeleton").hide();
-        	$("#finish").fadeIn(200);
+			if (hasZoom)
+				question = $.i18n._('question_with_focus');
+
+			$("#question").text(question);
+			taskid = data.task.id;
+
+			initGrid(data.task.info, maxCanvasWidth, maxCanvasHeight,
+					serverName);
+			configureUI();
+		} else {
+			$(".skeleton").hide();
+			$("#finish").fadeIn(200);
 			setTimeout(function() {
 				$("#finish").fadeOut(200);
 				enableNextTask();
 			}, 3000);
 		}
-     }
+	}
 
-     function configureUI() {
+	function configureUI() {
 		// A tabela foi rotacionada
 		if (getCanvasWidth() > maxCanvasWidth) {
 			$('#task-info').removeClass('task-info');
 			$('#button_finished').removeClass('button-finished');
-	
+
 			$('#task-info').addClass('task-info-rotated');
 			$('#instruction').addClass('instruction-rotated');
 			$('#button_finished').addClass('button-finished-rotated');
-	
-		}
-		else {
+
+		} else {
 			$('#task-info').removeClass('task-info-rotated');
 			$('#instruction').removeClass('instruction-rotated');
 			$('#button_finished').removeClass('button-finished-rotated');
-	
+
 			$('#task-info').addClass('task-info');
 			$('#button_finished').addClass('button-finished');
 		}
 		$("#task-info").show();
-     }
+	}
 
-     // Function to submit and save the TaskRun in PyBossa
-     function submitTask() {
+	// Function to submit and save the TaskRun in PyBossa
+	function submitTask() {
 		var answer = getGridLinesAnswer();
-		
-		pybossa.saveTask(taskid, answer).done(function(data) {   
+
+		pybossa.saveTask(taskid, answer).done(function(data) {
 			//Call tt workflow api.
-	        taskRunDone(taskid);
-			
-	        clearCanvas();
-			
-			$.blockUI({message: $("#success"),
-				  css: {height: $("#success").height()}
+			taskRunDone(taskid);
+
+			clearCanvas();
+
+			$.blockUI({
+				message : $("#success"),
+				css : {
+					height : $("#success").height()
+				}
 			});
-				
-		    setTimeout(function() {
-		      	$.unblockUI();
-		    }, 1500);
-			
-		    // Load new task
+
+			setTimeout(function() {
+				$.unblockUI();
+			}, 1500);
+
+			// Load new task
 			pybossa.newTask(task_shortname).done(function(data) {
-				 loadData(data);
-			 });
-		});     
-	 }
+				loadData(data);
+			});
+		});
+	}
 
-     pybossa.setEndpoint(endpoint);
+	pybossa.setEndpoint(endpoint);
 
-     $(window).load(function(){
-             pybossa.newTask(task_shortname).done(
-                 function( data ) {
-                     loadData( data );
-             }); 
-     });
-
+	$(window).load(function() {
+		pybossa.newTask(task_shortname).done(function(data) {
+			loadData(data);
+		});
+	});
 </script>
