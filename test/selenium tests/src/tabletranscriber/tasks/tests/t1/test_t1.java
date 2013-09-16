@@ -12,7 +12,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import com.thoughtworks.selenium.Selenium;
 
 public class test_t1 {
-	private final int NUMBER_OF_TASKS_T1_BY_USER = 10;
+	private final int NUMBER_OF_TASKS_T1_BY_USER = 5;
 	private Selenium selenium;
 
 	@Before
