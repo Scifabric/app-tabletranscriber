@@ -501,13 +501,13 @@
 			  canvas.fillStroke(this);
 			},
 			dragBoundFunc: function(pos, event) {
-				if (typeof event == 'undefined' || isSplitToolActive() || isAreaToolActive()) {
+				var points = this.getPoints();
+				if (typeof event == 'undefined' || isBorda(points) ||
+						isSplitToolActive() || isAreaToolActive()) {
 					return {x : this.getAbsolutePosition().x, y : this.getAbsolutePosition().y};
 				}
 
-				var points = this.getPoints();
 				var seg = getSegmento(points);
-
 				if (isColuna(points)) {
 					var posX = getMousePosX(event);
 					var limEsq = encontraLimiteEsquerda(points);
@@ -574,14 +574,10 @@
 
 			if (isSegmentoSelected(points)) return;
 
-			if (isMouseOverAnElement()) {
-				var mouseOverElement = getSegmento(points);
-				if (typeof mouseOverElement != "undefined") {
-					unhighlightSegmento(mouseOverElement);
-					layersRedraw();
-				}
-			} else {
-				clearSelection();
+			var mouseOverElement = getSegmento(points);
+			if (typeof mouseOverElement != "undefined") {
+				unhighlightSegmento(mouseOverElement);
+				layersRedraw();
 			}
 		});
 
@@ -772,30 +768,34 @@
 	}
 
 	function uneIntercessoes(points) {
-		var pos0, pos1;
-
 		if (isLinha(points)) {
-			pos0 = points[0].x;
-			pos1 = points[1].x;
 			var posY = points[0].y;
+			var intercessoes = encontraIntercessoesVerticais(posY);
 
-			if (!temContinuacaoLinha(points[0], points)) {
-				uneIntercessaoColuna(pos0, posY);
-			}
-			if (!temContinuacaoLinha(points[1], points)) {
-				uneIntercessaoColuna(pos1, posY);
+			for (var i = 0; i < intercessoes.length; i++) {
+				var intercessao = intercessoes[i];
+
+				if (insideIntervalOrEqual(points[0].x, points[1].x, intercessao)) {
+					if (points[0].x == intercessao && temContinuacaoLinha(points[0], points) ||
+						points[1].x == intercessao && temContinuacaoLinha(points[1], points)) {
+						continue;
+					}
+					uneIntercessaoColuna(intercessao, posY);
+				}
 			}
 		} else {
-
-			pos0 = points[0].y;
-			pos1 = points[1].y;
 			var posX = points[0].x;
+			var intercessoes = encontraIntercessoesHorizontais(posX);
 
-			if (!temContinuacaoColuna(points[0], points)) {
-				uneIntercessaoLinha(posX, pos0);
-			}
-			if (!temContinuacaoColuna(points[1], points)) {
-				uneIntercessaoLinha(posX, pos1);
+			for (var i = 0; i < intercessoes.length; i++) {
+				var intercessao = intercessoes[i];
+				if (insideIntervalOrEqual(points[0].y, points[1].y, intercessao)) {
+					if (points[0].y == intercessao && temContinuacaoColuna(points[0], points) ||
+						points[1].y == intercessao && temContinuacaoColuna(points[1], points)) {
+						continue;
+					}
+					uneIntercessaoLinha(posX, intercessao);
+				}
 			}
 		}
 	}
@@ -1474,9 +1474,11 @@
 
 	function clickOnSegmento(evt, seg) {
 
-		if (isMouseOverAnElement()) {
-			document.body.style.cursor = "move";
-		}
+		var segPoints = seg.getPoints();
+
+		if (isBorda(segPoints)) return;
+
+		document.body.style.cursor = "move";
 
 		if (!evt.shiftKey) {
 			resetSelecao();
@@ -1527,13 +1529,15 @@
 
 	function removeSelectedSegmentos() {
 		var removedAny = false;
-		return recursiveDeletion(removedAny);
+		var failed = false;
+		return recursiveDeletion(removedAny, failed);
 	}
 
-	function recursiveDeletion(removedAny) {
+	function recursiveDeletion(removedAny, failed) {
 		
-		if (segmentosSelecionados.length == 0) return removedAny;
+		if (segmentosSelecionados.length == 0 || failed) return removedAny;
 
+		var allFailed = true;
 		for (var i = segmentosSelecionados.length - 1; i >= 0; i--) {
 			var points = segmentosSelecionados[i].getPoints();
 			var segmento = getSegmento(points);
@@ -1544,12 +1548,14 @@
 			}
 
 			var success = removeSegmento(segmento);
+			allFailed = allFailed && !success;
+
 			if (success) {
 				segmentosSelecionados.splice(i, 1);
 				removedAny = true;
 			}
 		}
-		return recursiveDeletion(removedAny);
+		return recursiveDeletion(removedAny, allFailed);
 	}
 	
 	function removeSegmentoColuna(segmento) {
