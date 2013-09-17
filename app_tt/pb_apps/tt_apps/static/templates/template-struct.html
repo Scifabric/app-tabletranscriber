@@ -167,20 +167,21 @@
 			<strong style="color: red;">Atenção</strong>
 		</p>
 		<ul>
-			<li><strong> Caso uma célula esteja cortada, marque os
+			<li><strong>Caso uma célula esteja cortada, marque os
 					lados da célula que conseguir visualizar na tarefa.</strong></li>
 			<li>Observe o cabeçalho da tabela, geralmente eles não possuem
 				uma estrutura bem definida.</li>
 			<li>Não se esqueça de observar se existem ou não subcélulas na
 				tabela: elas também devem ser marcadas.</li>
 			<li>Ainda que a célula não possua nenhum conteúdo, privilegie a
-				formação da tabela e a marque-a também.</li>
+				formação da tabela e marque-a também.</li>
+			<li>Não se preocupe se a borda da linha cobrir um pouco o conteúdo da célula.</li>
 			<li>Caso você tenha alguma dúvida envie um feedback com sua
 				dúvida no campo logo abaixo da página.</li>
 		</ul>
 		<br>
 		<h2>Como devo marcar a estrutura da tabela?</h2>
-		<p>Inicialmente será apresentado uma grade com as linhas e colunas
+		<p>Inicialmente será apresentada uma grade com as linhas e colunas
 			identificadas por um software de visão computacional. Você pode
 			mover, dividir e apagar as linhas e colunas fornecidas, e adicionar
 			novas para identificar a estrutura completa da tabela.</p>
@@ -193,7 +194,7 @@
 			</dt>
 			<dd>
 				Ferramenta que permite selecionar linhas e colunas através do clique
-				simples.
+				simples. Quando selecionada, a linha ou coluna muda para a cor azul, e o seu início e fim são destacados de preto.
 				<p>É possível selecionar mais de uma linha ou coluna se o SHIFT
 					estiver pressionado.</p>
 			</dd>
@@ -231,7 +232,7 @@
 				o mouse sobre uma região da tabela para criá-las.
 				<p>Se o segmento desenhado for predominantemente horizontal, uma
 					linha será criada. Caso esse segmento tenda a uma orientação
-					vertical, uma coluna.</p>
+					vertical, uma coluna será criada.</p>
 			</dd>
 		</dl>
 		<dl>
@@ -414,10 +415,6 @@ div.container {
 								+ random_task_type) + "/newtask", "_self");
 			});
 
-	$('body').on('click', function(e) {
-		handleBodyClickEvent(e);
-	});
-
 	$('body').on('mouseup', function(e) {
 		handleMouseUpEvent(e);
 	});
@@ -478,7 +475,7 @@ div.container {
 		var answer = getGridLinesAnswer();
 
 		pybossa.saveTask(taskid, answer).done(function(data) {
-			//Call tt workflow api.
+			//Call tt workflow api
 			taskRunDone(taskid);
 
 			clearCanvas();
