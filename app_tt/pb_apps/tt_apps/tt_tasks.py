@@ -299,7 +299,7 @@ class TTTask2(pb_task):
             arch = open(filepath)
             data = arch.read().strip().split('\n')
 
-            for data_idx in range(0, len(data)):
+            for data_idx in range(1, len(data)):
                 selections.append([
                     int(coord) for coord in data[data_idx].split(',')])
 
