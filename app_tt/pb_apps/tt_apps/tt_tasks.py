@@ -392,6 +392,12 @@ class TTTask2(pb_task):
 
         return False
 
+# TODO ==> rodar OCR (TesseractExecutor)
+                
+# 1. inserir carregar respostas de TesseractExecutor
+# 2. verificar niveis de confianca para ocrzacoes de celulas
+# 3. inserir respostas em T4
+
 class TTTask3(pb_task):
     """
     Table Transcriber Task type 3
@@ -401,37 +407,72 @@ class TTTask3(pb_task):
 
     def add_next_task(self):
         try:
-            if(not self.task.info['hasZoom']):
-                # TODO ==> rodar OCR (TesseractExecutor)
-                    
-                # 1. inserir carregar respostas de TesseractExecutor
-                # 2. verificar niveis de confianca para ocrzacoes de celulas
-                # 3. inserir respostas em T4
-                
-                tt4_app_short_name = self.app_short_name[:-1] + "4"
-                tt4_app = ttapps.Apptt_transcribe(short_name=tt4_app_short_name)
-                tt4_app.add_task("info tt4 without zoom")
-                
+            hasZoom = task.info['hasZoom']
+            
+            linesAndColumnsMap = self.__loadAnswers(self)
+            cells = []
+            
+            if(hasZoom):
+                linesAndColumnsTransformed = self.__transformSegmentInLines(linesAndColumnsMap)
+                cells = self.__createCells(linesAndColumnsTransformed)
             else:
-                similarTasks = self.__searchSimilarTasks()
+                cells = self.__createCells(linesAndColumnsMap)
+                            
+            tt4_app_short_name = self.app_short_name[:-1] + "4"
+            tt4_app = ttapps.Apptt_transcribe(short_name=tt4_app_short_name)
+            tt4_app.add_task("" + cells)
                 
-                if(not self.__validateTaskGroup(similarTasks)):
-                    return
-                else:
-                    tableGrid = self.__joinTaskGroupAnswers(similarTasks)
-                    
-                    # TODO ==> rodar OCR (TesseractExecutor)
-                    
-                    # 1. inserir carregar respostas de TesseractExecutor
-                    # 2. verificar niveis de confianca para ocrzacoes de celulas
-                    # 3. inserir respostas em T4
-                    
-                    tt4_app_short_name = self.app_short_name[:-1] + "4"
-                    tt4_app = ttapps.Apptt_transcribe(short_name=tt4_app_short_name)
-                    tt4_app.add_task("info tt4 with zoom")
-                    
         except Exception, e:
             print str(e)
+    
+    def __loadAnswers(self):
+        if(self.task.info['hasZoom']):
+            task_runs = json.loads(urllib2.urlopen(
+                "%s/api/taskrun?task_id=%s&limit=%d" % (
+                    app.config['PYBOSSA_URL'], self.task.id, sys.maxint)).read())
+    
+            task_run = task_runs[len(task_runs) - 1]  # Get the last answer
+            answer = task_run["info"]
+            answer_json = json.loads(answer)
+            
+            return answerJson
+        
+        else:
+            # TODO
+            similarTasks = self.__searchSimilarTasks()
+                
+            if(not self.__validateTaskGroup(similarTasks)):
+                return
+            else:
+                tableGrid = self.__joinTaskGroupAnswers(similarTasks)
+        
+            return answer_json
+    
+    def __createCells(self, linesAndColumnsMap):
+        cells = []
+        
+        lines = linesAndColumnsMap['linhas']
+        columns = linesAndColumnsMap['colunas']
+        
+        l1 = lines[0]
+        l2 = lines[1]
+        c1 = columns[0]
+        c2 = columns[1]
+        
+        k = 0
+        for i in range(0,length(lines)-1):
+            for j in range(0,length(columns)-1):
+                if __instersect(l1,c1) and __instersect(l2,c2):
+                    cells[k] = (l1[0],c1[0],l2[1],c2[1])
+                    k = k + 1
+                l1 = lines[i]
+                l2 = lines[i+1]
+                c1 = columns[j]
+                c2 = columns[j+1]
+        
+        print "cells: " + cells
+                
+        return cells
     
     """
       Search similar tasks to this task in pybossa task table
@@ -457,9 +498,9 @@ class TTTask3(pb_task):
     """
     def __validateTaskGroup(self, similarTasks):
         for t in similarTasks:
-            if(not t.task.state == "completed" and self.task.state == "completed"):
+            if(not t.task.state == "completed"):
                 return False
-        return True
+        return self.task.state == "completed"
 
     """
       Join all answers of task_runs to return a table grid.
@@ -467,7 +508,22 @@ class TTTask3(pb_task):
     def __joinTaskGroupAnswers(self, similarTasks):
         #TODO
         return
-
+    
+    """
+      Transform segments in horizontal or vertical orientations
+      in complete lines.
+    """
+    def __transformSegmentInLines(self, answerJson):
+        linesAndColumnsMap = {}
+        linesAndColumnsMap['lines'] = answerJson['linhas']
+        linesAndColumnsMap['columns'] = []
+        
+        for seg in answerJson['colunas']:
+            if seg:
+                pass
+        
+        return lines
+    
     def close_task(self):
         pass
 
