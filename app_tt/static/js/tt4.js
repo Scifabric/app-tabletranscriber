@@ -3,7 +3,7 @@
     $.fn.table = function(options){
 		var opts = $.extend({}, $.fn.table.defaults, options);
 
-        var image = this;
+//        var image = this;
         this.image = this;
 
         this.imgUrl = opts.imgUrl;
@@ -54,7 +54,7 @@
 
 	$.fn.table.load = function(image){
 		//console.log(image.cells);
-		for(i=0; i< image.cells.length; i++){
+		for(var i=0; i< image.cells.length; i++){
 			new $.fn.cellView(image, image.cells[i]);
 		}
 	};

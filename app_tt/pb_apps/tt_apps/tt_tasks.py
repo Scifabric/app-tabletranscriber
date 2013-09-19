@@ -407,20 +407,27 @@ class TTTask3(pb_task):
 
     def add_next_task(self):
         try:
-            hasZoom = task.info['hasZoom']
+            hasZoom = self.task.info['hasZoom']
             
-            linesAndColumnsMap = self.__loadAnswers(self)
+            #linesAndColumnsMap = self.__loadAnswers(self)
             cells = []
+            #cells=[(30,60),(60,90),(60,60),(90,90),(30,90),(60,120),(60,90),(90,120)] 
             
-            if(hasZoom):
-                linesAndColumnsTransformed = self.__transformSegmentInLines(linesAndColumnsMap)
-                cells = self.__createCells(linesAndColumnsTransformed)
-            else:
-                cells = self.__createCells(linesAndColumnsMap)
+            linkImg = self.task.info['img_url']
+            
+            #if(hasZoom):
+                #linesAndColumnsTransformed = self.__transformSegmentInLines(linesAndColumnsMap)
+                #cells = self.__createCells(linesAndColumnsTransformed)
+            #else:
+                #cells = self.__createCells(linesAndColumnsMap)
+            
+            infoDict = {}
+            infoDict['link'] = linkImg
+            infoDict['cells'] = cells
                             
             tt4_app_short_name = self.app_short_name[:-1] + "4"
             tt4_app = ttapps.Apptt_transcribe(short_name=tt4_app_short_name)
-            tt4_app.add_task("" + cells)
+            tt4_app.add_task(infoDict)
                 
         except Exception, e:
             print str(e)
