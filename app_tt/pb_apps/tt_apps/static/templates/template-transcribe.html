@@ -45,16 +45,6 @@
 	</div>
 </div>
 
-<div class="row skeleton">
-	<!-- Answer buttons -->
-	<hidden id="table" value="#">
-	<div id="viewer-container" class="viewer iviewer"></div>
-	<div id="right-panel">
-		<div id="jQuerySheet"></div>
-	</div>
-</div>
-
-
 <div class="row skeleton" style="padding: 10px;">
 	<div id="answer" class="span8 offset2">
 		<button id="button" class="btn" onclick="submitTask('No')">
@@ -68,10 +58,21 @@
 			<i class="icon icon-white icon-ok"></i> Não há tabelas
 		</button>
 	</div>
-
-
 </div>
 
+<div class="row skeleton">
+	<!-- Answer buttons -->
+	<div id="container">
+		<hidden id="table" value="#">
+		<div id="viewer-container" class="viewer iviewer"></div>
+		<div id="right-panel">
+			<div id="jQuerySheet"></div>
+		</div>
+	</div>
+</div>
+
+<br>
+<br>
 <div class="row skeleton">
 	<div id="disqus_thread" class="span8 offset2"></div>
 </div>
@@ -98,7 +99,6 @@
 <a href="http://disqus.com" class="dsq-brlink">comments powered by <span
 	class="logo-disqus">Disqus</span></a>
 
-<script type="text/javascript" src="/static/js/pybossa/pybossa.js"></script>
 <script type="text/javascript" src="/static/js/throbber/throbber.js"></script>
 
 <!-- JQuery -->

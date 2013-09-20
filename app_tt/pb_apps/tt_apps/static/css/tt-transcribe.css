@@ -1,26 +1,39 @@
 .viewer {
-	width: 550px;
-	height: 700px;
+	width: 500px;
+	height: 600px;
 	border: 1px solid black;
-	position: relative;
-	float:	left;
+	float: left;
 	overflow: hidden;
 	position: relative;
-    overflow: hidden;
-}
-#right-panel {
-/*     float: right; */
 }
 
-#jQuerySheet{
-    height:450px;
-    margin-left:30px;
-    margin-top:56px;
-    width:563px;
+#container {
+	width: 930px;
+}
+
+#right-panel {
+	float: right;
+	width: 420px;
+	height: 600px;
+	margin: auto;
+}
+
+#jQuerySheet {
+	height: 600px;
+	margin: auto;
+	position: relative;
+/* 	margin-top: auto; */
+	width: 400px;
 }
 
 img {
-max-width: 800%;
-height: auto;
-border: 0;
+	max-width: 800%;
+	height: auto;
+	border: 0;
+}
+
+#jSheetControls_formula_0 {
+	width: 350px;
+/* 	padding-left: 10px;	 */
+/* 	padding-right: 20px; */
 }
