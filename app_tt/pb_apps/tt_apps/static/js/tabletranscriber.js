@@ -4,7 +4,7 @@ spinner = new Throbber({
 	size : 90
 });
 
-function createTable() {
+function createTable(cells) {
 	var table = null;
 
 	if (last_answer != undefined) {
@@ -33,6 +33,8 @@ function createTable() {
 			});
 
 		} else {
+
+			
 			jQuery('#jQuerySheet').sheet({
 				buildSheet : '4x6',
 				calcOff : true,

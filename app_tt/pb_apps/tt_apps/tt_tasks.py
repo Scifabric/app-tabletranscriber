@@ -11,6 +11,7 @@ from requests import RequestException
 import json
 import sys
 import os
+import cellsUtil
 
 
 """
@@ -393,7 +394,9 @@ class TTTask2(pb_task):
         return False
 
 # TODO ==> rodar OCR (TesseractExecutor)
-                
+     
+# Se tiver zoom checar se as tasks do grupo terminaram
+      
 # 1. inserir carregar respostas de TesseractExecutor
 # 2. verificar niveis de confianca para ocrzacoes de celulas
 # 3. inserir respostas em T4
@@ -408,13 +411,15 @@ class TTTask3(pb_task):
     def add_next_task(self):
         try:
             hasZoom = self.task.info['hasZoom']
-            
-            #linesAndColumnsMap = self.__loadAnswers(self)
-            cells = []
+            linesAndColumnsMap = self.__loadAnswers()
+
+            cells = cellsUtil.create_cells(linesAndColumnsMap["linhas"], linesAndColumnsMap["colunas"], 
+			linesAndColumnsMap["maxX"], linesAndColumnsMap["maxY"])
+
             #cells=[(30,60),(60,90),(60,60),(90,90),(30,90),(60,120),(60,90),(90,120)] 
             
             linkImg = self.task.info['img_url']
-            
+
             #if(hasZoom):
                 #linesAndColumnsTransformed = self.__transformSegmentInLines(linesAndColumnsMap)
                 #cells = self.__createCells(linesAndColumnsTransformed)
@@ -433,53 +438,26 @@ class TTTask3(pb_task):
             print str(e)
     
     def __loadAnswers(self):
-        if(self.task.info['hasZoom']):
-            task_runs = json.loads(urllib2.urlopen(
-                "%s/api/taskrun?task_id=%s&limit=%d" % (
-                    app.config['PYBOSSA_URL'], self.task.id, sys.maxint)).read())
-    
-            task_run = task_runs[len(task_runs) - 1]  # Get the last answer
-            answer = task_run["info"]
-            answer_json = json.loads(answer)
-            
-            return answerJson
-        
-        else:
+        #if(self.task.info['hasZoom']):
             # TODO
-            similarTasks = self.__searchSimilarTasks()
+            #similarTasks = self.__searchSimilarTasks()
                 
-            if(not self.__validateTaskGroup(similarTasks)):
-                return
-            else:
-                tableGrid = self.__joinTaskGroupAnswers(similarTasks)
+            #if(not self.__validateTaskGroup(similarTasks)):
+            #    return
+            #else:
+            #    tableGrid = self.__joinTaskGroupAnswers(similarTasks)
         
-            return answer_json
-    
-    def __createCells(self, linesAndColumnsMap):
-        cells = []
-        
-        lines = linesAndColumnsMap['linhas']
-        columns = linesAndColumnsMap['colunas']
-        
-        l1 = lines[0]
-        l2 = lines[1]
-        c1 = columns[0]
-        c2 = columns[1]
-        
-        k = 0
-        for i in range(0,length(lines)-1):
-            for j in range(0,length(columns)-1):
-                if __instersect(l1,c1) and __instersect(l2,c2):
-                    cells[k] = (l1[0],c1[0],l2[1],c2[1])
-                    k = k + 1
-                l1 = lines[i]
-                l2 = lines[i+1]
-                c1 = columns[j]
-                c2 = columns[j+1]
-        
-        print "cells: " + cells
-                
-        return cells
+            #return answer_json
+        #else:
+	task_runs = json.loads(urllib2.urlopen(
+        "%s/api/taskrun?task_id=%s&limit=%d" % (
+            app.config['PYBOSSA_URL'], self.task.id, sys.maxint)).read())
+
+	task_run = task_runs[len(task_runs) - 1]  # Get the last answer
+	answer = task_run["info"]
+	answer_json = json.loads(answer)
+
+	return answer_json
     
     """
       Search similar tasks to this task in pybossa task table

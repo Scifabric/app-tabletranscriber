@@ -253,14 +253,20 @@
 	
 	function atualizaColunasPerpendiculares(segPoints, newPosY) {
 		var posY = segPoints[0].y;
-		for (var i = 0; i < colunas.length; i++) {
+		for (var i = colunas.length -1; i >= 0; i--) {
 			var points = colunas[i].getPoints();
-			if (!insideIntervalOrEqual(segPoints[0].x, segPoints[1].x, points[0].x)) continue;
+			if (!insideClosedInterval(segPoints[0].x, segPoints[1].x, points[0].x)) continue;
 
 			if (points[0].y == posY) {
 				colunas[i].setPoints([points[0].x, newPosY, points[1].x,  points[1].y]);
 			} else if (points[1].y == posY) {
 				colunas[i].setPoints([points[0].x, points[0].y, points[1].x, newPosY]);
+			}
+
+			var newPoints = colunas[i].getPoints();
+			if (newPoints[0].y == newPoints[1].y) {
+				colunas[i].remove();
+				colunas.splice(i, 1);
 			}
 		}
 	}
@@ -342,14 +348,20 @@
 
 	function atualizaLinhasPerpendiculares(segPoints, newPosX) {
 		var posX = segPoints[0].x;
-		for (var i = 0; i < linhas.length; i++) {
+		for (var i = linhas.length -1; i >= 0; i--) {
 			var points = linhas[i].getPoints();
-			if (!insideIntervalOrEqual(segPoints[0].y, segPoints[1].y, points[0].y)) continue;
+			if (!insideClosedInterval(segPoints[0].y, segPoints[1].y, points[0].y)) continue;
 			
 			if (points[0].x == posX) {
 				linhas[i].setPoints([newPosX, points[0].y, points[1].x,  points[1].y]);
 			} else if (points[1].x == posX) {
 				linhas[i].setPoints([points[0].x, points[0].y, newPosX, points[1].y]);
+			}
+
+			var newPoints = linhas[i].getPoints();
+			if (newPoints[0].x == newPoints[1].x) {
+				linhas[i].remove();
+				linhas.splice(i, 1);
 			}
 		}
 	}
@@ -774,8 +786,9 @@
 
 			for (var i = 0; i < intercessoes.length; i++) {
 				var intercessao = intercessoes[i];
+				if (intercessao == getTableMinX() || intercessao == getTableMaxX()) continue;
 
-				if (insideIntervalOrEqual(points[0].x, points[1].x, intercessao)) {
+				if (insideClosedInterval(points[0].x, points[1].x, intercessao)) {
 					if (points[0].x == intercessao && temContinuacaoLinha(points[0], points) ||
 						points[1].x == intercessao && temContinuacaoLinha(points[1], points)) {
 						continue;
@@ -789,7 +802,9 @@
 
 			for (var i = 0; i < intercessoes.length; i++) {
 				var intercessao = intercessoes[i];
-				if (insideIntervalOrEqual(points[0].y, points[1].y, intercessao)) {
+				if (intercessao == getTableMinY() || intercessao == getTableMaxY()) continue;
+
+				if (insideClosedInterval(points[0].y, points[1].y, intercessao)) {
 					if (points[0].y == intercessao && temContinuacaoColuna(points[0], points) ||
 						points[1].y == intercessao && temContinuacaoColuna(points[1], points)) {
 						continue;
@@ -880,7 +895,7 @@
 		return element > init && element < final;
 	}
 
-	function insideIntervalOrEqual(init, final, element) {
+	function insideClosedInterval(init, final, element) {
 		return element >= init && element <= final;
 	}
 
@@ -906,7 +921,7 @@
 		return -1;
 	}
 
-	function initGrid(taskInfo, maxCanvasWidth, maxCanvasHeight, serverName) {
+	function initGrid(taskInfo, minCanvasWidth, minCanvasHeight, serverName) {
 		initVariables(taskInfo, serverName);
 
 		var isLastAnswer = typeof taskInfo.last_answer != "undefined";
@@ -915,7 +930,7 @@
 		if (typeof stage != "undefined") {
 			$(".kineticjs-content").remove();
 		}
-		createStage(matrizDePontos, maxCanvasWidth, maxCanvasHeight, isLastAnswer);
+		createStage(matrizDePontos, minCanvasWidth, minCanvasHeight, isLastAnswer);
 	}
 
 	function loadMatrizDePontos(taskInfo, isLastAnswer) {
@@ -955,19 +970,19 @@
 		return matrizDePontos;
 	}
 
-	function createStage(matrizDePontos, maxCanvasWidth, maxCanvasHeight, isLastAnswer) {
+	function createStage(matrizDePontos, minCanvasWidth, minCanvasHeight, isLastAnswer) {
 		var widthCanvas = getTableMaxX();
 		var heightCanvas = getTableMaxY();
 
-		if ((widthCanvas + shiftOnCanvas) < maxCanvasWidth) {
-			widthCanvas = maxCanvasWidth;
+		if ((widthCanvas + shiftOnCanvas) < minCanvasWidth) {
+			widthCanvas = minCanvasWidth;
 		} else {
 			// pad lateral
 			widthCanvas += shiftOnCanvas;
 		}
 
-		if ((heightCanvas + shiftOnCanvas) < maxCanvasHeight) {
-			heightCanvas = maxCanvasHeight;
+		if ((heightCanvas + shiftOnCanvas) < minCanvasHeight) {
+			heightCanvas = minCanvasHeight;
 		} else {
 			// pad inferior
 			heightCanvas += shiftOnCanvas;
@@ -1473,12 +1488,12 @@
 	}
 
 	function clickOnSegmento(evt, seg) {
-
 		var segPoints = seg.getPoints();
-
 		if (isBorda(segPoints)) return;
 
-		document.body.style.cursor = "move";
+		if (isMouseOverAnElement()) {
+			document.body.style.cursor = "move";
+		}
 
 		if (!evt.shiftKey) {
 			resetSelecao();
@@ -1591,11 +1606,17 @@
 				linhas[i].remove();
 				linhas.splice(i, 1);
 
+				if (hasZoom && isLinhaInZoomBorder(segPoints)) break;
 				uneIntercessoes(points2);
 				break;
 			}
 		}
 		return true;
+	}
+
+	function isLinhaInZoomBorder(segPoints) {
+		return segPoints[0].y == (zoom[1] + shiftOnCanvas) ||
+					segPoints[0].y == (zoom[3] + shiftOnCanvas);
 	}
 
 	function validaRemocao(segPoints) {
@@ -1604,14 +1625,13 @@
 
 			if (!temColunasDelimitando(segPoints)) return false;
 
-			if (hasZoom && ((segPoints[0].y == zoom[1] + shiftOnCanvas) ||
-					(segPoints[0].y == zoom[3] + shiftOnCanvas))) return true;
+			if (hasZoom && isLinhaInZoomBorder(segPoints)) return true;
 
 			// checa se as colunas que tocam a linha tem continuacao
 			var posY = segPoints[0].y;
 			for (var i = 0; i < colunas.length; i++) {
 				var points = colunas[i].getPoints();
-				if (!insideIntervalOrEqual(segPoints[0].x, segPoints[1].x, points[0].x)) continue;
+				if (!insideClosedInterval(segPoints[0].x, segPoints[1].x, points[0].x)) continue;
 
 				if (points[0].y == posY && !temContinuacaoColuna(points[0], points)) {
 					return false;
@@ -1627,7 +1647,7 @@
 			var posX = segPoints[0].x;
 			for (var i = 0; i < linhas.length; i++) {
 				var points = linhas[i].getPoints();
-				if (!insideIntervalOrEqual(segPoints[0].y, segPoints[1].y, points[0].y)) continue;
+				if (!insideClosedInterval(segPoints[0].y, segPoints[1].y, points[0].y)) continue;
 
 				if (points[0].x == posX && !temContinuacaoLinha(points[0], points)) {
 					return false;

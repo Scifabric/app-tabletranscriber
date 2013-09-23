@@ -99,7 +99,7 @@
 	<div id="canvas-container" style="float: left;"></div>
 
 	<div id="task-info" class="task-info" style="display: none;">
-		<div id="instruction" class="alert alert-info">
+		<div id="instruction" class="alert alert-info" style="padding-right: 14px;">
 			<h5 id="task-instruction">
 				<strong> Instru&ccedil;&otilde;es b&aacute;sicas</strong><br>
 				<ul>
@@ -108,7 +108,7 @@
 						ajustar a posição de um segmento;
 					</li>
 					<li>Use a ferramenta <img class="icon" style="width: 20px"
-						src="#server/images/area_tool.png"></img> para selecionar
+						src="#server/images/area_tool.png"></img> para selecionar os
 						segmentos de uma área;
 					</li>
 					<li>Clique na lixeira <i class="icon icon-trash"
@@ -117,8 +117,8 @@
 					</li>
 					<li>Com a ferramenta <img class="icon"
 						style="width: 16px; margin-bottom: 2px;"
-						src="#server/images/add_tool.png"></img> habilitada, clique e
-						arraste o mouse para adicionar uma linha ou coluna;
+						src="#server/images/add_tool.png"></img>, clique e
+						arraste o mouse para adicionar um segmento;
 					</li>
 					<li>Use a ferramenta <img class="icon"
 						style="width: 18px; margin-bottom: 2px;"
@@ -290,7 +290,7 @@ div.container {
 
 .task-info {
 	float: right;
-	width: 400px;
+	width: 325px;
 	height: 400px;
 }
 
@@ -298,7 +298,7 @@ div.container {
 	height: 80px;
 	width: 260px;
 	font-size: 20px;
-	margin-left: 65px;
+	margin-left: 33px;
 }
 
 .task-info-rotated {
@@ -350,8 +350,9 @@ div.container {
 <script type="text/javascript" charset="utf-8">
 	var taskid;
 	var serverName = "#server";
-	var maxCanvasWidth = 540;
-	var maxCanvasHeight = $("#task-info").height();
+	var minCanvasWidth = 540;
+	var minCanvasHeight = $("#task-info").height();
+	var minTaskInfoWidth = 325;
 
 	function showHelpStruct() {
 		$('#helpModalStruct').modal();
@@ -436,7 +437,7 @@ div.container {
 			$("#question").text(question);
 			taskid = data.task.id;
 
-			initGrid(data.task.info, maxCanvasWidth, maxCanvasHeight,
+			initGrid(data.task.info, minCanvasWidth, minCanvasHeight,
 					serverName);
 			configureUI();
 		} else {
@@ -450,8 +451,10 @@ div.container {
 	}
 
 	function configureUI() {
-		// A tabela foi rotacionada
-		if (getCanvasWidth() > maxCanvasWidth) {
+		var containerWidth = $(".container").width();
+		var taskInfoWidth = containerWidth - getCanvasWidth();
+
+		if (taskInfoWidth < minTaskInfoWidth) {
 			$('#task-info').removeClass('task-info');
 			$('#button_finished').removeClass('button-finished');
 
@@ -465,6 +468,7 @@ div.container {
 			$('#button_finished').removeClass('button-finished-rotated');
 
 			$('#task-info').addClass('task-info');
+			$("#task-info").css("width", taskInfoWidth);
 			$('#button_finished').addClass('button-finished');
 		}
 		$("#task-info").show();
