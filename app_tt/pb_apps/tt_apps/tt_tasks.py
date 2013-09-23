@@ -416,9 +416,8 @@ class TTTask3(pb_task):
             cells = cellsUtil.create_cells(linesAndColumnsMap["linhas"], linesAndColumnsMap["colunas"], 
 			linesAndColumnsMap["maxX"], linesAndColumnsMap["maxY"])
 
-            #cells=[(30,60),(60,90),(60,60),(90,90),(30,90),(60,120),(60,90),(90,120)] 
-            
             linkImg = self.task.info['img_url']
+	    transcriptedCells = self.__runOCR(cells, img_url)
 
             #if(hasZoom):
                 #linesAndColumnsTransformed = self.__transformSegmentInLines(linesAndColumnsMap)
@@ -427,8 +426,10 @@ class TTTask3(pb_task):
                 #cells = self.__createCells(linesAndColumnsMap)
             
             infoDict = {}
-            infoDict['link'] = linkImg
             infoDict['cells'] = cells
+            infoDict['img_url'] = linkImg
+	    infoDict['page'] = self.task.info['page']
+            infoDict['table_id'] = self.task.info['table_id']
                             
             tt4_app_short_name = self.app_short_name[:-1] + "4"
             tt4_app = ttapps.Apptt_transcribe(short_name=tt4_app_short_name)
