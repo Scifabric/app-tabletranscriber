@@ -412,12 +412,26 @@ class TTTask3(pb_task):
         try:
             hasZoom = self.task.info['hasZoom']
             linesAndColumnsMap = self.__loadAnswers()
-
+            
             cells = cellsUtil.create_cells(linesAndColumnsMap["linhas"], linesAndColumnsMap["colunas"], 
-			linesAndColumnsMap["maxX"], linesAndColumnsMap["maxY"])
+            linesAndColumnsMap["maxX"], linesAndColumnsMap["maxY"])
 
             linkImg = self.task.info['img_url']
-	    transcriptedCells = self.__runOCR(cells, img_url)
+            book_id = self.app_short_name[:-4]
+            page = self.task.info['page']
+            table_id = self.task.info['table_id']
+            maxX = self.task.info['maxX']
+            maxY = self.task.info['maxY']
+            
+            infoDict = {}
+            infoDict['cells'] = cells
+            infoDict['img_url'] = linkImg
+            infoDict['page'] = page
+            infoDict['table_id'] = table_id
+            infoDict['maxX'] = maxX
+            infoDict['maxY'] = maxY
+            
+            transcriptedCells = self.__runOCR(cells, book_id, page, table_id, maxX, maxY)
 
             #if(hasZoom):
                 #linesAndColumnsTransformed = self.__transformSegmentInLines(linesAndColumnsMap)
@@ -425,18 +439,52 @@ class TTTask3(pb_task):
             #else:
                 #cells = self.__createCells(linesAndColumnsMap)
             
-            infoDict = {}
-            infoDict['cells'] = cells
-            infoDict['img_url'] = linkImg
-	    infoDict['page'] = self.task.info['page']
-            infoDict['table_id'] = self.task.info['table_id']
-                            
             tt4_app_short_name = self.app_short_name[:-1] + "4"
             tt4_app = ttapps.Apptt_transcribe(short_name=tt4_app_short_name)
             tt4_app.add_task(infoDict)
                 
         except Exception, e:
             print str(e)
+    
+    """
+      Run tesseract executor
+    """
+    def __runOCR(self, cells, book_id, page, table_id, maxX, maxY):
+        
+        self.__saveCells(cells, book_id, page, table_id, maxX, maxY)
+        
+        command = 'cd %s/TesseractExecutorApp2/; ./tesseractexecutorapp2 ' \
+        '"/books/%s/metadados/tabelasAlta/image%s_%d.png"' % (
+        app.config['CV_MODULES'], book_id, page, table_id)
+        
+        call([command], shell=True)
+        
+    
+    """
+      Save cells in /books/<book_id>/metadados/respostaUsuarioTT/image<page>_<table_id>.png
+    """
+    def __saveCells(self, cells, book_id, page, table_id, maxX, maxY):
+        
+        try:
+            # file with the cells indicated by users
+            arch = open("%s/books/%s/metadados/saida/image%s_%s.txt" % (
+                       app.config['CV_MODULES'], book_id, page, table_id))
+            
+            header = "0,0" + "," + str(maxX) + "," + str(maxY)
+            arch.write(header)
+            
+            for cell in cells:
+                cStr = str(cell[0]) + "," + str(cell[1]) + "," + str(cell[2]) + "," + str(cell[3])
+                arch.write(cStr)
+            
+            arch.close()
+        
+        except IOError:
+            print "Error. File image%s_%s.txt couldn't be opened" % (
+                    page, table_id)
+        except Exception, e:
+            print str(e)
+    
     
     def __loadAnswers(self):
         #if(self.task.info['hasZoom']):
