@@ -468,21 +468,25 @@ class TTTask3(pb_task):
     
     """
       Save cells in /books/<book_id>/metadados/respostaUsuarioTT/image<page>_<table_id>.png
+      
+      obs.: the algorithm used open the file two times to
+       don't accept duplicated answers.
     """
     def __saveCells(self, cells, book_id, page, table_id, maxX, maxY):
         
         try:
-            # file with the cells indicated by users
+            # file with the cells identified by users
+            
+            header = "#0,0" + "," + str(maxX) + "," + str(maxY) + "\n"
             arch = open("%s/books/%s/metadados/respostaUsuarioTT/image%s_%s.txt" % (
-                       app.config['CV_MODULES'], book_id, page, table_id))
-            
-            print "ok"
-            
-            header = "#0,0" + "," + str(maxX) + "," + str(maxY)
+                       app.config['CV_MODULES'], book_id, page, table_id), 'w')
             arch.write(header)
+            arch.close()
             
+            arch = open("%s/books/%s/metadados/respostaUsuarioTT/image%s_%s.txt" % (
+                       app.config['CV_MODULES'], book_id, page, table_id), 'a')
             for cell in cells:
-                cStr = str(cell[0]) + "," + str(cell[1]) + "," + str(cell[2]) + "," + str(cell[3])
+                cStr = str(cell[0]) + "," + str(cell[1]) + "," + str(cell[2]) + "," + str(cell[3]) + "\n"
                 arch.write(cStr)
             
             arch.close()
