@@ -118,7 +118,7 @@ class Apptt_struct(app.Apptt):
         dirs = ["alta_resolucao", "baixa_resolucao",
                 "metadados/entrada", "metadados/saida",
                 "metadados/tabelasAlta", "metadados/tabelasBaixa",
-                "transcricoes", "metadados/respostaUsuario",
+                "transcricoes", "metadados/respostaUsuarioTT",
                 "metadados/modelPreview",
                 "selections"]
 

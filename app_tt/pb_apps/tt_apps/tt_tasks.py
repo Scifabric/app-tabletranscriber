@@ -415,13 +415,15 @@ class TTTask3(pb_task):
             
             cells = cellsUtil.create_cells(linesAndColumnsMap["linhas"], linesAndColumnsMap["colunas"], 
             linesAndColumnsMap["maxX"], linesAndColumnsMap["maxY"])
-
+            
+            print "linesAndColumnsMap: " + str(linesAndColumnsMap)
+            
             linkImg = self.task.info['img_url']
             book_id = self.app_short_name[:-4]
             page = self.task.info['page']
             table_id = self.task.info['table_id']
-            maxX = self.task.info['maxX']
-            maxY = self.task.info['maxY']
+            maxX = linesAndColumnsMap["maxX"]
+            maxY = linesAndColumnsMap["maxY"]
             
             infoDict = {}
             infoDict['cells'] = cells
@@ -431,7 +433,11 @@ class TTTask3(pb_task):
             infoDict['maxX'] = maxX
             infoDict['maxY'] = maxY
             
+            print "ok1"
+            
             transcriptedCells = self.__runOCR(cells, book_id, page, table_id, maxX, maxY)
+
+            print "ok2"
 
             #if(hasZoom):
                 #linesAndColumnsTransformed = self.__transformSegmentInLines(linesAndColumnsMap)
@@ -467,10 +473,12 @@ class TTTask3(pb_task):
         
         try:
             # file with the cells indicated by users
-            arch = open("%s/books/%s/metadados/saida/image%s_%s.txt" % (
+            arch = open("%s/books/%s/metadados/respostaUsuarioTT/image%s_%s.txt" % (
                        app.config['CV_MODULES'], book_id, page, table_id))
             
-            header = "0,0" + "," + str(maxX) + "," + str(maxY)
+            print "ok"
+            
+            header = "#0,0" + "," + str(maxX) + "," + str(maxY)
             arch.write(header)
             
             for cell in cells:
