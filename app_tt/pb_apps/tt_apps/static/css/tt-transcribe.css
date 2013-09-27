@@ -1,39 +1,39 @@
-.viewer {
-	width: 500px;
+#table-viewer {
+	width: 515px;
 	height: 600px;
 	border: 1px solid black;
 	float: left;
-	overflow: hidden;
+	overflow: auto;
 	position: relative;
 }
 
-#container {
-	width: 930px;
-}
-
-#right-panel {
+#right_panel {
 	float: right;
-	width: 420px;
-	height: 600px;
-	margin: auto;
-}
-
-#jQuerySheet {
-	height: 600px;
-	margin: auto;
-	position: relative;
-/* 	margin-top: auto; */
 	width: 400px;
+	margin: auto;
 }
 
-img {
-	max-width: 800%;
-	height: auto;
-	border: 0;
+#toolbar {
+	float: left;
 }
 
-#jSheetControls_formula_0 {
-	width: 350px;
-/* 	padding-left: 10px;	 */
-/* 	padding-right: 20px; */
+#toolbar .tooltip-inner {
+	max-width: none;
+}
+
+#toolbar button {
+	width: 55px;
+	height: 35px;
+	font-size: 18px;
+}
+
+#button_finished_task {
+	margin-left: 202px;
+	height: 35px;
+}
+
+#button_finished_transcription {
+	display: block;
+	height: 35px;
+	margin-bottom: 10px;
 }

@@ -3,8 +3,8 @@
 	});
 
 	// CONSTANTS
-	var MAX_X = 2000;
-	var MAX_Y = 2000;
+	var MAX_X = Number.MAX_VALUE;
+	var MAX_Y = Number.MAX_VALUE;
 	var MIN_X = 0;
 	var MIN_Y = 0;
 
@@ -87,7 +87,7 @@
 		pointsLayer = new Kinetic.Layer();
 		selectionLayer = new Kinetic.Layer();
 
-		segWidth = 2.5
+		segWidth = 2.5;
 		// distancia minima entre linhas e colunas (em pixels)
 		minDistance = 7.5;
 		// ajuste para que as linhas nas bordas aparecam completamente
@@ -1285,6 +1285,10 @@
 	function isToolBarClick(evt) {
 		return evt.target.tagName == "BUTTON" || evt.target.tagName == "IMG" || evt.target.tagName == "I";
 	}
+
+	$('body').on('mouseup', function(e) {
+		handleMouseUpEvent(e);
+	});
 
 	function handleMouseUpEvent(evt) {
 

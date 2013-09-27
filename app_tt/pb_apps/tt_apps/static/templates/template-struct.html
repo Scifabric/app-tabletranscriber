@@ -16,13 +16,6 @@
 			<p>
 				<span><strong>#</strong></span><span>#</span>
 			</p>
-			<!--
-      <br/>
-      <div class="alert-actions">
-              <a id="back" class="btn small" href="/">#</a>
-              <a id="other_apps" class="btn small" href="/app">#</a>
-      </div>
-      -->
 		</div>
 		<div id="error" class="alert alert-error" style="display: none;">
 			<a class="close">x</a>
@@ -41,7 +34,6 @@
 	<div class="span9">
 		<h1 id="question"></h1>
 		<!-- The question will be loaded here -->
-		<!-- <p><span>#</span><span id="task-id" class="label label-warning">#</span></p> -->
 		<p>
 			<span id="progress-from">#</span><span id="done"
 				class="label label-info" style="margin-right: 5px"></span><span
@@ -342,7 +334,6 @@ div.container {
 <script src="#server/js/kinetic.js"></script>
 <script type="text/javascript" src="#server/js/jquery.i18n.min.js"></script>
 <script type="text/javascript" src="#server/js/tt-struct-i18n.js"></script>
-<script type="text/javascript" src="#server/js/throbber/throbber.js"></script>
 <script type="text/javascript" src="#server/js/jquery.blockUI.js"></script>
 <script type="text/javascript" charset="utf-8" src="#server/js/tt3.js"></script>
 
@@ -415,10 +406,6 @@ div.container {
 						+ task_shortname.replace("_tt3", "_tt"
 								+ random_task_type) + "/newtask", "_self");
 			});
-
-	$('body').on('mouseup', function(e) {
-		handleMouseUpEvent(e);
-	});
 
 	var task_shortname = "#task_shortname#";
 	var endpoint = "/pybossa";
