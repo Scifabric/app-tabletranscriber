@@ -1,20 +1,32 @@
-	$('body').on('contextmenu', '#canvas-container', function(e) {
+	$('body').on('contextmenu', '#canvas-table-container', function(e) {
+		return false;
+	});
+
+	$('body').on('contextmenu', '#canvas-cell-container', function(e) {
 		return false;
 	});
 
 	var DEFAULT_ZOOM_DELTA = 0.5;
+	var MAX_TABLE_VIEWER_WIDTH = 515;
+	var MAX_TABLE_VIEWER_HEIGHT = 600;
+
+	var MAX_CELL_VIEWER_WIDTH = 400;
+	var MAX_CELL_VIEWER_HEIGHT = 150;
+
 	var MAX_X = Number.MAX_VALUE;
 	var MAX_Y = Number.MAX_VALUE;
 	var MIN_X = 0;
 	var MIN_Y = 0;
 
-	var stage;
+	var tableViewerStage;
+	var cellViewerStage;
+
 	var linesLayer;
 	var selectionLayer;
 	var imageLayer;
 	var img_url;
-	var origStageMaxX;
-	var origStageMaxY;
+	var origTableStageMaxX;
+	var origTableStageMaxY;
 
 	var cells;
 	var cellsIterator;
@@ -29,8 +41,8 @@
 		cells = new Array();
 		cellsIterator = new CellsIterator(cells);
 
-		shiftOnCanvas = 1.5;
-		segWidth = 2.5;
+		shiftOnCanvas = 0.5;
+		segWidth = 1.5;
 		unhighlightColor = "#E6663A";
 		highlightColor = "#339ACD";
 	}
@@ -88,15 +100,25 @@
 			if (segment[1].y > maxY) maxY = segment[1].y;
 		}
 
-		return [minX, minY, maxX, maxY]
+		return [minX, minY, maxX, maxY];
 	}
 
-	Cell.prototype.isPosInCell = function(posX, posY) {
+	Cell.prototype.getWidth = function() {
+		var cellBorders = this.getBorders();
+		return cellBorders[2] - cellBorders[0];
+	}
+
+	Cell.prototype.getHeight = function() {
+		var cellBorders = this.getBorders();
+		return cellBorders[3] - cellBorders[1];
+	}
+
+	Cell.prototype.isPosInCell = function(posX, posY, scale) {
 		var borders = this.getBorders();
-		var minX = borders[0];
-		var minY = borders[1];
-		var maxX = borders[2];
-		var maxY = borders[3];
+		var minX = borders[0] * scale.x;
+		var minY = borders[1] * scale.x;
+		var maxX = borders[2] * scale.y;
+		var maxY = borders[3] * scale.y;
 		
 		return (posX >= minX && posX <= maxX) && (posY >= minY && posY <= maxY);
 	}
@@ -133,7 +155,7 @@
 	}
 
 	function zoomCanvas(isZoomIn, zoomDelta) {
-		var actualScale = stage.getScale();
+		var actualScale = tableViewerStage.getScale();
 
 		var newScaleX = isZoomIn ?
 			actualScale.x + zoomDelta : actualScale.x - zoomDelta;
@@ -142,10 +164,14 @@
 
 		if (newScaleX <= 0 || newScaleY <= 0) return;
 
-		var newCanvasWidth = origStageMaxX * newScaleX;
-		var newCanvasHeight = origStageMaxY * newScaleY;
+		reScaleStage(tableViewerStage, newScaleX);
+	}
 
-		stage.setScale([newScaleX, newScaleY]);
+	function reScaleStage(stage, scale) {
+		var newCanvasWidth = origTableStageMaxX * scale;
+		var newCanvasHeight = origTableStageMaxY * scale;
+
+		stage.setScale(scale);
 		stage.setWidth(newCanvasWidth);
 		stage.setHeight(newCanvasHeight);
 		stage.draw();
@@ -154,13 +180,13 @@
 	function handleZoomOutToolEvent() {
 		var isZoomIn = false;
 		zoomCanvas(isZoomIn, DEFAULT_ZOOM_DELTA);
-		focusCell(cellsIterator.actual());
+		focusCell(cellsIterator.actual(), true);
 	}
 
 	function handleZoomInToolEvent() {
 		var isZoomIn = true;
 		zoomCanvas(isZoomIn, DEFAULT_ZOOM_DELTA);
-		focusCell(cellsIterator.actual());
+		focusCell(cellsIterator.actual(), true);
 	}
 
 	function createTableViewer(taskInfo) {
@@ -170,21 +196,29 @@
 
 		var tableMaxX = taskInfo.maxX;
 		var tableMaxY = taskInfo.maxY;
-		origStageMaxX = tableMaxX + (2 * shiftOnCanvas);
-		origStageMaxY = tableMaxY + (2 * shiftOnCanvas);
+		origTableStageMaxX = tableMaxX + (2 * shiftOnCanvas);
+		origTableStageMaxY = tableMaxY + (2 * shiftOnCanvas);
 
-		if (typeof stage != "undefined") {
+		if (typeof tableViewerStage != "undefined" ||
+				typeof cellViewerStage != "undefined") {
 			$(".kineticjs-content").remove();
 		}
 
-		stage = new Kinetic.Stage({
-			container : 'canvas-container',
-			width : origStageMaxX,
-			height : origStageMaxY,
+		tableViewerStage = new Kinetic.Stage({
+			container : 'canvas-table-container',
+			width : origTableStageMaxX,
+			height : origTableStageMaxY,
 			scale : 1,
 		});
 
-		stage.on('click', function(evt) {
+		cellViewerStage = new Kinetic.Stage({
+			container : 'canvas-cell-container',
+			width : origTableStageMaxX,
+			height : origTableStageMaxY,
+			scale : 1,
+		});
+
+		tableViewerStage.on('click', function(evt) {
 			handleMouseClickEvent(evt);     
 		});
 
@@ -196,23 +230,88 @@
 		imageObj.src = taskInfo.img_url;
 
 		imageObj.onload = function() {
-			var table = new Kinetic.Image({
-				x : shiftOnCanvas,
-				y : shiftOnCanvas,
-				image : imageObj,
-				width : tableMaxX,
-				height : tableMaxY
-			});
-
-			imageLayer.add(table);
-			table.moveToBottom();
-
-			stage.add(imageLayer);
-			stage.add(linesLayer);
-			stage.add(selectionLayer);
-
+			configureTableViewer(imageObj, tableMaxX, tableMaxY);
 			loadGrid(taskInfo);
 		};
+	}
+	
+	function configureTableViewer(imageObj, tableMaxX, tableMaxY) {
+		var table = new Kinetic.Image({
+			x : shiftOnCanvas,
+			y : shiftOnCanvas,
+			image : imageObj,
+			width : tableMaxX,
+			height : tableMaxY
+		});
+
+		imageLayer.add(table);
+		table.moveToBottom();
+
+		tableViewerStage.add(imageLayer);
+		tableViewerStage.add(linesLayer);
+		tableViewerStage.add(selectionLayer);
+
+		var tableStagePad = 15;
+		var stageWidth = tableViewerStage.getWidth() + tableStagePad;
+		var stageHeight = tableViewerStage.getHeight() + tableStagePad;
+		var tableViewerWidth = stageWidth > MAX_TABLE_VIEWER_WIDTH ?
+			 MAX_TABLE_VIEWER_WIDTH : stageWidth;
+		var talbeViewerHeight = stageHeight > MAX_TABLE_VIEWER_HEIGHT ?
+			 MAX_TABLE_VIEWER_HEIGHT : stageHeight;
+		$("#table-viewer").width(tableViewerWidth);
+		$("#table-viewer").height(talbeViewerHeight);
+	}
+
+	function updateCellViewerStage(cell) {
+		cellViewerStage.destroyChildren();
+		cellViewerStage.add(imageLayer.clone());
+
+		var cellWidth = cell.getWidth();
+		var cellHeight = cell.getHeight();
+
+		var scale = getSuitableScale(cellWidth, cellHeight);
+
+		var scaledCellWidth = cellWidth * scale;
+		var scaledCellHeight = cellHeight * scale;
+
+		reScaleStage(cellViewerStage, scale);
+
+		var cellViewerWidth = scaledCellWidth > MAX_CELL_VIEWER_WIDTH ?
+			 MAX_CELL_VIEWER_WIDTH : scaledCellWidth;
+		var cellViewerHeight = scaledCellHeight > MAX_CELL_VIEWER_HEIGHT ?
+			 MAX_CELL_VIEWER_HEIGHT : scaledCellHeight;
+
+		$("#cell-viewer").width(cellViewerWidth);
+		$("#cell-viewer").height(cellViewerHeight);
+		$("#canvas-cell-container").width(cellViewerWidth);
+		$("#canvas-cell-container").height(cellViewerHeight);
+		focusCell(cell, false);
+	}
+
+	function getSuitableScale(cellWidth, cellHeight) {
+		var scale = 1;
+
+		var scaledWidth = cellWidth;
+		var scaledHeight = cellHeight;
+		var isZoomIn = cellWidth < MAX_CELL_VIEWER_WIDTH &&
+				 cellHeight < MAX_CELL_VIEWER_HEIGHT;
+
+		if (isZoomIn) {
+			while (scaledWidth < MAX_CELL_VIEWER_WIDTH &&
+					scaledHeight < MAX_CELL_VIEWER_HEIGHT) {
+				scale += 0.01;
+				scaledWidth = cellWidth * scale;
+				scaledHeight = cellHeight * scale;
+			}
+		} else {
+			while (scaledWidth > MAX_CELL_VIEWER_WIDTH ||
+					scaledHeight > MAX_CELL_VIEWER_HEIGHT) {
+				scale -= 0.01;
+				scaledWidth = cellWidth * scale;
+				scaledHeight = cellHeight * scale;
+			}
+		}
+		return scale;
 	}
 
 	function loadGrid(taskInfo) {
@@ -310,8 +409,10 @@
 
 	function selectCell(cell) {
 		highlightCell(cell);
-		focusCell(cell);
+		focusCell(cell, true);
 		updateTranscriptionField(cell);
+
+		updateCellViewerStage(cell);
 	}
 
 	function highlightCell(cell) {
@@ -331,15 +432,26 @@
 		selectionLayer.destroyChildren();
 	}
 
-	function focusCell(cell) {
+	function focusCell(cell, onTableViewer) {
 		var cellBorders = cell.getBorders();
-		var scaledCenterX = cellBorders[0] * stage.getScale().x;
-		var scaledCenterY = cellBorders[1] * stage.getScale().y;
 
-		var shiftX = $("#table-viewer").width()*0.22;
-		var shiftY = $("#table-viewer").height()*0.22;
+		if (onTableViewer) {
+			viewer = $("#table-viewer");
+			scale = tableViewerStage.getScale();
+		} else {
+			viewer = $("#canvas-cell-container");
+			scale = cellViewerStage.getScale();
+		}
 
-		$("#table-viewer").animate({scrollLeft: scaledCenterX - shiftX, scrollTop: scaledCenterY - shiftY});
+		var scaledInitX = cellBorders[0] * scale.x;
+		var scaledInitY = cellBorders[1] * scale.y;
+
+		var scaledFinalX = cellBorders[2] * scale.x;
+		var scaledFinalY = cellBorders[3] * scale.y;
+
+		var shiftX = onTableViewer ? viewer.width()/2 + (scaledInitX - scaledFinalX)/2 : 0;
+		var shiftY = onTableViewer ? viewer.height()/2  + (scaledInitY - scaledFinalY)/2 : 0;
+		viewer.animate({scrollLeft: scaledInitX - shiftX, scrollTop: scaledInitY - shiftY});
 	}
 
 	function updateTranscriptionField(cell) {
@@ -351,7 +463,7 @@
 	function handleMouseClickEvent(evt) {
 		var mouseX = getMousePosX(evt);
 		var mouseY = getMousePosY(evt);
-		
+
 		var cellIndex = findCell(mouseX, mouseY);
 
 		if (cellIndex == -1) return;
@@ -373,9 +485,10 @@
 	}
 
 	function findCell(posX, posY) {
+		var scale = tableViewerStage.getScale();
 		for (var i = 0; i < cells.length; i++) {
 			var cell = cells[i];
-			if (cell.isPosInCell(posX, posY)) {
+			if (cell.isPosInCell(posX, posY, scale)) {
 				return i;
 			}
 		}
@@ -395,6 +508,6 @@
 	}
 
 	function clearCanvas() {
-		stage.removeChildren();
-		stage.remove();
+		tableViewerStage.removeChildren();
+		tableViewerStage.remove();
 	}

@@ -1,13 +1,27 @@
 #table-viewer {
-	width: 515px;
-	height: 600px;
-	border: 1px solid black;
 	float: left;
 	overflow: auto;
 	position: relative;
 }
 
-#right_panel {
+#cell-viewer {
+	width: 400px;
+	height: 150px;
+	border: 1px solid black;
+	margin-bottom: 10px;
+	position: relative;
+	overflow: hidden;
+}
+
+#canvas-cell-container {
+	width: 400px;
+	height: 150px;
+	padding-right: 15px;
+	padding-bottom: 15px;
+	overflow: auto;
+}
+
+#right-panel {
 	float: right;
 	width: 400px;
 	margin: auto;
@@ -27,12 +41,12 @@
 	font-size: 18px;
 }
 
-#button_finished_task {
+#button-finished-task {
 	margin-left: 202px;
 	height: 35px;
 }
 
-#button_finished_transcription {
+#button-finished-transcription {
 	display: block;
 	height: 35px;
 	margin-bottom: 10px;

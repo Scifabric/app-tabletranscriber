@@ -61,16 +61,16 @@
 			<i class="icon icon-question-sign"></i>
 		</button>
 	</div>
-	<button id="button_finished_task" class="btn btn-success" onclick="submitTask()">
+	<button id="button-finished-task" class="btn btn-success" onclick="submitTask()">
 		<i class="icon icon-white icon-thumbs-up"></i> Salvar correções
 	</button>
 </div>
 
 <div class="skeleton">
 	<div id="table-viewer">
-		<div id="canvas-container"></div>
+		<div id="canvas-table-container"></div>
 	</div>
-	<div id="right_panel">
+	<div id="right-panel">
 		<div class="btn-group" style="margin-bottom: 10px">
 			<button class="btn" rel="tooltip"
 				title="Célula anterior" onclick="handlePreviousCellEvent()">
@@ -82,11 +82,15 @@
 			</button>
 		</div>
 
+		<div id="cell-viewer">
+			<div id="canvas-cell-container"></div>
+		</div>
+
 		<label>Transcrição atual</label>
 		<span id="transcription-field" class="input uneditable-input"></span>
 		<label>Campo de edição</label>
 		<input id="edition-field" type="text">
-		<button id="button_finished_transcription" class="btn btn-success" onclick="handleSaveCellEvent()">
+		<button id="button-finished-transcription" class="btn btn-success" onclick="handleSaveCellEvent()">
 			<i class="icon icon-white icon-ok"></i> Salvar
 		</button>
 
