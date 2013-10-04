@@ -115,11 +115,17 @@ class Apptt_struct(app.Apptt):
                 print str(e)
 
     def __create_dirs(self, short_name, path):
-        dirs = ["alta_resolucao", "baixa_resolucao",
-                "metadados/entrada", "metadados/saida",
-                "metadados/tabelasAlta", "metadados/tabelasBaixa",
-                "transcricoes", "metadados/respostaUsuarioTT",
+        dirs = ["alta_resolucao",
+                "baixa_resolucao",
+                "metadados/entrada",
+                "metadados/saida",
+                "metadados/tabelasAlta",
+                "metadados/tabelasBaixa",
+                "metadados/respostaUsuarioTT",
                 "metadados/modelPreview",
+                "transcricoes",
+                "transcricoes/texts",
+                "transcricoes/confidences",
                 "selections"]
 
         for d in dirs:

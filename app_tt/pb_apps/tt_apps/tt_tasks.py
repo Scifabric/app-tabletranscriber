@@ -425,6 +425,11 @@ class TTTask3(pb_task):
             maxX = linesAndColumnsMap["maxX"]
             maxY = linesAndColumnsMap["maxY"]
             
+            self.__runOCR(cells, book_id, page, table_id, maxX, maxY)
+            
+            values = self.__loadValues(book_id, page, table_id)
+            confidences = self.__loadConfidences(book_id, page, table_id)
+            
             infoDict = {}
             infoDict['cells'] = cells
             infoDict['img_url'] = linkImg
@@ -432,13 +437,9 @@ class TTTask3(pb_task):
             infoDict['table_id'] = table_id
             infoDict['maxX'] = maxX
             infoDict['maxY'] = maxY
+            infoDict['values'] = values
+            infoDict['confidences'] = confidences
             
-            print "ok1"
-            
-            transcriptedCells = self.__runOCR(cells, book_id, page, table_id, maxX, maxY)
-
-            print "ok2"
-
             #if(hasZoom):
                 #linesAndColumnsTransformed = self.__transformSegmentInLines(linesAndColumnsMap)
                 #cells = self.__createCells(linesAndColumnsTransformed)
@@ -451,6 +452,39 @@ class TTTask3(pb_task):
                 
         except Exception, e:
             print str(e)
+    
+    """
+     Load values transcripted by tesseract ocr for this table
+    """
+    def __loadValues(self, book_id, page, table_id):
+        
+        f = open("%s/books/%s/transcricoes/texts/image%s_%s.txt" % (
+                       app.config['CV_MODULES'], book_id, page, table_id), 'r')
+        tmp = f.readlines()
+        f.close()
+        
+        values = []
+        for val in tmp[1:]:
+            values.append(val[:-1]) # exclude \n
+        
+        return values #excluding header
+    
+    """
+     Load confidences identified in transcriptions by tesseract ocr for
+     this table.
+    """
+    def __loadConfidences(self, book_id, page, table_id):
+        f = open("%s/books/%s/transcricoes/confidences/image%s_%s.txt" % (
+                       app.config['CV_MODULES'], book_id, page, table_id), 'r')
+        tmp = f.readlines()
+        
+        f.close()
+        
+        confidences = []
+        for conf in tmp[1:]:
+            confidences.append( int(conf[:-1])) # exclude \n
+        
+        return confidences # excluding header
     
     """
       Run tesseract executor
