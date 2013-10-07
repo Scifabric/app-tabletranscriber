@@ -55,19 +55,19 @@
 
 	Cell.prototype.getTranscription = function() {
 		return this.transcription;
-	}
+	};
 
 	Cell.prototype.setTranscription = function(newTranscription) {
 		this.transcription = newTranscription;
-	}
+	};
 
 	Cell.prototype.addSegment = function(segment) {
 		this.segments.push(segment);
-	}
+	};
 
 	Cell.prototype.getSegments = function() {
 		return this.segments;
-	}
+	};
 
 	Cell.prototype.getSegmentAtPosition = function(posSeg) {
 		for (var i = 0; i < this.segments.length; i++) {
@@ -77,13 +77,13 @@
 			}
 		}
 		return undefined;
-	}
+	};
 
 	Cell.prototype.setStroke = function(color) {
 		for (var i = 0; i < this.segments.length; i++) {
 			this.segments[i].setStroke(color);
 		}
-	}
+	};
 
 	Cell.prototype.getBorders = function() {
 		var minX = MAX_X;
@@ -101,17 +101,17 @@
 		}
 
 		return [minX, minY, maxX, maxY];
-	}
+	};
 
 	Cell.prototype.getWidth = function() {
 		var cellBorders = this.getBorders();
 		return cellBorders[2] - cellBorders[0];
-	}
+	};
 
 	Cell.prototype.getHeight = function() {
 		var cellBorders = this.getBorders();
 		return cellBorders[3] - cellBorders[1];
-	}
+	};
 
 	Cell.prototype.isPosInCell = function(posX, posY, scale) {
 		var borders = this.getBorders();
@@ -121,7 +121,7 @@
 		var maxY = borders[3] * scale.y;
 		
 		return (posX >= minX && posX <= maxX) && (posY >= minY && posY <= maxY);
-	}
+	};
 
 	function CellsIterator(cells) {
 		this.cells = cells;
@@ -132,27 +132,27 @@
 		var nextIndex = this.actualIndex + 1;
 		this.actualIndex =  nextIndex < this.cells.length ? nextIndex : 0;
 		return this.actual();
-	}
+	};
 
 	CellsIterator.prototype.previous = function() {
 		var previousIndex = this.actualIndex - 1;
 		this.actualIndex =  previousIndex >= 0 ? previousIndex : (this.cells.length - 1);
 		return this.actual();
-	}
+	};
 
 	CellsIterator.prototype.actual = function() {
 		return this.cells[this.actualIndex];
-	}
+	};
 
 	CellsIterator.prototype.updateActualIndex = function(newIndex) {
 		this.actualIndex = newIndex;
-	}
+	};
 
 	Kinetic.Line.prototype.equalsSegmentPosition = function(segPos) {
 		var points = this.getPoints();
 		return points[0].x == segPos[0].x && points[0].y == segPos[0].y && 
 			points[1].x == segPos[1].x && points[1].y == segPos[1].y;
-	}
+	};
 
 	function zoomCanvas(isZoomIn, zoomDelta) {
 		var actualScale = tableViewerStage.getScale();
@@ -299,19 +299,19 @@
 		if (isZoomIn) {
 			while (scaledWidth < MAX_CELL_VIEWER_WIDTH &&
 					scaledHeight < MAX_CELL_VIEWER_HEIGHT) {
-				scale += 0.01;
+				scale += 0.1;
 				scaledWidth = cellWidth * scale;
 				scaledHeight = cellHeight * scale;
 			}
 		} else {
 			while (scaledWidth > MAX_CELL_VIEWER_WIDTH ||
 					scaledHeight > MAX_CELL_VIEWER_HEIGHT) {
-				scale -= 0.01;
+				scale -= 0.1;
 				scaledWidth = cellWidth * scale;
 				scaledHeight = cellHeight * scale;
 			}
 		}
-		return scale;
+		return scale > 5 ? 5: scale;
 	}
 
 	function loadGrid(taskInfo) {
@@ -451,7 +451,7 @@
 
 		var shiftX = onTableViewer ? viewer.width()/2 + (scaledInitX - scaledFinalX)/2 : 0;
 		var shiftY = onTableViewer ? viewer.height()/2  + (scaledInitY - scaledFinalY)/2 : 0;
-		viewer.animate({scrollLeft: scaledInitX - shiftX, scrollTop: scaledInitY - shiftY});
+		viewer.animate({scrollLeft: scaledInitX - shiftX, scrollTop: scaledInitY - shiftY}, 0);
 	}
 
 	function updateTranscriptionField(cell) {
