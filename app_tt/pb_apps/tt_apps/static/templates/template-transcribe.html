@@ -57,7 +57,7 @@
 			<i class="icon icon-zoom-out"></i>
 		</button>
 		<button class="btn" rel="tooltip"
-			title="Abre a tela de ajuda" onclick="showHelpStruct()">
+			title="Abre a tela de ajuda" onclick="showHelpTranscribe()">
 			<i class="icon icon-question-sign"></i>
 		</button>
 	</div>
@@ -106,6 +106,95 @@
 	</div>
 </div>
 
+<div id="helpModalTranscribe" class="modal hide fade" tabindex="-1"
+	role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+	style="display: none">
+
+	<div class="modal-header">
+		<button class="close" data-dismiss="modal" aria-hidden="true">
+			<i class="icon-white icon-remove"></i>
+		</button>
+		<h3 id="myModalLabel">
+			<strong>Tutorial de Correção de Células da Tabela</strong>
+		</h3>
+	</div>
+
+	<div class="modal-body">
+		<h2>O que deve ser feito?</h2>
+		
+		<p>A tarefa consiste em corrigir o conteúdo das células selecionadas. Existe
+		um campo correspondente à transcrição feita pelo computador, com base em algoritmos
+		de visão computacional. Esta transcrição pode está correta ou conter algum erro,
+		neste último caso, você deve corrigir o conteúdo e clicar no botão Ok. A célula
+		que deve ser transcrita aparece em zoom, acima do campo de edição.</p>
+		
+		<h2>Cores das células: </h2>
+		
+		<p>As céĺulas em <strong style="color: red">vermelho</strong> 
+		são as células que o computador tem uma baixa
+		confiança na transcrição do que está escrito.</p>
+		
+		<p>As células em <strong style="color: green">verde</strong> são as
+		células que o computador tem uma confiança acima de 90% na transcrição
+		do que está escrito.</p>
+		
+		<p>A célula em <strong style="color: blue">azul</strong> é a célula que está
+		selecionada para você verificar a transcrição.</p>
+		<br>
+		
+		<h2>Atalhos de Navegação</h2>
+		<dl>
+			<dt>
+				Seta para esquerda <i class="icon-arrow-left"></i>
+			</dt>
+			<dd>
+				Dirija-se para a célula à esquerda da célula atual,
+				caso exista.
+			</dd>
+		</dl>
+		<dl>
+			<dt>
+				Seta para direita <i class="icon-arrow-right"></i>
+			</dt>
+			<dd>
+				Dirija-se para a célula à direita da célula atual, caso
+				exista.
+			</dd>
+		</dl>
+		<dl>
+			<dt>
+				Seta para cima <i class="icon-arrow-up"></i>
+			</dt>
+			<dd>Dirija-se para a célula acima da célula atual, caso exista.</dd>
+		</dl>
+		<dl>
+			<dt>
+				Seta para baixo <i class="icon-arrow-down"></i></dt>
+			<dd>
+				Dirija-se para a célula abaixo da célula atual, caso exista.
+			</dd>
+		</dl>
+		<br>
+		
+		<p>
+			<strong style="color: red">Atenção</strong>
+		</p>
+		<p>- Caso a célula não apresente nenhum conteúdo, não se preocupe, pode
+		deixá-la em branco.</p>
+		<p>- Caso a célula possua um hífen (-) ou reticências (...), transcreva do jeito
+		que está na célula visualizada.</p>
+		<p>- Caso a célula esteja no lugar errado, indique isso fazendo um comentário no
+		campo de feedback, logo abaixo da tabela.</p>
+		<br>
+		
+	</div>
+
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Fechar</button>
+	</div>
+</div>
+
+
 <link rel="stylesheet" href="#server/css/tt-transcribe.css" />
 
 <script src="#server/js/kinetic.js"></script>
@@ -148,7 +237,11 @@
 			$("#done").text(data.done);
 		});
 	}
-
+	
+	function showHelpTranscribe() {
+		$('#helpModalTranscribe').modal();
+	}
+	
 	function loadData(data) {
 		if (!$.isEmptyObject(data.task)) {
 			loadUserProgress();
