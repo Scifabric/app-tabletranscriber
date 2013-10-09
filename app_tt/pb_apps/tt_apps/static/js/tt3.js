@@ -927,9 +927,6 @@
 		var isLastAnswer = typeof taskInfo.last_answer != "undefined";
 		var matrizDePontos = loadMatrizDePontos(taskInfo, isLastAnswer);
 
-		if (typeof stage != "undefined") {
-			$(".kineticjs-content").remove();
-		}
 		createStage(matrizDePontos, minCanvasWidth, minCanvasHeight, isLastAnswer);
 	}
 
@@ -991,7 +988,7 @@
 		stage = new Kinetic.Stage({
 			container : 'canvas-container',
 			width : widthCanvas,
-			height : heightCanvas,
+			height : heightCanvas
 		});
 
                 stage.on("mousemove", function(evt){
@@ -1749,8 +1746,7 @@
 	}
 
 	function clearCanvas() {
-		stage.removeChildren();
-		stage.remove();
+		stage.destroy();
 	}
 
 	function getTableMaxX() {
