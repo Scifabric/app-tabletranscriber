@@ -51,3 +51,20 @@
 	height: 35px;
 	margin-bottom: 10px;
 }
+
+#transcription-field {
+	width: 390px;
+}
+
+#human-transcription-field {
+	display: block;
+	width: 390px;
+}
+
+#human-transcription-label {
+	display: none;
+}
+
+#edition-field {
+	width: 390px;
+}

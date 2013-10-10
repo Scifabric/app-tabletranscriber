@@ -62,7 +62,7 @@
 		</button>
 	</div>
 	<button id="button-finished-task" class="btn btn-success" onclick="submitTask()">
-		<i class="icon icon-white icon-thumbs-up"></i> Salvar correções
+		<i class="icon icon-white icon-ok"></i> Salvar correções
 	</button>
 </div>
 
@@ -86,23 +86,18 @@
 			<div id="canvas-cell-container"></div>
 		</div>
 
-		<label>Transcrição atual</label>
+		<label id="pc-transcription-label">#</label>
 		<span id="transcription-field" class="input uneditable-input"></span>
+
+		<label id="human-transcription-label">Transcrição de outro usuário</label>
+		<span id="human-transcription-field" class="input uneditable-input"></span>
+
 		<label>Campo de edição</label>
 		<input id="edition-field" type="text">
-		<button id="button-finished-transcription" class="btn btn-success" onclick="handleSaveCellEvent()">
-			<i class="icon icon-white icon-ok"></i> Salvar
-		</button>
 
-		<div id="instruction" class="alert alert-info">
-			<h5>
-				<strong> Instru&ccedil;&otilde;es b&aacute;sicas</strong><br>
-				<ul>
-					<li>TODO
-					</li>
-				</ul>
-			</h5>
-		</div>
+		<button id="button-finished-transcription" class="btn btn-success" onclick="handleSaveCellEvent()">
+			<i class="icon icon-white icon-ok"></i> OK
+		</button>
 	</div>
 </div>
 
@@ -130,15 +125,15 @@
 		
 		<h2>Cores das células: </h2>
 		
-		<p>As céĺulas em <strong style="color: red">vermelho</strong> 
+		<p>As células em <strong style="color: #E93F2D">vermelho</strong> 
 		são as células que o computador tem uma baixa
 		confiança na transcrição do que está escrito.</p>
 		
-		<p>As células em <strong style="color: green">verde</strong> são as
+		<p>As células em <strong style="color: #1BA038">verde</strong> são as
 		células que o computador tem uma confiança acima de 90% na transcrição
-		do que está escrito.</p>
+		do que está escrito, e células já corrigidas por você.</p>
 		
-		<p>A célula em <strong style="color: blue">azul</strong> é a célula que está
+		<p>A célula em <strong style="color: #339ACD">azul</strong> é a célula que está
 		selecionada para você verificar a transcrição.</p>
 		<br>
 		
@@ -161,6 +156,7 @@
 				exista.
 			</dd>
 		</dl>
+		<!--
 		<dl>
 			<dt>
 				Seta para cima <i class="icon-arrow-up"></i>
@@ -174,6 +170,7 @@
 				Dirija-se para a célula abaixo da célula atual, caso exista.
 			</dd>
 		</dl>
+		-->
 		<br>
 		
 		<p>
@@ -193,7 +190,6 @@
 		<button class="btn" data-dismiss="modal" aria-hidden="true">Fechar</button>
 	</div>
 </div>
-
 
 <link rel="stylesheet" href="#server/css/tt-transcribe.css" />
 
@@ -237,21 +233,20 @@
 			$("#done").text(data.done);
 		});
 	}
-	
+
 	function showHelpTranscribe() {
 		$('#helpModalTranscribe').modal();
 	}
-	
+
 	function loadData(data) {
 		if (!$.isEmptyObject(data.task)) {
 			loadUserProgress();
 			taskid = data.task.id;
+			createTableViewer(data.task.info);
 		} else {
 			$(".skeleton").hide();
 			$("#finish").fadeIn();
 		}
-
-		createTableViewer(data.task.info);
 	}
 
 	function taskRunDone(taskId) {

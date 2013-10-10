@@ -21,8 +21,9 @@
 	var tableViewerStage;
 	var cellViewerStage;
 
-	var linesLayer;
+	var unfixedLayer;
 	var selectionLayer;
+	var fixedLayer;
 	var imageLayer;
 	var img_url;
 	var origTableStageMaxX;
@@ -32,33 +33,64 @@
 	var cellsIterator;
 
 	var segWidth;
-	var unhighlightColor;
+	var unfixedColor;
 	var highlightColor;
 
 	var shiftOnCanvas;
+	var isEditing;
 
 	function initVariables() {
 		cells = new Array();
 		cellsIterator = new CellsIterator(cells);
+		isEditing = false;
 
-		shiftOnCanvas = 0.5;
-		segWidth = 1.5;
-		unhighlightColor = "#E6663A";
+		shiftOnCanvas = 1.2;
+		segWidth = 2.2;
+		unfixedColor = "#E93F2D";
+		fixedColor = "#1BA038";
 		highlightColor = "#339ACD";
 	}
 
 	// Cell class definition
-	function Cell() {
+	function Cell(computerTranscription, humanTranscription, lastAnswer, confidence) {
 		this.segments = new Array();
-		this.transcription = "Some value";
+		this.computerTranscription = computerTranscription;
+		this.humanTranscription = humanTranscription;
+		this.lastAnswer = lastAnswer;
+		this.confidence = confidence;
+		this.fixed = confidence >= 90 ? true : false;
 	}
 
-	Cell.prototype.getTranscription = function() {
-		return this.transcription;
+	Cell.prototype.isFixed = function() {
+		return this.fixed;
+	}
+
+	Cell.prototype.setFixed = function(fixed) {
+		this.fixed = fixed;
+	}
+
+	Cell.prototype.getConfidence = function() {
+		return this.confidence;
+	}
+
+	Cell.prototype.getLastAnswer = function() {
+		return this.lastAnswer;
+	}
+
+	Cell.prototype.getHumanTranscription = function() {
+		return this.humanTranscription;
 	};
 
-	Cell.prototype.setTranscription = function(newTranscription) {
-		this.transcription = newTranscription;
+	Cell.prototype.setHumanTranscription = function(newTranscription) {
+		this.humanTranscription = newTranscription;
+	};
+
+	Cell.prototype.getComputerTranscription = function() {
+		return this.computerTranscription;
+	};
+
+	Cell.prototype.setComputerTranscription = function(newTranscription) {
+		this.computerTranscription = newTranscription;
 	};
 
 	Cell.prototype.addSegment = function(segment) {
@@ -125,18 +157,52 @@
 
 	function CellsIterator(cells) {
 		this.cells = cells;
-		this.actualIndex = 0;
+		this.actualIndex = -1;
+	}
+
+	CellsIterator.prototype.haveCellsToFix = function() {
+		for (var i = 0; i < this.cells.length; i++) {
+			if (!this.cells[i].isFixed()) return true;
+		}
+		return false;
+	}
+
+	CellsIterator.prototype.getNextIndex = function(actualIndex) {
+		return actualIndex + 1 < this.cells.length ? actualIndex + 1 : 0;
+	}
+
+	CellsIterator.prototype.getPreviousIndex = function(actualIndex) {
+		return actualIndex - 1 >= 0 ? actualIndex - 1 : (this.cells.length - 1);
 	}
 
 	CellsIterator.prototype.next = function() {
-		var nextIndex = this.actualIndex + 1;
-		this.actualIndex =  nextIndex < this.cells.length ? nextIndex : 0;
+		var nextIndex = this.getNextIndex(this.actualIndex);
+		var loopSafe = 0;
+
+		while (nextIndex != this.actualIndex) {
+
+			if (!this.cells[nextIndex].isFixed()
+				 || loopSafe > (cells.length-1)) break;
+
+			nextIndex = this.getNextIndex(nextIndex);
+			loopSafe++;
+		}
+		this.actualIndex = nextIndex;
 		return this.actual();
 	};
 
 	CellsIterator.prototype.previous = function() {
-		var previousIndex = this.actualIndex - 1;
-		this.actualIndex =  previousIndex >= 0 ? previousIndex : (this.cells.length - 1);
+		var previousIndex = this.getPreviousIndex(this.actualIndex);
+		var loopSafe = 0;
+
+		while (previousIndex != this.actualIndex) {
+
+			if (!this.cells[previousIndex].isFixed()
+				|| loopSafe > (cells.length-1)) break;
+
+			previousIndex = this.getPreviousIndex(previousIndex);
+		}
+		this.actualIndex = previousIndex;
 		return this.actual();
 	};
 
@@ -208,22 +274,23 @@
 			container : 'canvas-table-container',
 			width : origTableStageMaxX,
 			height : origTableStageMaxY,
-			scale : 1,
+			scale : 1
 		});
 
 		cellViewerStage = new Kinetic.Stage({
 			container : 'canvas-cell-container',
 			width : origTableStageMaxX,
 			height : origTableStageMaxY,
-			scale : 1,
+			scale : 1
 		});
 
 		tableViewerStage.on('click', function(evt) {
 			handleMouseClickEvent(evt);     
 		});
 
-		linesLayer = new Kinetic.Layer();
+		unfixedLayer = new Kinetic.Layer();
 		selectionLayer = new Kinetic.Layer();
+		fixedLayer = new Kinetic.Layer();
 		imageLayer = new Kinetic.Layer();
 
 		var imageObj = new Image();
@@ -248,7 +315,9 @@
 		table.moveToBottom();
 
 		tableViewerStage.add(imageLayer);
-		tableViewerStage.add(linesLayer);
+		tableViewerStage.add(unfixedLayer);
+		tableViewerStage.add(fixedLayer);
+		fixedLayer.moveToTop();
 		tableViewerStage.add(selectionLayer);
 
 		var tableStagePad = 15;
@@ -318,15 +387,13 @@
 
 		var isLastAnswer = typeof taskInfo.last_answer != "undefined";
 		var taskInfoCells = isLastAnswer ? $.parseJSON(taskInfo.last_answer).cells : taskInfo.cells;
+		var computerValues = isLastAnswer ? $.parseJSON(taskInfo.last_answer).computer_values : taskInfo.values;
+		var humanValues = isLastAnswer ? $.parseJSON(taskInfo.last_answer).human_values : undefined;
+		var confidences = isLastAnswer ? $.parseJSON(taskInfo.last_answer).confidences : taskInfo.confidences;
 
 		for (var i = 0; i < taskInfoCells.length; i++) {
 			
-			var arr;
-			if (isLastAnswer) {
-				arr = taskInfoCells[i].coords;
-			} else {
-				arr = taskInfoCells[i];
-			}
+			var arr = taskInfoCells[i];
 
 			var leftX = arr[0] + shiftOnCanvas;
 			var upperY = arr[1] + shiftOnCanvas;
@@ -339,26 +406,87 @@
 			cellLines.push([{'x': leftX, 'y': bottomY}, {'x': rightX, 'y': bottomY}]);
 			cellLines.push([{'x': rightX, 'y': upperY}, {'x': rightX, 'y': bottomY}]);
 
-			var cell = createCell(cellLines);
-			if (isLastAnswer) {
-				cell.setTranscription(taskInfoCells[i].val);
-			}
+			var lastAnswer = isLastAnswer ? humanValues[i] : undefined;
+
+			/*var randomnumber = Math.floor(Math.random() * (100 - 80 + 1)) + 80;
+			var randomnumber = i == 0? 90: randomnumber;*/
+
+			var cell = createCell(cellLines, computerValues[i], lastAnswer, confidences[i]);
 			cells.push(cell);
 		}
 
-		selectCell(cellsIterator.actual());
-		linesLayer.draw();
+		createUnfixedLayer();
+		createFixedLayer();
+		redrawLinesLayer();
+
+		selectCell(cellsIterator.next());
 	}
 
-	function createCell(cellLines) {
-		var cell = new Cell();
+	function createUnfixedLayer() {
+		createLinesLayer(false);
+	}
+
+	function createFixedLayer() {
+		createLinesLayer(true);
+	}
+
+	function createLinesLayer(isFixedLayer) {
+		for (var i = 0; i < cells.length; i++) {
+			var cell = cells[i];
+			addCellSegmentsToLayer(isFixedLayer, cell);
+		}
+	}
+
+	function redrawLinesLayer() {
+		fixedLayer.draw();
+		unfixedLayer.draw();
+	}
+
+	function addCellSegmentsToLayer(isFixedLayer, cell) {
+
+		if (isFixedLayer && !cell.fixed) return;
+
+		var layer = isFixedLayer ? fixedLayer : unfixedLayer;
+		var cellSegs = cell.getSegments();
+
+		for (var i = 0; i < cellSegs.length; i++) {
+			var seg = isFixedLayer?
+				 createSegment(cellSegs[i].getPoints()) : cellSegs[i];
+
+			var segColor = isFixedLayer? fixedColor : unfixedColor;
+			seg.setStroke(segColor);
+
+			if (!isSegInArray(seg, layer.getChildren())) {
+				layer.add(seg);
+			}
+		}
+	}
+
+	function isSegInArray(seg, arr) {
+		var segPoints = seg.getPoints();
+		for (var i = 0; i < arr.length; i++) {
+			var otherSeg = arr[i];
+			if (otherSeg.equalsSegmentPosition(segPoints)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	function createCell(cellLines, computerTranscription, humanTranscription, confidence) {
+		var cell;
+
+		if (typeof humanTranscription != "undefined") {
+			cell = new Cell(computerTranscription, humanTranscription, humanTranscription, confidence);
+		} else {
+			cell = new Cell(computerTranscription, computerTranscription, undefined, confidence);
+		}
 
 		for (var i = 0; i < cellLines.length; i++) {
 			var segment = findSegment(cellLines[i]);
 
 			if (typeof segment == "undefined") {
 				segment = createSegment(cellLines[i]);
-				linesLayer.add(segment);
 			}
 			cell.addSegment(segment);
 		}
@@ -368,7 +496,7 @@
 	function createSegment(posLine) {
 		var kineticLine = new Kinetic.Line({
 			points : posLine,
-			stroke : unhighlightColor,
+			stroke : unfixedColor,
 			strokeWidth : segWidth,
 			draggable: false,
 		});
@@ -387,10 +515,35 @@
 
 	// Event Handling
 	document.onkeydown = function (evt) { 
-		if (typeof evt.keyCode != "undefined" && evt.keyCode == 13) {
+		if (typeof evt.keyCode == "undefined") return;
+
+		if (evt.keyCode == 13) {
 			handleSaveCellEvent();
+			return;
+		}
+
+		if (isEditing) return;
+
+		if (evt.keyCode == 37) {
+			handlePreviousCellEvent();
+			evt.preventDefault();
+		} else if (evt.keyCode == 39) {
+			handleNextCellEvent();
+			evt.preventDefault();
 		}
 	};
+
+	$("#edition-field").on("click", function() {
+		isEditing = true;	
+	});
+
+	$("#edition-field").on("input", function() {
+		isEditing = true;	
+	});
+
+	$("#edition-field").on("blur", function() {
+		isEditing = false;	
+	});
 
 	function handlePreviousCellEvent() {
 		selectCell(cellsIterator.previous());
@@ -402,7 +555,10 @@
 
 	function handleSaveCellEvent() {
 		var actualCell = cellsIterator.actual();
-		actualCell.setTranscription($("#edition-field").val());
+		actualCell.setHumanTranscription($("#edition-field").val());
+		actualCell.setFixed(true);
+		addCellSegmentsToLayer(fixedLayer, actualCell);
+		redrawLinesLayer();
 
 		selectCell(cellsIterator.next());
 	}
@@ -411,7 +567,6 @@
 		highlightCell(cell);
 		focusCell(cell, true);
 		updateTranscriptionField(cell);
-
 		updateCellViewerStage(cell);
 	}
 
@@ -455,9 +610,25 @@
 	}
 
 	function updateTranscriptionField(cell) {
-		$("#transcription-field").text(cell.getTranscription());
-		$("#edition-field").val(cell.getTranscription());
+		var pc_trancription_label = "O computador tem " + cell.confidence + "% de confiança na transcrição abaixo.";
+		$("#pc-transcription-label").text(pc_trancription_label);
+		$("#transcription-field").text(cell.getComputerTranscription());
+
+		var lastAnswer = cell.getLastAnswer();
+		if (typeof lastAnswer != "undefined") {
+			$("#human-transcription-field").text(lastAnswer);
+
+			$("#human-transcription-field").show();
+			$("#human-transcription-label").show();
+		} else {
+			$("#human-transcription-field").hide();
+			$("#human-transcription-label").hide();
+		}
+
+		$("#edition-field").val(cell.getHumanTranscription());
+		$("#edition-field").blur();
 		$("#edition-field").focus();
+		$("#edition-field").select();
 	}
 
 	function handleMouseClickEvent(evt) {
@@ -497,17 +668,25 @@
 
 	function getCompleteTranscriptionAnswer() {
 		var cellsToSave = new Array();
+		var computerValuesToSave = new Array();
+		var humanValuesToSave = new Array();
+		var confidencesToSave = new Array();
 
 		for (var i = 0; i < cells.length; i++) {
 			var cell = cells[i];
 			var borders = cell.getBorders();
-			cellsToSave.push({'coords': [borders[0] - shiftOnCanvas, borders[1] - shiftOnCanvas,
-							borders[2] - shiftOnCanvas, borders[3] - shiftOnCanvas], 'val': cell.getTranscription()});
+			cellsToSave.push([borders[0] - shiftOnCanvas, borders[1] - shiftOnCanvas,
+				borders[2] - shiftOnCanvas, borders[3] - shiftOnCanvas]);
+
+			computerValuesToSave.push(cell.getComputerTranscription());
+			humanValuesToSave.push(cell.getHumanTranscription());
+			confidencesToSave.push(cell.getConfidence());
 		}
-		return JSON.stringify({'cells' : cellsToSave});
+		return JSON.stringify({'cells': cellsToSave, 'computer_values': computerValuesToSave,
+			'human_values': humanValuesToSave, 'confidences': confidencesToSave});
 	}
 
 	function clearCanvas() {
-		tableViewerStage.removeChildren();
-		tableViewerStage.remove();
+		tableViewerStage.destroy();
+        	cellViewerStage.destroy();
 	}
