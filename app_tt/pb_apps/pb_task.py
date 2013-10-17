@@ -56,3 +56,7 @@ class pb_task(object):
             app.config['API_KEY'])).content)
 
         return pbclient.Task(data)
+
+    def get_book_id(self):
+	return self.app_short_name[:-4]
+

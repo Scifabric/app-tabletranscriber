@@ -18,11 +18,13 @@ try:
     cursor.execute(open("tt4dbcreate.sql", "r").read())
     con.commit()
 
+    cursor.execute(open("factsTableCreate.sql", "r").read())
+    con.commit()
+
 except psycopg2.DatabaseError, e:
     print 'Error %s' % e    
-    sys.exit(1)
-    
-    
+    sys.exit(1) 
+
 finally:
     
     if con:

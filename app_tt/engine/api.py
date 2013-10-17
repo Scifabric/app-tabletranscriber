@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint
+from flask import Blueprint, request
 from tasks import check_task, create_apps, close_task
-from tasks import create_task, available_tasks
+from tasks import create_task, available_tasks, save_fact, get_fact_page
+import json
 
 blueprint = Blueprint('api', __name__)
 
@@ -64,3 +65,16 @@ def are_there_tasks(task_id):
     """
     available = available_tasks.delay(task_id)
     return str(available.get())
+
+@blueprint.route('/save_fact', methods=['POST'])
+def execute_save_fact():
+    factInfo = json.loads(request.data)
+    done = save_fact.delay(factInfo)
+    return str(done.get())
+
+@blueprint.route('/fact/<fact_id>')
+def fact_page(fact_id):
+    page = get_fact_page.delay(fact_id)
+    return page.get()
+
+
