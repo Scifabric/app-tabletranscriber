@@ -7,7 +7,7 @@ import sys
 import urllib2
 
 if len(sys.argv) != 6:
-	print("Usage load_t3_tasks.py <db host> <db name> <db user> <db pass> <app id>")
+	print("Usage loader_tasks.py <db host> <db name> <db user> <db pass> <app id>")
 	sys.exit(1)
 
 con = None
