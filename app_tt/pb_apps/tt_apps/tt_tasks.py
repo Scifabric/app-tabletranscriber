@@ -799,20 +799,20 @@ class TTTask3(pb_task):
         return listOfColumns
     
     
-    def __identifyGroupIdInY(self, mapOfContinuousCols, column):
-        MIN_GAP_BETWEEN_COLUMNS_IN_Y_AXIS = 5
+    #def __identifyGroupIdInY(self, mapOfContinuousCols, column):
+        #MIN_GAP_BETWEEN_COLUMNS_IN_Y_AXIS = 5
         
-        sortListOfGroupIds = []
-        for id in mapGroupsOfColumns.keys():
-            sortListOfGroupIds.append(int(id)) 
+        #sortListOfGroupIds = []
+        #for id in mapGroupsOfColumns.keys():
+         #   sortListOfGroupIds.append(int(id)) 
         
-        sortListOfGroupIds.sort()
+        #sortListOfGroupIds.sort()
         
-        for group in sortListOfGroupIds:
-            if (column[1] - group < MIN_GAP_BETWEEN_COLUMNS_IN_X_AXIS):
-                return str(group)
+        #for group in sortListOfGroupIds:
+        #    if (column[1] - group < MIN_GAP_BETWEEN_COLUMNS_IN_X_AXIS):
+        #        return str(group)
         
-        return str(column[0])
+        #return str(column[0])
               
     def close_task(self):
         pass
