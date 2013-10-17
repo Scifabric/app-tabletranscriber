@@ -40,6 +40,10 @@
 	display: none;
 	position: absolute;
 }
+
+.popover-content{
+	display: none;
+}
 </style>
 
 <div class="row" style="margin-left: 10px;">
@@ -106,7 +110,7 @@
 	</div>
 </div>
 
-<div id="image-container" class="skeleton">
+<div id="image-container" class="skeleton" rel="popover" title="Clique e arraste o mouse sobre uma área da tabela para compartilhar.">
 	<a id="image-link" href="#" target="_blank" style="float: left;"> 
 		<img id="image" class="ttImage" src="#" onload="$.unblockUI();">
 	</a>
@@ -232,12 +236,13 @@
 			}
 		});
 
-		$("#success span:nth-child(1)").text($.i18n._('saved'));
+		$("#success strong").text($.i18n._('well_done'));
+		$("#success span:nth-child(2)").text($.i18n._('saved'));
 		$("#finish strong").text($.i18n._('congratulations'));
 		$("#finish span:nth-child(2)").text($.i18n._('finished'));
 		$("#error strong").text($.i18n._('error'));
 		$("#error span:nth-child(2)").text($.i18n._('err_msg'));
-		$("#workflowtask span:first").text($.i18n._('workflowtask'));
+		$("#workflowtask").text($.i18n._('workflowtask'));
 		$("#progress-from").text($.i18n._('progress-from'));
 		$("#progress-to").text($.i18n._('progress-to'));
 

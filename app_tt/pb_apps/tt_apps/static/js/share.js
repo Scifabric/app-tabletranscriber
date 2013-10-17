@@ -13,7 +13,7 @@
 	var APP_ID = "351081068361498"
 	var taskId;
 	var currentUserId;
-	var SHARE_HELP_ENABLED_MESSAGE = "Clique e arraste o mouse para selecionar uma região para ser compartilhada";
+	var SHARE_HELP_ENABLED_MESSAGE = "Clique e arraste o mouse sobre uma área da tabela para compartilhar";
 	var SHARE_HELP_DISABLED_MESSAGE = "Compartilhe algo interessante da página abaixo";
 
 	function initSharer(tId, userId) {
@@ -23,16 +23,11 @@
 	}
 
 	function share() {
-
 		if (!isShareActive) {
 			enableShare();
 		} else {
 			disableShare();
 		}
-
-		$("#button_share").attr("data-original-title",
-			 isShareActive ? SHARE_HELP_ENABLED_MESSAGE : SHARE_HELP_DISABLED_MESSAGE);
-		$("#button_share").trigger("mouseover");
 	}
 
 	function enableShare() {
@@ -40,6 +35,10 @@
 		$("#button_share").addClass('active');
 		document.body.style.cursor = "crosshair";
 		createShareStage(true);
+		$("[rel=popover]").popover("show");
+
+		$("#button_share").attr("data-original-title", SHARE_HELP_ENABLED_MESSAGE);
+		$("#button_share").trigger("mouseover");
 	}
 
 	function disableShare() {
@@ -49,6 +48,10 @@
 		shareStage.destroy();
 		shareArea = undefined;
 		$("#share-menu").hide();
+		$("[rel=popover]").popover("hide");
+
+		$("#button_share").attr("data-original-title", SHARE_HELP_DISABLED_MESSAGE);
+		$("#button_share").trigger("mouseover");
 	}
 
 	function createShareStage(addEventHandlers) {
@@ -79,7 +82,7 @@
 		shareStage.on("mousemove", function(evt) {
 			document.body.style.cursor = "crosshair";
 
-			if (evt.which != 1 || typeof shareArea == 'undefined') return;
+			if (evt.which != 1 || $("#share-menu").is(":visible")) return;
 
 			var mousePos = this.getMousePosition();
 
