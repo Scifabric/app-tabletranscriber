@@ -1,0 +1,76 @@
+canvas {
+	border: 1px solid #9C9898;
+}
+
+#loading {
+	position: absolute;
+	z-index: 10000;
+	width: 100px;
+	height: 100px;
+}
+
+#toolbar {
+	margin-bottom: 10px;
+}
+
+#toolbar button {
+	width: 55px;
+	height: 35px;
+	font-size: 18px;
+}
+
+#toolbar .tooltip-inner {
+	max-width: none;
+}
+
+div.container {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.task-info {
+	float: right;
+	width: 325px;
+	height: 400px;
+}
+
+.button-finished {
+	height: 80px;
+	width: 260px;
+	font-size: 20px;
+	margin: 0px auto;
+	display: block;
+}
+
+.task-info-rotated {
+	float: left;
+	width: auto;
+}
+
+.instruction-rotated {
+	float: left;
+	width: 380px;
+	display: inline-block;
+}
+
+.button-finished-rotated {
+	height: 80px;
+	width: 260px;
+	font-size: 20px;
+	margin-left: 15px;
+	float: left;
+}
+
+#alert-container {
+	width: 540px;
+	height: 50px;
+}
+
+#alert-container p {
+	margin-bottom: 0px;
+	text-align: center;
+}

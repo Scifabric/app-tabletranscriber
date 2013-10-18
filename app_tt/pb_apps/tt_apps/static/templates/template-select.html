@@ -1,52 +1,34 @@
-<style type="text/css">
-.ttImage {
-	width: 550px;
-	height: 700px;
-	border: 1px solid;
-}
-</style>
 
-<div class="row">
-
-	<div class="span8 offset2" style="height: 50px">
-
+<div id="template-container">
+<div class="skeleton">
+	<div id="alert-container">
 		<div id="success" class="alert alert-success" style="display: none;">
 			<p>
-				<span>#</span>
+				<span><strong>#</strong></span><span>#</span>
 			</p>
 		</div>
 		<div id="finish" class="alert alert-success" style="display: none;">
 			<p>
 				<span><strong>#</strong></span><span>#</span>
 			</p>
-			<br />
 		</div>
 		<div id="error" class="alert alert-error" style="display: none;">
-			<a class="close">x</a>
 			<p>
 				<span><strong>#</strong></span><span>#</span>
 			</p>
 		</div>
 		<div id="workflowtask" class="alert alert-success"
-			style="display: none; cursor: pointer; position: relative">
-			<p>
-				<span>#</span>
-			</p>
-		</div>
-
-	</div>
-	<!-- End Success and Error Messages for the user -->
-</div>
-
-<div class="row skeleton">
-	<div id="question" class="span8 offset2">
-		<h2>Question</h2>
+			style="display: none; text-align: center; cursor: pointer; position: relative; margin-top: 5px;"></div>
 	</div>
 </div>
 
-<div class="row skeleton">
+<div class="skeleton">
+	<h1 id="question"></h1>
+</div>
+
+<div class="skeleton">
 	<!-- Answer buttons -->
-	<div id="answer" class="span8 offset2">
+	<div id="answer">
 		<button id="button_yes" class="btn btn-success"
 			onclick="submitTask('Yes')">
 			<i class="icon icon-white icon-ok"></i>
@@ -56,16 +38,22 @@
 			<i class="icon icon-white icon-remove"></i>
 		</button>
 		<button id="button_ntk" class="btn" onclick="submitTask('NotKnown')"></button>
-		<button id="button_help" class="btn help" data-toggle="modal" title="Abre a tela de ajuda"
-			onclick="showHelpSelect()"></button>
+		<button id="button_help" class="btn help" data-toggle="modal" rel="tooltip" title="Abre a tela de ajuda"
+			onclick="showHelpSelect()">
+			<i class="icon icon-question-sign"></i>
+		</button>
+		<button id="button_share" class="btn" rel="tooltip" title="Compartilhe algo interessante da página abaixo" onclick="share()">
+			<img class="icon" style="width: 20px"
+				src="#server/images/share_icon.png"></img>
+		</button>
 
-		<p>
+		<div style="margin-top:10px; margin-bottom: 10px;">
 			<span id="progress-from">#</span><span id="done"
 				class="label label-info" style="margin-right: 5px"></span><span
 				id="progress-to">#</span>
 			<!-- Progress bar for the user -->
 			<span id="total" class="label label-inverse"></span>
-		</p>
+		</div>
 		<div class="progress progress-striped">
 			<div id="progress" rel="tooltip" title="#" class="bar"
 				style="width: 0%;"></div>
@@ -73,17 +61,24 @@
 	</div>
 </div>
 
-<div class="row skeleton" style="padding: 10px;">
-	<div class="span8 offset2">
-		<a id="image-link" href="#" target="_blank"> <img id="image"
-			class=ttImage src="#" onload="$.unblockUI();">
-		</a>
-
+<div id="image-container" class="skeleton" rel="popover" title="Clique e arraste o mouse sobre uma área da tabela para compartilhar.">
+	<a id="image-link" href="#" target="_blank" style="float: left;"> 
+		<img id="image" class="ttImage" src="#" onload="$.unblockUI();">
+	</a>
+	<div id="share-container">
+		<ul id="share-menu" class="dropdown-menu" role="menu">
+		  <li><a style="padding: 3px 12px;" onclick="shareOnFacebook()"> 
+			<img class="icon" style="width: 20px; margin-right: 3px;" src="#server/images/social_facebook.png"></img>
+			Facebook
+		      </a>
+		  </li>
+		</ul>
+		<div id="share-canvas-container"></div>
 	</div>
 </div>
 
-<div class="row skeleton">
-	<div id="disqus_thread" class="span8 offset2"></div>
+<div class="skeleton">
+	<div id="disqus_thread"></div>
 </div>
 
 <div id="helpModalSelect" class="modal hide fade" tabindex="-1"
@@ -126,6 +121,7 @@
 		<button class="btn" data-dismiss="modal" aria-hidden="true">Fechar</button>
 	</div>
 </div>
+</div>
 
 <script type="text/javascript">
 	/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
@@ -149,21 +145,29 @@
 <a href="http://disqus.com" class="dsq-brlink">comments powered by <span
 	class="logo-disqus">Disqus</span></a>
 
+<script src="#server/js/kinetic.js"></script>
+<script type="text/javascript" src="#server/js/share.js"></script>
+<script src="//connect.facebook.net/en_US/all.js"></script>
 <script type="text/javascript" src="#server/js/jquery.i18n.min.js"></script>
 <script type="text/javascript" src="#server/js/tt-select-i18n.js"></script>
 <script type="text/javascript" src="#server/js/jquery.blockUI.js"></script>
-<script type="text/javascript"
-	src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 
-<script>
+<link rel="stylesheet" type="text/css" href="#server/css/tt-select.css" />
+
+<script type="text/javascript" charset="utf-8">
+
+	var task_shortname = "#task_shortname#";
+	var endpoint = "/pybossa";
+
 	function showHelpSelect() {
 		$("#helpModalSelect").modal();
 	}
-</script>
 
-<script>
+	$("[rel=tooltip]").tooltip();
+	$("[rel=popover]").popover({"trigger": "manual"});
+
 	$(window).load(function() {
-		$("#question h2").text($.i18n._('question'));
+		$("#question").text($.i18n._('question'));
 
 		$("#button_yes").text($.i18n._('button_yes'));
 		$("#button_yes").button({
@@ -187,19 +191,17 @@
 			}
 		});
 
-		$("#success span:nth-child(1)").text($.i18n._('saved'));
+		$("#success strong").text($.i18n._('well_done'));
+		$("#success span:nth-child(2)").text($.i18n._('saved'));
 		$("#finish strong").text($.i18n._('congratulations'));
 		$("#finish span:nth-child(2)").text($.i18n._('finished'));
 		$("#error strong").text($.i18n._('error'));
 		$("#error span:nth-child(2)").text($.i18n._('err_msg'));
-		$("#workflowtask span:first").text($.i18n._('workflowtask'));
+		$("#workflowtask").text($.i18n._('workflowtask'));
 		$("#progress-from").text($.i18n._('progress-from'));
 		$("#progress-to").text($.i18n._('progress-to'));
 
 	}); //Internationalization using jquery.i18n
-
-	var task_shortname = "#task_shortname#";
-	var endpoint = "/pybossa";
 
 	function loadUserProgress() {
 		pybossa.userProgress(task_shortname).done(function(data) {
@@ -242,12 +244,12 @@
 	}
 
 	function loadData(data) {
-
 		if (!$.isEmptyObject(data.task)) {
 			loadUserProgress();
 			task_id = data.task.id;
 			$("#image-link").attr("href", data.task.info.url_b);
 			$("#image").attr("src", data.task.info.url_m);
+			initSharer(task_id, pybossa.getCurrentUserId());
 		} else {
 			$(".skeleton").hide();
 			//$("#finish").fadeIn();
@@ -255,7 +257,6 @@
 					+ task_shortname.replace("_tt1", "_tt2") + "/newtask",
 					"_self");
 		}
-
 	}
 
 	// Function to submit and save the TaskRun in PyBossa

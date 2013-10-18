@@ -3,6 +3,7 @@ from celery import Celery
 import urllib2
 import requests
 import json
+import psycopg2
 from celery import task
 from app_tt.core import app
 from app_tt.pb_apps.tt_apps.ttapps import Apptt_select
@@ -223,3 +224,131 @@ def _archiveBookData(bookid):
             print "This book does not have %s key" % key
 
     return dict(known_dict.items() + default_dict.items())
+
+@task(name="app_tt.engine.tasks.save_fact")
+def save_fact(factInfo):
+    taskFacade = task_factory.get_task(factInfo['task_id'])
+
+    user_id = factInfo['user_id']
+    book_id = taskFacade.get_book_id()
+    page_id = taskFacade.task.info['page']
+    top_pos = factInfo['top_pos']
+    left_pos = factInfo['left_pos']
+    bottom_pos = factInfo['bottom_pos']
+    right_pos = factInfo['right_pos']
+
+    isUpdate = 'id' in factInfo
+    post_id = factInfo['post_id'] if 'post_id' in factInfo else ''
+    fact_text = factInfo['fact_text'] if 'fact_text' in factInfo else ''
+    fact_id = factInfo['id'] if isUpdate else -1
+
+    con = None
+
+    try:
+        con = _create_db_connection(app.config['DB_NAME'])
+        cursor = con.cursor()
+	query = ""
+
+	if (isUpdate):
+            query = "UPDATE facts SET (user_id, book_id, page_id, top_pos, left_pos, bottom_pos, right_pos, post_id, fact_text) = ('" + user_id + "', '" + book_id + "', " + str(page_id) + ", " + str(top_pos) + ", "+ str(left_pos) + ", " + str(bottom_pos) + ", " + str(right_pos) + ", '" + post_id + "', '" + fact_text + "') WHERE id = " + str(fact_id)
+	else:
+            query = "BEGIN; INSERT INTO facts(user_id, book_id, page_id, top_pos, left_pos, bottom_pos, right_pos, post_id, fact_text) values ('" + user_id + "', '" + book_id + "', " + str(page_id) + ", " + str(top_pos) + ", "+ str(left_pos) + ", " + str(bottom_pos) + ", " + str(right_pos) + ", '" + post_id + "', '" + fact_text + "') RETURNING id;"
+
+        print(query)
+        cursor.execute(query)
+
+	if not isUpdate:
+            rows = cursor.fetchone()
+            fact_id = rows[0]
+
+        con.commit()
+    except psycopg2.DatabaseError, e:
+    	print 'Error %s' % e
+    finally:
+        if con:
+            con.close()
+        return fact_id
+
+def _create_db_connection(db_name):
+    conn_string = "host='"+ app.config['DB_HOST'] + "' dbname='" + db_name + "' user='" + app.config['DB_USER'] + "' password='" + app.config['DB_USER_PASSWD'] + "'"
+    return psycopg2.connect(conn_string)
+
+@task(name="app_tt.engine.tasks.get_fact_page")
+def get_fact_page(fact_id):
+    con = None
+    result = ""
+    try:
+        con = _create_db_connection(app.config['DB_NAME'])
+        cursor = con.cursor()
+	query = "SELECT id, user_id, book_id, page_id, top_pos, left_pos, bottom_pos, right_pos FROM facts WHERE id = " + str(fact_id)
+        print(query)
+
+        cursor.execute(query)
+	
+        rows = cursor.fetchone()
+	result = _createFactPage(rows[0], rows[1], rows[2], rows[3], rows[4], rows[5], rows[6], rows[7])
+
+        con.commit()
+    except psycopg2.DatabaseError, e:
+    	print 'Error %s' % e
+    finally:
+        if con:
+            con.close()
+        return result
+
+def _createFactPage(fact_id, user_id, book_id, page_id, top_pos, left_pos, bottom_pos, right_pos):
+    user_name = _get_user_name(user_id)
+    server_url = app.config['URL_TEMPLATES']
+    fact_url = "http://" + app.config['PYBOSSA_HOST'] + "/mb/api/fact/" + str(fact_id)
+    book_list_url = "http://" + app.config['PYBOSSA_HOST'] + "/mb/collaborate/"
+    book_app_url=  "http://" + app.config['PYBOSSA_HOST'] + "/pybossa/app/" + book_id + "_tt1/newtask"
+    page_url = "http://www.archive.org/download/%s/page/n%d_w%d_h%d" % (book_id, page_id, 550, 700)
+    book_title = __get_book_title(book_id).encode('utf-8')
+    top_pos = str(top_pos)
+    left_pos = str(left_pos)
+    bottom_pos = str(bottom_pos)
+    right_pos = str(right_pos)
+
+    text = ""
+    templateArch = urllib2.urlopen(urllib2.Request(server_url + "/templates/facts-template.html"))
+
+    for line in templateArch.readlines():
+	line = line.replace("#server", server_url)
+	line = line.replace("#book_app_url", book_app_url)
+        line = line.replace("#book_list_url", book_list_url)
+        line = line.replace("#fact_url", fact_url)
+        line = line.replace("#page_url", page_url)
+
+	line = line.replace("#user_name", user_name)
+	line = line.replace("#book_title", book_title)
+	line = line.replace("#top_pos", top_pos)
+	line = line.replace("#left_pos", left_pos)
+	line = line.replace("#bottom_pos", bottom_pos)
+	line = line.replace("#right_pos", right_pos)
+	
+        text += line
+    return text
+
+def _get_user_name(user_id):
+    con = None
+    result = "Um voluntário"
+    try:
+        con = _create_db_connection("pybossa")
+        cursor = con.cursor()
+	query = "SELECT fullname FROM \"user\" WHERE id = " + str(user_id)
+        print(query)
+        cursor.execute(query)
+	
+        rows = cursor.fetchone()
+	result = rows[0].split(" ")[0]
+
+        con.commit()
+    except psycopg2.DatabaseError, e:
+    	print 'Error %s' % e
+    finally:
+        if con:
+            con.close()
+        return result
+
+
+

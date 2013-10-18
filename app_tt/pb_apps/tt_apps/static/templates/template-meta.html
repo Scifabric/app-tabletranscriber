@@ -1,74 +1,67 @@
-<style type="text/css">
-#throbber {
-	padding: 10px;
-	position: absolute;
-	left: 50%;
-	top: 10%;
-	margin: -50px 0 0 -50px;
-	z-index: 10000;
-	width: 100px;
-	height: 100px;
-}
-</style>
 
-<div class="row">
-
-	<div class="span8 offset2" style="height: 50px">
+<div id="template-container">
+<div class="skeleton">
+	<div id="alert-container">
 		<div id="success" class="alert alert-success" style="display: none;">
-			<a class="close">×</a> <strong>Muito bem!</strong> Sua resposta foi
-			salva</strong>
+			<p>
+				<strong>Muito bem!</strong> Sua resposta foi salva
+			</p>
 		</div>
 		<div id="finish" class="alert alert-success" style="display: none;">
-			<strong>Parabéns!</strong> Todas as tarefas foram finalizadas</strong>
+			<p>
+				<strong>Parabéns!</strong> Todas as tarefas foram finalizadas
+			</p>
 		</div>
 		<div id="error" class="alert alert-error" style="display: none;">
-			<a class="close">×</a> <strong>Erro!</strong> Algo ocorreu errado,
-			por favor contate o administrador do site.</strong>
+			<p>
+				<strong>Erro!</strong> Algo ocorreu errado, por favor contate o administrador do site.
+			</p>
 		</div>
 		<div id="workflowtask" class="alert alert-success"
-			style="display: none; cursor: pointer; position: relative">
-			<a class="close"></a>
+			style="display: none; text-align: center; cursor: pointer; position: relative; margin-top: 5px;">
 			<p>
-				<span>Existe um novo tipo de tarefa disponível. Clique para
-					ir.</span>
+				<span>Existe um novo tipo de tarefa disponível. Clique para ir.</span>
 			</p>
 		</div>
 	</div>
-	<!-- End Success and Error Messages for the user -->
 </div>
-
 
 <div id="throbber"></div>
 
-<div class="row skeleton">
-	<div id="question" class="span8 offset2">
-		<h2>Question</h2>
+<div class="skeleton">
+	<div id="question">
+		<h1>Question</h1>
 		<p>
 			<span style="display: none;" id="task-id" class="label label-warning"></span>
 		</p>
 	</div>
 </div>
 
-<div class="row skeleton">
+<div class="skeleton">
 	<!-- Answer buttons -->
-	<div id="answer" class="span8 offset2">
+	<div id="answer">
 		<button id="button" class="btn btn-success" onclick="submitTask()">
 			<i class="icon icon-white icon-ok"></i> Salvar essas marcações
 		</button>
 		<button id="button" class="btn small" onclick="submitTask('0')">
 			<i class="icon icon-white icon-ok"></i> Não há tabelas
 		</button>
-		<button id="button" class="btn help" data-toggle="modal" title="Abre a tela de ajuda"
+		<button id="button_help" class="btn help" data-toggle="modal" rel="tooltip" title="Abre a tela de ajuda"
 			onclick="showHelp()">
 			<i class="icon-white icon-question-sign"></i>
 		</button>
-		<p>
+		<button id="button_share" class="btn" rel="tooltip" title="Compartilhe algo interessante da página abaixo" onclick="share()">
+			<img class="icon" style="width: 20px"
+				src="#server/images/share_icon.png"></img>
+		</button>
+
+		<div style="margin-top:10px; margin-bottom: 10px;">
 			<span id="progress-from">Voc&ecirc; fez </span><span id="done"
 				class="label label-info" style="margin-right: 5px"></span><span
 				id="progress-to">tarefas de </span>
 			<!-- Progress bar for the user -->
 			<span id="total" class="label label-inverse"></span>
-		</p>
+		</div>
 		<div class="progress progress-striped">
 			<div id="progress" rel="tooltip" title="#" class="bar"
 				style="width: 0%;"></div>
@@ -301,14 +294,25 @@
 	</div>
 </div>
 
-<div class="row skeleton" style="padding: 10px; padding-bottom: 40px;">
-	<div id="TTImage" class="TTImageContainer">
+<div id="image-container" class="skeleton" rel="popover" title="Clique e arraste o mouse sobre uma área da tabela para compartilhar.">
+	<div id="TTImage" class="TTImageContainer" style="float: left">
 		<img id="table" class="TTImage" src="#" onload="spinnerStop()">
+	</div>
+	<div id="share-container">
+		<ul id="share-menu" class="dropdown-menu" role="menu">
+		  <li><a style="padding: 3px 12px;" onclick="shareOnFacebook()"> 
+			<img class="icon" style="width: 20px; margin-right: 3px;" src="#server/images/social_facebook.png"></img>
+			Facebook
+		      </a>
+		  </li>
+		</ul>
+		<div id="share-canvas-container"></div>
 	</div>
 </div>
 
-<div class="row skeleton">
-	<div id="disqus_thread" class="span8 offset2"></div>
+<div class="skeleton">
+	<div id="disqus_thread"></div>
+</div>
 </div>
 
 <script type="text/javascript">
@@ -334,9 +338,9 @@
 	class="logo-disqus">Disqus</span>
 </a>
 
-
-<!-- <script src="/static/js/pybossa/pybossa.js" type="text/javascript"></script> -->
-
+<script src="#server/js/kinetic.js"></script>
+<script type="text/javascript" src="#server/js/share.js"></script>
+<script src="//connect.facebook.net/en_US/all.js"></script>
 <script src="#server/js/throbber/throbber.js" type="text/javascript"></script>
 <script src="#server/js/jquery.annotate.js" type="text/javascript"></script>
 <script type="text/javascript"
@@ -345,14 +349,16 @@
 <link rel="stylesheet" type="text/css" href="#server/css/annotation.css" />
 <link rel="stylesheet" type="text/css" href="#server/css/tt-meta.css" />
 
-<script>
+<script type="text/javascript" charset="utf-8">
+
 	function showHelp() {
 		$("#helpModalMeta").modal();
 		$('#nav-header').affix();
 	}
-</script>
 
-<script>
+	$("[rel=tooltip]").tooltip();
+	$("[rel=popover]").popover({"trigger": "manual"});
+
 	var task_shortname = "#task_shortname#";
 	var endpoint = "/pybossa";
 
@@ -417,14 +423,13 @@
 		if (!$.isEmptyObject(data.task)) {
 			spinnerStart();
 			loadUserProgress();
-			$("#question h2").text(data.question);
-			$("#task-id").text(data.task.id);
+			var task_id = data.task.id;
+			$("#question h1").text(data.question);
+			$("#task-id").text(task_id);
 			$("#table").attr("src", data.task.info.link);
 
 			var notes = data.task.info.last_answer != undefined ? JSON
 					.parse(data.task.info.last_answer) : [];
-
-			console.log(notes);
 
 			image = $("#table").annotateImage({
 				editable : true,
@@ -432,9 +437,9 @@
 				clear : false,
 				notes : notes
 			});
+			initSharer(task_id, pybossa.getCurrentUserId());
 		} else { // Return to tt1 or collaborate page
 			var task_id = $("#task-id").text();
-			console.log(task_id);
 
 			$(".skeleton").hide();
 			$("#finish").fadeIn(
