@@ -82,7 +82,8 @@
 		shareStage.on("mousemove", function(evt) {
 			document.body.style.cursor = "crosshair";
 
-			if (evt.which != 1 || $("#share-menu").is(":visible")) return;
+			if (evt.which != 1 || $("#share-menu").is(":visible") ||
+				typeof shareArea == "undefined") return;
 
 			var mousePos = this.getMousePosition();
 

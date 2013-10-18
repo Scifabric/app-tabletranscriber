@@ -267,6 +267,7 @@
         var girar = this.note.text.girar;
         var nao_girar = this.note.text.nao_girar;
         var mista = this.note.text.mista;
+		var fontes = typeof this.note.text.fontes == "undefined"? "" : this.note.text.fontes;
 		
         // Add the note (which we'll load with the form afterwards)
 		var form = $('<div id="image-annotate-edit-form">' + 
@@ -278,7 +279,7 @@
                 '<option value="2" ' + (selected == "2" ? "selected" : "") + '>Violência/Criminalidade</option>' +
                 '<option value="3"' + (selected == "3" ? "selected" : "") + ' >Outros</option></select>' +                    
                 '<input type="text" id="outros" value="' + this.note.text.outros +'">' + '</input><br/>' +
-				'Fontes: <textarea type="textarea" id="fontes">' + this.note.text.fontes + '</textarea>' +
+				'Fontes: <textarea type="textarea" id="fontes">' + fontes + '</textarea>' +
 				'<p><input id="nao_girar"' + (nao_girar ? "checked='true'" : "") + 'name="radio" type="radio" value="true" class="radiocheckbox" checked="true"> Tabela possui orientação horizontal</input></p>' +
                 '<p><input id="girar"' + (girar ? "checked='true'" : "") + 'name="radio" type="radio" value="true" class="radiocheckbox"> Tabela possui orientação vertical</input></p>' + 
                 '<p><input id="mista"' + (mista ? "checked='true'" : "") + 'name="radio" type="radio" value="true" class="radiocheckbox"> Tabela possui orientação mista</input></p>' +

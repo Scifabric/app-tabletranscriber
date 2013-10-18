@@ -68,3 +68,8 @@
 #edition-field {
 	width: 390px;
 }
+
+#alert-container p {
+	margin-bottom: 0px;
+}
+

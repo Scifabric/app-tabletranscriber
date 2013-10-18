@@ -340,7 +340,7 @@ def _get_user_name(user_id):
         cursor.execute(query)
 	
         rows = cursor.fetchone()
-	result = rows[0]
+	result = rows[0].split(" ")[0]
 
         con.commit()
     except psycopg2.DatabaseError, e:

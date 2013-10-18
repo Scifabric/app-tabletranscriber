@@ -1,56 +1,8 @@
-<style type="text/css">
-.ttImage {
-	width: 550px;
-	height: 700px;
-	border: 1px solid;
-}
 
-#image-container {
-	width: 550px;
-	height: 700px;
-	margin-left: 20px;
-	display: block;
-}
-
-#button_help {
-	font-size: 20px;
-	float: right;
-}
-
-#button_share {
-	font-size: 20px;
-	float: right;
-	margin-right: 4px;
-}
-
-#answer {
-	width: 595px;
-}
-
-#disqus_thread {
-	width: 595px;
-	margin-top: 20px;
-}
-
-#share-container {
-	position: absolute;
-}
-
-#share-menu {
-	display: none;
-	position: absolute;
-}
-
-.popover-content{
-	display: none;
-}
-</style>
-
-<div class="row" style="margin-left: 10px;">
-
-	<div class="span6" style="height: 50px">
+<div id="template-container">
+<div class="skeleton">
+	<div id="alert-container">
 		<div id="success" class="alert alert-success" style="display: none;">
-			<a class="close">x</a>
 			<p>
 				<span><strong>#</strong></span><span>#</span>
 			</p>
@@ -61,7 +13,6 @@
 			</p>
 		</div>
 		<div id="error" class="alert alert-error" style="display: none;">
-			<a class="close">x</a>
 			<p>
 				<span><strong>#</strong></span><span>#</span>
 			</p>
@@ -170,6 +121,7 @@
 		<button class="btn" data-dismiss="modal" aria-hidden="true">Fechar</button>
 	</div>
 </div>
+</div>
 
 <script type="text/javascript">
 	/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
@@ -200,6 +152,8 @@
 <script type="text/javascript" src="#server/js/tt-select-i18n.js"></script>
 <script type="text/javascript" src="#server/js/jquery.blockUI.js"></script>
 
+<link rel="stylesheet" type="text/css" href="#server/css/tt-select.css" />
+
 <script type="text/javascript" charset="utf-8">
 
 	var task_shortname = "#task_shortname#";
@@ -210,6 +164,7 @@
 	}
 
 	$("[rel=tooltip]").tooltip();
+	$("[rel=popover]").popover({"trigger": "manual"});
 
 	$(window).load(function() {
 		$("#question").text($.i18n._('question'));

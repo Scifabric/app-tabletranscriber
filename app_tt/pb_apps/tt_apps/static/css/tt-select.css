@@ -2,24 +2,10 @@
 	margin-left: 170px;
 }
 
-.TTImageContainer {
-
-	position: relative;
+.ttImage {
 	width: 550px;
 	height: 700px;
-	cursor: crosshair;
-}
-
-.TTImage{
-	overflow: hidden;
-	position: relative;
-	width: 550px;
-	height: 700px
-	
-}
-
-#answer {
-	width: 595px;
+	border: 1px solid;
 }
 
 #image-container {
@@ -27,11 +13,6 @@
 	height: 700px;
 	margin-left: 20px;
 	display: block;
-}
-
-#disqus_thread {
-	width: 595px;
-	margin-top: 20px;
 }
 
 #button_help {
@@ -43,6 +24,15 @@
 	font-size: 20px;
 	float: right;
 	margin-right: 4px;
+}
+
+#answer {
+	width: 595px;
+}
+
+#disqus_thread {
+	width: 595px;
+	margin-top: 20px;
 }
 
 #share-container {
@@ -57,22 +47,6 @@
 .popover-content{
 	display: none;
 }
-
-#throbber {
-	padding: 10px;
-	position: absolute;
-	left: 50%;
-	top: 10%;
-	margin: -50px 0 0 -50px;
-	z-index: 10000;
-	width: 100px;
-	height: 100px;
-}
-
-#alert-container p {
-	margin-bottom: 0px;
-}
-
 
 #alert-container {
 	width: 595px;

@@ -1,13 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
 "http://www.w3.org/TR/html4/strict.dtd">
 
-
-<div class="row" style="margin-left: 10px;">
-
-	<div class="span6" style="height: 50px">
-
+<div class="row">
+	<div id="alert-container" class="span6" style="height: 50px">
 		<div id="success" class="alert alert-success" style="display: none;">
-			<a class="close">x</a>
 			<p>
 				<span><strong>#</strong></span><span>#</span>
 			</p>
@@ -18,7 +14,6 @@
 			</p>
 		</div>
 		<div id="error" class="alert alert-error" style="display: none;">
-			<a class="close">x</a>
 			<p>
 				<span><strong>#</strong></span><span>#</span>
 			</p>
@@ -26,7 +21,6 @@
 		<div id="workflowtask" class="alert alert-success"
 			style="display: none; text-align: center; cursor: pointer; position: relative; margin-top: 5px;"></div>
 	</div>
-	<!-- End Success and Error Messages for the user -->
 </div>
 
 <div class="row skeleton">
@@ -42,7 +36,7 @@
 			<span id="total" class="label label-inverse"></span>
 		</p>
 		<div class="progress progress-striped"
-			style="width: 520px; margin-bottom: 10px;">
+			style="width: 540px; margin-bottom: 10px;">
 			<div id="progress" rel="tooltip" title="#" class="bar"
 				style="width: 0%;"></div>
 		</div>
@@ -245,74 +239,6 @@
 	</div>
 </div>
 
-<style>
-canvas {
-	border: 1px solid #9C9898;
-}
-
-#loading {
-	position: absolute;
-	z-index: 10000;
-	width: 100px;
-	height: 100px;
-}
-
-#toolbar {
-	margin-bottom: 10px;
-}
-
-#toolbar button {
-	width: 55px;
-	height: 35px;
-	font-size: 18px;
-}
-
-#toolbar .tooltip-inner {
-	max-width: none;
-}
-
-div.container {
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-}
-
-.task-info {
-	float: right;
-	width: 325px;
-	height: 400px;
-}
-
-.button-finished {
-	height: 80px;
-	width: 260px;
-	font-size: 20px;
-	margin-left: 33px;
-}
-
-.task-info-rotated {
-	float: left;
-	width: auto;
-}
-
-.instruction-rotated {
-	float: left;
-	width: 380px;
-	display: inline-block;
-}
-
-.button-finished-rotated {
-	height: 80px;
-	width: 260px;
-	font-size: 20px;
-	margin-left: 15px;
-	float: left;
-}
-</style>
-
 <!--<div class="row skeleton">
 <div id="disqus_thread" class="span8 offset2"></div>
 </div>
@@ -337,6 +263,7 @@ div.container {
 <script type="text/javascript" src="#server/js/jquery.blockUI.js"></script>
 <script type="text/javascript" charset="utf-8" src="#server/js/tt3.js"></script>
 
+<link rel="stylesheet" type="text/css" href="#server/css/tt-struct.css" />
 
 <script type="text/javascript" charset="utf-8">
 	var taskid;

@@ -1,42 +1,30 @@
-<style type="text/css">
-#throbber {
-	padding: 10px;
-	position: absolute;
-	left: 50%;
-	top: 10%;
-	margin: -50px 0 0 -50px;
-	z-index: 10000;
-	width: 100px;
-	height: 100px;
-}
-</style>
 
-<div class="row">
-
-	<div class="span8 offset2" style="height: 50px">
+<div id="template-container">
+<div class="skeleton">
+	<div id="alert-container">
 		<div id="success" class="alert alert-success" style="display: none;">
-			<a class="close">×</a> <strong>Muito bem!</strong> Sua resposta foi
-			salva</strong>
+			<p>
+				<strong>Muito bem!</strong> Sua resposta foi salva
+			</p>
 		</div>
 		<div id="finish" class="alert alert-success" style="display: none;">
-			<strong>Parabéns!</strong> Todas as tarefas foram finalizadas</strong>
+			<p>
+				<strong>Parabéns!</strong> Todas as tarefas foram finalizadas
+			</p>
 		</div>
 		<div id="error" class="alert alert-error" style="display: none;">
-			<a class="close">×</a> <strong>Erro!</strong> Algo ocorreu errado,
-			por favor contate o administrador do site.</strong>
+			<p>
+				<strong>Erro!</strong> Algo ocorreu errado, por favor contate o administrador do site.
+			</p>
 		</div>
 		<div id="workflowtask" class="alert alert-success"
-			style="display: none; cursor: pointer; position: relative">
-			<a class="close"></a>
+			style="display: none; text-align: center; cursor: pointer; position: relative; margin-top: 5px;">
 			<p>
-				<span>Existe um novo tipo de tarefa disponível. Clique para
-					ir.</span>
+				<span>Existe um novo tipo de tarefa disponível. Clique para ir.</span>
 			</p>
 		</div>
 	</div>
-	<!-- End Success and Error Messages for the user -->
 </div>
-
 
 <div id="throbber"></div>
 
@@ -325,6 +313,7 @@
 <div class="skeleton">
 	<div id="disqus_thread"></div>
 </div>
+</div>
 
 <script type="text/javascript">
 	/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
@@ -368,7 +357,7 @@
 	}
 
 	$("[rel=tooltip]").tooltip();
-	$("[rel=popover]").popover();
+	$("[rel=popover]").popover({"trigger": "manual"});
 
 	var task_shortname = "#task_shortname#";
 	var endpoint = "/pybossa";
