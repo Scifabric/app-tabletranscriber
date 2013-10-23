@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 def create_cells(lines, columns, maxX, maxY):
+	lines = sorted(lines, key=lambda line: (line[1], line[0]))
+	columns = sorted(columns, key=lambda column: (column[0], column[1]))
+
 	lines = __splitLines(lines, columns)
 	columns = __splitColumns(lines, columns)
 

@@ -89,7 +89,7 @@
 		<label id="human-transcription-label">Transcrição de outro usuário</label>
 		<span id="human-transcription-field" class="input uneditable-input"></span>
 
-		<label>Campo de edição</label>
+		<label>Sua transcrição</label>
 		<input id="edition-field" type="text">
 
 		<button id="button-finished-transcription" class="btn btn-success" onclick="handleSaveCellEvent()">
@@ -198,10 +198,12 @@
 
 <script type="text/javascript">
 
-	var task_shortname = "#task_shortname#";
-	var endpoint = "/pybossa";
 	var taskid;
 	var serverName = "#server";
+	var task_shortname = "#task_shortname#";
+	var endpoint = "/pybossa";
+	var minTableViewerWidth = 515;
+	var minTableViewerHeight = $("#right-panel").height();
 
 	$(window).load(function() {
 		$("#question").text($.i18n._('question'));
@@ -239,7 +241,7 @@
 		if (!$.isEmptyObject(data.task)) {
 			loadUserProgress();
 			taskid = data.task.id;
-			createTableViewer(data.task.info);
+			createTableViewer(data.task.info, minTableViewerWidth, minTableViewerHeight);
 		} else {
 			$(".skeleton").hide();
 			$("#finish").fadeIn();

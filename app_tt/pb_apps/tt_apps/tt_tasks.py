@@ -12,6 +12,7 @@ import json
 import sys
 import os
 import cellsUtil
+import math
 from InvalidTaskGroupException import InvalidTaskGroupException
 from operator import itemgetter, attrgetter
 
@@ -76,6 +77,10 @@ class TTTask2(pb_task):
         super(TTTask2, self).__init__(task_id, app_short_name)
 
     def add_next_task(self):
+
+	if (self.__checkIfNextTaskWasCreated()):
+	    return
+
         # Get the list of task_runs
         task_runs = json.loads(urllib2.urlopen(
             "%s/api/taskrun?task_id=%s&limit=%d" % (
@@ -135,6 +140,17 @@ class TTTask2(pb_task):
             # routine to solve this must be implemented
             except Exception, e:
                 print str(e)
+
+    def __checkIfNextTaskWasCreated(self):
+	page_num = self.task.info['page']
+	tt3_app_short_name = self.app_short_name[:-1] + "3"
+        tt3_app = ttapps.Apptt_struct(short_name=tt3_app_short_name)
+	tt3_tasks = tt3_app.get_tasks()
+
+        for t in tt3_tasks:
+            if (t.info['page'] == page_num):
+		return True
+	return False
 
     def close_task(self):
         pass
@@ -410,13 +426,17 @@ class TTTask3(pb_task):
         super(TTTask3, self).__init__(task_id, app_short_name)
 
     def add_next_task(self):
+	
+	if (self.__checkIfNextTaskWasCreated()):
+	    return
+
         try:
             linesAndColumnsMap = self.__loadAnswers()
             
             cells = cellsUtil.create_cells(linesAndColumnsMap["linhas"], linesAndColumnsMap["colunas"], 
             linesAndColumnsMap["maxX"], linesAndColumnsMap["maxY"])
             
-            print "linesAndColumnsMap: " + str(linesAndColumnsMap)
+            #print "linesAndColumnsMap: " + str(linesAndColumnsMap)
             
             linkImg = self.task.info['img_url']
             book_id = self.app_short_name[:-4]
@@ -440,7 +460,6 @@ class TTTask3(pb_task):
             infoDict['values'] = values
             infoDict['confidences'] = confidences
             
-            
             tt4_app_short_name = self.app_short_name[:-1] + "4"
             tt4_app = ttapps.Apptt_transcribe(short_name=tt4_app_short_name)
             tt4_app.add_task(infoDict)
@@ -448,6 +467,17 @@ class TTTask3(pb_task):
         except Exception, e:
             print str(e)
     
+    def __checkIfNextTaskWasCreated(self):
+	img_url = self.task.info['img_url']
+	tt4_app_short_name = self.app_short_name[:-1] + "4"
+        tt4_app = ttapps.Apptt_transcribe(short_name=tt4_app_short_name)
+	tt4_tasks = tt4_app.get_tasks()
+
+        for t in tt4_tasks:
+            if (t.info['img_url'] == img_url):
+		return True
+	return False
+
     """
      Load values transcripted by tesseract ocr for this table
     """
@@ -629,7 +659,8 @@ class TTTask3(pb_task):
               
         for info in similarTaskRunsAnswers:
             for l in info['linhas']:
-                lines.append(l)
+		if (not self.__isOverlapping(l, lines)):
+	                lines.append(l)
             for c in info['colunas']:
                 columns.append(c)
             
@@ -638,18 +669,31 @@ class TTTask3(pb_task):
             if maxY < info['maxY']:
                 maxY = info['maxY']
         
-        print "lines"
-        print lines
+        #print "lines"
+        #print lines
         
-        print "columns"
-        print columns
+        #print "columns"
+        #print columns
         
         mapWithNewAnswer = self.__transformSegmentsInLines(lines, columns)
         mapWithNewAnswer['maxX'] = maxX
         mapWithNewAnswer['maxY'] = maxY
         
         return mapWithNewAnswer
-    
+
+    def __isOverlapping(self, line, lines):
+	MIN_GAP_BETWEEN_LINES = 5
+        for i in range(0, len(lines)):
+            other_line =  lines[i]
+            
+            if ((line[0] == other_line[0] or self.__insideOpenInterval(line[0], line[2], other_line[0]) or self.__insideOpenInterval(line[0], line[2], other_line[2])) and math.fabs((line[1] - other_line[1])) <= MIN_GAP_BETWEEN_LINES):
+                return True
+  	
+	return False
+
+    def __insideOpenInterval(self, init, final, element):
+	return element > init and element < final
+
     """
       Transform segments in horizontal or vertical orientations
       in complete lines.
@@ -658,21 +702,6 @@ class TTTask3(pb_task):
       columns: set of columns of all tasks similars to this
     """
     def __transformSegmentsInLines(self, lines, columns):
-        MIN_GAP_BETWEEN_LINES = 5
-        
-        ptr_l1 = None
-        ptr_l2 = None
-        ptr_l3 = None
-        
-        validLines = []
-        for i in range(1, len(lines)-1):
-            ptr_l1 = lines[i-1]
-            ptr_l2 = lines[i]
-            ptr_l3 = lines[i+1]
-            
-            if ( not (((ptr_l2[1] - ptr_l1[1]) < MIN_GAP_BETWEEN_LINES) and
-                 ((ptr_l3[1] - ptr_l2[1]) < MIN_GAP_BETWEEN_LINES)) ):
-                validLines.append(ptr_l2)
         
         mapGroupsOfColumns = {}
         for c1 in columns:
@@ -683,12 +712,10 @@ class TTTask3(pb_task):
             else:
                 mapGroupsOfColumns[idGroup].append(c1)
         
-        mapWithLinesAndColumns = {}
-        mapWithLinesAndColumns['lines'] = validLines
-        mapWithLinesAndColumns['columns'] = self.__joinColumnsInGroup(mapGroupsOfColumns)
+        mapWithLinesAndColumns = self.__joinColumnsInGroup(mapGroupsOfColumns, lines)
         
-        print "mapWithLinesAndColumns"
-        print mapWithLinesAndColumns
+        #print "mapWithLinesAndColumns"
+        #print mapWithLinesAndColumns
         
         return mapWithLinesAndColumns
     
@@ -702,7 +729,7 @@ class TTTask3(pb_task):
         sortListOfGroupIds.sort()
         
         for group in sortListOfGroupIds:
-            if (column[0] - group < MIN_GAP_BETWEEN_COLUMNS_IN_X_AXIS):
+            if (column[0] - group <= MIN_GAP_BETWEEN_COLUMNS_IN_X_AXIS):
                 return str(group)
         
         return str(column[0])
@@ -711,108 +738,88 @@ class TTTask3(pb_task):
      Join the columns in the same group to make
      a one or more columns consistents.
     """
-    def __joinColumnsInGroup(self, mapGroupsOfColumns):
+    def __joinColumnsInGroup(self, mapGroupsOfColumns, lines):
         finalListOfColumns = []
         
-        print "mapGroupsOfColumns"
-        print mapGroupsOfColumns
+        #print "mapGroupsOfColumns"
+        #print mapGroupsOfColumns
         
         for groupOfColumns in mapGroupsOfColumns.values():
-            listOfColumns = self.__transformGroupInList(groupOfColumns)
+	    transformationResult = self.__transformGroupInList(groupOfColumns, lines)
+            lines = transformationResult['lines']
+            columns = transformationResult['columns']
             
-            for c in listOfColumns:
+            for c in columns:
                 finalListOfColumns.append(c)
                        
-        print "finalListOfColumns"
-        print finalListOfColumns
+        #print "finalListOfColumns"
+        #print finalListOfColumns
+
+	joinResult = {}
+	joinResult['lines'] = lines
+	joinResult['columns'] = finalListOfColumns
         
-        return finalListOfColumns
+        return joinResult
     
     """
      Transform group of columns in one list of consistent
      columns.
     """
-    def __transformGroupInList(self, groupOfColumns):
+    def __transformGroupInList(self, groupOfColumns, lines):
         sortedGroupOfColumns = sorted(groupOfColumns, key=itemgetter(1))
-        print "sortedGroupOfColumns"
-        print sortedGroupOfColumns
+        #print "sortedGroupOfColumns"
+        #print sortedGroupOfColumns
         
         listOfColumns = []
         
         ptr1 = None
         ptr2 = None
-        #mapOfContinuousCols = {}
-        tmpCols = [sortedGroupOfColumns[0]]
-        for i in range(1, len(sortedGroupOfColumns)-1):   # find other columns to join
+        tmpCols = []
+
+        for i in range(0, len(sortedGroupOfColumns)-1):   # find other columns to join
             ptr1 = sortedGroupOfColumns[i]
             ptr2 = sortedGroupOfColumns[i+1]
             
             if (ptr2[1] - ptr1[3] <= 0): # is a continuous column
-                #idGroup = self.__identifyGroupIdInY(mapOfContinuousCols, ptr1)
-                
-                #if(mapOfContinuousCols.has_key(idGroup)):
-                #    mapOfContinuousCols[idGroup].append(ptr1)
                 tmpCols.append(ptr1)
                 if(i+1 == len(sortedGroupOfColumns)-1):
                     tmpCols.append(ptr2)
-                #else:
-                #    mapOfContinuousCols[idGroup] = [ptr1]
             else:
-                #mapOfContinuousCols[idGroup] = [ptr1]
-                listOfColumns.append([tmpCols[0][0],
-                                      tmpCols[0][1],
-                                      tmpCols[0][2],
-                                      tmpCols[-1][3]])
+		newX = tmpCols[0][0]
+                listOfColumns.append([newX, tmpCols[0][1],
+                                      newX, tmpCols[-1][3]])
+		lines = self.__updateLinesXAxis(tmpCols, lines, newX)
+
                 tmpCols = [ptr2]
-                print "listOfColumns"
-                print listOfColumns
+                #print "listOfColumns"
+                #print listOfColumns
        
-      
-        listOfColumns.append([tmpCols[0][0],
-                             tmpCols[0][1],
-                             tmpCols[0][2],
-                             tmpCols[-1][3]])
-            
-       #     print "mapOfContinuousCols"
-       #     print mapOfContinuousCols
-            
-        #if(ptr2 == sortedGroupOfColumns[-1]):
-        #    idGroup = self.__identifyGroupIdInY(mapOfContinuousCols, ptr2)
-        #    
-        #    if(mapOfContinuousCols.has_key(idGroup)):
-        #        mapOfContinuousCols[idGroup].append(ptr2)
-        #    else:
-        #        mapOfContinuousCols[idGroup] = [ptr2]
-       # 
-        #for i in range(0,len(mapOfContinuousCols.values())):
-        #   list = mapOfContinuousCols.values()[i]
-        #    listOfColumns.append([list[0][0],
-        #                          list[0][1],
-        #                          list[0][2],
-         #                         list[-1][3]])
+	if (len(sortedGroupOfColumns) == 1):
+		tmpCols.append(sortedGroupOfColumns[0])
+
+	newX = tmpCols[0][0]
+        listOfColumns.append([newX, tmpCols[0][1],
+                              newX, tmpCols[-1][3]])
+	lines = self.__updateLinesXAxis(tmpCols, lines, newX)
+     
+        #print "listOfColumns"
+        #print listOfColumns
+
+	transformationResult = {}
+	transformationResult['lines'] = lines
+	transformationResult['columns'] = listOfColumns
         
-        #listCols.append()
-                
-        print "listOfColumns"
-        print listOfColumns
-        
-        return listOfColumns
+        return transformationResult
     
-    
-    #def __identifyGroupIdInY(self, mapOfContinuousCols, column):
-        #MIN_GAP_BETWEEN_COLUMNS_IN_Y_AXIS = 5
-        
-        #sortListOfGroupIds = []
-        #for id in mapGroupsOfColumns.keys():
-         #   sortListOfGroupIds.append(int(id)) 
-        
-        #sortListOfGroupIds.sort()
-        
-        #for group in sortListOfGroupIds:
-        #    if (column[1] - group < MIN_GAP_BETWEEN_COLUMNS_IN_X_AXIS):
-        #        return str(group)
-        
-        #return str(column[0])
+    def __updateLinesXAxis(self, columns, lines, newX):
+	for column in columns:
+	    for i in range(0, len(lines)):
+	        line = lines[i]
+	        if line[0] == column[0]:
+	            lines[i] = [newX, line[1], line[2], line[3]]
+	        elif line[2] == column[0]:
+	            lines[i] = [line[0], line[1], newX, line[3]]
+	return lines
               
     def close_task(self):
         pass

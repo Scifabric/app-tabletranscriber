@@ -59,6 +59,7 @@
 		this.lastAnswer = lastAnswer;
 		this.confidence = confidence;
 		this.fixed = confidence >= 90 ? true : false;
+		this.rect = undefined;
 	}
 
 	Cell.prototype.isFixed = function() {
@@ -155,9 +156,29 @@
 		return (posX >= minX && posX <= maxX) && (posY >= minY && posY <= maxY);
 	};
 
+	Cell.prototype.createRectangle = function() {
+		var borders = this.getBorders();
+		var isFixed = this.isFixed();
+		this.rect = new Kinetic.Rect({
+					x: borders[0],
+					y: borders[1],
+					width: borders[2] - borders[0],
+					height: borders[3] - borders[1],
+					fillEnabled: true,
+					fill: isFixed? fixedColor:unfixedColor,
+					opacity: 0.25
+				});
+		return this.rect;	
+	}
+
+	Cell.prototype.setRectangleOpacity = function(value) {
+		this.rect.setOpacity(value);
+	}
+
 	function CellsIterator(cells) {
 		this.cells = cells;
 		this.actualIndex = -1;
+		this.previousIndex = -1;
 	}
 
 	CellsIterator.prototype.haveCellsToFix = function() {
@@ -175,34 +196,42 @@
 		return actualIndex - 1 >= 0 ? actualIndex - 1 : (this.cells.length - 1);
 	}
 
+	CellsIterator.prototype.getPreviousCell = function() {
+		return this.cells[this.previousIndex];
+	}
+
 	CellsIterator.prototype.next = function() {
-		var nextIndex = this.getNextIndex(this.actualIndex);
+		var computedNextIndex = this.getNextIndex(this.actualIndex);
 		var loopSafe = 0;
 
-		while (nextIndex != this.actualIndex) {
+		while (computedNextIndex != this.actualIndex) {
 
-			if (!this.cells[nextIndex].isFixed()
+			if (!this.cells[computedNextIndex].isFixed()
 				 || loopSafe > (cells.length-1)) break;
 
-			nextIndex = this.getNextIndex(nextIndex);
+			computedNextIndex = this.getNextIndex(computedNextIndex);
 			loopSafe++;
 		}
-		this.actualIndex = nextIndex;
+
+		this.previousIndex = this.actualIndex;
+		this.actualIndex = computedNextIndex;
 		return this.actual();
 	};
 
 	CellsIterator.prototype.previous = function() {
-		var previousIndex = this.getPreviousIndex(this.actualIndex);
+		var computedPreviousIndex = this.getPreviousIndex(this.actualIndex);
 		var loopSafe = 0;
 
-		while (previousIndex != this.actualIndex) {
+		while (computedPreviousIndex != this.actualIndex) {
 
-			if (!this.cells[previousIndex].isFixed()
+			if (!this.cells[computedPreviousIndex].isFixed()
 				|| loopSafe > (cells.length-1)) break;
 
-			previousIndex = this.getPreviousIndex(previousIndex);
+			computedPreviousIndex = this.getPreviousIndex(computedPreviousIndex);
 		}
-		this.actualIndex = previousIndex;
+
+		this.previousIndex = this.actualIndex;
+		this.actualIndex = computedPreviousIndex;
 		return this.actual();
 	};
 
@@ -211,6 +240,7 @@
 	};
 
 	CellsIterator.prototype.updateActualIndex = function(newIndex) {
+		this.previousIndex = this.actualIndex;
 		this.actualIndex = newIndex;
 	};
 
@@ -255,7 +285,7 @@
 		focusCell(cellsIterator.actual(), true);
 	}
 
-	function createTableViewer(taskInfo) {
+	function createTableViewer(taskInfo, minTableViewerWidth, minTableViewerHeight) {
 		initVariables();
 
 		img_url = taskInfo.link;
@@ -264,16 +294,16 @@
 		var tableMaxY = taskInfo.maxY;
 		origTableStageMaxX = tableMaxX + (2 * shiftOnCanvas);
 		origTableStageMaxY = tableMaxY + (2 * shiftOnCanvas);
-
-		if (typeof tableViewerStage != "undefined" ||
-				typeof cellViewerStage != "undefined") {
-			$(".kineticjs-content").remove();
-		}
-
+		
+		var tableViewerWidth = origTableStageMaxX < minTableViewerWidth?
+				 minTableViewerWidth: origTableStageMaxX;
+		var tableViewerHeight = origTableStageMaxY < minTableViewerHeight?
+				 minTableViewerHeight: origTableStageMaxY;
+		
 		tableViewerStage = new Kinetic.Stage({
 			container : 'canvas-table-container',
-			width : origTableStageMaxX,
-			height : origTableStageMaxY,
+			width : tableViewerWidth,
+			height : tableViewerHeight,
 			scale : 1
 		});
 
@@ -444,7 +474,7 @@
 
 	function addCellSegmentsToLayer(isFixedLayer, cell) {
 
-		if (isFixedLayer && !cell.fixed) return;
+		if (isFixedLayer && !cell.isFixed() || !isFixedLayer && cell.isFixed()) return;
 
 		var layer = isFixedLayer ? fixedLayer : unfixedLayer;
 		var cellSegs = cell.getSegments();
@@ -460,13 +490,16 @@
 				layer.add(seg);
 			}
 		}
+
+		var cellRect = cell.createRectangle();
+		layer.add(cellRect);
 	}
 
 	function isSegInArray(seg, arr) {
 		var segPoints = seg.getPoints();
 		for (var i = 0; i < arr.length; i++) {
 			var otherSeg = arr[i];
-			if (otherSeg.equalsSegmentPosition(segPoints)) {
+			if (otherSeg.getClassName() == "Line" && otherSeg.equalsSegmentPosition(segPoints)) {
 				return true;
 			}
 		}
@@ -522,6 +555,11 @@
 			return;
 		}
 
+		if ($("#edition-field").is(":focus") &&
+				(evt.keyCode == 35 || evt.keyCode == 36 || evt.keyCode == 38 || evt.keyCode == 40)) {
+			isEditing = true;
+		}
+
 		if (isEditing) return;
 
 		if (evt.keyCode == 37) {
@@ -556,22 +594,37 @@
 	function handleSaveCellEvent() {
 		var actualCell = cellsIterator.actual();
 		actualCell.setHumanTranscription($("#edition-field").val());
-		actualCell.setFixed(true);
-		addCellSegmentsToLayer(fixedLayer, actualCell);
-		redrawLinesLayer();
 
-		selectCell(cellsIterator.next());
+		var isFixed = actualCell.isFixed();
+		if (!isFixed) {
+			actualCell.setFixed(true);
+			addCellSegmentsToLayer(true, actualCell);
+			redrawLinesLayer();
+		}
+
+		var nextCell = cellsIterator.next();
+		if (nextCell.isFixed()) {
+			unhighlightPreviousCell();
+			$("#right-panel").hide();
+		} else {
+			selectCell(nextCell);
+		}
 	}
 
 	function selectCell(cell) {
 		highlightCell(cell);
 		focusCell(cell, true);
+		updateRightPanel(cell);
+	}
+
+	function updateRightPanel(cell) {
+		$("#right-panel").show();
 		updateTranscriptionField(cell);
 		updateCellViewerStage(cell);
 	}
 
 	function highlightCell(cell) {
-		unhighlightSelectedCell();
+		unhighlightPreviousCell();
 
 		var cellSegs = cell.getSegments();
 		for (var i = 0; i < cellSegs.length; i++) {
@@ -580,11 +633,29 @@
 			selectionSeg.setStroke(highlightColor);
 			selectionLayer.add(selectionSeg);
 		}
+		
+		cell.setRectangleOpacity(0);
+		if (cell.isFixed()) {
+			fixedLayer.draw();
+		} else {
+			unfixedLayer.draw();
+		}
 		selectionLayer.draw();
 	}
 
-	function unhighlightSelectedCell() {
+	function unhighlightPreviousCell() {
+
+		var previousCell = cellsIterator.getPreviousCell();
+		if (typeof previousCell == "undefined") return ;
+
+		previousCell.setRectangleOpacity(0.25);
+		if (previousCell.isFixed()) {
+			fixedLayer.draw();
+		} else {
+			unfixedLayer.draw();
+		}
 		selectionLayer.destroyChildren();
+		selectionLayer.draw();
 	}
 
 	function focusCell(cell, onTableViewer) {
