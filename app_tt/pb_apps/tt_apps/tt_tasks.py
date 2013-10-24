@@ -143,8 +143,7 @@ class TTTask2(pb_task):
 
     def __checkIfNextTaskWasCreated(self):
 	page_num = self.task.info['page']
-	tt3_app_short_name = self.app_short_name[:-1] + "3"
-        tt3_app = ttapps.Apptt_struct(short_name=tt3_app_short_name)
+        tt3_app = self.get_next_app()
 	tt3_tasks = tt3_app.get_tasks()
 
         for t in tt3_tasks:
@@ -469,8 +468,7 @@ class TTTask3(pb_task):
     
     def __checkIfNextTaskWasCreated(self):
 	img_url = self.task.info['img_url']
-	tt4_app_short_name = self.app_short_name[:-1] + "4"
-        tt4_app = ttapps.Apptt_transcribe(short_name=tt4_app_short_name)
+        tt4_app = self.get_next_app()
 	tt4_tasks = tt4_app.get_tasks()
 
         for t in tt4_tasks:
@@ -846,7 +844,7 @@ class TTTask3(pb_task):
     def get_next_app(self):
         curr_app_name = self.app_short_name
         next_app_name = curr_app_name[:-1] + "4"
-        return ttapps.Apptt_meta(short_name=next_app_name)
+        return ttapps.Apptt_transcribe(short_name=next_app_name)
 
     def __compare_answers(self, answer1, answer2):
         if len(answer1) != len(answer2):
@@ -914,10 +912,35 @@ class TTTask4(pb_task):
         pass
     
     def check_answer(self):
-        #TODO  
-        return
+        task_runs = self.get_task_runs()
+        n_taskruns = len(task_runs)  # task_runs goes from 0 to n-1
+        
+        if(n_taskruns > 1):
+            answer1 = task_runs[n_taskruns - 1].info
+            answer2 = task_runs[n_taskruns - 2].info
+            
+            answer1_json = json.loads(answer1)
+            answer2_json = json.loads(answer2)
+            if(self.__compare_answers(answer1_json, answer2_json)):
+                return True
+            else:
+                return False
+        else:
+            return False
+        
+        return False
+
+    def __compare_answers(self, answer1, answer2):
+        val1 = answer1['human_values']
+        val2 = answer2['human_values']
+
+        if len(val1) != len(val2):
+            return False
+        
+        for i in range(0, len(val1)):
+	    if val1[i] != val2[i]:
+		return False
+	return True
     
     def get_next_app(self):
-        curr_app_name = self.app_short_name
-        next_app_name = curr_app_name[:-1] + "4"
-        return ttapps.Apptt_struct(short_name=next_app_name)
+        return

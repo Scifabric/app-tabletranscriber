@@ -104,12 +104,12 @@ class Apptt_struct(app.Apptt):
                         + "/templates"
                         + "/long_description-struct.html")), short_name))
 
+            print "Create task type 3"
+
             try:
                 self.__create_dirs(
                     short_name[:-4],
                     flask_app.config['CV_MODULES'])
-            
-                print "Create task type 3"
             
             except OSError, e:
                 print str(e)
