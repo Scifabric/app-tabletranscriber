@@ -49,17 +49,33 @@
 		unfixedColor = "#E93F2D";
 		fixedColor = "#1BA038";
 		highlightColor = "#339ACD";
+
+		$("#task-bar-progress").tooltip({'placement' : 'top', 'trigger' : 'manual'});
 	}
 
 	// Cell class definition
-	function Cell(computerTranscription, humanTranscription, lastAnswer, confidence) {
+	function Cell(computerTranscription, humanTranscription, lastAnswer, confidence, numOfConfirmations, enableEdit) {
 		this.segments = new Array();
 		this.computerTranscription = computerTranscription;
 		this.humanTranscription = humanTranscription;
 		this.lastAnswer = lastAnswer;
 		this.confidence = confidence;
-		this.fixed = confidence >= 90 ? true : false;
+		this.fixed = confidence >= 90 || !enableEdit ? true : false;
+		this.enableEdit = enableEdit;
 		this.rect = undefined;
+		this.numberOfConfirmations = numOfConfirmations;
+	}
+
+	Cell.prototype.getNumberOfConfirmations = function() {
+		return this.numberOfConfirmations;
+	}
+
+	Cell.prototype.increaseNumberOfConfirmation = function() {
+		this.numberOfConfirmations++;
+	}
+
+	Cell.prototype.isEditEnabled = function() {
+		return this.enableEdit;
 	}
 
 	Cell.prototype.isFixed = function() {
@@ -420,6 +436,7 @@
 		var computerValues = isLastAnswer ? $.parseJSON(taskInfo.last_answer).computer_values : taskInfo.values;
 		var humanValues = isLastAnswer ? $.parseJSON(taskInfo.last_answer).human_values : undefined;
 		var confidences = isLastAnswer ? $.parseJSON(taskInfo.last_answer).confidences : taskInfo.confidences;
+		var numberOfConfirmations = isLastAnswer ? $.parseJSON(taskInfo.last_answer).num_of_confirmations : undefined;
 
 		for (var i = 0; i < taskInfoCells.length; i++) {
 			
@@ -437,11 +454,10 @@
 			cellLines.push([{'x': rightX, 'y': upperY}, {'x': rightX, 'y': bottomY}]);
 
 			var lastAnswer = isLastAnswer ? humanValues[i] : undefined;
+			var numConfirmations = isLastAnswer ? numberOfConfirmations[i] : 0;
+			var enableEdit = numConfirmations < 2;
 
-			/*var randomnumber = Math.floor(Math.random() * (100 - 80 + 1)) + 80;
-			var randomnumber = i == 0? 90: randomnumber;*/
-
-			var cell = createCell(cellLines, computerValues[i], lastAnswer, confidences[i]);
+			var cell = createCell(cellLines, computerValues[i], lastAnswer, confidences[i], numConfirmations, enableEdit);
 			cells.push(cell);
 		}
 
@@ -506,13 +522,15 @@
 		return false;
 	}
 
-	function createCell(cellLines, computerTranscription, humanTranscription, confidence) {
+	function createCell(cellLines, computerTranscription, humanTranscription, confidence, numOfConfirmations, enableEdit) {
 		var cell;
 
 		if (typeof humanTranscription != "undefined") {
-			cell = new Cell(computerTranscription, humanTranscription, humanTranscription, confidence);
+			cell = new Cell(computerTranscription, humanTranscription, humanTranscription,
+				 confidence, numOfConfirmations, enableEdit);
 		} else {
-			cell = new Cell(computerTranscription, computerTranscription, undefined, confidence);
+			cell = new Cell(computerTranscription, computerTranscription, undefined,
+				 confidence, numOfConfirmations, enableEdit);
 		}
 
 		for (var i = 0; i < cellLines.length; i++) {
@@ -597,6 +615,7 @@
 
 		var isFixed = actualCell.isFixed();
 		if (!isFixed) {
+			actualCell.increaseNumberOfConfirmation();
 			actualCell.setFixed(true);
 			addCellSegmentsToLayer(true, actualCell);
 			redrawLinesLayer();
@@ -609,7 +628,31 @@
 		} else {
 			selectCell(nextCell);
 		}
+
+		updateTaskbarProgress();
 	}
+
+	function updateTaskbarProgress() {
+		var totalCell = cells.length;
+		var nFixedCells = countFixedCells();
+		var pct = Math.round((nFixedCells * 100) / totalCell);
+
+		$("#task-bar-progress").css("width", pct.toString() + "%");
+		$("#task-bar-progress").attr("data-original-title", pct.toString() + "% completa!");
+		$("#task-bar-progress").on('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend',   
+		    function(e) {
+			$('#task-bar-progress').tooltip('show');
+		});
+	}
+
+	function countFixedCells() {
+		var count = 0;
+		for (var i = 0; i < cells.length; i++) {
+			if (cells[i].isFixed()) count++;
+		}
+		return count;
+	}
+
 
 	function selectCell(cell) {
 		highlightCell(cell);
@@ -698,8 +741,16 @@
 
 		$("#edition-field").val(cell.getHumanTranscription());
 		$("#edition-field").blur();
-		$("#edition-field").focus();
-		$("#edition-field").select();
+
+		if (cell.isEditEnabled()) {
+			$("#button-finished-transcription").show();
+			$("#edition-field").removeAttr("disabled");
+			$("#edition-field").focus();
+			$("#edition-field").select();
+		} else {
+			$("#button-finished-transcription").hide();
+			$("#edition-field").attr("disabled", "disabled");
+		}
 	}
 
 	function handleMouseClickEvent(evt) {
@@ -742,19 +793,22 @@
 		var computerValuesToSave = new Array();
 		var humanValuesToSave = new Array();
 		var confidencesToSave = new Array();
+		var numberOfconfirmationsToSave = new Array();
 
 		for (var i = 0; i < cells.length; i++) {
 			var cell = cells[i];
 			var borders = cell.getBorders();
 			cellsToSave.push([borders[0] - shiftOnCanvas, borders[1] - shiftOnCanvas,
 				borders[2] - shiftOnCanvas, borders[3] - shiftOnCanvas]);
+			var incConfirmation = cell.getNumberOfConfirmations() + 1;
 
 			computerValuesToSave.push(cell.getComputerTranscription());
 			humanValuesToSave.push(cell.getHumanTranscription());
 			confidencesToSave.push(cell.getConfidence());
+			numberOfconfirmationsToSave.push(cell.getNumberOfConfirmations());
 		}
 		return JSON.stringify({'cells': cellsToSave, 'computer_values': computerValuesToSave,
-			'human_values': humanValuesToSave, 'confidences': confidencesToSave});
+			'human_values': humanValuesToSave, 'confidences': confidencesToSave, 'num_of_confirmations': numberOfconfirmationsToSave});
 	}
 
 	function clearCanvas() {

@@ -42,14 +42,20 @@
 }
 
 #button-finished-task {
-	margin-left: 202px;
+	margin-left: 181px;
+	margin-right: 41px;
 	height: 35px;
+	float: left;
 }
 
 #button-finished-transcription {
 	display: block;
 	height: 35px;
 	margin-bottom: 10px;
+}
+
+#task-progress {
+	height: 30px;
 }
 
 #transcription-field {

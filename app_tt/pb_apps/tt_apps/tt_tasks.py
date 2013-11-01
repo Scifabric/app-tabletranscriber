@@ -656,11 +656,17 @@ class TTTask3(pb_task):
         maxY = 0
               
         for info in similarTaskRunsAnswers:
-            for l in info['linhas']:
-		if (not self.__isOverlapping(l, lines)):
-	                lines.append(l)
             for c in info['colunas']:
                 columns.append(c)
+
+            for l in info['linhas']:
+		overlapping_line = self.__getLineOverlapping(l, lines)
+
+		if (overlapping_line == -1):
+	            lines.append(l)
+		else:
+		    newY = overlapping_line[1]
+		    columns = self.__updateColumnsYAxis(l, columns, newY)
             
             if maxX < info['maxX']:
                 maxX = info['maxX']
@@ -679,15 +685,15 @@ class TTTask3(pb_task):
         
         return mapWithNewAnswer
 
-    def __isOverlapping(self, line, lines):
+    def __getLineOverlapping(self, line, lines):
 	MIN_GAP_BETWEEN_LINES = 5
         for i in range(0, len(lines)):
             other_line =  lines[i]
             
             if ((line[0] == other_line[0] or self.__insideOpenInterval(line[0], line[2], other_line[0]) or self.__insideOpenInterval(line[0], line[2], other_line[2])) and math.fabs((line[1] - other_line[1])) <= MIN_GAP_BETWEEN_LINES):
-                return True
+                return other_line
   	
-	return False
+	return -1
 
     def __insideOpenInterval(self, init, final, element):
 	return element > init and element < final
@@ -722,15 +728,15 @@ class TTTask3(pb_task):
         
         sortListOfGroupIds = []
         for id in mapGroupsOfColumns.keys():
-            sortListOfGroupIds.append(int(id)) 
+            sortListOfGroupIds.append(float(id)) 
         
         sortListOfGroupIds.sort()
         
         for group in sortListOfGroupIds:
-            if (column[0] - group <= MIN_GAP_BETWEEN_COLUMNS_IN_X_AXIS):
+            if (math.fabs(column[0] - group) <= MIN_GAP_BETWEEN_COLUMNS_IN_X_AXIS):
                 return str(group)
         
-        return str(column[0])
+        return str(float(column[0]))
         
     """
      Join the columns in the same group to make
@@ -764,6 +770,7 @@ class TTTask3(pb_task):
      columns.
     """
     def __transformGroupInList(self, groupOfColumns, lines):
+	MIN_GAP_BETWEEN_COLUMNS_IN_Y_AXIS = 5
         sortedGroupOfColumns = sorted(groupOfColumns, key=itemgetter(1))
         #print "sortedGroupOfColumns"
         #print sortedGroupOfColumns
@@ -777,12 +784,15 @@ class TTTask3(pb_task):
         for i in range(0, len(sortedGroupOfColumns)-1):   # find other columns to join
             ptr1 = sortedGroupOfColumns[i]
             ptr2 = sortedGroupOfColumns[i+1]
-            
-            if (ptr2[1] - ptr1[3] <= 0): # is a continuous column
+
+            if (ptr2[1] - ptr1[3] <= MIN_GAP_BETWEEN_COLUMNS_IN_Y_AXIS): # is a continuous column
                 tmpCols.append(ptr1)
                 if(i+1 == len(sortedGroupOfColumns)-1):
                     tmpCols.append(ptr2)
             else:
+		if (len(tmpCols) == 0):
+		    tmpCols.append(ptr1)
+
 		newX = tmpCols[0][0]
                 listOfColumns.append([newX, tmpCols[0][1],
                                       newX, tmpCols[-1][3]])
@@ -818,7 +828,16 @@ class TTTask3(pb_task):
 	        elif line[2] == column[0]:
 	            lines[i] = [line[0], line[1], newX, line[3]]
 	return lines
-              
+
+    def __updateColumnsYAxis(self, line, columns, newY):
+	for i in range(0, len(columns)):
+	    column = columns[i]
+	    if column[1] == line[1]:
+	        columns[i] = [column[0], newY, column[2], column[3]]
+	    elif column[3] == line[1]:
+	        columns[i] = [column[0], column[1], column[2], newY]
+	return columns
+
     def close_task(self):
         pass
 
@@ -915,20 +934,17 @@ class TTTask4(pb_task):
         task_runs = self.get_task_runs()
         n_taskruns = len(task_runs)  # task_runs goes from 0 to n-1
         
-        if(n_taskruns > 1):
-            answer1 = task_runs[n_taskruns - 1].info
-            answer2 = task_runs[n_taskruns - 2].info
-            
-            answer1_json = json.loads(answer1)
-            answer2_json = json.loads(answer2)
-            if(self.__compare_answers(answer1_json, answer2_json)):
-                return True
-            else:
-                return False
+        if (n_taskruns > 0):
+            last_answer = task_runs[n_taskruns - 1].info
+	    last_answer_json = json.loads(last_answer)
+            confirmations = last_answer_json['num_of_confirmations']
+
+	    for confirmation in confirmations:
+	        if (int(confirmation) < 2):
+	            return False
+            return True
         else:
             return False
-        
-        return False
 
     def __compare_answers(self, answer1, answer2):
         val1 = answer1['human_values']
