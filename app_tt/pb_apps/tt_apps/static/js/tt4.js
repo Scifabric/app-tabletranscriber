@@ -49,8 +49,6 @@
 		unfixedColor = "#E93F2D";
 		fixedColor = "#1BA038";
 		highlightColor = "#339ACD";
-
-		$("#task-bar-progress").tooltip({'placement' : 'top', 'trigger' : 'manual'});
 	}
 
 	// Cell class definition
@@ -60,7 +58,7 @@
 		this.humanTranscription = humanTranscription;
 		this.lastAnswer = lastAnswer;
 		this.confidence = confidence;
-		this.fixed = confidence >= 90 || !enableEdit ? true : false;
+		this.fixed = !enableEdit ? true : false;
 		this.enableEdit = enableEdit;
 		this.rect = undefined;
 		this.numberOfConfirmations = numOfConfirmations;
@@ -466,6 +464,7 @@
 		redrawLinesLayer();
 
 		selectCell(cellsIterator.next());
+	        updateTaskbarProgress(true);
 	}
 
 	function createUnfixedLayer() {
@@ -629,20 +628,26 @@
 			selectCell(nextCell);
 		}
 
-		updateTaskbarProgress();
+		updateTaskbarProgress(false);
 	}
 
-	function updateTaskbarProgress() {
+	function updateTaskbarProgress(isInit) {
 		var totalCell = cells.length;
 		var nFixedCells = countFixedCells();
 		var pct = Math.round((nFixedCells * 100) / totalCell);
 
+		if (isInit) {
+			$("#task-bar-progress").tooltip({'placement' : 'top', 'trigger' : 'manual'});
+			$("#task-bar-progress").on('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend',   
+			    function(e) {
+				var nFixedCells = countFixedCells();
+				if (nFixedCells > 0) $('#task-bar-progress').tooltip('show');
+			});
+		}
+
+        	$("#task-bar-progress").tooltip('hide');
 		$("#task-bar-progress").css("width", pct.toString() + "%");
 		$("#task-bar-progress").attr("data-original-title", pct.toString() + "% completa!");
-		$("#task-bar-progress").on('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend',   
-		    function(e) {
-			$('#task-bar-progress').tooltip('show');
-		});
 	}
 
 	function countFixedCells() {
