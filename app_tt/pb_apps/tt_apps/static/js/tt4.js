@@ -464,7 +464,7 @@
 		redrawLinesLayer();
 
 		selectCell(cellsIterator.next());
-	        updateTaskbarProgress(true);
+		updateTaskbarProgress();
 	}
 
 	function createUnfixedLayer() {
@@ -628,26 +628,22 @@
 			selectCell(nextCell);
 		}
 
-		updateTaskbarProgress(false);
+		updateTaskbarProgress();
 	}
 
-	function updateTaskbarProgress(isInit) {
+	function updateTaskbarProgress() {
 		var totalCell = cells.length;
 		var nFixedCells = countFixedCells();
 		var pct = Math.round((nFixedCells * 100) / totalCell);
 
-		if (isInit) {
-			$("#task-bar-progress").tooltip({'placement' : 'top', 'trigger' : 'manual'});
-			$("#task-bar-progress").on('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend',   
-			    function(e) {
-				var nFixedCells = countFixedCells();
-				if (nFixedCells > 0) $('#task-bar-progress').tooltip('show');
-			});
-		}
-
         	$("#task-bar-progress").tooltip('hide');
 		$("#task-bar-progress").css("width", pct.toString() + "%");
 		$("#task-bar-progress").attr("data-original-title", pct.toString() + "% completa!");
+	}
+
+	function handleTaskbarProgressChange() {
+		var nFixedCells = countFixedCells();
+		if (nFixedCells > 0) $('#task-bar-progress').tooltip('show');
 	}
 
 	function countFixedCells() {
@@ -734,7 +730,7 @@
 		$("#transcription-field").text(cell.getComputerTranscription());
 
 		var lastAnswer = cell.getLastAnswer();
-		if (typeof lastAnswer != "undefined") {
+		if (typeof lastAnswer != "undefined" && cell.getNumberOfConfirmations() >= 1) {
 			$("#human-transcription-field").text(lastAnswer);
 
 			$("#human-transcription-field").show();

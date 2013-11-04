@@ -231,6 +231,10 @@
 		$("#workflowtask").text($.i18n._('workflowtask'));
 		$("#progress-from").text($.i18n._('progress-from'));
 		$("#progress-to").text($.i18n._('progress-to'));
+
+		$("#task-bar-progress").tooltip({'placement' : 'top', 'trigger' : 'manual'});
+		$("#task-bar-progress").on('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend',   
+		   handleTaskbarProgressChange);
 	});
 
 	function loadUserProgress() {
