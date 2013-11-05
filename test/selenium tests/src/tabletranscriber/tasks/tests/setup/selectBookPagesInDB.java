@@ -36,7 +36,7 @@ public class selectBookPagesInDB {
             
             ArrayList<Integer> arrayOfFinalIDs = new ArrayList<Integer>();
             
-            for(int i = 10; i < 400; i++) {
+            for(int i = 10; i < 30; i++) {
             	arrayOfFinalIDs.add(firstID + i);
             	System.out.println("final IDs: " + (firstID + i - 1));
             }

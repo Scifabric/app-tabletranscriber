@@ -42,6 +42,6 @@
 	<classpathentry kind="lib" path="/home/guilhermeg/drivers to selenium/selenium-2.33.0/selenium-2.33.0/selenium-2.33.0/libs/xalan-2.7.1.jar"/>
 	<classpathentry kind="lib" path="/home/guilhermeg/drivers to selenium/selenium-2.33.0/selenium-2.33.0/selenium-2.33.0/libs/xercesImpl-2.10.0.jar"/>
 	<classpathentry kind="lib" path="/home/guilhermeg/drivers to selenium/selenium-2.33.0/selenium-2.33.0/selenium-2.33.0/libs/xml-apis-1.4.01.jar"/>
-	<classpathentry kind="lib" path="/home/guilhermeg/postgresql-9.2-1003.jdbc4.jar"/>
+	<classpathentry kind="lib" path="/home/guilhermeg/postgresql-9.3-1100.jdbc3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
