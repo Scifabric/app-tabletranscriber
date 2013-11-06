@@ -95,7 +95,7 @@ def create_apps(book_id):
                 sched="incremental",
                 thumbnail=app.config['URL_TEMPLATES']
                 + "/images"
-                + "long_description_struct.png"))
+                + "/long_description_struct.png"))
         
         tt_transcribe.add_app_infos(
             dict(
