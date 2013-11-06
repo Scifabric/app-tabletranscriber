@@ -1,6 +1,9 @@
 {% extends "/base.html" %}
 {% block content %}
 {% set active_page = "index" %}
+
+<div class="container-wrapper">
+<div class="container well">
     <h1>Mem&oacuteria Brasil</h1>
     <p>O projeto Mem&oacute;ria Brasil objetiva selecionar, digitalizar e transcrever para arquivos edit&aacute;veis, publica&ccedil;&otilde;es históricas relevantes para a história estat&iacute;stica do Brasil. Estas publica&ccedil;&otilde;es, no momento vindas da Biblioteca do Minist&eacute;rio da Fazenda, t&ecirc;m a memória estat&iacute;stica do Brasil nas &aacute;reas de demografia, economia, finan&ccedil;as, administra&ccedil;&atilde;o p&uacute;blica, transporte, educa&ccedil;&atilde;o, sa&uacute;de, entre outras.</p>
 
@@ -9,12 +12,18 @@
 
     <p>Em <a href="/mb/collaborate">colabore</a> você poder&aacute; escolher com qual publica&ccedil;&atilde;o deseja contribuir clicando sobre o nome do livro. Ap&oacute;s selecionar a publica&ccedil;&atilde;o alvo você ser&aacute; redirecionado para uma micro-tarefa que comp&otilde;e um conjunto de tarefas necess&aacute;rias para a transcri&ccedil;&atilde;o.</p>
 
-    <ul><p>Existem dois tipos de tarefas que s&atilde;o geradas de acordo com as respostas fornecidas pelos usu&aacute;rios, essas tarefas s&atilde;o:</p>
+    <ul><p>Existem quatro tipos de tarefas que s&atilde;o geradas de acordo com as respostas fornecidas pelos usu&aacute;rios, essas tarefas s&atilde;o:</p>
 
-        <li>Tarefa de triagem: Nessa tarefa você ser&aacute; apresentado a uma p&aacute;gina de um livro. E dever&aacute; responder sim caso haja uma tabela naquela p&aacute;gina, n&atilde;o caso n&atilde;o haja tabela, ou n&atilde;o sei em caso de d&uacute;vida.</li><br/>
+        <li><strong>Tarefa de sele&ccedil;&atilde;o</strong>: Nessa tarefa você ser&aacute; apresentado a uma p&aacute;gina de um livro. E dever&aacute; responder sim caso haja uma tabela naquela p&aacute;gina, n&atilde;o caso n&atilde;o haja tabela, ou n&atilde;o sei em caso de d&uacute;vida.</li><br/>
 
-        <li>Tarefa de marca&ccedil;&atilde;o: Nessa tarefa ser&aacute; apresentado uma p&aacute;gina de um livro. Você dever&aacute; ent&atilde;o delimitar a &aacute;rea das tabelas contidas nessa p&aacute;gina utilizando o mouse para desenhar uma moldura sobre a &aacute;rea de cada tabela. Ap&oacute;s o desenho de uma moldura, ser&aacute; apresentado um formul&aacute;rio que dever&aacute; ser preenchido com as informa&ccedil;&otilde;es solicitadas.</li></ul>
+        <li><strong>Tarefa de marca&ccedil;&atilde;o</strong>: Nessa tarefa ser&aacute; apresentado uma p&aacute;gina de um livro. Você dever&aacute; ent&atilde;o delimitar a &aacute;rea das tabelas contidas nessa p&aacute;gina utilizando o mouse para desenhar uma moldura sobre a &aacute;rea de cada tabela. Ap&oacute;s o desenho de uma moldura, ser&aacute; apresentado um formul&aacute;rio que dever&aacute; ser preenchido com as informa&ccedil;&otilde;es solicitadas.</li><br/>
 
-    <p>Durante a execu&ccedil;&atilde;o dessas tarefas, você poder&aacute; escolher se deseja fazer uma tarefa diferente da que est&aacute; realizando no momento clicando sobre um bot&atilde;o que aparecer&aacute;, sempre que existir uma tarefa diferente dispon&iacute;vel.</p>
+        <li><strong>Tarefa de desenho da estrutura</strong>: Nessa tarefa ser&aacute; apresentada uma tabela com as suas linhas e colunas que foram reconhecidas automaticamente por um computador. O volunt&aacute;rio dever&aacute; ajustar estes segmentos de modo a demarcar perfeitamente todas as c&eacute;lulas da tabela.</li><br/>
+
+        <li><strong>Tarefa de transcri&ccedil;&atilde;o</strong>: Nessa tarefa ser&aacute; apresentado o resultado do OCR (reconhecimento &oacute;tico de caracteres) para as c&eacute;lulas identificadas na etapa anterior, e ser&aacute; pedido ao volunt&aacute;rio para que ele verifique e corrija esse resultado.</li></ul><br/>
+
+    <p>Durante a execu&ccedil;&atilde;o dessas tarefas, voc&ecirc; poder&aacute; escolher se deseja fazer uma tarefa diferente da que est&aacute; realizando no momento clicando sobre um bot&atilde;o que aparecer&aacute;, sempre que existir uma tarefa diferente dispon&iacute;vel.</p>
+</div>
+</div>
 
 {% endblock %}

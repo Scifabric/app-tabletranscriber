@@ -627,18 +627,19 @@
 		} else {
 			selectCell(nextCell);
 		}
-
 		updateTaskbarProgress();
 	}
 
 	function updateTaskbarProgress() {
 		var totalCell = cells.length;
 		var nFixedCells = countFixedCells();
-		var pct = Math.round((nFixedCells * 100) / totalCell);
+		var newPct = Math.round((nFixedCells * 100) / totalCell).toString() + "%";
+		var currentPct = $("#task-bar-progress")[0].style.width;
 
-        	$("#task-bar-progress").tooltip('hide');
-		$("#task-bar-progress").css("width", pct.toString() + "%");
-		$("#task-bar-progress").attr("data-original-title", pct.toString() + "% completa!");
+        	if (newPct != currentPct) $("#task-bar-progress").tooltip('hide');
+
+		$("#task-bar-progress").css("width", newPct);
+		$("#task-bar-progress").attr("data-original-title", newPct.toString() + " completa!");
 	}
 
 	function handleTaskbarProgressChange() {
@@ -653,7 +654,6 @@
 		}
 		return count;
 	}
-
 
 	function selectCell(cell) {
 		highlightCell(cell);

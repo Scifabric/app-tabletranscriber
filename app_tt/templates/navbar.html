@@ -1,18 +1,14 @@
-   <div class="navbar navbar-inverse navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-
-          <div class="nav-collapse collapse">
-            <ul class="nav">
-                <li {% if active_page == "index"  %} class="active" {% endif %}> <a href="{{ url_for('home')  }}"><i class="icon-home icon-white"></i> Home</a></li>
-              <li {% if active_page == "collaborate"  %} class="active" {% endif %}><a href="{{ url_for('collaborate.index')}}"><i class="icon-globe icon-white"></i>Colabore</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
+	<div class="navbar navbar-fixed-top">
+	      <div class="navbar-inner" style="background:#FFF">
+		<div class="container" style="height: 83px;">
+		  <a class="brand" href="/pybossa/"><img src="{{ url_for('static', filename="images/logo_societic.png") }}" alt="PyBossa"></a>
+		  <div class="nav-collapse collapse">
+		    <ul id="nav-buttons" class="nav">
+		    	<li><a href="/pybossa/account/" target="_blank">Community</a></li>
+			<li><a href="/pybossa/app/category/featured/" target="_blank">Applications</a></li>
+			<li><a href="/pybossa/about" target="_blank">About</a></li>
+		    </ul>
+		  </div>
+		</div>
+	      </div>
+	</div>
