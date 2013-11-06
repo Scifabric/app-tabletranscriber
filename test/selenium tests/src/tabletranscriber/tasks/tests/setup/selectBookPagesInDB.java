@@ -28,6 +28,7 @@ public class selectBookPagesInDB {
             rs = st.executeQuery("SELECT * FROM task");
             
             rs.next();
+            rs.next();
             int firstID = Integer.parseInt(rs.getString(1));
             
             // de acordo com paginas do livro

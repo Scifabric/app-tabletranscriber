@@ -77,28 +77,32 @@ def create_apps(book_id):
         
         bookInfo = _archiveBookData(book_id)
 
-        tt_select.add_app_infos(dict(thumbnail=bookInfo["img"]))
+        tt_select.add_app_infos(
+            dict(
+                 thumbnail=app.config['URL_TEMPLATES']
+                 + "/images" 
+                 + "/long_description_selection.png"))
 
         tt_meta.add_app_infos(
             dict(
                 sched="incremental",
                 thumbnail=app.config['URL_TEMPLATES']
                 + "/images"
-                + "/long_description.png"))
+                + "/long_description_meta.png"))
 
         tt_struct.add_app_infos(
             dict(
                 sched="incremental",
                 thumbnail=app.config['URL_TEMPLATES']
-                + "/images/tutorial-meta-struct"
-                + "/model0_1.png"))
+                + "/images"
+                + "long_description_struct.png"))
         
         tt_transcribe.add_app_infos(
             dict(
                  sched="incremental",
                  thumbnail=app.config['URL_TEMPLATES']
                  + "/images"
-                 + "/long_description.png"))
+                 + "/long_description_transcribe.png"))
         
         tt_meta.add_app_infos(bookInfo)
         tt_select.add_app_infos(bookInfo)
