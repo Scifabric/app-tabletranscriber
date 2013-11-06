@@ -5,10 +5,11 @@
 
     <title>Table Transcriber</title>
 
-    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}" type="text/css" />
-    <link rel="stylesheet" href="{{url_for('static', filename='vendor/bootstrap/2.1.0/bootstrap.min.css')}}">
-    <!-- FontAwesome goodies -->
-    <link rel="stylesheet" href="{{url_for('static', filename='vendor/fontawesome/css/font-awesome.css')}}">
+    <!-- Le styles -->
+    <link href="/pybossa/static/vendor/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+    <link href="/pybossa/static/css/fonts/stylesheet.css" rel="stylesheet">
+    <link href="/pybossa/static/css/styles.css" rel="stylesheet">
 
     <!-- Le javascript -->
     <script type="text/javascript" src="{{url_for('static', filename='vendor/bootstrap/2.1.0/bootstrap.js')}}"></script>
@@ -19,17 +20,69 @@
         {% include "header.html" ignore missing %}    
     </header>
     <body>
+	<style type="text/css">
+	html {
+		background-color: #FFF;
+	}
+
+	.well {
+		border: 0px;
+	}
+
+	.container-wrapper {
+		min-height: 750px;
+	}
+
+	#nav-buttons {
+		margin-top: 20px;
+		margin-bottom: 0px;
+	}
+
+	.navbar .brand {
+	  padding: 20px 20px 0px 0px;
+	  margin: 0px;
+	  color: #000;
+	  text-shadow: none;
+	}
+
+	.navbar .nav > li > a {
+	  padding-top: 10px;
+	  padding-bottom: 10px;
+	  margin: 20px 3px 20px 0px;
+	  -webkit-border-radius: 20px;
+	  -moz-border-radius: 20px;
+	  border-radius: 20px;
+	  color: #000;
+	  text-shadow: none;
+	}
+
+	.navbar .nav > li > a:hover,
+	.navbar .nav > li > a:focus {
+	  background-color: #1487D4;
+	  color: #FFF;
+	}
+	.navbar .nav > .active > a,
+	.navbar .nav > .active > a:hover,
+	.navbar .nav > .active > a:focus {
+	  background-color: #add56c;
+	  -webkit-box-shadow: none;
+	  box-shadow: none;
+	  color: #FFF;
+	}
+
+	body > footer,
+	html {
+	  background-color: #000000;
+	}
+
+	</style>
+
         {% set active_page = active_page | default('index') -%}
         {% include "navbar.html" %}
-       <div class="container">
         {% block content %}{% endblock %}           
-       </div>
-
-       <hr>
    </body>
     <footer>
         {% include "footer.html" ignore missing %}
     </footer>
-
 </html>
 

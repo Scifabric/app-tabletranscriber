@@ -35,7 +35,7 @@
 
 
 {% macro show_book(book) -%}
-<div class="row">
+<div class="container">
     <div class="span12 well">
         <div class="row">
             <div class="span2">
@@ -66,23 +66,23 @@
 
 {% block content %}
 
-<div class="span12">
-        <h1>Livros</h1>
-    </div>
-<br/>
+<div class="container-wrapper">
+	<div class="container" style="padding-top: 19px">
+		<h1>Mem&oacuteria Brasil - Livros</h1>
+	</div>
+	<br/>
 
+	{% if books %}
+	{% for book in books %}
+	{{ show_book(book )}}
+	{% endfor %}
 
-{% if books %}
-{% for book in books %}
-{{ show_book(book )}}
-{% endfor %}
-
-<div class="row">
-    <div class="span9 offset2">
-        {{ render_pagination(pagination) }}
-    </div>
+	<div class="row">
+	    <div class="span9 offset2">
+		{{ render_pagination(pagination) }}
+	    </div>
+	</div>
 </div>
 {% endif %}
-
 
 {% endblock %}

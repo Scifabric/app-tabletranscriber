@@ -724,7 +724,7 @@ class TTTask3(pb_task):
         return mapWithLinesAndColumns
     
     def __identifyGroupIdInX(self, mapGroupsOfColumns, column):
-        MIN_GAP_BETWEEN_COLUMNS_IN_X_AXIS = 5
+        MIN_GAP_BETWEEN_COLUMNS_IN_X_AXIS = 10
         
         sortListOfGroupIds = []
         for id in mapGroupsOfColumns.keys():
