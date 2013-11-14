@@ -281,8 +281,12 @@
 			createTableViewer(data.task.info, minTableViewerWidth,
 					minTableViewerHeight);
 		} else {
-			$(".skeleton").hide();
-			$("#finish").fadeIn();
+                        $(".skeleton").hide();
+                        $("#finish").fadeIn(200);
+                        setTimeout(function() {
+                                $("#finish").fadeOut(200);
+                                enableNextTask();
+                        }, 2500);
 		}
 	}
 
@@ -301,12 +305,19 @@
 
 	$("#workflowtask").click(
 			function() {
-				var random_task_type = Math.round(Math.random() * 3) + 1;
 				window.open(endpoint
 						+ "/app/"
-						+ task_shortname.replace("_tt4", "_tt"
-								+ random_task_type) + "/newtask", "_self");
+						+ task_shortname.replace("_tt4", getARandomTask()) + "/newtask", "_self");
 			});
+
+	function getARandomTask() {
+		var nextTaskArr = ["_tt1", "_tt2", "_tt3"];
+		return nextTaskArr[getRandomInt(0,nextTaskArr.length-1)];
+	}
+
+	function getRandomInt(min, max) {
+	    return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
 
 	// Function to submit and save the TaskRun in PyBossa
 	function submitTask() {

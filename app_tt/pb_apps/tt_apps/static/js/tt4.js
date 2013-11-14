@@ -68,6 +68,10 @@
 		return this.numberOfConfirmations;
 	}
 
+	Cell.prototype.setNumberOfConfirmations = function(newVal) {
+		this.numberOfConfirmations = newVal;
+	}
+
 	Cell.prototype.increaseNumberOfConfirmation = function() {
 		this.numberOfConfirmations++;
 	}
@@ -528,7 +532,7 @@
 			cell = new Cell(computerTranscription, humanTranscription, humanTranscription,
 				 confidence, numOfConfirmations, enableEdit);
 		} else {
-			cell = new Cell(computerTranscription, computerTranscription, undefined,
+			cell = new Cell(computerTranscription, undefined, undefined,
 				 confidence, numOfConfirmations, enableEdit);
 		}
 
@@ -610,15 +614,22 @@
 
 	function handleSaveCellEvent() {
 		var actualCell = cellsIterator.actual();
-		actualCell.setHumanTranscription($("#edition-field").val());
+		var humanTranscription = $("#edition-field").val();
 
 		var isFixed = actualCell.isFixed();
 		if (!isFixed) {
-			actualCell.increaseNumberOfConfirmation();
+
+			var isAnConfirmation = actualCell.getHumanTranscription() == humanTranscription;
+			if (actualCell.getNumberOfConfirmations() == 0 || isAnConfirmation) {
+				actualCell.increaseNumberOfConfirmation();
+			} else {
+				actualCell.setNumberOfConfirmations(1);
+			}
 			actualCell.setFixed(true);
 			addCellSegmentsToLayer(true, actualCell);
 			redrawLinesLayer();
 		}
+		actualCell.setHumanTranscription(humanTranscription);
 
 		var nextCell = cellsIterator.next();
 		if (nextCell.isFixed()) {
@@ -740,7 +751,8 @@
 			$("#human-transcription-label").hide();
 		}
 
-		$("#edition-field").val(cell.getHumanTranscription());
+		$("#edition-field").val(cell.getNumberOfConfirmations() == 0 ?
+				 cell.getComputerTranscription() : cell.getHumanTranscription());
 		$("#edition-field").blur();
 
 		if (cell.isEditEnabled()) {
@@ -804,7 +816,7 @@
 			var incConfirmation = cell.getNumberOfConfirmations() + 1;
 
 			computerValuesToSave.push(cell.getComputerTranscription());
-			humanValuesToSave.push(cell.getHumanTranscription());
+			humanValuesToSave.push(typeof cell.getHumanTranscription() == "undefined" ? "" : cell.getHumanTranscription());
 			confidencesToSave.push(cell.getConfidence());
 			numberOfconfirmationsToSave.push(cell.getNumberOfConfirmations());
 		}

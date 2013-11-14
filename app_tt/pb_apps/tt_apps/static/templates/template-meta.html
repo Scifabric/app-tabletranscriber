@@ -393,7 +393,6 @@
 				}
 			}
 		});
-
 		$("#workflowtask").click(
 				function() {
 					window.open(endpoint + "/app/"
@@ -439,44 +438,28 @@
 			});
 			initSharer(task_id, pybossa.getCurrentUserId());
 		} else { // Return to tt1 or collaborate page
-			var task_id = $("#task-id").text();
-
 			$(".skeleton").hide();
 			$("#finish").fadeIn(
 					100,
 					function() {
-
-						if (task_id != "") {
-							$
-									.ajax({
-										url : '/mb/api/' + task_id
-												+ '/available_tasks',
-										success : function(data) {
-											if (data == "True") {
-												window.open(endpoint
-														+ "/app/"
-														+ task_shortname
-																.replace(
-																		"_tt2",
-																		"_tt1")
-														+ "/newtask", "_self");
-											} else {
-												window.open("/mb/collaborate",
-														"_self");
-											}
-										}
-									});
-						} else {
-							setTimeout(function() {
-								window.open(endpoint
-										+ "/app/"
-										+ task_shortname
-												.replace("_tt2", "_tt1")
-										+ "/newtask", "_self");
-							}, 1500);
-						}
+						setTimeout(function() {
+							window.open(endpoint
+									+ "/app/"
+									+ task_shortname
+											.replace("_tt2", getARandomTask())
+									+ "/newtask", "_self");
+						}, 1500);
 					});
 		}
+	}
+
+	function getARandomTask() {
+		var nextTaskArr = ["_tt1", "_tt3", "_tt4"];
+		return nextTaskArr[getRandomInt(0,nextTaskArr.length-1)];
+	}
+
+	function getRandomInt(min, max) {
+	    return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 
 	// Function to submit and save the TaskRun in PyBossa
