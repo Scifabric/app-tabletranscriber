@@ -3,7 +3,7 @@ app-tabletranscriber
 
 TableTranscriber (TT) is a PyBossa application that aims to take old books and use a series of crowd-sourcing tasks to transcribe data inside tables (which are poorly recognized by OCR processes).
 
-In this first version we are using as a case books from the [Brazilian Statistical Memories](http://memoria.nemesis.org.br/) maintained by [IPEA](http://www.ipea.gov.br/portal/)
+In this first version we are using as a case books from the [Brazilian Statistical Memories](http://memoria.nemesis.org.br/) maintained by [Biblioteca do Ministério da Fazenda do Rio de Janeiro](http://memoria.org.br/)
 
 About
 =====
