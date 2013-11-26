@@ -252,11 +252,27 @@
 			initSharer(task_id, pybossa.getCurrentUserId());
 		} else {
 			$(".skeleton").hide();
-			//$("#finish").fadeIn();
-			window.open(endpoint + "/app/"
-					+ task_shortname.replace("_tt1", "_tt2") + "/newtask",
-					"_self");
+			$("#finish").fadeIn(
+					100,
+					function() {
+						setTimeout(function() {
+							window.open(endpoint
+									+ "/app/"
+									+ task_shortname
+											.replace("_tt1", getARandomTask())
+									+ "/newtask", "_self");
+						}, 1500);
+					});
 		}
+	}
+
+	function getARandomTask() {
+		var nextTaskArr = ["_tt2", "_tt3", "_tt4"];
+		return nextTaskArr[getRandomInt(0,nextTaskArr.length-1)];
+	}
+
+	function getRandomInt(min, max) {
+	    return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 
 	// Function to submit and save the TaskRun in PyBossa

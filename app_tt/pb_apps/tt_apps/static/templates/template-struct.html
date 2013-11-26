@@ -325,13 +325,20 @@
 		$("#workflowtask").fadeIn(200);
 	}
 
+	function getARandomTask() {
+		var nextTaskArr = ["_tt1", "_tt2", "_tt4"];
+		return nextTaskArr[getRandomInt(0,nextTaskArr.length-1)];
+	}
+
+	function getRandomInt(min, max) {
+	    return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
+
 	$("#workflowtask").click(
 			function() {
-				var random_task_type = Math.round(Math.random()) + 1;
 				window.open(endpoint
 						+ "/app/"
-						+ task_shortname.replace("_tt3", "_tt"
-								+ random_task_type) + "/newtask", "_self");
+						+ task_shortname.replace("_tt3", getARandomTask()) + "/newtask", "_self");
 			});
 
 	var task_shortname = "#task_shortname#";
@@ -356,11 +363,17 @@
 			configureUI();
 		} else {
 			$(".skeleton").hide();
-			$("#finish").fadeIn(200);
-			setTimeout(function() {
-				$("#finish").fadeOut(200);
-				enableNextTask();
-			}, 3000);
+			$("#finish").fadeIn(
+					100,
+					function() {
+						setTimeout(function() {
+							window.open(endpoint
+									+ "/app/"
+									+ task_shortname
+											.replace("_tt3", getARandomTask())
+									+ "/newtask", "_self");
+						}, 1500);
+					});
 		}
 	}
 
