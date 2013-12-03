@@ -1,0 +1,6 @@
+{
+	"app_id" : <your_facebook_app_id>,
+	"shortname" : <shortname_in_pybossa>,
+	"endpoint" : <pybossa_endpoint>,
+	"facebook_permissions_type" : <facebook_permissions_needed>
+}

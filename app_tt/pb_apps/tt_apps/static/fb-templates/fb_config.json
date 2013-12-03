@@ -1,0 +1,6 @@
+{
+	"app_id" : "549612841794811",
+	"shortname" : "flickrperson",
+	"endpoint" : "/pybossa",
+	"facebook_permissions_type" : "email"
+}
