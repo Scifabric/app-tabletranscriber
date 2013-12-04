@@ -46,11 +46,6 @@
 	</header>
 
 	<div id="task-long-description" class="container">
-		<div id="long-description-info">
-			<a class="btn btn-primary pull-right" onclick="showTaskTemplate()"><i
-				class="icon-thumbs-up" style="color: white;"></i> Start Contributing
-				Now!</a>
-		</div>
 		<div id="long-description-content"></div>
 	</div>
 
@@ -141,7 +136,8 @@
 							'full_name' : response.name
 						};
 
-						pybossa.authenticateFacebookUser(authData, function(answer) {
+						pybossa.authenticateFacebookUser(authData, function(
+								answer) {
 							successfullyLogged = true;
 							FB.Event.subscribe('auth.authResponseChange',
 									handleAuthChange);
@@ -156,7 +152,7 @@
 					});
 		}
 	</script>
-	
+
 	<!-- PyBossa Application Template Load -->
 	<script type="text/javascript" charset="utf-8">
 		var app_shortname;
@@ -173,7 +169,8 @@
 		$("#task-template").load("template.html");
 		$("#long-description-content").load("long_description.html");
 
-		function FinishedTaskCallback() {}
+		function FinishedTaskCallback() {
+		}
 
 		FinishedTaskCallback.prototype.finished = function() {
 			// Load a new task
