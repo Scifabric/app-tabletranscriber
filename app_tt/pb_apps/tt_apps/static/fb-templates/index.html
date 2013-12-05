@@ -38,8 +38,15 @@
 				<a class="btn btn-navbar" data-toggle="collapse"
 					data-target=".nav-collapse"> <span class="icon-bar"></span> <span
 					class="icon-bar"></span> <span class="icon-bar"></span>
-				</a> <a class="brand" href="http://www.socientize.eu/"><img
+				</a> <a class="brand" href="http://www.socientize.eu/" target="_blank"><img
 					src="img/logo_societic.png" alt="Socientize"></a>
+				<div class="nav-collapse collapse">
+				    <ul id="nav-buttons" class="nav">
+					    <li><a href="/pybossa/account/" target="_blank">Community</a></li>
+						<li><a href="/pybossa/app/category/featured/" target="_blank">Applications</a></li>
+						<li><a href="/pybossa/about" target="_blank">About</a></li>
+				    </ul>
+			    </div>
 			</div>
 		</div>
 	</div>
@@ -77,6 +84,7 @@
 	<script type="text/javascript" charset="utf-8">
 		var fb_permissions;
 		var fb_app_id;
+		var server_name;
 
 		function initFacebookSDK(app_id, permissions) {
 			fb_app_id = app_id;
@@ -121,7 +129,6 @@
 		}
 
 		function processLogin(authResponse) {
-			console.log(authResponse);
 			$.ajax(
 					{
 						url : "https://graph.facebook.com/me?access_token="
@@ -141,13 +148,6 @@
 							successfullyLogged = true;
 							FB.Event.subscribe('auth.authResponseChange',
 									handleAuthChange);
-							checkUserProgress();
-
-							// Show PyBossa Task
-							pybossa.newTask(app_shortname).done(function(data) {
-								loadData(data, new FinishedTaskCallback());
-								$("#task-content").show();
-							});
 						});
 					});
 		}
@@ -162,28 +162,12 @@
 		$.getJSON("fb_config.json", function(json) {
 			app_shortname = json.shortname;
 			fb_app_id = json.app_id;
+			server_name = json.server_name;
 			pybossa.setEndpoint(json.endpoint);
 			initFacebookSDK(json.app_id, json.facebook_permissions_type);
 		});
 
-		$("#task-template").load("template.html");
 		$("#long-description-content").load("long_description.html");
-
-		function FinishedTaskCallback() {
-		}
-
-		FinishedTaskCallback.prototype.finished = function() {
-			// Load a new task
-			pybossa.newTask(app_shortname).done(function(data) {
-				loadData(data, new FinishedTaskCallback());
-			});
-		}
-
-		function checkUserProgress() {
-			pybossa.userProgress(app_shortname).done(function(data) {
-				numOfTaskRunDone = data.done;
-			});
-		}
 
 		function loadTutorial() {
 			$("#task-tutorial").load("tutorial.html");

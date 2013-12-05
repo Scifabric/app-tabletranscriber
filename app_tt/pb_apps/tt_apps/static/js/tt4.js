@@ -1,8 +1,10 @@
 	$('body').on('contextmenu', '#canvas-table-container', function(e) {
+		console.log("MENU!");
 		return false;
 	});
 
 	$('body').on('contextmenu', '#canvas-cell-container', function(e) {
+		console.log("MENU!");
 		return false;
 	});
 
@@ -647,7 +649,7 @@
 		var newPct = Math.round((nFixedCells * 100) / totalCell).toString() + "%";
 		var currentPct = $("#task-bar-progress")[0].style.width;
 
-        	if (newPct != currentPct) $("#task-bar-progress").tooltip('hide');
+        if (newPct != currentPct) $("#task-bar-progress").tooltip('hide');
 
 		$("#task-bar-progress").css("width", newPct);
 		$("#task-bar-progress").attr("data-original-title", newPct.toString() + " completa!");

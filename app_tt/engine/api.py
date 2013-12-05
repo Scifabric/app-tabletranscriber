@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask import Blueprint, request
 from tasks import check_task, create_apps, close_task
-from tasks import create_task, available_tasks, save_fact, get_fact_page
+from tasks import create_task, available_tasks, save_fact, get_fact_page, render_template
 import json
 
 blueprint = Blueprint('api', __name__)
@@ -77,4 +77,8 @@ def fact_page(fact_id):
     page = get_fact_page.delay(fact_id)
     return page.get()
 
+@blueprint.route('/render_template/<task_shortname>/<page>')
+def render_pages_template(task_shortname, page):
+    rendered_page = render_template.delay(task_shortname, page)
+    return rendered_page.get()
 

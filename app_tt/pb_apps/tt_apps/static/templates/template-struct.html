@@ -1,8 +1,6 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-"http://www.w3.org/TR/html4/strict.dtd">
-
+<div id="template-container">
 <div class="row">
-	<div id="alert-container" class="span6" style="height: 50px">
+	<div id="alert-container" class="span7" style="height: 50px">
 		<div id="success" class="alert alert-success" style="display: none;">
 			<p>
 				<span><strong>#</strong></span><span>#</span>
@@ -37,7 +35,7 @@
 		</p>
 		<div class="progress progress-striped"
 			style="width: 540px; margin-bottom: 10px;">
-			<div id="progress" rel="tooltip" title="#" class="bar"
+			<div id="progress" rel="tooltip" class="bar"
 				style="width: 0%;"></div>
 		</div>
 	</div>
@@ -238,6 +236,7 @@
 		<button class="btn" data-dismiss="modal" aria-hidden="true">Fechar</button>
 	</div>
 </div>
+</div>
 
 <!--<div class="row skeleton">
 <div id="disqus_thread" class="span8 offset2"></div>
@@ -278,7 +277,7 @@
 
 	$("[rel=tooltip]").tooltip();
 
-	$(window).load(function() {
+	$("#template-container").ready(function() {
 		$("#question").text($.i18n._('question'));
 		$("#question span:first").text($.i18n._('task_name'));
 		$("#button_finished span:first").text($.i18n._('button_finished'));
@@ -303,7 +302,8 @@
 			var lastTask = (data.done + 1) == data.total;
 			var pct = Math.round((data.done * 100) / data.total);
 			$("#progress").css("width", pct.toString() + "%");
-			$("#progress").attr("title", pct.toString() + "% completed!");
+			$("#progress").tooltip('destroy');
+			$("#progress").attr("data-original-title", pct.toString() + "% completed!");
 			$("#progress").tooltip({
 				'placement' : 'left'
 			});
@@ -325,8 +325,16 @@
 		$("#workflowtask").fadeIn(200);
 	}
 
+	function redirectToANewTask(taskSufix) {
+		window.open(endpoint
+				+ "/app/"
+				+ task_shortname
+						.replace("_tt3", "_" + taskSufix)
+				+ "/newtask", "_self");
+	}
+	
 	function getARandomTask() {
-		var nextTaskArr = ["_tt1", "_tt2", "_tt4"];
+		var nextTaskArr = ["tt1", "tt2", "tt4"];
 		return nextTaskArr[getRandomInt(0,nextTaskArr.length-1)];
 	}
 
@@ -336,9 +344,7 @@
 
 	$("#workflowtask").click(
 			function() {
-				window.open(endpoint
-						+ "/app/"
-						+ task_shortname.replace("_tt3", getARandomTask()) + "/newtask", "_self");
+				redirectToANewTask(getARandomTask());
 			});
 
 	var task_shortname = "#task_shortname#";
@@ -367,12 +373,8 @@
 					100,
 					function() {
 						setTimeout(function() {
-							window.open(endpoint
-									+ "/app/"
-									+ task_shortname
-											.replace("_tt3", getARandomTask())
-									+ "/newtask", "_self");
-						}, 1500);
+							redirectToANewTask(getARandomTask());
+						}, 2500);
 					});
 		}
 	}
@@ -430,10 +432,7 @@
 	}
 
 	pybossa.setEndpoint(endpoint);
-
-	$(window).load(function() {
-		pybossa.newTask(task_shortname).done(function(data) {
-			loadData(data);
-		});
+	pybossa.newTask(task_shortname).done(function(data) {
+		loadData(data);
 	});
 </script>

@@ -1,11 +1,10 @@
 <div id="mb"></div>
 <div id="books"></div>
-<div id="task1"></div>
 
 <script>
 	var bookId;
 	
-	$('#mb').load("http://localhost/mb", function() {
+	$('#mb').load("https://localhost/mb", function() {
 		$('#footer_links').hide();
 		
 		$('#mb .btn .btn-success').click(function(e) {
@@ -26,21 +25,18 @@
 	
 	function loadBooksPage() {
 		$('#mb').hide();
-		$('#books').load("http://localhost/mb/collaborate", function() {
+		$('#books').load("https://localhost/mb/collaborate", function() {
 			$('#books #footer_links').hide();
 			
-// 			$('#books #long-description-info .btn .btn-primary .pull-right').click(function(e) {
-// 				e.preventDefault();
-// 				loadTask1Page();
-// 			}); 
-			
-			var POSITION_BOOK_ID = 5;
-			
-			$(".container-wrapper a").click(function () {
+			$(".container-wrapper a").click(function (e) {
+				e.preventDefault();
+				
 		        var addressValue = $(this).attr("href");
+		        var POSITION_BOOK_ID = 5;
 		        bookId = addressValue.split("/")[POSITION_BOOK_ID];
-		        
-		        //loadTask1Page();
+		        $("#task-template").load("template.html", function() {
+		        	showTaskTemplate();
+		        });
 		    });
 		});
 	}

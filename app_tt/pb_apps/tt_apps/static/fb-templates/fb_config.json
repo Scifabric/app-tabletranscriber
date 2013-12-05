@@ -1,6 +1,7 @@
 {
-	"app_id" : "549612841794811",
-	"shortname" : "flickrperson",
+	"app_id" : "697196073638750",
+	"shortname" : "memoriadobrasil",
 	"endpoint" : "/pybossa",
-	"facebook_permissions_type" : "email"
+	"facebook_permissions_type" : "email",
+	"server_name": "localhost"
 }

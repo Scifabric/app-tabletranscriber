@@ -1,4 +1,5 @@
 	$('body').on('contextmenu', '#canvas-container', function(e) {
+		console.log("MENU!");
 		return false;
 	});
 
@@ -1186,11 +1187,10 @@
 		layersRedraw();
 	}
 
-	$('body').on('mousedown', function(e) {
-		handleMouseDownEvent(e);
-	});
+	$('body').on('mousedown', handleMouseDownEvent)
 
 	function handleMouseDownEvent(evt) {
+		console.log("DOWN!");
 		isMouseDown = true;
 
 		if (!isRightMouseClick(evt)) return;
@@ -1283,12 +1283,11 @@
 		return evt.target.tagName == "BUTTON" || evt.target.tagName == "IMG" || evt.target.tagName == "I";
 	}
 
-	$('body').on('mouseup', function(e) {
-		handleMouseUpEvent(e);
-	});
+	$('body').on('mouseup', handleMouseUpEvent);
 
 	function handleMouseUpEvent(evt) {
 
+		console.log("UP!");
 		isMouseDown = false;
 		desenhandoSegmento = false;
 

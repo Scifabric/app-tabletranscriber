@@ -317,18 +317,18 @@ def _createFactPage(fact_id, user_id, book_id, page_id, top_pos, left_pos, botto
     templateArch = urllib2.urlopen(urllib2.Request(server_url + "/templates/facts-template.html"))
 
     for line in templateArch.readlines():
-	line = line.replace("#server", server_url)
-	line = line.replace("#book_app_url", book_app_url)
+        line = line.replace("#server", server_url)
+        line = line.replace("#book_app_url", book_app_url)
         line = line.replace("#book_list_url", book_list_url)
         line = line.replace("#fact_url", fact_url)
         line = line.replace("#page_url", page_url)
-
-	line = line.replace("#user_name", user_name)
-	line = line.replace("#book_title", book_title)
-	line = line.replace("#top_pos", top_pos)
-	line = line.replace("#left_pos", left_pos)
-	line = line.replace("#bottom_pos", bottom_pos)
-	line = line.replace("#right_pos", right_pos)
+        
+        line = line.replace("#user_name", user_name)
+        line = line.replace("#book_title", book_title)
+        line = line.replace("#top_pos", top_pos)
+        line = line.replace("#left_pos", left_pos)
+        line = line.replace("#bottom_pos", bottom_pos)
+        line = line.replace("#right_pos", right_pos)
 	
         text += line
     return text
@@ -354,5 +354,15 @@ def _get_user_name(user_id):
             con.close()
         return result
 
-
+@task(name="app_tt.engine.tasks.render_template")
+def render_template(task_shortname, page):
+    server_url = app.config['URL_TEMPLATES']
+    templateArch = urllib2.urlopen(urllib2.Request(server_url + "/templates/" + page))
+    
+    text = ""
+    for line in templateArch.readlines():
+        line = line.replace("#server", server_url)
+        line = line.replace("#task_shortname#", task_shortname.encode('utf-8'))
+        text += line
+    return text
 
