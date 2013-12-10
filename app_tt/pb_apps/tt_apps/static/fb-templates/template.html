@@ -10,7 +10,7 @@
 	
 	function loadTaskTemplate(bookId, taskType) {
 		clearCurrentTemplate();
-		$("#" + taskType).load('https://' + server_name + '/mb/api/render_template/anuario1916pb_' + taskType + '/' + taskType2html[taskType], function() {
+		$("#" + taskType).load('https://' + server_name + '/mb/api/render_template/' + bookId + '_' + taskType + '/' + taskType2html[taskType], function() {
 			currentTaskType = taskType;
 			redirectToANewTask = function(taskSufix) {
 				loadTaskTemplate(bookId, taskSufix);

@@ -4,15 +4,10 @@
 <script>
 	var bookId;
 	
-	$('#mb').load("https://localhost/mb", function() {
+	$('#mb').load("https://" + server_name + "/mb", function() {
 		$('#footer_links').hide();
 		
 		$('#mb .btn .btn-success').click(function(e) {
-			e.preventDefault();
-			loadBooksPage();
-		});
-		
-		$('#mb #long-description-info .btn .btn-primary .pull-right').click(function(e) {
 			e.preventDefault();
 			loadBooksPage();
 		});
@@ -25,7 +20,9 @@
 	
 	function loadBooksPage() {
 		$('#mb').hide();
-		$('#books').load("https://localhost/mb/collaborate", function() {
+		initFacebookSDK();
+		
+		$('#books').load("https://" + server_name + "/mb/collaborate", function() {
 			$('#books #footer_links').hide();
 			
 			$(".container-wrapper a").click(function (e) {

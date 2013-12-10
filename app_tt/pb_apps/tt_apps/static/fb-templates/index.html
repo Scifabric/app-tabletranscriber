@@ -85,23 +85,23 @@
 		var fb_permissions;
 		var fb_app_id;
 		var server_name;
-
-		function initFacebookSDK(app_id, permissions) {
+		
+		function initFacebookVariables(app_id, permissions) {
 			fb_app_id = app_id;
 			fb_permissions = {
 				'scope' : permissions
-			};
+			};		
+		}
 
-			window.fbAsyncInit = function() {
-				FB.init({
-					appId : fb_app_id,
-					status : false, // check login status
-					cookie : true, // enable cookies to allow the server to access the session
-					xfbml : true
-				});
+		function initFacebookSDK() {
+			FB.init({
+				appId : fb_app_id,
+				status : false, // check login status
+				cookie : true, // enable cookies to allow the server to access the session
+				xfbml : true
+			});
 
-				FB.getLoginStatus(handleAuthChange);
-			};
+			FB.getLoginStatus(handleAuthChange);
 		}
 
 		// Load the SDK asynchronously
@@ -148,6 +148,7 @@
 							successfullyLogged = true;
 							FB.Event.subscribe('auth.authResponseChange',
 									handleAuthChange);
+							console.log(answer);
 						});
 					});
 		}
@@ -163,11 +164,11 @@
 			app_shortname = json.shortname;
 			fb_app_id = json.app_id;
 			server_name = json.server_name;
+			
 			pybossa.setEndpoint(json.endpoint);
-			initFacebookSDK(json.app_id, json.facebook_permissions_type);
+			initFacebookVariables(json.app_id, json.facebook_permissions_type);
+			$("#long-description-content").load("long_description.html");
 		});
-
-		$("#long-description-content").load("long_description.html");
 
 		function loadTutorial() {
 			$("#task-tutorial").load("tutorial.html");
