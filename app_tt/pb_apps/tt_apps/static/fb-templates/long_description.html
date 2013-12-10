@@ -30,7 +30,9 @@
 				
 		        var addressValue = $(this).attr("href");
 		        var POSITION_BOOK_ID = 5;
-		        bookId = addressValue.split("/")[POSITION_BOOK_ID];
+		        var tmp = addressValue.split("/")[POSITION_BOOK_ID];
+		        bookId = tmp.substring(0, tmp.indexOf("_"));
+		        
 		        $("#task-template").load("template.html", function() {
 		        	showTaskTemplate();
 		        });
