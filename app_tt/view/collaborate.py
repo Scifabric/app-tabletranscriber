@@ -42,6 +42,7 @@ def index(page):
         if(book_id not in book_stack and app["hidden"] == 0):
             try:
                 app["info"]["title"]
+                app["info"]["newtask"] = pybossa_server + '/app/' + book_id + '_tt1/newtask'
                 book_stack.append(book_id)
                 book_data.append(app)
             except KeyError:
