@@ -6,29 +6,34 @@
 	
 	$('#mb').load("https://" + server_name + "/mb", function() {
 		$('#footer_links').hide();
-		
-		$('#mb .btn .btn-success').click(function(e) {
-			e.preventDefault();
-			loadBooksPage();
-		});
-		
-		$(".container-wrapper a").click(function (e) {
-	        e.preventDefault();
-	        loadBooksPage();
-	    });
+		$('#mb .btn .btn-success').click(handleStartContributingClickEvent);
+		$(".container-wrapper a").click(handleStartContributingClickEvent);
 	});
 	
-	function loadBooksPage() {
+	function handleStartContributingClickEvent(e) {
+		e.preventDefault();
+		loadBooksPage("/mb/collaborate");
+	}
+	
+	function loadBooksPage(url) {
 		$('#mb').hide();
 		initFacebookSDK();
 		
-		$('#books').load("https://" + server_name + "/mb/collaborate", function() {
+		$('#books').load("https://" + server_name + url, function() {
 			$('#books #footer_links').hide();
 			
 			$(".container-wrapper a").click(function (e) {
 				e.preventDefault();
 				
 		        var addressValue = $(this).attr("href");
+		        
+		        if (addressValue == "#") return;
+		        
+		        if (addressValue.indexOf("collaborate") != -1) {
+		        	loadBooksPage(addressValue);
+		        	return;
+		        }
+		        
 		        var POSITION_BOOK_ID = 5;
 		        var tmp = addressValue.split("/")[POSITION_BOOK_ID];
 		        bookId = tmp.substring(0, tmp.indexOf("_"));

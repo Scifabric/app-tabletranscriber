@@ -210,5 +210,7 @@ if __name__ == "__main__":
                 app_short_name)
 
             app.info['task_presenter'] = new_template
-
+            #print(app.info['thumbnail'])
+            #app.info['thumbnail'] = app.info['thumbnail'].replace("alfa", "alfa2")
+            
             pbclient.update_app(app)

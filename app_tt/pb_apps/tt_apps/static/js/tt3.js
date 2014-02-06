@@ -925,9 +925,14 @@
 	function initGrid(taskInfo, minCanvasWidth, minCanvasHeight, serverName) {
 		initVariables(taskInfo, serverName);
 
+		// Checks if the last answer is a valid one
 		var isLastAnswer = typeof taskInfo.last_answer != "undefined";
-		var matrizDePontos = loadMatrizDePontos(taskInfo, isLastAnswer);
+        if (isLastAnswer) {
+            var lastAnswer = $.parseJSON(taskInfo.last_answer);
+            isLastAnswer = lastAnswer.linhas.length != 0 && lastAnswer.colunas.length != 0;
+        }
 
+		var matrizDePontos = loadMatrizDePontos(taskInfo, isLastAnswer);
 		createStage(matrizDePontos, minCanvasWidth, minCanvasHeight, isLastAnswer);
 	}
 
