@@ -1,26 +1,29 @@
-<div id="mb"></div>
-<div id="books"></div>
+<div id="mb" style="display: none"></div>
+<div id="books" style="display: none"></div>
 
 <script>
 	var bookId;
 	
 	$('#mb').load("https://" + server_name + "/mb", function() {
 		$('#footer_links').hide();
+		$('#mb').show();
 		$('#mb .btn .btn-success').click(handleStartContributingClickEvent);
 		$(".container-wrapper a").click(handleStartContributingClickEvent);
 	});
 	
 	function handleStartContributingClickEvent(e) {
 		e.preventDefault();
+		initFacebookSDK();
 		loadBooksPage("/mb/collaborate");
 	}
 	
 	function loadBooksPage(url) {
 		$('#mb').hide();
-		initFacebookSDK();
+		$('#books').hide();
 		
 		$('#books').load("https://" + server_name + url, function() {
 			$('#books #footer_links').hide();
+			$('#books').show();
 			
 			$(".container-wrapper a").click(function (e) {
 				e.preventDefault();

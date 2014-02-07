@@ -27,6 +27,10 @@
 #task-long-description {
 	min-height: 700px;
 }
+
+footer .span2 {
+	width: 117px;
+}
 </style>
 
 </head>
@@ -41,12 +45,12 @@
 				</a> <a class="brand" href="http://www.socientize.eu/" target="_blank"><img
 					src="img/logo_societic.png" alt="Socientize"></a>
 				<div class="nav-collapse collapse">
-				    <ul id="nav-buttons" class="nav">
-					    <li><a href="/pybossa/account/" target="_blank">Community</a></li>
+					<ul id="nav-buttons" class="nav">
+						<li><a href="/pybossa/account/" target="_blank">Community</a></li>
 						<li><a href="/pybossa/app/category/featured/" target="_blank">Applications</a></li>
 						<li><a href="/pybossa/about" target="_blank">About</a></li>
-				    </ul>
-			    </div>
+					</ul>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -62,18 +66,33 @@
 	<footer>
 	<div class="container">
 		<div class="row">
-			<div class="span3">
-				<a href="http://ec.europa.eu/"><img src="img/commlogo.jpg"></a>
+			<div class="span2">
+				<a href="http://www.lsd.ufcg.edu.br/" target="_blank"><img
+					src="img/lsdlogo.png" style="height: 57px"></a>
 			</div>
-			<div class="span3">
-				<a href="http://cordis.europa.eu/fp7/home_en.html"><img
+			<div class="span2">
+				<a href="http://www.channah.com.br/meb/" target="_blank"><img
+					src="img/meb_icon.png" style="height: 57px"></a>
+			</div>
+			<div class="span2">
+				<a href="http://www.ipea.gov.br/portal/" target="_blank"><img
+					src="img/logoipea.png" style="height: 57px"></a>
+			</div>
+			<div class="span2">
+				<a href="http://ec.europa.eu/" target="_blank"><img
+					src="img/commlogo.jpg"></a>
+			</div>
+			<div class="span2">
+				<a href="http://cordis.europa.eu/fp7/home_en.html" target="_blank"><img
 					src="img/fp7logo.jpg"></a>
 			</div>
-			<div class="span3">
-				<a href="http://europa.eu/"><img src="img/eulogo.jpg"></a>
+			<div class="span2">
+				<a href="http://europa.eu/" target="_blank"><img
+					src="img/eulogo.jpg"></a>
 			</div>
-			<div class="span3">
-				<a href="http://pybossa.com/"><img src="img/pybossa.png"></a>
+			<div class="span2">
+				<a href="http://pybossa.com/" target="_blank"><img
+					src="img/pybossa.png"></a>
 			</div>
 		</div>
 	</div>
@@ -85,12 +104,12 @@
 		var fb_permissions;
 		var fb_app_id;
 		var server_name;
-		
+
 		function initFacebookVariables(app_id, permissions) {
 			fb_app_id = app_id;
 			fb_permissions = {
 				'scope' : permissions
-			};		
+			};
 		}
 
 		function initFacebookSDK() {
@@ -164,7 +183,7 @@
 			app_shortname = json.shortname;
 			fb_app_id = json.app_id;
 			server_name = json.server_name;
-			
+
 			pybossa.setEndpoint(json.endpoint);
 			initFacebookVariables(json.app_id, json.facebook_permissions_type);
 			$("#long-description-content").load("long_description.html");
