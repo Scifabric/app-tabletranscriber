@@ -1,6 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+<meta charset="utf-8">
+
+<title>Memória Estatística do Brasil</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta property="og:title" content="Memória Estatística do Brasil" />
+<meta property="og:type" content="website" />
 
 <!-- Le styles -->
 <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
@@ -50,6 +58,24 @@ footer .span2 {
 						<li><a href="/pybossa/app/category/featured/" target="_blank">Applications</a></li>
 						<li><a href="/pybossa/about" target="_blank">About</a></li>
 					</ul>
+				</div>
+				<div style="float: left; margin-top: 25px; margin-left: 5px;">
+					<a
+						href="javascript:openShareWindow('http://twitter.com/share?text=Contribute%20with%20our%20project!&url=https://apps.facebook.com/memoriadobrasil/');"
+						data-toggle="tooltip" title="Share the project on Twitter"> <img
+						src="img/twitter.png"
+						onmouseover="javascript:ChangeImage(this,'img/twitterHover.png');"
+						onmouseout="javascript:ChangeImage(this,'img/twitter.png');" style="margin-right: 10px;"/></a> <a
+						href="javascript:shareOnFacebook('https://apps.facebook.com/memoriadobrasil/')"
+						data-toggle="tooltip" title="Share the project on Facebook"> <img
+						src="img/face.png"
+						onmouseover="javascript:ChangeImage(this,'img/faceHover.png');"
+						onmouseout="javascript:ChangeImage(this,'img/face.png');" style="margin-right: 10px;"/></a> <a
+						href="javascript:openShareWindow('https://plus.google.com/share?url=https://apps.facebook.com/memoriadobrasil/');"
+						data-toggle="tooltip" title="Share the project on Google+"> <img
+						src="img/google.png"
+						onmouseover="javascript:ChangeImage(this,'img/googleHover.png');"
+						onmouseout="javascript:ChangeImage(this,'img/google.png');" style="margin-right: 10px;"/></a>
 				</div>
 			</div>
 		</div>
@@ -199,6 +225,26 @@ footer .span2 {
 			}
 			$("#task-template").show();
 			$("#task-long-description").hide();
+		}
+
+		/* MISC Functions */
+		function ChangeImage(img, url) {
+			img.src = url;
+		}
+
+		function openShareWindow(url) {
+			window
+					.open(
+							url,
+							"_blank",
+							"toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, copyhistory=yes, width=500, height=300");
+		}
+
+		function shareOnFacebook(url) {
+			FB.ui({
+				method : 'feed',
+				link : url
+			});
 		}
 	</script>
 </body>

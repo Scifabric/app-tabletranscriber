@@ -39,22 +39,27 @@
 	src="/pybossa/static/vendor/bootstrap/2.2.1/js/bootstrap.js"></script>
 <!-- Google Analytics or similar solutions -->
 <script type="text/javascript">
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', 'UA-36076688-3']);
-        _gaq.push(['_trackPageview']);
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-36076688-3' ]);
+	_gaq.push([ '_trackPageview' ]);
 
-        (function() {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-        })();
-    </script>
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
 
 </head>
 
 <body>
 
-<style type="text/css">
+	<style type="text/css">
 #ttImage {
 	width: 550px;
 	height: 700px;
@@ -141,20 +146,25 @@ html {
 body>footer,html {
 	background-color: #000000;
 }
+
+footer .span2 {
+	width: 117px;
+}
 </style>
 
 	<script type="text/javascript" src="#server/js/share.js"></script>
 	<script type="text/javascript" src="#server/js/kinetic.js"></script>
 
 	<script type="text/javascript" charset="utf-8">
-	function showFactArea() {
-		var shareAreaInitX = $("#ttImage").attr("data-share-area-init-x");
-		var shareAreaInitY = $("#ttImage").attr("data-share-area-init-y");
-		var shareAreaFinalX = $("#ttImage").attr("data-share-area-final-x");
-		var shareAreaFinalY = $("#ttImage").attr("data-share-area-final-y");
-		createStageAndSetFocusArea(shareAreaInitX, shareAreaInitY, shareAreaFinalX, shareAreaFinalY);
-	}
-</script>
+		function showFactArea() {
+			var shareAreaInitX = $("#ttImage").attr("data-share-area-init-x");
+			var shareAreaInitY = $("#ttImage").attr("data-share-area-init-y");
+			var shareAreaFinalX = $("#ttImage").attr("data-share-area-final-x");
+			var shareAreaFinalY = $("#ttImage").attr("data-share-area-final-y");
+			createStageAndSetFocusArea(parseInt(shareAreaInitX), parseInt(shareAreaInitY),
+					parseInt(shareAreaFinalX), parseInt(shareAreaFinalY));
+		}
+	</script>
 
 	<div class="navbar navbar-fixed-top">
 		<div class="navbar-inner" style="background: #FFF">
@@ -214,7 +224,7 @@ body>footer,html {
 		<!-- Botão para contribuir com o Memória Estatística Brasil-->
 		<div id="button-container">
 			<a class="btn btn-success" style="padding: 4px 12px;"
-				href="#book_app_url"><i class="icon icon-white icon-ok"
+				href="https://apps.facebook.com/memoriadobrasil/"><i class="icon icon-white icon-ok"
 				style="margin-right: 8px;"></i>Colabore você também para o Memória
 				Estatística do Brasil!</a>
 		</div>
@@ -225,27 +235,31 @@ body>footer,html {
 		<div class="container">
 			<div class="row">
 				<div class="span2">
-					<a href="http://www.lsd.ufcg.edu.br/"><img
+					<a href="http://www.lsd.ufcg.edu.br/" target="_blank"><img
 						src="#server/images/lsdlogo.png" style="height: 57px"></a>
 				</div>
 				<div class="span2">
-					<a href="http://www.ipea.gov.br/portal/"><img
+					<a href="http://www.channah.com.br/meb/" target="_blank"><img
+						src="#server/images/meb_icon.png" style="height: 57px"></a>
+				</div>
+				<div class="span2">
+					<a href="http://www.ipea.gov.br/portal/" target="_blank"><img
 						src="#server/images/logoipea.png" style="height: 57px"></a>
 				</div>
 				<div class="span2">
-					<a href="http://ec.europa.eu/"><img
+					<a href="http://ec.europa.eu/" target="_blank"><img
 						src="#server/images/commlogo.jpg"></a>
 				</div>
 				<div class="span2">
-					<a href="http://cordis.europa.eu/fp7/home_en.html"><img
+					<a href="http://cordis.europa.eu/fp7/home_en.html" target="_blank"><img
 						src="#server/images/fp7logo.jpg"></a>
 				</div>
 				<div class="span2">
-					<a href="http://europa.eu/"><img
+					<a href="http://europa.eu/" target="_blank"><img
 						src="#server/images/eulogo.jpg"></a>
 				</div>
 				<div class="span2">
-					<a href="http://pybossa.com/"><img
+					<a href="http://pybossa.com/" target="_blank"><img
 						src="#server/images/pybossa.png"></a>
 				</div>
 			</div>

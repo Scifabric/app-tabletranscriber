@@ -10,7 +10,7 @@
 	var shareStage;
 	var shareArea;
 	var selectionLayer;
-	var APP_ID = "351081068361498"
+	var APP_ID = "697196073638750"
 	var taskId;
 	var currentUserId;
 	var SHARE_HELP_ENABLED_MESSAGE = "Clique e arraste o mouse sobre uma área da tabela para compartilhar";
@@ -19,7 +19,10 @@
 	function initSharer(tId, userId) {
 		taskId = tId;
 		currentUserId = userId;
-		FB.init({appId: APP_ID, status: true, cookie: true});
+		
+		if (typeof FB == "undefined") {
+			FB.init({appId: APP_ID, status: true, cookie: true});	
+		}
 	}
 
 	function share() {
@@ -136,19 +139,6 @@
 			var shareAreaInitY = pos.y;
 			var shareAreaFinalX = pos.x + shareArea.getWidth();
 			var shareAreaFinalY = pos.y + shareArea.getHeight();
-
-			if (shareAreaInitX > shareAreaFinalX) {
-				var tmp = shareAreaInitX;
-				shareAreaInitX = shareAreaFinalX;
-				shareAreaFinalX = tmp;
-			} 
-
-			if (shareAreaInitY > shareAreaFinalY) {
-				var tmp = shareAreaInitY;
-				shareAreaInitY = shareAreaFinalY;
-				shareAreaFinalY = tmp;
-			}
-
 			createFocusArea(shareAreaInitX, shareAreaInitY, shareAreaFinalX, shareAreaFinalY);
 
 			$("#share-menu").css("top", shareAreaFinalY - 20);
@@ -159,6 +149,19 @@
 	}
 
 	function createFocusArea(shareAreaInitX, shareAreaInitY, shareAreaFinalX, shareAreaFinalY) {
+		
+		if (shareAreaInitX > shareAreaFinalX) {
+			var tmp = shareAreaInitX;
+			shareAreaInitX = shareAreaFinalX;
+			shareAreaFinalX = tmp;
+		} 
+
+		if (shareAreaInitY > shareAreaFinalY) {
+			var tmp = shareAreaInitY;
+			shareAreaInitY = shareAreaFinalY;
+			shareAreaFinalY = tmp;
+		}
+		
 		var shareStageWidth = shareStage.getWidth();
 		var shareStageHeight = shareStage.getHeight();
 		var shareAreaWidth = Math.abs(shareAreaFinalX - shareAreaInitX);

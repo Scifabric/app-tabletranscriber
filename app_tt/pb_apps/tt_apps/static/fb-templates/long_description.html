@@ -5,7 +5,9 @@
 	var bookId;
 	
 	$('#mb').load("https://" + server_name + "/mb", function() {
+		$("#mb .navbar").hide();
 		$('#footer_links').hide();
+		
 		$('#mb').show();
 		$('#mb .btn .btn-success').click(handleStartContributingClickEvent);
 		$(".container-wrapper a").click(handleStartContributingClickEvent);
@@ -23,6 +25,7 @@
 		
 		$('#books').load("https://" + server_name + url, function() {
 			$('#books #footer_links').hide();
+			$("#books .navbar").hide();
 			$('#books').show();
 			
 			$(".container-wrapper a").click(function (e) {
