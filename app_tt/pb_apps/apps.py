@@ -23,6 +23,7 @@ class Apptt(object):
         self.description = description
         self.name = name
         self.app_id = self._create_app()
+        self.set_name(name);
 
     def _create_app(self):
 
@@ -58,6 +59,11 @@ class Apptt(object):
             return output['id']
         else:
             raise ValueError("Error creating the application")
+
+    def set_name(self, name):
+        app = pbclient.get_app(self.app_id)
+        app.name = name
+        pbclient.update_app(app)
 
     def set_template(self, template_text):
         app = pbclient.get_app(self.app_id)

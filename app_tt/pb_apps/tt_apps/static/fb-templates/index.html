@@ -36,8 +36,19 @@
 	min-height: 700px;
 }
 
+#loading-container {
+	min-height: 700px;
+}
+
 footer .span2 {
 	width: 117px;
+}
+
+#loading-container img {
+	position: absolute;
+	width: 80px;
+	top: 37%;
+	left: 47%;
 }
 </style>
 
@@ -54,8 +65,8 @@ footer .span2 {
 					src="img/logo_societic.png" alt="Socientize"></a>
 				<div class="nav-collapse collapse">
 					<ul id="nav-buttons" class="nav">
+						<li><a id="books_link" href="">Books</a></li>
 						<li><a href="/pybossa/account/" target="_blank">Community</a></li>
-						<li><a href="/pybossa/app/category/featured/" target="_blank">Applications</a></li>
 						<li><a href="/pybossa/about" target="_blank">About</a></li>
 					</ul>
 				</div>
@@ -65,29 +76,35 @@ footer .span2 {
 						data-toggle="tooltip" title="Share the project on Twitter"> <img
 						src="img/twitter.png"
 						onmouseover="javascript:ChangeImage(this,'img/twitterHover.png');"
-						onmouseout="javascript:ChangeImage(this,'img/twitter.png');" style="margin-right: 10px;"/></a> <a
-						href="javascript:shareOnFacebook('https://apps.facebook.com/memoriadobrasil/')"
+						onmouseout="javascript:ChangeImage(this,'img/twitter.png');"
+						style="margin-right: 10px;" /></a> <a
+						href="javascript:shareProjectOnFacebook('https://apps.facebook.com/memoriadobrasil/')"
 						data-toggle="tooltip" title="Share the project on Facebook"> <img
 						src="img/face.png"
 						onmouseover="javascript:ChangeImage(this,'img/faceHover.png');"
-						onmouseout="javascript:ChangeImage(this,'img/face.png');" style="margin-right: 10px;"/></a> <a
+						onmouseout="javascript:ChangeImage(this,'img/face.png');"
+						style="margin-right: 10px;" /></a> <a
 						href="javascript:openShareWindow('https://plus.google.com/share?url=https://apps.facebook.com/memoriadobrasil/');"
 						data-toggle="tooltip" title="Share the project on Google+"> <img
 						src="img/google.png"
 						onmouseover="javascript:ChangeImage(this,'img/googleHover.png');"
-						onmouseout="javascript:ChangeImage(this,'img/google.png');" style="margin-right: 10px;"/></a>
+						onmouseout="javascript:ChangeImage(this,'img/google.png');"
+						style="margin-right: 10px;" /></a>
 				</div>
 			</div>
 		</div>
 	</div>
 	</header>
 
+	<div id="loading-container" class="container" style="display: none;">
+		<img src="img/loading.gif">
+	</div>
+
 	<div id="task-long-description" class="container">
 		<div id="long-description-content"></div>
 	</div>
 
 	<div id="task-template" class="container" style="display: none;"></div>
-	<div id="task-tutorial" class="container"></div>
 
 	<footer>
 	<div class="container">
@@ -131,38 +148,42 @@ footer .span2 {
 		var fb_app_id;
 		var server_name;
 
-		function initFacebookVariables(app_id, permissions) {
+		function initFacebookSDK(app_id, permissions) {
 			fb_app_id = app_id;
 			fb_permissions = {
 				'scope' : permissions
 			};
+			
+			window.fbAsyncInit = function() {
+				FB.init({
+					appId : fb_app_id,
+					status : false, // check login status
+					cookie : true, // enable cookies to allow the server to access the session
+					xfbml : true
+				});
+			};
+
+			// Load the SDK asynchronously
+			(function(d) {
+				var js, id = 'facebook-jssdk', ref = d
+						.getElementsByTagName('script')[0];
+				if (d.getElementById(id)) {
+					return;
+				}
+				js = d.createElement('script');
+				js.id = id;
+				js.async = true;
+				js.src = "//connect.facebook.net/en_US/all.js";
+				ref.parentNode.insertBefore(js, ref);
+			}(document));
 		}
-
-		function initFacebookSDK() {
-			FB.init({
-				appId : fb_app_id,
-				status : false, // check login status
-				cookie : true, // enable cookies to allow the server to access the session
-				xfbml : true
-			});
-
-			FB.getLoginStatus(handleAuthChange);
-		}
-
-		// Load the SDK asynchronously
-		(function(d) {
-			var js, id = 'facebook-jssdk', ref = d
-					.getElementsByTagName('script')[0];
-			if (d.getElementById(id)) {
-				return;
+		
+		function initFacebookLogin() {
+			if (!successfullyLogged) {
+				FB.getLoginStatus(handleAuthChange);	
 			}
-			js = d.createElement('script');
-			js.id = id;
-			js.async = true;
-			js.src = "//connect.facebook.net/en_US/all.js";
-			ref.parentNode.insertBefore(js, ref);
-		}(document));
-
+		}
+		
 		function handleAuthChange(response) {
 			if (response.status === 'connected' && !successfullyLogged) {
 				processLogin(response.authResponse);
@@ -204,25 +225,22 @@ footer .span2 {
 		var app_shortname;
 		var successfullyLogged = false;
 		var numOfTaskRunDone = 0;
-
+		
 		$.getJSON("fb_config.json", function(json) {
 			app_shortname = json.shortname;
 			fb_app_id = json.app_id;
 			server_name = json.server_name;
 
 			pybossa.setEndpoint(json.endpoint);
-			initFacebookVariables(json.app_id, json.facebook_permissions_type);
-			$("#long-description-content").load("long_description.html");
+			initFacebookSDK(json.app_id, json.facebook_permissions_type);
+			
+			$("#loading-container").show();
+			$("#long-description-content").load("long_description.html", function(){
+				$('#books_link').click(handleStartContributingClickEvent);
+			});
 		});
-
-		function loadTutorial() {
-			$("#task-tutorial").load("tutorial.html");
-		}
-
+		
 		function showTaskTemplate() {
-			if (numOfTaskRunDone == 0) {
-				loadTutorial();
-			}
 			$("#task-template").show();
 			$("#task-long-description").hide();
 		}
@@ -240,7 +258,7 @@ footer .span2 {
 							"toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, copyhistory=yes, width=500, height=300");
 		}
 
-		function shareOnFacebook(url) {
+		function shareProjectOnFacebook(url) {
 			FB.ui({
 				method : 'feed',
 				link : url

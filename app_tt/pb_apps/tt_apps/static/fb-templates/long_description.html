@@ -4,50 +4,69 @@
 <script>
 	var bookId;
 	
-	$('#mb').load("https://" + server_name + "/mb", function() {
+	function loadAHTML(targetEl, htmlUrl, callback) {
+		$("#loading-container").show();
+		
+		//setTimeout(function() {
+			$(targetEl).load(htmlUrl, function(){
+				$("#loading-container").hide();
+				callback();
+			});
+		//}, 2000);
+	}
+
+	loadAHTML('#mb', "https://" + server_name + "/mb", function() {
 		$("#mb .navbar").hide();
 		$('#footer_links').hide();
-		
+
 		$('#mb').show();
 		$('#mb .btn .btn-success').click(handleStartContributingClickEvent);
 		$(".container-wrapper a").click(handleStartContributingClickEvent);
 	});
-	
+
 	function handleStartContributingClickEvent(e) {
 		e.preventDefault();
-		initFacebookSDK();
+		initFacebookLogin();
 		loadBooksPage("/mb/collaborate");
 	}
-	
+
+	function setUpBooksPage() {
+		$('#books #footer_links').hide();
+		$("#books .navbar").hide();
+
+		$("#task-long-description").show();
+		$('#books').show();
+	}
+
 	function loadBooksPage(url) {
 		$('#mb').hide();
 		$('#books').hide();
-		
-		$('#books').load("https://" + server_name + url, function() {
-			$('#books #footer_links').hide();
-			$("#books .navbar").hide();
-			$('#books').show();
-			
-			$(".container-wrapper a").click(function (e) {
+		$("#task-template").hide();
+
+		loadAHTML('#books', "https://" + server_name + url, function() {
+			setUpBooksPage();
+
+			$(".container-wrapper a").click(function(e) {
 				e.preventDefault();
-				
-		        var addressValue = $(this).attr("href");
-		        
-		        if (addressValue == "#") return;
-		        
-		        if (addressValue.indexOf("collaborate") != -1) {
-		        	loadBooksPage(addressValue);
-		        	return;
-		        }
-		        
-		        var POSITION_BOOK_ID = 5;
-		        var tmp = addressValue.split("/")[POSITION_BOOK_ID];
-		        bookId = tmp.substring(0, tmp.indexOf("_"));
-		        
-		        $("#task-template").load("template.html", function() {
-		        	showTaskTemplate();
-		        });
-		    });
+
+				var addressValue = $(this).attr("href");
+
+				if (addressValue == "#")
+					return;
+
+				if (addressValue.indexOf("collaborate") != -1) {
+					loadBooksPage(addressValue);
+					return;
+				}
+
+				var POSITION_BOOK_ID = 5;
+				var tmp = addressValue.split("/")[POSITION_BOOK_ID];
+				bookId = tmp.substring(0, tmp.indexOf("_"));
+
+				$("#task-template").load("template.html", function() {
+					showTaskTemplate();
+				});
+			});
 		});
 	}
 </script>
