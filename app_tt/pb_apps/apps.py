@@ -23,7 +23,9 @@ class Apptt(object):
         self.description = description
         self.name = name
         self.app_id = self._create_app()
-        self.set_name(name);
+        
+        if (name != ""):
+            self.set_name(name)
 
     def _create_app(self):
 

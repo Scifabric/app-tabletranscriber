@@ -135,6 +135,28 @@ def close_task(task_id):
         data=json.dumps(dict(state="completed")))
 
 
+@task(name="app_tt.engine.tasks.close_t1")
+def close_t1(book_id):
+    tt_select = Apptt_select(short_name=book_id + "_tt1")
+    tasks = tt_select.get_tasks()
+    
+    for task in tasks:
+        
+        if ('answer' in task.info.keys()):
+            continue
+        
+        task.info["answer"] = 'Yes'
+        # put the answer into task info
+        requests.put("%s/api/task/%s?api_key=%s" % (
+            app.config['PYBOSSA_URL'], task.id,
+            app.config['API_KEY']),
+            data=json.dumps(dict(info=task.info, state="completed")))
+        
+        tt_task = task_factory.get_task(task.id)
+        tt_task.add_next_task()
+    
+
+
 @task(name="app_tt.engine.tasks.create_task")
 def create_task(task_id):
     """

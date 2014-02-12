@@ -87,7 +87,7 @@ class TTTask2(pb_task):
                 app.config['PYBOSSA_URL'], self.task.id, sys.maxint)).read())
 
         task_run = task_runs[len(task_runs) - 1]  # Get the last answer
-	answer = task_run["info"]
+        answer = task_run["info"]
         answer_json = json.loads(answer)
 
         if (answer != "0" and answer != "[]"):
@@ -142,14 +142,14 @@ class TTTask2(pb_task):
                 print str(e)
 
     def __checkIfNextTaskWasCreated(self):
-	page_num = self.task.info['page']
+        page_num = self.task.info['page']
         tt3_app = self.get_next_app()
-	tt3_tasks = tt3_app.get_tasks()
+        tt3_tasks = tt3_app.get_tasks()
 
         for t in tt3_tasks:
             if (t.info['page'] == page_num):
-		return True
-	return False
+		        return True
+	    return False
 
     def close_task(self):
         pass

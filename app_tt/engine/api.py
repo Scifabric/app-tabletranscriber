@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask import Blueprint, request
-from tasks import check_task, create_apps, close_task
+from tasks import check_task, create_apps, close_task, close_t1
 from tasks import create_task, available_tasks, save_fact, get_fact_page, render_template
 import json
 
@@ -32,6 +32,15 @@ def book_init(book_id):
     result = create_apps.delay(book_id)
     return str(result.get(propagate=True))
 
+@blueprint.route('/<book_id>/init_and_close_t1')
+def book_init_close_t1(book_id):
+    
+    result = create_apps.delay(book_id)
+    success = result.get(propagate=True)
+    
+    if success:
+        close_t1.delay(book_id)
+    return str(success)
 
 @blueprint.route('/<task_id>/done')
 def check_task_done(task_id):
