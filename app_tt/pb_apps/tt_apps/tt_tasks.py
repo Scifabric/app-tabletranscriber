@@ -60,6 +60,7 @@ class TTTask1(pb_task):
                     app.config['PYBOSSA_URL'], self.task.id,
                     app.config['API_KEY']),
                     data=json.dumps(dict(info=self.task.info)))
+                
                 return True
         return False
 

@@ -35,7 +35,9 @@ def index(page):
     apps = json.loads(requests.get(pybossa_server + '/api/app?api_key=%s&limit=%d' % (api_key, max_limit)).content)
     book_stack = []
     book_data = []
-
+    
+    valid_books = ['estatisticasdodi1950depa', 'mensagemdogovern1912gove','caracterizaoeten2001bras', 'MemmoriaPB_1841_1847']
+    
     for app in apps:
         book_id = app["short_name"][:-4]
 
@@ -44,7 +46,9 @@ def index(page):
                 app["info"]["title"]
                 app["info"]["newtask"] = pybossa_server + '/app/' + book_id + '_tt1/newtask'
                 book_stack.append(book_id)
-                book_data.append(app)
+                
+                if app["short_name"][:-4] in valid_books:
+                    book_data.append(app)
             except KeyError:
                 print "It's not a tt app"
             except Exception, e:
@@ -62,7 +66,7 @@ def index(page):
 
     pagination = Pagination(page, per_page, count)
 
-    return render_template('/collaborate/index.html',
+    return render_template('/home/index.html',
             books=books,
             pagination=pagination)
 
@@ -120,6 +124,6 @@ def book():
         error = "Erro, algum erro inesperado ocorreu, \
                 por favor contate o administrador."
         return render_template('/error.html', error=error)
-    return render_template('/collaborate/book.html',
+    return render_template('/meb/book.html',
             bookid=bookid_app,
             appTasks=app_tasks)

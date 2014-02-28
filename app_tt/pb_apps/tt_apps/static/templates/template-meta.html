@@ -1,95 +1,101 @@
 <div id="template-container">
-<div class="row">
-	<div id="alert-container" class="span7" style="height: 50px">
-		<div id="success" class="alert alert-success" style="display: none;">
-			<p>
-				<strong>Muito bem!</strong> Sua resposta foi salva
-			</p>
+	<div class="row">
+		<div id="alert-container" class="span7" style="height: 50px">
+			<div id="success" class="alert alert-success" style="display: none;">
+				<p>
+					<strong>Muito bem!</strong> Sua resposta foi salva
+				</p>
+			</div>
+			<div id="finish" class="alert alert-success" style="display: none;">
+				<p>
+					<strong>Parabéns!</strong> Todas as tarefas de marcação foram
+					finalizadas
+				</p>
+			</div>
+			<div id="error" class="alert alert-error" style="display: none;">
+				<p>
+					<strong>Erro!</strong> Algo ocorreu errado, por favor contate o
+					administrador do site.
+				</p>
+			</div>
+			<div id="workflowtask" class="alert alert-success"
+				style="display: none; text-align: center; cursor: pointer; position: relative; margin-top: 5px;">
+				<p>
+					<span>Existe um novo tipo de tarefa disponível. Clique para
+						ir.</span>
+				</p>
+			</div>
 		</div>
-		<div id="finish" class="alert alert-success" style="display: none;">
+	</div>
+
+	<div id="throbber"></div>
+
+	<div class="skeleton">
+		<div id="question">
+			<h1>Question</h1>
 			<p>
-				<strong>Parabéns!</strong> Todas as tarefas de marcação foram finalizadas
-			</p>
-		</div>
-		<div id="error" class="alert alert-error" style="display: none;">
-			<p>
-				<strong>Erro!</strong> Algo ocorreu errado, por favor contate o administrador do site.
-			</p>
-		</div>
-		<div id="workflowtask" class="alert alert-success"
-			style="display: none; text-align: center; cursor: pointer; position: relative; margin-top: 5px;">
-			<p>
-				<span>Existe um novo tipo de tarefa disponível. Clique para ir.</span>
+				<span style="display: none;" id="task-id"
+					class="label label-warning"></span>
 			</p>
 		</div>
 	</div>
-</div>
 
-<div id="throbber"></div>
+	<div class="skeleton">
+		<!-- Answer buttons -->
+		<div id="answer">
+			<button id="button" class="btn btn-success" onclick="submitTask()">
+				<i class="icon icon-white icon-ok"></i> Salvar essas marcações
+			</button>
+			<button id="button" class="btn small" onclick="submitTask('0')">
+				<i class="icon icon-white icon-ok"></i> Não há tabelas
+			</button>
+			<button id="button_help" class="btn help" data-toggle="modal"
+				rel="tooltip" title="Abre a tela de ajuda" onclick="showHelp()">
+				<i class="icon-white icon-question-sign"></i>
+			</button>
+			<button id="button_share" class="btn" rel="tooltip"
+				title="Compartilhe algo interessante da página abaixo"
+				onclick="share()">
+				<img class="icon" style="width: 20px"
+					src="#server/images/share_icon.png"></img>
+			</button>
 
-<div class="skeleton">
-	<div id="question">
-		<h1>Question</h1>
-		<p>
-			<span style="display: none;" id="task-id" class="label label-warning"></span>
-		</p>
-	</div>
-</div>
-
-<div class="skeleton">
-	<!-- Answer buttons -->
-	<div id="answer">
-		<button id="button" class="btn btn-success" onclick="submitTask()">
-			<i class="icon icon-white icon-ok"></i> Salvar essas marcações
-		</button>
-		<button id="button" class="btn small" onclick="submitTask('0')">
-			<i class="icon icon-white icon-ok"></i> Não há tabelas
-		</button>
-		<button id="button_help" class="btn help" data-toggle="modal" rel="tooltip" title="Abre a tela de ajuda"
-			onclick="showHelp()">
-			<i class="icon-white icon-question-sign"></i>
-		</button>
-		<button id="button_share" class="btn" rel="tooltip" title="Compartilhe algo interessante da página abaixo" onclick="share()">
-			<img class="icon" style="width: 20px"
-				src="#server/images/share_icon.png"></img>
-		</button>
-
-		<div style="margin-top:10px; margin-bottom: 10px;">
-			<span id="progress-from">Voc&ecirc; fez </span><span id="done"
-				class="label label-info" style="margin-right: 5px"></span><span
-				id="progress-to">tarefas de </span>
-			<!-- Progress bar for the user -->
-			<span id="total" class="label label-inverse"></span>
-		</div>
-		<div class="progress progress-striped">
-			<div id="progress" rel="tooltip" class="bar"
-				style="width: 0%;"></div>
+			<div style="margin-top: 10px; margin-bottom: 10px;">
+				<span id="progress-from">Voc&ecirc; fez </span><span id="done"
+					class="label label-info" style="margin-right: 5px"></span><span
+					id="progress-to">tarefas de </span>
+				<!-- Progress bar for the user -->
+				<span id="total" class="label label-inverse"></span>
+			</div>
+			<div class="progress progress-striped">
+				<div id="progress" rel="tooltip" class="bar" style="width: 0%;"></div>
+			</div>
 		</div>
 	</div>
-</div>
 
-<!-- modal help button -->
-<div id="helpModalMeta" class="modal hide fade" tabindex="-1"
-	role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display:none">
+	<!-- modal help button -->
+	<div id="helpModalMeta" class="modal hide fade" tabindex="-1"
+		role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+		style="display: none">
 
-	<div class="modal-header">
-		<button class="close" data-dismiss="modal" aria-hidden="true">
-			<i class="icon-white icon-remove"></i>
-		</button>
-		<h3 id="myModalLabel">
-			<strong>Tutorial de Marcação de Tabelas</strong>
-		</h3>
-	</div>
+		<div class="modal-header">
+			<button class="close" data-dismiss="modal" aria-hidden="true">
+				<i class="icon-white icon-remove"></i>
+			</button>
+			<h3 id="myModalLabel">
+				<strong>Tutorial de Marcação de Tabelas</strong>
+			</h3>
+		</div>
 
-	<div id="container">
-		<div class="tabbable tabs-left">
-			<div class="span3 bs-docs-sidebar" data-spy="affix-top"
-				data-offset-top="1">
-				<ul class="nav nav-tabs">
-					<li class="active nav-header">
-					<a href="#home" data-toggle="tab"><i class="icon-chevron-right"></i> Home</a></li>
-					
-					<li class="nav-header"><strong>Casos de Tabelas</strong></li>
+		<div id="container">
+			<div class="tabbable tabs-left">
+				<div class="span3 bs-docs-sidebar" data-spy="affix-top"
+					data-offset-top="1">
+					<ul class="nav nav-tabs">
+						<li class="active nav-header"><a href="#home"
+							data-toggle="tab"><i class="icon-chevron-right"></i> Home</a></li>
+
+						<li class="nav-header"><strong>Casos de Tabelas</strong></li>
 						<li><a href="#tabelasComOrientacaoHorizontal"
 							data-toggle="tab"><i class="icon-chevron-right"></i> Tabelas
 								com Orientação Horizontal</a></li>
@@ -99,243 +105,206 @@
 							data-toggle="tab"><i class="icon-chevron-right"></i> Tabela
 								com Diferentes Orientações</a></li>
 
-					<li class="nav-header">Várias Tabelas na Página</li>
+						<li class="nav-header">Várias Tabelas na Página</li>
 						<li><a href="#maisDeUmaTabelaNaPagina" data-toggle="tab"><i
 								class="icon-chevron-right"></i> Mais de Uma Tabela na Página</a></li>
 						<li><a href="#tabelasComOrientacaoHorizontalEVertical"
 							data-toggle="tab"><i class="icon-chevron-right"></i> Tabelas
 								com Orientação Horizontal e Vertical na mesma Página</a></li>
 
-					<li class="nav-header">Tabelas Seccionadas</li>
+						<li class="nav-header">Tabelas Seccionadas</li>
 						<li><a href="#tabelaSeccionadaEmUmaPagina" data-toggle="tab"><i
 								class="icon-chevron-right"></i> Tabela Seccionada em uma Página</a></li>
 						<li><a href="#tabelaSeccionadaEmMaisDeUmaPagina"
 							data-toggle="tab"><i class="icon-chevron-right"></i> Tabela
 								Seccionada em Mais de Uma Página</a></li>
-				</ul>
-			</div>
-			<div class="modal-body" style="max-height: 550px">
-				<div class="tab-content">
-					<div class="tab-pane active" id="home">
-						<h2>O que deve ser feito?</h2>
-						<p>A tarefa consiste em selecionar o local em que a tabela
-							está na página do livro, informar se a tabela possui orientação horizontal,
-							vertical ou mista, e transcrever o título, o assunto e as fontes,
-							caso existam na página que você está visualizando.</p>
-						<br>
-						<p>	Uma tabela possui orientação horizontal quando a maioria de suas células
-						estão escritas na horizontal, possui orientação vertical quando a maioria
-						de suas células estão escritas na vertical e possui orientação mista quando
-						existem células na vertical e outras na horizontal.</p>
-						<br>
-						<p>
-							<strong style="color: red">Atenção</strong>
-						</p>
-						<p>- Caso esteja visível apenas uma parte do título, você deve
-							transcrever o que conseguir visualizar.</p>
-						<p>- Caso você não consiga identificar o assunto e as fontes
-							da tabela na página, esses campos podem ser deixados em branco.</p>
-						
-						<br>
-						<h2>O que devo considerar uma tabela?</h2>
-						<p>Você deve considerar uma tabela qualquer estrutura que
-							possua dados sobre economia, geografia, demografia ou outra
-							matéria para fins estatísticos.</p>
-						<br>
-						<h2>O que devo selecionar na tabela?</h2>
-						<p>É necessário que você nos diga onde está o corpo da tabela,
-							desconsiderando textos avulsos, como título e fontes, ainda que
-							sejam relacionados com a tabela, mas que não compõem seu corpo.
-							Posteriormente será feita a identificação automática da estrutura
-							da tabela sobre a área que você selecionou.
-					</div>
+					</ul>
+				</div>
+				<div class="modal-body" style="max-height: 550px">
+					<div class="tab-content">
+						<div class="tab-pane active" id="home">
+							<h2>O que deve ser feito?</h2>
+							<p>A tarefa consiste em selecionar o local em que a tabela
+								está na página do livro, informar se a tabela possui orientação
+								horizontal, vertical ou mista, e transcrever o título, o assunto
+								e as fontes, caso existam na página que você está visualizando.</p>
+							<br>
+							<p>Uma tabela possui orientação horizontal quando a maioria
+								de suas células estão escritas na horizontal, possui orientação
+								vertical quando a maioria de suas células estão escritas na
+								vertical e possui orientação mista quando existem células na
+								vertical e outras na horizontal.</p>
+							<br>
+							<p>
+								<strong style="color: red">Atenção</strong>
+							</p>
+							<p>- Caso esteja visível apenas uma parte do título, você
+								deve transcrever o que conseguir visualizar.</p>
+							<p>- Caso você não consiga identificar o assunto e as fontes
+								da tabela na página, esses campos podem ser deixados em branco.</p>
 
-					<div class="tab-pane" id="tabelasComOrientacaoHorizontal">
-						<h2>Tabelas com Orientação Horizontal</h2>
-						<p>
-							Uma tabela que tem orientação horizontal é aquela que possui a
-							maioria de suas células escritas na horizontal. Selecione apenas
-							o corpo da tabela, coloque o título, o assunto e as fontes se
-							existirem.
-							Observe que a seleção deve ser feita do ponto superior esquerdo ao
-							inferior direito da tabela. Não esqueça de indicar a orientação da tabela
-							antes de submeter.
-						</p>
-						<p>Exemplo de tabela com orientação horizontal:</p>
-						<div class="thumbnail">
-							<img data-src="holder.js/300x200" alt=""
-								src="#server/images/help-meta/thumbnails/tabelasComOrientacaoHorizontal.png">
+							<br>
+							<h2>O que devo considerar uma tabela?</h2>
+							<p>Você deve considerar uma tabela qualquer estrutura que
+								possua dados sobre economia, geografia, demografia ou outra
+								matéria para fins estatísticos.</p>
+							<br>
+							<h2>O que devo selecionar na tabela?</h2>
+							<p>É necessário que você nos diga onde está o corpo da
+								tabela, desconsiderando textos avulsos, como título e fontes,
+								ainda que sejam relacionados com a tabela, mas que não compõem
+								seu corpo. Posteriormente será feita a identificação automática
+								da estrutura da tabela sobre a área que você selecionou.
 						</div>
-					</div>
 
-					<div class="tab-pane" id="tabelasComOrientacaoVertical">
-						<h2>Tabelas com Orientação Vertical</h2>
-						<p>
-							Uma tabela que tem orientação vertical é aquela que possui a
-							maioria de suas células escritas na vertical. Selecione apenas o
-							corpo da tabela, coloque o título, o assunto e as fontes se
-							existirem. Observe que
-							a seleção deve ser feita do ponto superior esquerdo ao
-							inferior direito da tabela. Não esqueça de indicar a orientação vertical
-							da tabela antes de submeter.
-						</p>
-						<p>Exemplo de tabela com orientação vertical:</p>
-						<div class="thumbnail">
-							<img data-src="holder.js/300x200" alt=""
-								src="#server/images/help-meta/thumbnails/tabelasComOrientacaoVertical.png">
+						<div class="tab-pane" id="tabelasComOrientacaoHorizontal">
+							<h2>Tabelas com Orientação Horizontal</h2>
+							<p>Uma tabela que tem orientação horizontal é aquela que
+								possui a maioria de suas células escritas na horizontal.
+								Selecione apenas o corpo da tabela, coloque o título, o assunto
+								e as fontes se existirem. Observe que a seleção deve ser feita
+								do ponto superior esquerdo ao inferior direito da tabela. Não
+								esqueça de indicar a orientação da tabela antes de submeter.</p>
+							<p>Exemplo de tabela com orientação horizontal:</p>
+							<div class="thumbnail">
+								<img data-src="holder.js/300x200" alt=""
+									src="#server/images/help-meta/thumbnails/tabelasComOrientacaoHorizontal.png">
+							</div>
 						</div>
-					</div>
 
-					<div class="tab-pane" id="tabelaComDiferentesOrientacoes">
-						<h2>Tabela com Diferentes Orientações</h2>
-						<p>
-							Este tipo de tabela é definido por tabelas que estão na
-							horizontal, mas possuem células escritas na vertical ou
-							vice-versa. Para esse tipo, siga as instruções padrão. Em especial, verifique se a orientação da maioria das
-							células está na vertical, sendo a tabela classificada como tendo
-							orientação vertical, ou na horizontal, sendo a tabela
-							classificada como tendo orientação horizontal. Observe que a 
-							seleção deve ser feita do ponto superior esquerdo ao inferior direito da tabela.
-							Não esqueça de indicar a orientação mista da tabela
-							antes de submeter.
-						</p>
-						<p>Exemplo de tabela com diferentes orientações:</p>
-						<div class="thumbnail">
-							<img data-src="holder.js/300x200" alt=""
-								src="#server/images/help-meta/thumbnails/tabelaComDiferentesOrientacoes.png">
+						<div class="tab-pane" id="tabelasComOrientacaoVertical">
+							<h2>Tabelas com Orientação Vertical</h2>
+							<p>Uma tabela que tem orientação vertical é aquela que possui
+								a maioria de suas células escritas na vertical. Selecione apenas
+								o corpo da tabela, coloque o título, o assunto e as fontes se
+								existirem. Observe que a seleção deve ser feita do ponto
+								superior esquerdo ao inferior direito da tabela. Não esqueça de
+								indicar a orientação vertical da tabela antes de submeter.</p>
+							<p>Exemplo de tabela com orientação vertical:</p>
+							<div class="thumbnail">
+								<img data-src="holder.js/300x200" alt=""
+									src="#server/images/help-meta/thumbnails/tabelasComOrientacaoVertical.png">
+							</div>
 						</div>
-					</div>
 
-					<div class="tab-pane" id="maisDeUmaTabelaNaPagina">
-						<h2>Mais de uma Tabela na Página</h2>
-						<p>
-							Selecione o corpo de ambas as tabelas separadamente, coloque o título, o
-							assunto e as fontes para cada uma das tabelas selecionadas, se
-							existirem.
-							Observe que a seleção deve ser feita do ponto superior esquerdo 
-							da tabela ao inferior direito.  Não esqueça 
-							de indicar separadamente as orientações de cada tabela antes de submeter.
-						</p>
-						<p>Exemplo de Mais de Uma Tabela por Página:</p>
-						<div class="thumbnail">
-							<img data-src="holder.js/300x200" alt=""
-								src="#server/images/help-meta/thumbnails/maisDeUmaTabelaNaPagina.png">
+						<div class="tab-pane" id="tabelaComDiferentesOrientacoes">
+							<h2>Tabela com Diferentes Orientações</h2>
+							<p>Este tipo de tabela é definido por tabelas que estão na
+								horizontal, mas possuem células escritas na vertical ou
+								vice-versa. Para esse tipo, siga as instruções padrão. Em
+								especial, verifique se a orientação da maioria das células está
+								na vertical, sendo a tabela classificada como tendo orientação
+								vertical, ou na horizontal, sendo a tabela classificada como
+								tendo orientação horizontal. Observe que a seleção deve ser
+								feita do ponto superior esquerdo ao inferior direito da tabela.
+								Não esqueça de indicar a orientação mista da tabela antes de
+								submeter.</p>
+							<p>Exemplo de tabela com diferentes orientações:</p>
+							<div class="thumbnail">
+								<img data-src="holder.js/300x200" alt=""
+									src="#server/images/help-meta/thumbnails/tabelaComDiferentesOrientacoes.png">
+							</div>
 						</div>
-					</div>
 
-					<div class="tab-pane" id="tabelasComOrientacaoHorizontalEVertical">
-						<h2>Tabelas com Orientação Horizontal e Vertical na Mesma
-							Página</h2>
-						<p>
-							Este caso ocorre quando há mais de uma tabela com diferentes
-							orientações: uma com orientação vertical e outra horizontal,
-							na mesma página. Selecione uma tabela de cada vez. Coloque o título,
-							o assunto e as fontes de cada tabela separadamente, se existirem, tal
-							como descrito na tab de Tabelas com
-								Orientação Horizontal e na tab de Tabelas com Orientação
-								Vertical e confirme a seleção para ambas. Não esqueça 
-							de indicar as orientações de cada tabela separadamente antes de submeter.
-						</p>
-						<p>Caso já exista uma tabela ou mais tabelas já demarcadas por
-							outra pessoa, você pode escolher entre refazer a seleção, caso
-							exista algum erro, ou confirmar a marcação e os dados
-							sobre as tabelas já inseridos.</p>
-						<p>Exemplo de tabelas com orientação horizontal e vertical na
-							mesma página:</p>
-						<div class="thumbnail">
-							<img data-src="holder.js/300x400" alt=""
-								src="#server/images/help-meta/thumbnails/tabelasComOrientacaoHorizontalEVertical.png">
+						<div class="tab-pane" id="maisDeUmaTabelaNaPagina">
+							<h2>Mais de uma Tabela na Página</h2>
+							<p>Selecione o corpo de ambas as tabelas separadamente,
+								coloque o título, o assunto e as fontes para cada uma das
+								tabelas selecionadas, se existirem. Observe que a seleção deve
+								ser feita do ponto superior esquerdo da tabela ao inferior
+								direito. Não esqueça de indicar separadamente as orientações de
+								cada tabela antes de submeter.</p>
+							<p>Exemplo de Mais de Uma Tabela por Página:</p>
+							<div class="thumbnail">
+								<img data-src="holder.js/300x200" alt=""
+									src="#server/images/help-meta/thumbnails/maisDeUmaTabelaNaPagina.png">
+							</div>
 						</div>
-					</div>
-					
-					<div class="tab-pane" id="tabelaSeccionadaEmUmaPagina">
-						<h2>Tabelas Seccionadas em uma Página</h2>
-						<p>
-							Selecione o corpo da tabela, coloque o título, o assunto e as
-							fontes se existirem.
-							Observe que a seleção também deve ser feita do ponto superior
-							esquerdo ao inferior direito da tabela. Não esqueça 
-							de indicar a orientação da tabela antes de submeter.
-						</p>
-						<p>Exemplo de Tabela Seccionadas em uma Página:</p>
-						<div class="thumbnail">
-							<img data-src="holder.js/300x200" alt=""
-								src="#server/images/help-meta/thumbnails/tabelaSeccionadaEmUmaPagina.png">
+
+						<div class="tab-pane" id="tabelasComOrientacaoHorizontalEVertical">
+							<h2>Tabelas com Orientação Horizontal e Vertical na Mesma
+								Página</h2>
+							<p>Este caso ocorre quando há mais de uma tabela com
+								diferentes orientações: uma com orientação vertical e outra
+								horizontal, na mesma página. Selecione uma tabela de cada vez.
+								Coloque o título, o assunto e as fontes de cada tabela
+								separadamente, se existirem, tal como descrito na tab de Tabelas
+								com Orientação Horizontal e na tab de Tabelas com Orientação
+								Vertical e confirme a seleção para ambas. Não esqueça de indicar
+								as orientações de cada tabela separadamente antes de submeter.</p>
+							<p>Caso já exista uma tabela ou mais tabelas já demarcadas
+								por outra pessoa, você pode escolher entre refazer a seleção,
+								caso exista algum erro, ou confirmar a marcação e os dados sobre
+								as tabelas já inseridos.</p>
+							<p>Exemplo de tabelas com orientação horizontal e vertical na
+								mesma página:</p>
+							<div class="thumbnail">
+								<img data-src="holder.js/300x400" alt=""
+									src="#server/images/help-meta/thumbnails/tabelasComOrientacaoHorizontalEVertical.png">
+							</div>
 						</div>
-						<br>
-						<p style="color: red">Observe que a tabela está dividida em três partes na mesma página. 
-						Selecione toda a tabela com apenas uma marcação.</p>
-					</div>
-					
-					<div class="tab-pane" id="tabelaSeccionadaEmMaisDeUmaPagina">
-						<h2>Tabela Seccionada em mais de Página</h2>
-						<p>
-							Selecione apenas o corpo visível da tabela, coloque o título, o
-							assunto e as fontes se existirem. Observe que a seleção deve ser
-							feita do ponto superior esquerdo ao inferior direito da tabela. Não esqueça 
-							de indicar a orientação da tabela antes de submeter.
-						</p>
-						<p>Exemplo de tabela seccionada em mais de uma página, observe a indicação, em vermelho,
-						de continuidade na próxima página:</p>
-						<div class="thumbnail">
-							<img data-src="holder.js/300x200" alt=""
-								src="#server/images/help-meta/thumbnails/tabelaSeccionadaEmMaisDeUmaPagina.png">
+
+						<div class="tab-pane" id="tabelaSeccionadaEmUmaPagina">
+							<h2>Tabelas Seccionadas em uma Página</h2>
+							<p>Selecione o corpo da tabela, coloque o título, o assunto e
+								as fontes se existirem. Observe que a seleção também deve ser
+								feita do ponto superior esquerdo ao inferior direito da tabela.
+								Não esqueça de indicar a orientação da tabela antes de submeter.
+							</p>
+							<p>Exemplo de Tabela Seccionadas em uma Página:</p>
+							<div class="thumbnail">
+								<img data-src="holder.js/300x200" alt=""
+									src="#server/images/help-meta/thumbnails/tabelaSeccionadaEmUmaPagina.png">
+							</div>
+							<br>
+							<p style="color: red">Observe que a tabela está dividida em
+								três partes na mesma página. Selecione toda a tabela com apenas
+								uma marcação.</p>
+						</div>
+
+						<div class="tab-pane" id="tabelaSeccionadaEmMaisDeUmaPagina">
+							<h2>Tabela Seccionada em mais de Página</h2>
+							<p>Selecione apenas o corpo visível da tabela, coloque o
+								título, o assunto e as fontes se existirem. Observe que a
+								seleção deve ser feita do ponto superior esquerdo ao inferior
+								direito da tabela. Não esqueça de indicar a orientação da tabela
+								antes de submeter.</p>
+							<p>Exemplo de tabela seccionada em mais de uma página,
+								observe a indicação, em vermelho, de continuidade na próxima
+								página:</p>
+							<div class="thumbnail">
+								<img data-src="holder.js/300x200" alt=""
+									src="#server/images/help-meta/thumbnails/tabelaSeccionadaEmMaisDeUmaPagina.png">
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
+
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true">
+					Fechar</button>
+			</div>
 		</div>
+	</div>
 
-		<div class="modal-footer">
-			<button class="btn" data-dismiss="modal" aria-hidden="true">
-				Fechar</button>
+	<div id="image-container" class="skeleton" rel="popover"
+		title="Clique e arraste o mouse sobre uma área da tabela para compartilhar.">
+		<div id="TTImage" class="TTImageContainer" style="float: left">
+			<img id="table" class="TTImage" src="#" onload="spinnerStop()">
+		</div>
+		<div id="share-container">
+			<ul id="share-menu" class="dropdown-menu" role="menu">
+				<li><a style="padding: 3px 12px;" onclick="shareOnFacebook()">
+						<img class="icon" style="width: 20px; margin-right: 3px;"
+						src="#server/images/social_facebook.png"></img> Facebook
+				</a></li>
+			</ul>
+			<div id="share-canvas-container"></div>
 		</div>
 	</div>
-</div>
 
-<div id="image-container" class="skeleton" rel="popover" title="Clique e arraste o mouse sobre uma área da tabela para compartilhar.">
-	<div id="TTImage" class="TTImageContainer" style="float: left">
-		<img id="table" class="TTImage" src="#" onload="spinnerStop()">
-	</div>
-	<div id="share-container">
-		<ul id="share-menu" class="dropdown-menu" role="menu">
-		  <li><a style="padding: 3px 12px;" onclick="shareOnFacebook()"> 
-			<img class="icon" style="width: 20px; margin-right: 3px;" src="#server/images/social_facebook.png"></img>
-			Facebook
-		      </a>
-		  </li>
-		</ul>
-		<div id="share-canvas-container"></div>
-	</div>
 </div>
-
-<div class="skeleton">
-	<div id="disqus_thread"></div>
-</div>
-</div>
-
-<script type="text/javascript">
-	/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-	var disqus_shortname = 'lsdpybossa'; // required: replace example with your forum shortname
-	//var disqus_developer = 1;
-
-	/* * * DON'T EDIT BELOW THIS LINE * * */
-	(function() {
-		var dsq = document.createElement('script');
-		dsq.type = 'text/javascript';
-		dsq.async = true;
-		dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
-		(document.getElementsByTagName('head')[0] || document
-				.getElementsByTagName('body')[0]).appendChild(dsq);
-	})();
-</script>
-<noscript>
-	Please enable JavaScript to view the <a
-		href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
-</noscript>
-<a href="https://disqus.com" class="dsq-brlink">comments powered by <span
-	class="logo-disqus">Disqus</span>
-</a>
 
 <script src="#server/js/kinetic.js"></script>
 <script type="text/javascript" src="#server/js/share.js"></script>
@@ -349,30 +318,33 @@
 <link rel="stylesheet" type="text/css" href="#server/css/tt-meta.css" />
 
 <script type="text/javascript" charset="utf-8">
-
 	function showHelp() {
 		$("#helpModalMeta").modal();
 		$('#nav-header').affix();
 	}
 
 	$("[rel=tooltip]").tooltip();
-	$("[rel=popover]").popover({"trigger": "manual"});
+	$("[rel=popover]").popover({
+		"trigger" : "manual"
+	});
 
 	var task_shortname = "#task_shortname#";
 	var endpoint = "/pybossa";
 
 	function loadUserProgress() {
-		pybossa.userProgress(task_shortname).done(function(data) {
-			var pct = Math.round((data.done * 100) / data.total);
-			$("#progress").css("width", pct.toString() + "%");
-			$("#progress").tooltip('destroy');
-			$("#progress").attr("data-original-title", pct.toString() + "% completed!");
-			$("#progress").tooltip({
-				'placement' : 'left'
-			});
-			$("#total").text(data.total);
-			$("#done").text(data.done);
-		});
+		pybossa.userProgress(task_shortname).done(
+				function(data) {
+					var pct = Math.round((data.done * 100) / data.total);
+					$("#progress").css("width", pct.toString() + "%");
+					$("#progress").tooltip('destroy');
+					$("#progress").attr("data-original-title",
+							pct.toString() + "% completed!");
+					$("#progress").tooltip({
+						'placement' : 'left'
+					});
+					$("#total").text(data.total);
+					$("#done").text(data.done);
+				});
 	}
 
 	function taskRunDone(taskId) {
@@ -393,10 +365,9 @@
 				}
 			}
 		});
-		$("#workflowtask").click(
-				function() {
-					redirectToANewTask("tt3");
-				});
+		$("#workflowtask").click(function() {
+			redirectToANewTask("tt3");
+		});
 	}
 
 	var spinner = new Throbber({
@@ -428,6 +399,9 @@
 			var notes = data.task.info.last_answer != undefined ? JSON
 					.parse(data.task.info.last_answer) : [];
 
+			console.log("notes: ");
+			console.log(notes);
+
 			image = $("#table").annotateImage({
 				editable : true,
 				useAjax : false,
@@ -435,35 +409,32 @@
 				notes : notes
 			});
 			pybossa.getCurrentUserId(function(userId) {
-				initSharer(task_id, userId);	
+				initSharer(task_id, userId);
 			});
+
 		} else { // Return to tt1 or collaborate page
 			$(".skeleton").hide();
-			$("#finish").fadeIn(
-					100,
-					function() {
-						setTimeout(function() {
-							redirectToANewTask(getARandomTask());
-						}, 1500);
-					});
+			$("#finish").fadeIn(100, function() {
+				setTimeout(function() {
+					redirectToANewTask(getARandomTask());
+				}, 1500);
+			});
 		}
 	}
-	
+
 	function redirectToANewTask(taskSufix) {
-		window.open(endpoint
-				+ "/app/"
-				+ task_shortname
-						.replace("_tt2", "_" + taskSufix)
-				+ "/newtask", "_self");
+		window.open(endpoint + "/app/"
+				+ task_shortname.replace("_tt2", "_" + taskSufix) + "/newtask",
+				"_self");
 	}
 
 	function getARandomTask() {
-		var nextTaskArr = ["tt1", "tt3", "tt4"];
-		return nextTaskArr[getRandomInt(0,nextTaskArr.length-1)];
+		var nextTaskArr = [ "tt1", "tt3", "tt4" ];
+		return nextTaskArr[getRandomInt(0, nextTaskArr.length - 1)];
 	}
 
 	function getRandomInt(min, max) {
-	    return Math.floor(Math.random() * (max - min + 1)) + min;
+		return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 
 	// Function to submit and save the TaskRun in PyBossa

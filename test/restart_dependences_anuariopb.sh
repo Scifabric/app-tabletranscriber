@@ -11,8 +11,8 @@ python app_tt/pb_apps/tt_apps/ttapps.py -u anuario1916pb_tt4
 deactivate
 
 
-sudo service rabbitmq-server stop
-sudo service rabbitmq-server start
+#sudo service rabbitmq-server stop
+sudo service rabbitmq-server restart
 sudo service supervisor stop
 sudo service supervisor start
 sudo service apache2 restart

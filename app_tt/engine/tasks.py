@@ -70,48 +70,50 @@ def create_apps(book_id):
     if(imgs):
         book_title = __get_book_title(book_id)
 
-        tt_select = Apptt_select(short_name=book_id + "_tt1", title=book_title)
-        tt_meta = Apptt_meta(short_name=book_id + "_tt2", title=book_title)
-        tt_struct = Apptt_struct(short_name=book_id + "_tt3", title=book_title)
-        tt_transcribe = Apptt_transcribe(short_name=book_id + "_tt4", title=book_title)
+        app_tt_select = Apptt_select(short_name=book_id + "_tt1", title=book_title)
+        app_tt_meta = Apptt_meta(short_name=book_id + "_tt2", title=book_title)
+        app_tt_struct = Apptt_struct(short_name=book_id + "_tt3", title=book_title)
+        app_tt_transcribe = Apptt_transcribe(short_name=book_id + "_tt4", title=book_title)
         
         bookInfo = _archiveBookData(book_id)
 
-        tt_select.add_app_infos(
+        app_tt_select.add_app_infos(
             dict(
                  thumbnail=app.config['URL_TEMPLATES']
                  + "/images" 
                  + "/long_description_selection.png"))
 
-        tt_meta.add_app_infos(
+        app_tt_meta.add_app_infos(
             dict(
                 sched="incremental",
                 thumbnail=app.config['URL_TEMPLATES']
                 + "/images"
                 + "/long_description_meta.png"))
 
-        tt_struct.add_app_infos(
+        app_tt_struct.add_app_infos(
             dict(
                 sched="incremental",
                 thumbnail=app.config['URL_TEMPLATES']
                 + "/images"
                 + "/long_description_struct.png"))
         
-        tt_transcribe.add_app_infos(
+        app_tt_transcribe.add_app_infos(
             dict(
                  sched="incremental",
                  thumbnail=app.config['URL_TEMPLATES']
                  + "/images"
                  + "/long_description_transcribe.png"))
         
-        tt_meta.add_app_infos(bookInfo)
-        tt_select.add_app_infos(bookInfo)
-        tt_struct.add_app_infos(bookInfo)
-        tt_transcribe.add_app_infos(bookInfo)
+        app_tt_meta.add_app_infos(bookInfo)
+        app_tt_select.add_app_infos(bookInfo)
+        app_tt_struct.add_app_infos(bookInfo)
+        app_tt_transcribe.add_app_infos(bookInfo)
         
-        if len(tt_select.get_tasks()) == 0:
+        #record_book_info_mbdb(bookInfo)
+        
+        if len(app_tt_select.get_tasks()) == 0:
             for img in imgs:
-                tt_select.add_task(img)
+                app_tt_select.add_task(img)
 
         return True
 
@@ -183,8 +185,10 @@ def __get_book_title(bookId):
     output = json.loads(data)
     title = ""
 
-    if output:
+    if output and output['metadata'].has_key('volume'):
         title = output['metadata']['title'] + ' (Vol. ' + output['metadata']['volume'] + ')'
+    else:
+        title = output['metadata']['title']
 
     return title
 
@@ -213,8 +217,12 @@ def __get_tt_images(bookId):
         try:
             imagecount = output['metadata']['imagecount']
         except KeyError:
-            imagecount = output['metadata']['numero_de_paginas_do_item']
-
+            # ATENCAO: ISSO NAO EXISTE !!
+            #imagecount = output['metadata']['numero_de_paginas_do_item']
+            imagecount = 103 # GAMBIARRA PARA FUNCIONAR COM MemmoriaPB_1841_1847
+            
+            #raise
+            
         imgUrls = "http://www.archive.org/download/" + bookId + "/page/n"
         for idx in range(int(imagecount)):
             print 'Retrieved img: %s' % idx
@@ -388,3 +396,6 @@ def render_template(task_shortname, page):
         text += line
     return text
 
+def record_book_info_mbdb(book_info):
+    data_mngr.record_book_info(book_info)
+    

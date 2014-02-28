@@ -15,11 +15,11 @@ try:
     conn_string = "host='"+ sys.argv[1] + "' dbname='" + sys.argv[2] + "' user='" + sys.argv[3] + "' password='" + sys.argv[4] + "'" 
     con = psycopg2.connect(conn_string) 
     cursor = con.cursor()
-    cursor.execute(open("tt4dbcreate.sql", "r").read())
+    cursor.execute(open("mbdb_create.sql", "r").read())
     con.commit()
 
-    cursor.execute(open("factsTableCreate.sql", "r").read())
-    con.commit()
+    #cursor.execute(open("factsTableCreate.sql", "r").read())
+    #con.commit()
 
 except psycopg2.DatabaseError, e:
     print 'Error %s' % e    

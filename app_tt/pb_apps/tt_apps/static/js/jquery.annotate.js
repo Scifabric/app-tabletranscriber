@@ -152,7 +152,6 @@
 			$.fn.annotateImage.createCancelButton(editable, image);
 			
 		}
-
 	};
 
 	$.fn.annotateImage.createSaveButton = function(editable, image, note) {
@@ -163,12 +162,19 @@
 
 		ok.click(function() {
 			var form = $('#image-annotate-edit-form form');
-			var text = {titulo : $('#titulo').val(), subtitulo: $('#subtitulo').val(),
-                assunto: $('#assunto').val(), fontes: $('#fontes').val(),
-                outros: $('#outros').val(),
-                girar: $('#girar')[0].checked,
-                nao_girar: $('#nao_girar')[0].checked,
-                mista: $('#mista')[0].checked};
+			var text = {
+					titulo : $('#titulo').val(), 
+					subtitulo: $('#subtitulo').val(),
+	                assunto: $('#assunto').val(), 
+	                fontes: $('#fontes').val(),
+	                outros: $('#outros').val(),
+	                
+	                dataInicial: $('#dataInicial').val(),
+	                dataFinal: $('#dataFinal').val(),
+	                
+	                girar: $('#girar')[0].checked,
+	                nao_girar: $('#nao_girar')[0].checked,
+			};
 			
 			$.fn.annotateImage.appendPosition(form, editable);
 			image.mode = 'view';
@@ -247,7 +253,7 @@
 			newNote.left = coords.left;
 			newNote.width = coords.width;
 			newNote.height = coords.height;
-			newNote.text = {titulo: "",subtitulo: "",fontes: "", assunto : "", outros: ""};
+			newNote.text = {titulo: "",subtitulo: "",fontes: "", assunto : "", outros: "", dataInicial: "", dataFinal: ""};
 			this.note = newNote;
 		}
 
@@ -266,7 +272,6 @@
         var selected = this.note.text.assunto;
         var girar = this.note.text.girar;
         var nao_girar = this.note.text.nao_girar;
-        var mista = this.note.text.mista;
 		var fontes = typeof this.note.text.fontes == "undefined"? "" : this.note.text.fontes;
 		
         // Add the note (which we'll load with the form afterwards)
@@ -280,9 +285,10 @@
                 '<option value="3"' + (selected == "3" ? "selected" : "") + ' >Outros</option></select>' +                    
                 '<input type="text" id="outros" value="' + this.note.text.outros +'">' + '</input><br/>' +
 				'Fontes: <textarea type="textarea" id="fontes">' + fontes + '</textarea>' +
+				'Data Inicial (dd/mm/aaaa): <textarea type="textarea" id="dataInicial">' + this.note.text.dataInicial + '</textarea><br/>' +
+				'Data Final (dd/mm/aaaa): <textarea type="textarea" id="dataFinal">' + this.note.text.dataFinal + '</textarea><br/>' +
 				'<p><input id="nao_girar"' + (nao_girar ? "checked='true'" : "") + 'name="radio" type="radio" value="true" class="radiocheckbox" checked="true"> Tabela possui orientação horizontal</input></p>' +
                 '<p><input id="girar"' + (girar ? "checked='true'" : "") + 'name="radio" type="radio" value="true" class="radiocheckbox"> Tabela possui orientação vertical</input></p>' + 
-                '<p><input id="mista"' + (mista ? "checked='true'" : "") + 'name="radio" type="radio" value="true" class="radiocheckbox"> Tabela possui orientação mista</input></p>' +
                 '</form></div>');
 		
         this.form = form;

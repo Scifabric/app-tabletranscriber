@@ -9,7 +9,7 @@ import urllib2
 def replaceInfo(info):
     print "info before:"
     print info
-    info[1] = info[1].replace("socientize", "localhost")
+    info[1] = info[1].replace("localhost", "socientize")
     return info
 
 if len(sys.argv) != 5:
@@ -19,8 +19,8 @@ if len(sys.argv) != 5:
 con = None
 
 try:
-    app_id = 3
-    table = "task"
+    app_id = 335
+    table = "task_run"
 
     #NOTE: em task_run, info eh uma string
     #NOTE: em task, info eh um dicionario
@@ -41,8 +41,8 @@ try:
 	#print "row"	
 	#print row
 
-	cursor.execute("UPDATE " + table + " SET info=%s WHERE id=%s", (newInfo[1], row['id']) )
-	con.commit()    
+#	cursor.execute("UPDATE " + table + " SET info=%s WHERE id=%s", (newInfo[1], row['id']) )
+#	con.commit()    
 
 except psycopg2.DatabaseError, e:
     print 'Error %s' % e    
