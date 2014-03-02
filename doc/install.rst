@@ -200,15 +200,15 @@ Para instalar o apache2 execute o seguinte comando::
 Em seguida configure o apache para listar os arquivos estáticos que estão no
 diretório <diretorio-mb>/app_tt/pb_apps/tt_apps/static/::
 
-    sudo touch /etc/apache2/sites-enable/mb-static
-    sudo vim /etc/apache2/sites-enabled/mb-static
-    #Cole o código abaixo no arquivo mb-static e substitua <diretorio-mb> pelo
-    #diretorio onde o memória brasil foi instalado
+    Acrescentando o seguinte Alias no arquivo /etc/apache2/sites-available/mb-site:
+    
+    # substitua <diretorio-mb> pelo diretorio onde o memória brasil foi instalado
     Alias /mb-static <diretorio-mb>/app_tt/pb_apps/tt_apps/static
 
-Por fim reinicie o apache para que as configurações sejam iniciadas::
 
-    sudo /etc/init.d/apache2 restart
+Por fim recarregue o apache para que as configurações sejam iniciadas::    
+    
+    sudo service apache2 reload
 
 .. 
     instalação sem o pybossa ###############
