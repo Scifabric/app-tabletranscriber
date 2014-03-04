@@ -1,10 +1,14 @@
 from flask import render_template, request, url_for
 from engine.api import blueprint as api
-from home.collaborate import blueprint as collaborate
+from meb.collaborate import blueprint as collaborate
+from administration.admin import blueprint as admin
+from meb_results.results import blueprint as results
 from core import app
 
 app.register_blueprint(collaborate, url_prefix='/collaborate')
 app.register_blueprint(api, url_prefix='/api')
+app.register_blueprint(admin, url_prefix='/admin')
+app.register_blueprint(results, url_prefix='/results')
 
 @app.route('/')
 def home():
