@@ -36,7 +36,7 @@ def index(page):
     book_stack = []
     book_data = []
     
-    valid_books = ['estatisticasdodi1950depa', 'mensagemdogovern1912gove','caracterizaoeten2001bras', 'MemmoriaPB_1841_1847']
+    valid_books = ['estatisticasdodi1950depa', 'mensagemdogovern1912gove','caracterizaoeten2001bras', 'MemmoriaParaiba1841A1847']
     
     for app in apps:
         book_id = app["short_name"][:-4]

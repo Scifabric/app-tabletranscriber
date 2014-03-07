@@ -217,11 +217,7 @@ def __get_tt_images(bookId):
         try:
             imagecount = output['metadata']['imagecount']
         except KeyError:
-            # ATENCAO: ISSO NAO EXISTE !!
-            #imagecount = output['metadata']['numero_de_paginas_do_item']
-            imagecount = 103 # GAMBIARRA PARA FUNCIONAR COM MemmoriaPB_1841_1847
-            
-            #raise
+            raise
             
         imgUrls = "http://www.archive.org/download/" + bookId + "/page/n"
         for idx in range(int(imagecount)):
