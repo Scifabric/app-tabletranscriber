@@ -1,7 +1,7 @@
 from unittest import TestCase
 import sys
 import unittest
-from app_tt.application import app as application
+from app_tt.core import app as application
 from app_tt.core import pbclient
 import app_tt.engine.api as api
 import requests
@@ -9,8 +9,6 @@ import json
 
 
 class test_api(TestCase):
-
-
     def setUp(self):
         app = application
         app.config['TESTING'] = True

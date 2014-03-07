@@ -1,5 +1,5 @@
 import os
-from app_tt.application import app as application
+from app_tt.core import app as application
 from unittest import TestCase
 from app_tt.core import pbclient
 import unittest

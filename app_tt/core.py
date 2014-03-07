@@ -3,16 +3,16 @@ import pbclient
 
 from flask import Flask
 from app_tt import default_settings as settings
-
+from flask.ext.sqlalchemy import SQLAlchemy
 
 def create_app():
     app = Flask(__name__)
-    configure_app(app)
-    setup_pbclient(app)
+    __configure_app(app)
+    __setup_pbclient(app)
     return app
 
 
-def configure_app(app):
+def __configure_app(app):
     app.config.from_object(settings)
     #app.config.from_envvar('TT_SETTINGS', silent=True)
     # parent directory
@@ -26,10 +26,9 @@ def configure_app(app):
         app.config['PYBOSSA_PORT'],
         app.config['PYBOSSA_ENDPOINT'])
 
-    app.config['TT_DB_URI'] = "dbname='%s' user='%s'\
-            host='%s' password='%s'" % (
-        app.config['DB_NAME'], app.config['DB_USER'],
-        app.config['DB_HOST'], app.config['DB_USER_PASSWD'])
+    app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://%s:%s@%s/%s" % (
+        app.config['DB_USER'], app.config['DB_USER_PASSWD'],
+        app.config['DB_HOST'], app.config['DB_NAME'])
 
     app.config['BROKER_URL'] = "amqp://%s:%s@localhost:5672/%s" % (
         app.config['RABBIT_USER'],
@@ -39,11 +38,13 @@ def configure_app(app):
     app.config['CV_MODULES'] = os.path.join(
             os.path.dirname(here), 'cv-modules')
 
-
-def setup_pbclient(app):
+def __setup_pbclient(app):
     pbclient.set('endpoint', app.config['PYBOSSA_URL'])
     pbclient.set('api_key', app.config['API_KEY'])
 
 app = create_app()
+db = SQLAlchemy(app)
 pbclient = pbclient
+
+db.create_all()
 

@@ -11,6 +11,7 @@ from app_tt.pb_apps.tt_apps.ttapps import Apptt_meta
 from app_tt.pb_apps.tt_apps.ttapps import Apptt_struct
 from app_tt.pb_apps.tt_apps.ttapps import Apptt_transcribe
 from app_tt.pb_apps.tt_apps import task_factory
+from app_tt.data_mngr import data_manager as data_mngr
 
 BROKER_URL = "amqp://celery:celery@localhost:5672/celery"
 celery = Celery('tasks', backend='amqp', broker=app.config['BROKER_URL'])
@@ -75,8 +76,6 @@ def create_apps(book_id):
         app_tt_struct = Apptt_struct(short_name=book_id + "_tt3", title=book_title)
         app_tt_transcribe = Apptt_transcribe(short_name=book_id + "_tt4", title=book_title)
         
-        bookInfo = _archiveBookData(book_id)
-
         app_tt_select.add_app_infos(
             dict(
                  thumbnail=app.config['URL_TEMPLATES']
@@ -103,13 +102,15 @@ def create_apps(book_id):
                  thumbnail=app.config['URL_TEMPLATES']
                  + "/images"
                  + "/long_description_transcribe.png"))
-        
+
+        bookInfo = __archiveBookData(book_id)
+                
         app_tt_meta.add_app_infos(bookInfo)
         app_tt_select.add_app_infos(bookInfo)
         app_tt_struct.add_app_infos(bookInfo)
         app_tt_transcribe.add_app_infos(bookInfo)
         
-        #record_book_info_mbdb(bookInfo)
+        data_mngr.record_book_info_mbdb(bookInfo)
         
         if len(app_tt_select.get_tasks()) == 0:
             for img in imgs:
@@ -231,7 +232,7 @@ def __get_tt_images(bookId):
     return imgList
 
 
-def _archiveBookData(bookid):
+def __archiveBookData(bookid):
     """
     Get internet archive book infos
 
@@ -275,7 +276,7 @@ def save_fact(factInfo):
     con = None
 
     try:
-        con = _create_db_connection(app.config['DB_NAME'])
+        con = __create_db_connection(app.config['DB_NAME'])
         cursor = con.cursor()
 	query = ""
 
@@ -299,7 +300,7 @@ def save_fact(factInfo):
             con.close()
         return fact_id
 
-def _create_db_connection(db_name):
+def __create_db_connection(db_name):
     conn_string = "host='"+ app.config['DB_HOST'] + "' dbname='" + db_name + "' user='" + app.config['DB_USER'] + "' password='" + app.config['DB_USER_PASSWD'] + "'"
     return psycopg2.connect(conn_string)
 
@@ -308,7 +309,7 @@ def get_fact_page(fact_id):
     con = None
     result = ""
     try:
-        con = _create_db_connection(app.config['DB_NAME'])
+        con = __create_db_connection(app.config['DB_NAME'])
         cursor = con.cursor()
 	query = "SELECT id, user_id, book_id, page_id, top_pos, left_pos, bottom_pos, right_pos FROM facts WHERE id = " + str(fact_id)
         print(query)
@@ -316,7 +317,7 @@ def get_fact_page(fact_id):
         cursor.execute(query)
 	
         rows = cursor.fetchone()
-	result = _createFactPage(rows[0], rows[1], rows[2], rows[3], rows[4], rows[5], rows[6], rows[7])
+	result = __createFactPage(rows[0], rows[1], rows[2], rows[3], rows[4], rows[5], rows[6], rows[7])
 
         con.commit()
     except psycopg2.DatabaseError, e:
@@ -326,8 +327,8 @@ def get_fact_page(fact_id):
             con.close()
         return result
 
-def _createFactPage(fact_id, user_id, book_id, page_id, top_pos, left_pos, bottom_pos, right_pos):
-    user_name = _get_user_name(user_id)
+def __createFactPage(fact_id, user_id, book_id, page_id, top_pos, left_pos, bottom_pos, right_pos):
+    user_name = __get_user_name(user_id)
     server_url = app.config['URL_TEMPLATES']
     fact_url = "http://" + app.config['PYBOSSA_HOST'] + "/mb/api/fact/" + str(fact_id)
     book_list_url = "http://" + app.config['PYBOSSA_HOST'] + "/mb/collaborate/"
@@ -359,11 +360,11 @@ def _createFactPage(fact_id, user_id, book_id, page_id, top_pos, left_pos, botto
         text += line
     return text
 
-def _get_user_name(user_id):
+def __get_user_name(user_id):
     con = None
     result = "Um voluntário"
     try:
-        con = _create_db_connection("pybossa")
+        con = __create_db_connection("pybossa")
         cursor = con.cursor()
 	query = "SELECT fullname FROM \"user\" WHERE id = " + str(user_id)
         print(query)
@@ -390,8 +391,4 @@ def render_template(task_shortname, page):
         line = line.replace("#server", server_url)
         line = line.replace("#task_shortname#", task_shortname.encode('utf-8'))
         text += line
-    return text
-
-def record_book_info_mbdb(book_info):
-    data_mngr.record_book_info(book_info)
-    
+    return text    

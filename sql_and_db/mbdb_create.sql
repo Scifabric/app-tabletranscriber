@@ -17,6 +17,8 @@ create table book(
 	title varchar(255),
 	publisher varchar(255),
 	contributor varchar(255),
+	volume varchar(50),
+	img_url varchar(255),
 	initialDate date,
 	finalDate date
 );
