@@ -10,6 +10,8 @@ API_KEY = "insert-pybossa-api-key" # Pybossa's Api Key
 RABBIT_VHOST = "myvhost"
 RABBIT_USER = "myuser"
 RABBIT_PASSWD = "mypassword"
+RABBIT_HOST = "localhost"
+RABBIT_PORT = 5672
 
 #MB database definitions
 DB_USER = "mbuser"
