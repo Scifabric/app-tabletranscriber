@@ -26,3 +26,21 @@ class book(db.Model):
                                                    self.contributor, self.volume,\
                                                     self.img_url)
  
+class page(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    archiveURL = db.Column(db.String(255), unique=True)
+    page = db.Column(db.String(10))
+    
+    def __init__(self, archiveURL=None, page=None):
+        self.archiveURL = archiveURL
+        self.page = page
+        
+    def __repr__(self):
+        return '<page %r, %r, %r>' % (self.id, self.archiveURL, self.page)
+    
+#class fact(db.Model):
+    #id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    #user_id = db.Column(db.Integer) 
+    #book_id = db.Column(db.String(100), Fore)
+    
+    

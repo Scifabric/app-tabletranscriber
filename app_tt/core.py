@@ -13,7 +13,7 @@ def create_app():
 
 
 def __configure_app(app):
-    app.config.from_object(settings)
+    #app.config.from_object(settings)
     #app.config.from_envvar('TT_SETTINGS', silent=True)
     # parent directory
     here = os.path.dirname(os.path.abspath(__file__))
@@ -30,9 +30,11 @@ def __configure_app(app):
         app.config['DB_USER'], app.config['DB_USER_PASSWD'],
         app.config['DB_HOST'], app.config['DB_NAME'])
 
-    app.config['BROKER_URL'] = "amqp://%s:%s@localhost:5672/%s" % (
+    app.config['BROKER_URL'] = "amqp://%s:%s@%s:%d/%s" % (
         app.config['RABBIT_USER'],
         app.config['RABBIT_PASSWD'],
+        app.config['RABBIT_HOST'],
+        app.config['RABBIT_PORT'],
         app.config['RABBIT_VHOST'])
 
     app.config['CV_MODULES'] = os.path.join(
@@ -46,5 +48,8 @@ app = create_app()
 db = SQLAlchemy(app)
 pbclient = pbclient
 
+print "Creating database..."
 db.create_all()
+print "mbdb database created"
+
 

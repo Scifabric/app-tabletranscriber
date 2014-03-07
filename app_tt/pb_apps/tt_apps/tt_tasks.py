@@ -15,6 +15,7 @@ import cellsUtil
 import math
 from InvalidTaskGroupException import InvalidTaskGroupException
 from operator import itemgetter, attrgetter
+from app_tt.data_mngr import data_manager
 
 """
     Table transcriber tasks
@@ -60,6 +61,10 @@ class TTTask1(pb_task):
                     app.config['PYBOSSA_URL'], self.task.id,
                     app.config['API_KEY']),
                     data=json.dumps(dict(info=self.task.info)))
+                
+                archiveURL = self.task.info["url_m"]
+                page = self.task.info["page"]
+                data_manager.record_page((archiveURL, page))
                 
                 return True
         return False
@@ -207,10 +212,10 @@ class TTTask2(pb_task):
         """
 
         try:
-
-            url_request = requests.get(
-                "http://archive.org/download/%s/page/n%s_w%s_h%s" % (
-                bookId, imgId, max_width, max_height))
+            archiveURL = "http://archive.org/download/%s/page/n%s_w%s_h%s" % (
+                bookId, imgId, max_width, max_height)
+            
+            url_request = requests.get(archiveURL)
 
             fullImgPath = "%s/books/%s/alta_resolucao/image%s" % (
                 app.config['CV_MODULES'], bookId, imgId)
@@ -221,11 +226,11 @@ class TTTask2(pb_task):
             fullImgFile.write(url_request.content)
             fullImgFile.close()
 	    
-	    # shell command to convert jpg to png
+	        # shell command to convert jpg to png
             command = 'convert %s -resize %dx%d! %s; rm %s; ' % (
                 fullImgPathJPG, max_width, max_height, fullImgPathPNG, fullImgPathJPG)
 
-	    # create image with low resolution
+	        # create image with low resolution
             lowImgPath = "%s/books/%s/baixa_resolucao/image%s" % (
                 app.config['CV_MODULES'], bookId, imgId)
             lowImgPathPNG = lowImgPath + ".png"
@@ -233,9 +238,9 @@ class TTTask2(pb_task):
             command += 'convert %s -resize %dx%d! %s' % (
                 fullImgPathPNG, width, height, lowImgPathPNG)
 
-	    print("Command: " + command)
+    	    print("Command: " + command)
             call([command], shell=True)  # calls the shell command
-
+            
             return True
         except IOError, e:
             print str(e)
