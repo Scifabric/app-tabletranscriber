@@ -69,12 +69,12 @@ def create_apps(book_id):
     imgs = __get_tt_images(book_id)
 
     if(imgs):
-        book_title = __get_book_title(book_id)
-
-        app_tt_select = Apptt_select(short_name=book_id + "_tt1", title=book_title)
-        app_tt_meta = Apptt_meta(short_name=book_id + "_tt2", title=book_title)
-        app_tt_struct = Apptt_struct(short_name=book_id + "_tt3", title=book_title)
-        app_tt_transcribe = Apptt_transcribe(short_name=book_id + "_tt4", title=book_title)
+        bookInfo = __archiveBookData(book_id)
+        
+        app_tt_select = Apptt_select(short_name=book_id + "_tt1", title=bookInfo['title'])
+        app_tt_meta = Apptt_meta(short_name=book_id + "_tt2", title=bookInfo['title'])
+        app_tt_struct = Apptt_struct(short_name=book_id + "_tt3", title=bookInfo['title'])
+        app_tt_transcribe = Apptt_transcribe(short_name=book_id + "_tt4", title=bookInfo['title'])
         
         app_tt_select.add_app_infos(
             dict(
@@ -103,10 +103,9 @@ def create_apps(book_id):
                  + "/images"
                  + "/long_description_transcribe.png"))
 
-        bookInfo = __archiveBookData(book_id)
                 
-        app_tt_meta.add_app_infos(bookInfo)
         app_tt_select.add_app_infos(bookInfo)
+        app_tt_meta.add_app_infos(bookInfo)
         app_tt_struct.add_app_infos(bookInfo)
         app_tt_transcribe.add_app_infos(bookInfo)
         
@@ -171,27 +170,6 @@ def create_task(task_id):
     """
     task = task_factory.get_task(task_id)
     task.add_next_task()
-
-
-
-def __get_book_title(bookId):
-
-    print('Contacting archive.org')
-
-    url = "http://archive.org/metadata/"
-    query = url + bookId
-    urlobj = urllib2.urlopen(query)
-    data = urlobj.read()
-    urlobj.close()
-    output = json.loads(data)
-    title = ""
-
-    if output and output['metadata'].has_key('volume'):
-        title = output['metadata']['title'] + ' (Vol. ' + output['metadata']['volume'] + ')'
-    else:
-        title = output['metadata']['title']
-
-    return title
 
 def __get_tt_images(bookId):
     """

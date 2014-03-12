@@ -16,7 +16,7 @@ class Apptt_select(app.Apptt):
             title = keyargs['title'] + " "
         else:
             title = ""
-            
+        
         app_name = title + unicode("Seleção", "utf-8")
 
         super(Apptt_select, self).__init__(
@@ -45,13 +45,13 @@ class Apptt_meta(app.Apptt):
     def __init__(self, **keyargs):
         if "short_name" in keyargs.keys():
             short_name = keyargs['short_name']
-
-	    if "title" in keyargs.keys():
-     	        title = keyargs['title'] + " "
-	    else:
-		    title = ""
-	    
-	    app_name = title + unicode("Marcação", "utf-8")
+        
+        if "title" in keyargs.keys():
+            title = keyargs['title'] + " "
+        else:
+            title = ""
+        
+        app_name = title + unicode("Marcação", "utf-8")
 
         super(Apptt_meta, self).__init__(
             app_name, short_name,

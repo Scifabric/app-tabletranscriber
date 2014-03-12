@@ -24,9 +24,6 @@ class Apptt(object):
         self.name = name
         self.app_id = self._create_app()
         
-        if (name != ""):
-            self.set_name(name)
-
     def _create_app(self):
 
         info = dict(newtask="%s/app/%s/newtask" % (flask_app.config['PYBOSSA_URL'], self.short_name))

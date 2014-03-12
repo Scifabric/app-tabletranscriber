@@ -1,2 +1,1 @@
-drop table book
---delete from book cascade
+delete from book where title like '%Memmoria%'
