@@ -83,3 +83,4 @@ def progress(bookid):
         return render_template('/progress.html', progress=0)
 
     return render_template('/progress.html', progress=progress)
+    

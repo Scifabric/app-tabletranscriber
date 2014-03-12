@@ -7,3 +7,4 @@ supervisor
 pybossa_client
 SQLAlchemy==0.9
 Flask-SQLAlchemy
+flask-migrate

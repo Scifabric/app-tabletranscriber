@@ -4,6 +4,8 @@ import pbclient
 from flask import Flask
 from app_tt import default_settings as settings
 from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.script import Manager
+from flask.ext.migrate import Migrate, MigrateCommand
 
 def create_app():
     app = Flask(__name__)
@@ -45,11 +47,21 @@ def __setup_pbclient(app):
     pbclient.set('api_key', app.config['API_KEY'])
 
 app = create_app()
+
 db = SQLAlchemy(app)
+
+""" 
+    Usado para fazer migracoes das versoes do banco MBDB
+"""
+migrate = Migrate(app, db)
+manager = Manager(app)
+manager.add_command('mbdb', MigrateCommand)
+
 pbclient = pbclient
 
-print "Creating database..."
-db.create_all()
-print "mbdb database created"
+#print "Creating database..."
+#db.create_all()
+#print "mbdb database created"
 
-
+if __name__ == '__main__':
+    manager.run()
