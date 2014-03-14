@@ -1,5 +1,4 @@
 	$('body').on('contextmenu', '#canvas-container', function(e) {
-		console.log("MENU!");
 		return false;
 	});
 
@@ -1195,7 +1194,6 @@
 	$('body').on('mousedown', handleMouseDownEvent)
 
 	function handleMouseDownEvent(evt) {
-		console.log("DOWN!");
 		isMouseDown = true;
 
 		if (!isRightMouseClick(evt)) return;
@@ -1292,7 +1290,6 @@
 
 	function handleMouseUpEvent(evt) {
 
-		console.log("UP!");
 		isMouseDown = false;
 		desenhandoSegmento = false;
 
