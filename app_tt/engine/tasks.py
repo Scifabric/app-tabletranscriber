@@ -312,7 +312,9 @@ def __createFactPage(fact_id, user_id, book_id, page_id, top_pos, left_pos, bott
     book_list_url = "http://" + app.config['PYBOSSA_HOST'] + "/mb/collaborate/"
     book_app_url=  "http://" + app.config['PYBOSSA_HOST'] + "/pybossa/app/" + book_id + "_tt1/newtask"
     page_url = "http://www.archive.org/download/%s/page/n%d_w%d_h%d" % (book_id, page_id, 550, 700)
-    book_title = __get_book_title(book_id).encode('utf-8')
+    
+    bookInfo = __archiveBookData(book_id)
+    book_title = bookInfo['title'].encode('utf-8')
     top_pos = str(top_pos)
     left_pos = str(left_pos)
     bottom_pos = str(bottom_pos)
