@@ -51,17 +51,13 @@ app = create_app()
 db = SQLAlchemy(app)
 
 """ 
-    Usado para fazer migracoes das versoes do banco MBDB
+    Used to make migrations of database MBDB
 """
 migrate = Migrate(app, db)
 manager = Manager(app)
 manager.add_command('mbdb', MigrateCommand)
 
 pbclient = pbclient
-
-#print "Creating database..."
-#db.create_all()
-#print "mbdb database created"
 
 if __name__ == '__main__':
     manager.run()

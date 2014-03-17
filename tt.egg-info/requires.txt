@@ -1,7 +1,10 @@
-Flask==0.8
+Flask==0.9
 Flask-Testing
 psycopg2
-celery
+celery==3.0.21
 requests
 supervisor
 pybossa_client
+SQLAlchemy==0.9
+Flask-SQLAlchemy
+flask-migrate

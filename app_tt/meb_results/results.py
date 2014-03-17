@@ -14,7 +14,7 @@ pybossa_server = flask_app.config['PYBOSSA_URL']
 max_limit = sys.maxint
 
 def getAppData(app_short_name, pybossa_server):
-     return json.load(urllib2.urlopen(pybossa_server + '/api/app?short_name='
+    return json.load(urllib2.urlopen(pybossa_server + '/api/app?short_name='
          + app_short_name))[0]
  
  
@@ -22,7 +22,7 @@ def getAppTasks(app_id, pybossa_server):
      return json.load(urllib2.urlopen(pybossa_server + '/api/task?app_id=%d&limit=%d' %
              (app_id, max_limit)))
 
-@blueprint.route('/book/<bookid>', methods=['GET'])
+@blueprint.route('/book', methods=['GET'])
 def book():
     # get info configs from default config file
     NUM_APPS = 4
