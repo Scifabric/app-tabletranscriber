@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 from app_tt.core import app as flask_app
-from app_tt.core import pbclient
 import app_tt.pb_apps.apps as app
 import urllib2
 import os
-from optparse import OptionParser
-
+from app_tt.meb_util import setUrl_
 
 class Apptt_select(app.Apptt):
     def __init__(self, **keyargs):
@@ -24,14 +22,14 @@ class Apptt_select(app.Apptt):
             short_name,
             "Por favor. Selecione as páginas com tabela.")
 
-        super(Apptt_select, self).set_template(_setUrl_(
+        super(Apptt_select, self).set_template(setUrl_(
             urllib2.urlopen(
                 urllib2.Request(
                     flask_app.config['URL_TEMPLATES']
                     + "/templates"
                     + "/template-select.html")), short_name))
 
-        super(Apptt_select, self).set_long_description(_setUrl_(
+        super(Apptt_select, self).set_long_description(setUrl_(
             urllib2.urlopen(
                 urllib2.Request(
                     flask_app.config['URL_TEMPLATES']
@@ -57,14 +55,14 @@ class Apptt_meta(app.Apptt):
             app_name, short_name,
             "Marque e descreva as tabelas ou corrija as marcações.")
 
-        super(Apptt_meta, self).set_template(_setUrl_(
+        super(Apptt_meta, self).set_template(setUrl_(
             urllib2.urlopen(
                 urllib2.Request(
                     flask_app.config['URL_TEMPLATES']
                     + "/templates"
                     + "/template-meta.html")), short_name))
 
-        super(Apptt_meta, self).set_long_description(_setUrl_(
+        super(Apptt_meta, self).set_long_description(setUrl_(
             urllib2.urlopen(
                 urllib2.Request(
                     flask_app.config['URL_TEMPLATES']
@@ -79,25 +77,25 @@ class Apptt_struct(app.Apptt):
         if "short_name" in keyargs.keys():
             short_name = keyargs['short_name']
 
-	    if "title" in keyargs.keys():
-     	        title = keyargs['title'] + " "
-	    else:
-		    title = ""
-	    
-	    app_name = title + unicode("Estrutura", "utf-8")
+        if "title" in keyargs.keys():
+            title = keyargs['title'] + " "
+        else:
+            title = ""
+
+        app_name = title + unicode("Estrutura", "utf-8")
 
         super(Apptt_struct, self).__init__(
             app_name, short_name,
             "Por favor. Corrija as linhas e colunas da tabela.")
 
-        super(Apptt_struct, self).set_template(_setUrl_(
+        super(Apptt_struct, self).set_template(setUrl_(
             urllib2.urlopen(
                 urllib2.Request(
                     flask_app.config['URL_TEMPLATES']
                     + "/templates/template-struct.html")),
             short_name))
 
-        super(Apptt_struct, self).set_long_description(_setUrl_(
+        super(Apptt_struct, self).set_long_description(setUrl_(
             urllib2.urlopen(
                 urllib2.Request(
                     flask_app.config['URL_TEMPLATES']
@@ -140,24 +138,24 @@ class Apptt_transcribe(app.Apptt):
             short_name = keyargs['short_name']
 
         if "title" in keyargs.keys():
-            	title = keyargs['title'] + " "
+            title = keyargs['title'] + " "
         else:
             title = ""
-         	
+        
         app_name = title + unicode("Transcrição", "utf-8")
     
         super(Apptt_transcribe, self).__init__(
             app_name, short_name,
             "Por favor. Corrija o conteúdo das células da tabela.")
 
-        super(Apptt_transcribe, self).set_template(_setUrl_(
+        super(Apptt_transcribe, self).set_template(setUrl_(
             urllib2.urlopen(
                 urllib2.Request(
                     flask_app.config['URL_TEMPLATES']
                     + "/templates/template-transcribe.html")),
             short_name))
 
-        super(Apptt_transcribe, self).set_long_description(_setUrl_(
+        super(Apptt_transcribe, self).set_long_description(setUrl_(
             urllib2.urlopen(
                 urllib2.Request(
                     flask_app.config['URL_TEMPLATES']
@@ -166,52 +164,4 @@ class Apptt_transcribe(app.Apptt):
 
         print "Create task type 4"
 
-def _setUrl_(arch, short_name, server=flask_app.config['URL_TEMPLATES']):
-    text = ""
-    for line in arch.readlines():
-        line = line.replace("#server", server)
-        line = line.replace("#task_shortname#", short_name.encode('utf-8'))
-        text += line
 
-    return text
-
-
-if __name__ == "__main__":
-    usage = "usage: %prog [options]"
-    parser = OptionParser(usage)
-    parser.add_option(
-        "-u", "--update-template",
-        dest="app_short_name", help="Update app template",
-        metavar="SHORT_NAME")
-
-    (options, args) = parser.parse_args()
-
-    if options.app_short_name:
-        app_short_name = options.app_short_name
-        print app_short_name
-        app = pbclient.find_app(short_name=app_short_name)[0]             
-        app_type = app_short_name[-4:]
-        template_type = None
-
-        if app_type == "_tt1":
-            template_type = "template-select.html"
-        elif app_type == "_tt2":
-            template_type = "template-meta.html"
-        elif app_type == "_tt3":
-            template_type = "template-struct.html"
-        elif app_type == "_tt4":
-            template_type = "template-transcribe.html"
-
-        if template_type:
-            new_template = _setUrl_(
-                urllib2.urlopen(
-                    urllib2.Request(
-                        flask_app.config['URL_TEMPLATES']
-                        + "/templates/" + template_type)),
-                app_short_name)
-
-            app.info['task_presenter'] = new_template
-            #print(app.info['thumbnail'])
-            #app.info['thumbnail'] = app.info['thumbnail'].replace("alfa", "alfa2")
-            
-            pbclient.update_app(app)

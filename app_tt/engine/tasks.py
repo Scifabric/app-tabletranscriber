@@ -10,6 +10,7 @@ from app_tt.pb_apps.tt_apps.ttapps import Apptt_select
 from app_tt.pb_apps.tt_apps.ttapps import Apptt_meta
 from app_tt.pb_apps.tt_apps.ttapps import Apptt_struct
 from app_tt.pb_apps.tt_apps.ttapps import Apptt_transcribe
+from app_tt.meb_util import archiveBookData
 from app_tt.pb_apps.tt_apps import task_factory
 from app_tt.data_mngr import data_manager as data_mngr
 
@@ -69,7 +70,7 @@ def create_apps(book_id):
     imgs = __get_tt_images(book_id)
 
     if(imgs):
-        bookInfo = __archiveBookData(book_id)
+        bookInfo = archiveBookData(book_id)
         
         app_tt_select = Apptt_select(short_name=book_id + "_tt1", title=bookInfo['title'])
         app_tt_meta = Apptt_meta(short_name=book_id + "_tt2", title=bookInfo['title'])
@@ -209,31 +210,6 @@ def __get_tt_images(bookId):
 
     return imgList
 
-
-def __archiveBookData(bookid):
-    """
-    Get internet archive book infos
-
-    :arg book_id: Internet archive book id
-    :returns: A dict with metadata from internet archive
-    :rtype: dict
-
-    """
-    query = "http://archive.org/metadata/" + bookid
-    data = json.loads(requests.get(query).content)
-    img = "http://www.archive.org/download/" + bookid + "/page/n7_w100_h100"
-    default_dict = {"title": None, "publisher": None,
-                    "volume": None, "contributor": None}
-    known_dict = dict(img=img, bookid=bookid)
-
-    for key in default_dict:
-        try:
-            default_dict[key] = data["metadata"][key]
-        except:
-            print "This book does not have %s key" % key
-
-    return dict(known_dict.items() + default_dict.items())
-
 @task(name="app_tt.engine.tasks.save_fact")
 def save_fact(factInfo):
     taskFacade = task_factory.get_task(factInfo['task_id'])
@@ -256,23 +232,23 @@ def save_fact(factInfo):
     try:
         con = __create_db_connection(app.config['DB_NAME'])
         cursor = con.cursor()
-	query = ""
+        query = ""
 
-	if (isUpdate):
+        if (isUpdate):
             query = "UPDATE facts SET (user_id, book_id, page_id, top_pos, left_pos, bottom_pos, right_pos, post_id, fact_text) = ('" + user_id + "', '" + book_id + "', " + str(page_id) + ", " + str(top_pos) + ", "+ str(left_pos) + ", " + str(bottom_pos) + ", " + str(right_pos) + ", '" + post_id + "', '" + fact_text + "') WHERE id = " + str(fact_id)
-	else:
+        else:
             query = "BEGIN; INSERT INTO facts(user_id, book_id, page_id, top_pos, left_pos, bottom_pos, right_pos, post_id, fact_text) values ('" + user_id + "', '" + book_id + "', " + str(page_id) + ", " + str(top_pos) + ", "+ str(left_pos) + ", " + str(bottom_pos) + ", " + str(right_pos) + ", '" + post_id + "', '" + fact_text + "') RETURNING id;"
 
         print(query)
         cursor.execute(query)
 
-	if not isUpdate:
+        if not isUpdate:
             rows = cursor.fetchone()
             fact_id = rows[0]
 
         con.commit()
     except psycopg2.DatabaseError, e:
-    	print 'Error %s' % e
+        print 'Error %s' % e
     finally:
         if con:
             con.close()
@@ -289,17 +265,17 @@ def get_fact_page(fact_id):
     try:
         con = __create_db_connection(app.config['DB_NAME'])
         cursor = con.cursor()
-	query = "SELECT id, user_id, book_id, page_id, top_pos, left_pos, bottom_pos, right_pos FROM facts WHERE id = " + str(fact_id)
+        query = "SELECT id, user_id, book_id, page_id, top_pos, left_pos, bottom_pos, right_pos FROM facts WHERE id = " + str(fact_id)
         print(query)
 
         cursor.execute(query)
-	
+
         rows = cursor.fetchone()
-	result = __createFactPage(rows[0], rows[1], rows[2], rows[3], rows[4], rows[5], rows[6], rows[7])
+        result = __createFactPage(rows[0], rows[1], rows[2], rows[3], rows[4], rows[5], rows[6], rows[7])
 
         con.commit()
     except psycopg2.DatabaseError, e:
-    	print 'Error %s' % e
+        print 'Error %s' % e
     finally:
         if con:
             con.close()
@@ -313,7 +289,7 @@ def __createFactPage(fact_id, user_id, book_id, page_id, top_pos, left_pos, bott
     book_app_url=  "http://" + app.config['PYBOSSA_HOST'] + "/pybossa/app/" + book_id + "_tt1/newtask"
     page_url = "http://www.archive.org/download/%s/page/n%d_w%d_h%d" % (book_id, page_id, 550, 700)
     
-    bookInfo = __archiveBookData(book_id)
+    bookInfo = archiveBookData(book_id)
     book_title = bookInfo['title'].encode('utf-8')
     top_pos = str(top_pos)
     left_pos = str(left_pos)
@@ -336,7 +312,7 @@ def __createFactPage(fact_id, user_id, book_id, page_id, top_pos, left_pos, bott
         line = line.replace("#left_pos", left_pos)
         line = line.replace("#bottom_pos", bottom_pos)
         line = line.replace("#right_pos", right_pos)
-	
+
         text += line
     return text
 
@@ -346,16 +322,15 @@ def __get_user_name(user_id):
     try:
         con = __create_db_connection("pybossa")
         cursor = con.cursor()
-	query = "SELECT fullname FROM \"user\" WHERE id = " + str(user_id)
+        query = "SELECT fullname FROM \"user\" WHERE id = " + str(user_id)
         print(query)
         cursor.execute(query)
-	
         rows = cursor.fetchone()
-	result = rows[0].split(" ")[0]
+        result = rows[0].split(" ")[0]
 
         con.commit()
     except psycopg2.DatabaseError, e:
-    	print 'Error %s' % e
+        print 'Error %s' % e
     finally:
         if con:
             con.close()
