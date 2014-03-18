@@ -84,8 +84,8 @@ class TTTask2(pb_task):
 
     def add_next_task(self):
 
-	if (self.__checkIfNextTaskWasCreated()):
-	    return
+        if (self.__checkIfNextTaskWasCreated()):
+            return
 
         # Get the list of task_runs
         task_runs = json.loads(urllib2.urlopen(
@@ -154,8 +154,8 @@ class TTTask2(pb_task):
 
         for t in tt3_tasks:
             if (t.info['page'] == page_num):
-		        return True
-	    return False
+                return True
+        return False
 
     def close_task(self):
         pass
@@ -165,8 +165,8 @@ class TTTask2(pb_task):
         n_taskruns = len(task_runs)  # task_runs goes from 0 to n-1
         
         if(n_taskruns > 1):
-    	    answer1 = task_runs[n_taskruns - 1].info
-    	    answer2 = task_runs[n_taskruns - 2].info
+            answer1 = task_runs[n_taskruns - 1].info
+            answer2 = task_runs[n_taskruns - 2].info
             answer1_json = json.loads(answer1)
             answer2_json = json.loads(answer2)
     
@@ -179,14 +179,14 @@ class TTTask2(pb_task):
             return False
 
     def __compare_answers(self, answer1, answer2):
-    	threshold = 2
-    	
-    	if len(answer1) != len(answer2):
+        threshold = 2
+        
+        if len(answer1) != len(answer2):
                 return False
     
-    	for i in range(0, len(answer1)):
-    	    table1 = answer1[i]
-    	    table2 = answer2[i]
+        for i in range(0, len(answer1)):
+            table1 = answer1[i]
+            table2 = answer2[i]
     
             for answer_type in table1.keys():
                 a1_value = table1[answer_type]
@@ -225,12 +225,12 @@ class TTTask2(pb_task):
             fullImgFile = open(fullImgPathJPG, "w")
             fullImgFile.write(url_request.content)
             fullImgFile.close()
-	    
-	        # shell command to convert jpg to png
+    
+            # shell command to convert jpg to png
             command = 'convert %s -resize %dx%d! %s; rm %s; ' % (
                 fullImgPathJPG, max_width, max_height, fullImgPathPNG, fullImgPathJPG)
 
-	        # create image with low resolution
+            # create image with low resolution
             lowImgPath = "%s/books/%s/baixa_resolucao/image%s" % (
                 app.config['CV_MODULES'], bookId, imgId)
             lowImgPathPNG = lowImgPath + ".png"
@@ -238,7 +238,7 @@ class TTTask2(pb_task):
             command += 'convert %s -resize %dx%d! %s' % (
                 fullImgPathPNG, width, height, lowImgPathPNG)
 
-    	    print("Command: " + command)
+            print("Command: " + command)
             call([command], shell=True)  # calls the shell command
             
             return True
@@ -292,7 +292,7 @@ class TTTask2(pb_task):
         directory = "%s/books/%s/metadados/saida/" % (
             app.config['CV_MODULES'], bookId)
         output_files = os.listdir(directory)
-        images = [file.split('_')[0] for file in output_files]
+        images = [f.split('_')[0] for f in output_files]
 
         return ("image%s" % imgId) in images
 
@@ -335,13 +335,6 @@ class TTTask2(pb_task):
             print str(e)
 
         return selections
-
-    def __scale(point, src, dest):
-        scaleX = lambda x, src_w, dest_w: round((dest_w * x) / float(src_w))
-        scaleY = lambda y, src_h, dest_h: round((dest_h * y) / float(src_h))
-
-        return [scaleX(point[0], src[0], dest[0]),
-                scaleY(point[1], src[1], dest[1])]
 
     def __url_table(self, bookId, imgId, idx):
         """""
@@ -431,9 +424,9 @@ class TTTask3(pb_task):
         super(TTTask3, self).__init__(task_id, app_short_name)
 
     def add_next_task(self):
-	
-	if (self.__checkIfNextTaskWasCreated()):
-	    return
+
+        if (self.__checkIfNextTaskWasCreated()):
+            return
 
         try:
             linesAndColumnsMap = self.__loadAnswers()
@@ -473,14 +466,14 @@ class TTTask3(pb_task):
             print str(e)
     
     def __checkIfNextTaskWasCreated(self):
-	img_url = self.task.info['img_url']
+        img_url = self.task.info['img_url']
         tt4_app = self.get_next_app()
-	tt4_tasks = tt4_app.get_tasks()
+        tt4_tasks = tt4_app.get_tasks()
 
         for t in tt4_tasks:
             if (t.info['img_url'] == img_url):
-		return True
-	return False
+                return True
+        return False
 
     """
      Load values transcripted by tesseract ocr for this table
@@ -666,13 +659,13 @@ class TTTask3(pb_task):
                 columns.append(c)
 
             for l in info['linhas']:
-		overlapping_line = self.__getLineOverlapping(l, lines)
+                overlapping_line = self.__getLineOverlapping(l, lines)
 
-		if (overlapping_line == -1):
-	            lines.append(l)
-		else:
-		    newY = overlapping_line[1]
-		    columns = self.__updateColumnsYAxis(l, columns, newY)
+                if (overlapping_line == -1):
+                    lines.append(l)
+                else:
+                    newY = overlapping_line[1]
+                    columns = self.__updateColumnsYAxis(l, columns, newY)
             
             if maxX < info['maxX']:
                 maxX = info['maxX']
@@ -692,17 +685,17 @@ class TTTask3(pb_task):
         return mapWithNewAnswer
 
     def __getLineOverlapping(self, line, lines):
-	MIN_GAP_BETWEEN_LINES = 5
+        MIN_GAP_BETWEEN_LINES = 5
         for i in range(0, len(lines)):
             other_line =  lines[i]
             
             if ((line[0] == other_line[0] or self.__insideOpenInterval(line[0], line[2], other_line[0]) or self.__insideOpenInterval(line[0], line[2], other_line[2])) and math.fabs((line[1] - other_line[1])) <= MIN_GAP_BETWEEN_LINES):
                 return other_line
-  	
-	return -1
+  
+        return -1
 
     def __insideOpenInterval(self, init, final, element):
-	return element > init and element < final
+        return element > init and element < final
 
     """
       Transform segments in horizontal or vertical orientations
@@ -733,8 +726,8 @@ class TTTask3(pb_task):
         MIN_GAP_BETWEEN_COLUMNS_IN_X_AXIS = 10
         
         sortListOfGroupIds = []
-        for id in mapGroupsOfColumns.keys():
-            sortListOfGroupIds.append(float(id)) 
+        for identifier in mapGroupsOfColumns.keys():
+            sortListOfGroupIds.append(float(identifier)) 
         
         sortListOfGroupIds.sort()
         
@@ -755,7 +748,7 @@ class TTTask3(pb_task):
         #print mapGroupsOfColumns
         
         for groupOfColumns in mapGroupsOfColumns.values():
-	    transformationResult = self.__transformGroupInList(groupOfColumns, lines)
+            transformationResult = self.__transformGroupInList(groupOfColumns, lines)
             lines = transformationResult['lines']
             columns = transformationResult['columns']
             
@@ -765,9 +758,9 @@ class TTTask3(pb_task):
         #print "finalListOfColumns"
         #print finalListOfColumns
 
-	joinResult = {}
-	joinResult['lines'] = lines
-	joinResult['columns'] = finalListOfColumns
+        joinResult = {}
+        joinResult['lines'] = lines
+        joinResult['columns'] = finalListOfColumns
         
         return joinResult
     
@@ -776,7 +769,7 @@ class TTTask3(pb_task):
      columns.
     """
     def __transformGroupInList(self, groupOfColumns, lines):
-	MIN_GAP_BETWEEN_COLUMNS_IN_Y_AXIS = 5
+        MIN_GAP_BETWEEN_COLUMNS_IN_Y_AXIS = 5
         sortedGroupOfColumns = sorted(groupOfColumns, key=itemgetter(1))
         #print "sortedGroupOfColumns"
         #print sortedGroupOfColumns
@@ -796,53 +789,53 @@ class TTTask3(pb_task):
                 if(i+1 == len(sortedGroupOfColumns)-1):
                     tmpCols.append(ptr2)
             else:
-		if (len(tmpCols) == 0):
-		    tmpCols.append(ptr1)
+                if (len(tmpCols) == 0):
+                    tmpCols.append(ptr1)
 
-		newX = tmpCols[0][0]
+                newX = tmpCols[0][0]
                 listOfColumns.append([newX, tmpCols[0][1],
                                       newX, tmpCols[-1][3]])
-		lines = self.__updateLinesXAxis(tmpCols, lines, newX)
+                lines = self.__updateLinesXAxis(tmpCols, lines, newX)
 
                 tmpCols = [ptr2]
                 #print "listOfColumns"
                 #print listOfColumns
        
-	if (len(sortedGroupOfColumns) == 1):
-		tmpCols.append(sortedGroupOfColumns[0])
+        if (len(sortedGroupOfColumns) == 1):
+            tmpCols.append(sortedGroupOfColumns[0])
 
-	newX = tmpCols[0][0]
+        newX = tmpCols[0][0]
         listOfColumns.append([newX, tmpCols[0][1],
                               newX, tmpCols[-1][3]])
-	lines = self.__updateLinesXAxis(tmpCols, lines, newX)
+        lines = self.__updateLinesXAxis(tmpCols, lines, newX)
      
         #print "listOfColumns"
         #print listOfColumns
 
-	transformationResult = {}
-	transformationResult['lines'] = lines
-	transformationResult['columns'] = listOfColumns
+        transformationResult = {}
+        transformationResult['lines'] = lines
+        transformationResult['columns'] = listOfColumns
         
         return transformationResult
     
     def __updateLinesXAxis(self, columns, lines, newX):
-	for column in columns:
-	    for i in range(0, len(lines)):
-	        line = lines[i]
-	        if line[0] == column[0]:
-	            lines[i] = [newX, line[1], line[2], line[3]]
-	        elif line[2] == column[0]:
-	            lines[i] = [line[0], line[1], newX, line[3]]
-	return lines
+        for column in columns:
+            for i in range(0, len(lines)):
+                line = lines[i]
+                if line[0] == column[0]:
+                    lines[i] = [newX, line[1], line[2], line[3]]
+                elif line[2] == column[0]:
+                    lines[i] = [line[0], line[1], newX, line[3]]
+        return lines
 
     def __updateColumnsYAxis(self, line, columns, newY):
-	for i in range(0, len(columns)):
-	    column = columns[i]
-	    if column[1] == line[1]:
-	        columns[i] = [column[0], newY, column[2], column[3]]
-	    elif column[3] == line[1]:
-	        columns[i] = [column[0], column[1], column[2], newY]
-	return columns
+        for i in range(0, len(columns)):
+            column = columns[i]
+            if column[1] == line[1]:
+                columns[i] = [column[0], newY, column[2], column[3]]
+            elif column[3] == line[1]:
+                columns[i] = [column[0], column[1], column[2], newY]
+        return columns
 
     def close_task(self):
         pass
@@ -942,12 +935,12 @@ class TTTask4(pb_task):
         
         if (n_taskruns > 0):
             last_answer = task_runs[n_taskruns - 1].info
-	    last_answer_json = json.loads(last_answer)
+            last_answer_json = json.loads(last_answer)
             confirmations = last_answer_json['num_of_confirmations']
 
-	    for confirmation in confirmations:
-	        if (int(confirmation) < 2):
-	            return False
+            for confirmation in confirmations:
+                if (int(confirmation) < 2):
+                    return False
             return True
         else:
             return False
@@ -960,9 +953,9 @@ class TTTask4(pb_task):
             return False
         
         for i in range(0, len(val1)):
-	    if val1[i] != val2[i]:
-		return False
-	return True
+            if val1[i] != val2[i]:
+                return False
+        return True
     
     def get_next_app(self):
         return
