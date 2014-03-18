@@ -387,7 +387,6 @@
 	}
 
 	function loadData(data) {
-
 		if (!$.isEmptyObject(data.task)) {
 			spinnerStart();
 			loadUserProgress();
@@ -419,6 +418,10 @@
 					redirectToANewTask(getARandomTask());
 				}, 1500);
 			});
+		}
+		
+		if ($("#button_share").hasClass("active")) {
+			disableShare();			
 		}
 	}
 

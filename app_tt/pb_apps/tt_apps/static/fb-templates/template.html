@@ -19,11 +19,7 @@
 	}
 	
 	function clearCurrentTemplate() {
-		$('body').off('mouseup');
-		$('body').off('mousedown');
-		$('body').off('contextmenu');
-		$("[rel=tooltip]").tooltip('destroy');
-		
+		clearMBInterface();
 		$('#'+ currentTaskType).empty();
 	}
 	

@@ -6,13 +6,10 @@
 	
 	function loadAHTML(targetEl, htmlUrl, callback) {
 		$("#loading-container").show();
-		
-		//setTimeout(function() {
-			$(targetEl).load(htmlUrl, function(){
-				$("#loading-container").hide();
-				callback();
-			});
-		//}, 2000);
+		$(targetEl).load(htmlUrl, function(){
+			$("#loading-container").hide();
+			callback();
+		});
 	}
 
 	loadAHTML('#mb', "https://" + server_name + "/mb", function() {
@@ -24,6 +21,14 @@
 		$(".container-wrapper a").click(handleStartContributingClickEvent);
 	});
 
+	function clearMBInterface() {
+		$('body').off('mouseup');
+		$('body').off('mousedown');
+		$('body').off('contextmenu');
+		$("[rel=tooltip]").tooltip('destroy');
+		$("[rel=popover]").popover('destroy');
+	}
+	
 	function handleStartContributingClickEvent(e) {
 		e.preventDefault();
 		initFacebookLogin();
@@ -39,6 +44,8 @@
 	}
 
 	function loadBooksPage(url) {
+		clearMBInterface();
+		
 		$('#mb').hide();
 		$('#books').hide();
 		$("#task-template").hide();

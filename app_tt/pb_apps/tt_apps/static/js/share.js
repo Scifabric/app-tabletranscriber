@@ -10,7 +10,8 @@
 	var shareStage;
 	var shareArea;
 	var selectionLayer;
-	var APP_ID = "697196073638750"
+	var APP_ID = "697196073638750";
+	//var APP_ID = "715128605186409";
 	var taskId;
 	var currentUserId;
 	var SHARE_HELP_ENABLED_MESSAGE = "Clique e arraste o mouse sobre uma área da tabela para compartilhar";
@@ -55,6 +56,7 @@
 
 		$("#button_share").attr("data-original-title", SHARE_HELP_DISABLED_MESSAGE);
 		$("#button_share").trigger("mouseover");
+		$("#button_share").trigger("mouseout");
 	}
 
 	function createShareStage(addEventHandlers) {

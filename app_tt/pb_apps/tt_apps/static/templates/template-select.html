@@ -229,6 +229,9 @@
 						}, 1500);
 					});
 		}
+		if ($("#button_share").hasClass("active")) {
+			disableShare();			
+		}
 	}
 	
 	function redirectToANewTask(taskSufix) {
