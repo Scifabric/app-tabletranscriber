@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo sh restart_dependences_allbooks.sh
+#sudo sh restart_dependences_allbooks.sh
 
 sudo service rabbitmq-server stop
 sudo service rabbitmq-server start

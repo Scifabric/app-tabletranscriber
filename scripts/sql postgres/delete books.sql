@@ -1,1 +1,1 @@
-delete from book where title like '%Memmoria%'
+delete from book where id like '%anuario1916pb%'
