@@ -189,7 +189,7 @@ if __name__ == "__main__":
     if options.app_short_name:
         app_short_name = options.app_short_name
         print app_short_name
-        app = pbclient.find_app(short_name=app_short_name)[0]
+        app = pbclient.find_app(short_name=app_short_name)[0]             
         app_type = app_short_name[-4:]
         template_type = None
 
@@ -200,7 +200,7 @@ if __name__ == "__main__":
         elif app_type == "_tt3":
             template_type = "template-struct.html"
         elif app_type == "_tt4":
-        	template_type = "template-transcribe.html"
+            template_type = "template-transcribe.html"
 
         if template_type:
             new_template = _setUrl_(
