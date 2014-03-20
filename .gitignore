@@ -1,2 +1,4 @@
 .settings/
 *.pyc
+/settings_local.py
+/env

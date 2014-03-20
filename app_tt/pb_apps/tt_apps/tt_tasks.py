@@ -62,9 +62,11 @@ class TTTask1(pb_task):
                     app.config['API_KEY']),
                     data=json.dumps(dict(info=self.task.info)))
                 
+                bookId = self.app_short_name[:-4]
                 archiveURL = self.task.info["url_m"]
                 page = self.task.info["page"]
-                data_manager.record_page((archiveURL, page))
+                
+                data_manager.record_page((bookId, archiveURL, page))
                 
                 return True
         return False

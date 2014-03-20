@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
-from app_tt.core import pbclient
+
+from app_tt.meb_util import archiveBookData, setUrl_
 from optparse import OptionParser
-from app_tt.meb_util import archiveBookData
-from app_tt.meb_util import setUrl_
-from app_tt.core import app as flask_app
+from app_tt.core import app as flask_app, pbclient
 import urllib2
 
 
@@ -14,9 +12,9 @@ if __name__ == "__main__":
         "-u", "--update-template",
         dest="app_short_name", help="Update app template",
         metavar="SHORT_NAME")
-
+ 
     (options, args) = parser.parse_args()
-
+ 
     if options.app_short_name:
         app_short_name = options.app_short_name
         print app_short_name
@@ -24,7 +22,7 @@ if __name__ == "__main__":
         app_type = app_short_name[-4:]
         template_type = None
         app_name = None
-
+ 
         if app_type == "_tt1":
             template_type = "template-select.html"
             app_name = unicode("Seleção", "utf-8")
@@ -37,7 +35,7 @@ if __name__ == "__main__":
         elif app_type == "_tt4":
             template_type = "template-transcribe.html"
             app_name = unicode("Transcrição", "utf-8")
-
+ 
         if template_type:
             new_template = setUrl_(
                 urllib2.urlopen(
@@ -45,9 +43,9 @@ if __name__ == "__main__":
                         flask_app.config['URL_TEMPLATES']
                         + "/templates/" + template_type)),
                 app_short_name)
-
+ 
             app.info['task_presenter'] = new_template
-            
+             
             book_id = app_short_name[:-4]
             bookInfo = archiveBookData(book_id)
             app.name = bookInfo['title'] + " " + app_name

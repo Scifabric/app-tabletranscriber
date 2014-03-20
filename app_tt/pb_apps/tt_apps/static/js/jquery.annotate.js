@@ -648,8 +648,7 @@
 		// 	jsonData.push({data: {titulo: noteS[i].text.titulo, subtitulo: noteS[i].text.subtitulo, assunto: noteS[i].text.assunto,
                     // fontes: noteS[i].text.fontes}, coords: {x1: noteS[i].left, y1:noteS[i].top, x2: noteS[i].left + noteS[i].width , y2: noteS[i].top + noteS[i].height}});
 		// }
-        // console.log(jsonData);
-		
+        
 		return JSON.stringify(jsonData);
 	};
 		

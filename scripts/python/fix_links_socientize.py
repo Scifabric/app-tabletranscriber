@@ -32,15 +32,15 @@ try:
     rows = cursor.fetchall()
 
     for row in rows:
-        newInfo = replaceInfo(row)
-    print "newInfo[1]"
-    print newInfo[1]
+    	newInfo = replaceInfo(row)
+	print "newInfo[1]"
+	print newInfo[1]
 
-    #print "row"    
-    #print row
+	#print "row"	
+	#print row
 
-#    cursor.execute("UPDATE " + table + " SET info=%s WHERE id=%s", (newInfo[1], row['id']) )
-#    con.commit()    
+#	cursor.execute("UPDATE " + table + " SET info=%s WHERE id=%s", (newInfo[1], row['id']) )
+#	con.commit()    
 
 except psycopg2.DatabaseError, e:
     print 'Error %s' % e    

@@ -25,8 +25,9 @@ def record_book_info_mbdb(info_book):
     
     
 def record_page(page_info):
-    pg = page(page_info[0],
-              page_info[1])
+    pg = page(bookid=page_info[0],
+              archiveURL=page_info[1],
+              page_num=page_info[2])
     
     try:
         db.session.add(pg)
@@ -34,3 +35,4 @@ def record_page(page_info):
     except Exception as e:
         db.session.rollback()
         raise e
+    

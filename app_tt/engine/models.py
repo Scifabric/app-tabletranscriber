@@ -22,21 +22,23 @@ class book(db.Model):
         #self.finalDate = finalDate
 
     def __repr__(self):
-       return '<book %r, %r , %r, %r, %r, %r>' % (self.id, self.title, self.publisher,\
+        return '<book %r, %r , %r, %r, %r, %r>' % (self.id, self.title, self.publisher,\
                                                    self.contributor, self.volume,\
                                                     self.img_url)
  
 class page(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    book_id = db.Column(db.String(100), db.ForeignKey('book.id'))
     archiveURL = db.Column(db.String(255), unique=True)
-    page = db.Column(db.String(10))
+    page_num = db.Column(db.String(10))
     
-    def __init__(self, archiveURL=None, page=None):
+    def __init__(self, bookid=None, archiveURL=None, page_num=None):
+        self.book_id = bookid
         self.archiveURL = archiveURL
-        self.page = page
+        self.page_num = page_num
         
     def __repr__(self):
-        return '<page %r, %r, %r>' % (self.id, self.archiveURL, self.page)
+        return '<page %r, %r, %r, %r>' % (self.id, self.book_id, self.archiveURL, self.page_num)
     
 #class fact(db.Model):
     #id = db.Column(db.Integer, primary_key=True, autoincrement=True)
