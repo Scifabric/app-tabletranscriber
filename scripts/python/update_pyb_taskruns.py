@@ -17,6 +17,29 @@ def __undo_fix_task_run_info_dict(info):
     
     return info
 
+def __change_fields(info_dict):
+    if not info_dict.has_key('dataInicial'):
+        info_dict['dataInicial'] = ''
+    if not info_dict.has_key('dataFinal'):
+        info_dict['dataFinal'] = ''
+    if info_dict.has_key('test'):
+        info_dict.pop('test')
+    
+    return info_dict
+
+def __update_taskrun(tr):
+    print "tr.id: " + str(tr.id)
+    print "tr.info: " + tr.info
+    #print "api_key=" + str(flask_app.config['API_KEY'])
+    #print "pybossa-url: " + flask_app.config['PYBOSSA_URL']
+            
+    r = requests.put("%s/api/taskrun/%s?api_key=%s" % 
+                         (flask_app.config['PYBOSSA_URL'], tr.id, 
+                          flask_app.config['API_KEY']),
+                          data=json.dumps( dict(info=tr.info) ) )
+        
+    print "r: " + str(r.json())
+
 def fix_dates_t2(app_short_name):
     apps = pbclient.find_app(short_name=app_short_name)
     
@@ -25,33 +48,30 @@ def fix_dates_t2(app_short_name):
         trs = pbclient.find_taskruns(app.id)
         
         for tr in trs:
-            info_dict = tr.info[1:len(tr.info)-1]
-            info_dict = __fix_task_run_info_dict(info_dict)
-            info_dict = ast.literal_eval(info_dict)
+            infos = tr.info[1:len(tr.info)-1]
+            infos = __fix_task_run_info_dict(infos)
+            infos = ast.literal_eval(infos)
             
-            if not info_dict.has_key('dataInicial'):
-                info_dict['dataInicial'] = ''
-            if not info_dict.has_key('dataFinal'):
-                info_dict['dataFinal'] = ''
-            if info_dict.has_key('test'):
-                info_dict.pop('test')
+            if type(infos) is tuple:
+                info_list = []
+                for info in infos:
+                    info = __change_fields(info)
+                    info = __undo_fix_task_run_info_dict(info)
+                    info_list.append(info)
+                    
+                tr.info = json.dumps(tuple(info_list))        
+                
+                __update_taskrun(tr)
+                
+            elif type(infos) is dict:
+                info_dict = __change_fields(infos)
             
-            info_dict = __undo_fix_task_run_info_dict(info_dict)
+                info_dict = __undo_fix_task_run_info_dict(info_dict)
+                        
+                tr.info = "[" + json.dumps(info_dict) + "]"        
+                
+                __update_taskrun(tr)
             
-            tr.info = "[" + json.dumps(info_dict) + "]"        
-            
-            #print "tr.id: " + str(tr.id)
-            #print "tr.info: " + tr.info
-            #print "api_key=" + str(flask_app.config['API_KEY'])
-            #print "pybossa-url: " + flask_app.config['PYBOSSA_URL']
-            
-            r = requests.put("%s/api/taskrun/%s?api_key=%s" % 
-                             (flask_app.config['PYBOSSA_URL'], tr.id, 
-                              flask_app.config['API_KEY']),
-                        data=json.dumps( dict(info=tr.info) ) )
-        
-            print "r: " + str(r.json())
-        
 if __name__ == '__main__':
     short_names = ["caracterizaoeten2001bras_tt2",
                    "recenseamento1872pb_tt2",
