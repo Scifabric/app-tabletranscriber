@@ -12,7 +12,12 @@ def __fix_task_run_info_dict(d_str):
 
 def __undo_fix_task_run_info_dict(info):
     info['text']['girar'] = 'true' if info['text']['girar'] else 'false'
-    info['text']['nao_girar'] = 'true' if info['text']['nao_girar'] else 'false'
+    
+    if info['text'].has_key('nao_girar'):
+        info['text']['nao_girar'] = 'true' if info['text']['nao_girar'] else 'false'
+    else:
+        info['text']['nao_girar'] = 'true'
+    
     info['editable'] = 'true' if info['editable'] else 'false'
     
     return info
