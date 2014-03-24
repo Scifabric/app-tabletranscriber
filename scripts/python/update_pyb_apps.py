@@ -1,4 +1,5 @@
-
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from app_tt.meb_util import archiveBookData, setUrl_
 from optparse import OptionParser
 from app_tt.core import app as flask_app, pbclient
