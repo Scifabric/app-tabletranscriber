@@ -11,6 +11,11 @@ def __fix_task_run_info_dict(d_str):
     return d_str
 
 def __undo_fix_task_run_info_dict(info):
+    if info.has_key('dataInicial'): # fix old error
+        info.pop('dataInicial')
+    if info.has_key('dataFinal'):  # fix old error
+        info.pop('dataFinal')
+    
     info['text']['girar'] = 'true' if info['text']['girar'] else 'false'
     
     if info['text'].has_key('nao_girar'):
@@ -23,10 +28,10 @@ def __undo_fix_task_run_info_dict(info):
     return info
 
 def __change_fields(info_dict):
-    if not info_dict.has_key('dataInicial'):
-        info_dict['dataInicial'] = ''
-    if not info_dict.has_key('dataFinal'):
-        info_dict['dataFinal'] = ''
+    if not info_dict['text'].has_key('dataInicial'):
+        info_dict['text']['dataInicial'] = ''
+    if not info_dict['text'].has_key('dataFinal'):
+        info_dict['text']['dataFinal'] = ''
     if info_dict.has_key('test'):
         info_dict.pop('test')
     
@@ -57,24 +62,23 @@ def fix_dates_t2(app_short_name):
             infos = __fix_task_run_info_dict(infos)
             infos = ast.literal_eval(infos)
             
-            if type(infos) is tuple:
-                info_list = []
-                for info in infos:
-                    info = __change_fields(info)
-                    info = __undo_fix_task_run_info_dict(info)
-                    info_list.append(info)
-                    
-                tr.info = json.dumps(tuple(info_list))        
-                
-                __update_taskrun(tr)
-                
-            elif type(infos) is dict:
-                info_dict = __change_fields(infos)
-            
-                info_dict = __undo_fix_task_run_info_dict(info_dict)
+            if infos != "":
+                if type(infos) is tuple:
+                    info_list = []
+                    for info in infos:
+                        info = __change_fields(info)
+                        info = __undo_fix_task_run_info_dict(info)
+                        info_list.append(info)
                         
-                tr.info = "[" + json.dumps(info_dict) + "]"        
+                    tr.info = json.dumps(tuple(info_list))        
+                    
+                elif type(infos) is dict:
+                    info_dict = __change_fields(infos)
                 
+                    info_dict = __undo_fix_task_run_info_dict(info_dict)
+                            
+                    tr.info = "[" + json.dumps(info_dict) + "]"        
+                    
                 __update_taskrun(tr)
             
 if __name__ == '__main__':
