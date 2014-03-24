@@ -1,15 +1,12 @@
 #!/bin/bash
 
-cd ..
-
 #reload templates
-. env/bin/activate
-python app_tt/pb_apps/tt_apps/ttapps.py -u anuario1916pb_tt1
-python app_tt/pb_apps/tt_apps/ttapps.py -u anuario1916pb_tt2
-python app_tt/pb_apps/tt_apps/ttapps.py -u anuario1916pb_tt3
-python app_tt/pb_apps/tt_apps/ttapps.py -u anuario1916pb_tt4
+. ../../env/bin/activate
+python ../python/update_pyb_apps.py -u anuario1916pb_tt1
+python ../python/update_pyb_apps.py -u anuario1916pb_tt2
+python ../python/update_pyb_apps.py -u anuario1916pb_tt3
+python ../python/update_pyb_apps.py -u anuario1916pb_tt4
 deactivate
-
 
 #sudo service rabbitmq-server stop
 sudo service rabbitmq-server restart
