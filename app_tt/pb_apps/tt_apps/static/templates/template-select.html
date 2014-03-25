@@ -176,7 +176,7 @@
 			$("#progress").css("width", pct.toString() + "%");
 			
 			$("#progress").tooltip('destroy');
-			$("#progress").attr("data-original-title", pct.toString() + "% completed!");
+			$("#progress").attr("data-original-title", pct.toString() + "% " + $.i18n._('completed'));
 			$("#progress").tooltip({
 				'placement' : 'left'
 			});

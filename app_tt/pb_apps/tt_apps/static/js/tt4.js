@@ -652,7 +652,7 @@
         if (newPct != currentPct) $("#task-bar-progress").tooltip('hide');
 
 		$("#task-bar-progress").css("width", newPct);
-		$("#task-bar-progress").attr("data-original-title", newPct.toString() + " completa!");
+		$("#task-bar-progress").attr("data-original-title", newPct.toString() + " " + $.i18n._('completed'));
 	}
 
 	function handleTaskbarProgressChange() {
@@ -738,8 +738,7 @@
 	}
 
 	function updateTranscriptionField(cell) {
-		var pc_trancription_label = "O computador tem " + cell.confidence + "% de confiança na transcrição abaixo.";
-		$("#pc-transcription-label").text(pc_trancription_label);
+		$("#pc-transcription-confidence").text(cell.confidence);
 		$("#transcription-field").text(cell.getComputerTranscription());
 
 		var lastAnswer = cell.getLastAnswer();

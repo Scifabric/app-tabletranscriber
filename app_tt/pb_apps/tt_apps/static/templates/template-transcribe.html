@@ -1,214 +1,192 @@
 <div id="template-container">
-<div class="row">
-	<div id="alert-container" class="span7" style="height: 50px">
-		<div id="success" class="alert alert-success" style="display: none;">
-			<p style="margin-left: 110px;">
-				<span><strong>#</strong></span><span>#</span>
-			</p>
+	<div class="row">
+		<div id="alert-container" class="span7" style="height: 50px">
+			<div id="success" class="alert alert-success" style="display: none;">
+				<p style="margin-left: 110px;">
+					<span><strong>#</strong></span><span>#</span>
+				</p>
+			</div>
+			<div id="finish" class="alert alert-success" style="display: none;">
+				<p style="margin-left: 80px;">
+					<span><strong>#</strong></span><span>#</span>
+				</p>
+			</div>
+			<div id="error" class="alert alert-error" style="display: none;">
+				<p>
+					<span><strong>#</strong></span><span>#</span>
+				</p>
+			</div>
+			<div id="workflowtask" class="alert alert-success"
+				style="display: none; text-align: center; cursor: pointer; position: relative; margin-top: 5px;"></div>
 		</div>
-		<div id="finish" class="alert alert-success" style="display: none;">
-			<p style="margin-left: 80px;">
-				<span><strong>#</strong></span><span>#</span>
-			</p>
-		</div>
-		<div id="error" class="alert alert-error" style="display: none;">
-			<p>
-				<span><strong>#</strong></span><span>#</span>
-			</p>
-		</div>
-		<div id="workflowtask" class="alert alert-success"
-			style="display: none; text-align: center; cursor: pointer; position: relative; margin-top: 5px;"></div>
 	</div>
-</div>
 
-<div class="row skeleton">
-	<div class="span9">
-		<h1 id="question"></h1>
-		<p>
-			<span id="progress-from">#</span><span id="done"
-				class="label label-info" style="margin-right: 5px"></span><span
-				id="progress-to">#</span> <span id="total"
-				class="label label-inverse"></span>
-		</p>
-		<div class="progress progress-striped"
-			style="width: 500px; margin-bottom: 10px;">
-			<div id="app-bar-progress" rel="tooltip" class="bar"
+	<div class="row skeleton">
+		<div class="span9">
+			<h1 id="question"></h1>
+			<p>
+				<span id="progress-from">#</span><span id="done"
+					class="label label-info" style="margin-right: 5px"></span><span
+					id="progress-to">#</span> <span id="total"
+					class="label label-inverse"></span>
+			</p>
+			<div class="progress progress-striped"
+				style="width: 500px; margin-bottom: 10px;">
+				<div id="app-bar-progress" rel="tooltip" class="bar"
+					style="width: 0%;"></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="skeleton" style="margin-bottom: 25px;">
+		<div id="toolbar" class="btn-group">
+			<button id="button-zoom-in" class="btn" rel="tooltip" title=""
+				onclick="handleZoomInToolEvent()">
+				<i class="icon icon-zoom-in"></i>
+			</button>
+			<button id="button-zoom-out" class="btn" rel="tooltip" title=""
+				onclick="handleZoomOutToolEvent()">
+				<i class="icon icon-zoom-out"></i>
+			</button>
+			<button id="button-help" class="btn" rel="tooltip" title=""
+				onclick="showHelpTranscribe()">
+				<i class="icon icon-question-sign"></i>
+			</button>
+		</div>
+		<button id="button-finished-task" class="btn btn-success"
+			onclick="submitTask()">
+			<i class="icon icon-white icon-ok"></i> <span></span>
+		</button>
+
+		<div id="task-progress" class="progress">
+			<div id="task-bar-progress" rel="tooltip" class="bar bar-success"
 				style="width: 0%;"></div>
 		</div>
 	</div>
-</div>
 
-<div class="skeleton" style="margin-bottom: 25px;">
-	<div id="toolbar" class="btn-group">
-		<button class="btn" rel="tooltip"
-			title="Habilita a ferramenta de Zoom In"
-			onclick="handleZoomInToolEvent()">
-			<i class="icon icon-zoom-in"></i>
-		</button>
-		<button class="btn" rel="tooltip"
-			title="Habilita a ferramenta de Zoom Out"
-			onclick="handleZoomOutToolEvent()">
-			<i class="icon icon-zoom-out"></i>
-		</button>
-		<button class="btn" rel="tooltip" title="Abre a tela de ajuda"
-			onclick="showHelpTranscribe()">
-			<i class="icon icon-question-sign"></i>
-		</button>
-	</div>
-	<button id="button-finished-task" class="btn btn-success"
-		onclick="submitTask()">
-		<i class="icon icon-white icon-ok"></i> Salvar correções
-	</button>
+	<div class="skeleton">
+		<div id="table-viewer">
+			<div id="canvas-table-container"></div>
+		</div>
+		<div id="right-panel">
+			<div class="btn-group" style="margin-bottom: 10px">
+				<button id="button-previous-cell" class="btn" rel="tooltip" title=""
+					onclick="handlePreviousCellEvent()">
+					<i class="icon icon-arrow-left"></i>
+				</button>
+				<button id="button-next-cell" class="btn" rel="tooltip" title=""
+					onclick="handleNextCellEvent()">
+					<i class="icon icon-arrow-right"></i>
+				</button>
+			</div>
 
-	<div id="task-progress" class="progress">
-		<div id="task-bar-progress" rel="tooltip" class="bar bar-success"
-			style="width: 0%;"></div>
-	</div>
-</div>
+			<div id="cell-viewer">
+				<div id="canvas-cell-container"></div>
+			</div>
 
-<div class="skeleton">
-	<div id="table-viewer">
-		<div id="canvas-table-container"></div>
-	</div>
-	<div id="right-panel">
-		<div class="btn-group" style="margin-bottom: 10px">
-			<button class="btn" rel="tooltip" title="Célula anterior"
-				onclick="handlePreviousCellEvent()">
-				<i class="icon icon-arrow-left"></i>
+			<label><span id="pc-transcription-p1"></span><span
+				id="pc-transcription-confidence"></span><span
+				id="pc-transcription-p2"></span></label> <span id="transcription-field"
+				class="input uneditable-input"></span> <label
+				id="human-transcription-label"></label> <span
+				id="human-transcription-field" class="input uneditable-input"></span>
+
+			<label id="your-transcription-label"></label> <input
+				id="edition-field" type="text">
+
+			<button id="button-finished-transcription" class="btn btn-success"
+				onclick="handleSaveCellEvent()">
+				<i class="icon icon-white icon-ok"></i> OK
 			</button>
-			<button class="btn" rel="tooltip" title="Próxima célula"
-				onclick="handleNextCellEvent()">
-				<i class="icon icon-arrow-right"></i>
+
+			<div id="instruction" class="alert alert-info">
+				<h5>
+					<span id="task-instruction-p1"></span><br>
+					<ul>
+						<li><span id="task-instruction-p2"></span></li>
+						<li><span id="task-instruction-p3"></span></li>
+						<li><span id="task-instruction-p4"></span></li>
+						<li><span id="task-instruction-p5"></span></li>
+					</ul>
+				</h5>
+			</div>
+		</div>
+	</div>
+
+	<div id="helpModalTranscribe" class="modal hide fade" tabindex="-1"
+		role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+		style="display: none">
+
+		<div class="modal-header">
+			<button class="close" data-dismiss="modal" aria-hidden="true">
+				<i class="icon-white icon-remove"></i>
 			</button>
+			<h3 id="myModalLabel">
+				<strong>Tutorial de Correção de Células da Tabela</strong>
+			</h3>
 		</div>
 
-		<div id="cell-viewer">
-			<div id="canvas-cell-container"></div>
+		<div class="modal-body">
+			<h2>O que deve ser feito?</h2>
+
+			<p>A tarefa consiste em corrigir o conteúdo das células
+				selecionadas. Existe um campo correspondente à transcrição feita
+				pelo computador, com base em algoritmos de visão computacional. Esta
+				transcrição pode está correta ou conter algum erro, neste último
+				caso, você deve corrigir o conteúdo e clicar no botão Ok. A célula
+				que deve ser transcrita aparece em zoom, acima do campo de edição.</p>
+
+			<h2>Cores das células:</h2>
+
+			<p>
+				As células em <strong style="color: #E93F2D">vermelho</strong> são
+				as células que o computador tem uma baixa confiança na transcrição
+				do que está escrito, e que faltam ser inspecionadas e finalizadas.
+			</p>
+			<p>
+				As células em <strong style="color: #1BA038">verde</strong> são as
+				células que as transcrições corrigidas por você ou por outro
+				usuário;
+			</p>
+			<p>
+				A célula em <strong style="color: #339ACD">azul</strong> é a célula
+				que está selecionada para você verificar a transcrição.
+			</p>
+			<br>
+
+			<h2>Atalhos de Navegação</h2>
+			<dl>
+				<dt>
+					Seta para esquerda <i class="icon-arrow-left"></i>
+				</dt>
+				<dd>Dirija-se para a célula à esquerda da célula atual, caso
+					exista.</dd>
+			</dl>
+			<dl>
+				<dt>
+					Seta para direita <i class="icon-arrow-right"></i>
+				</dt>
+				<dd>Dirija-se para a célula à direita da célula atual, caso
+					exista.</dd>
+			</dl>
+			<br>
+			<p>
+				<strong style="color: red">Atenção</strong>
+			</p>
+			<p>- Caso a célula não apresente nenhum conteúdo, não se
+				preocupe, pode deixá-la em branco.</p>
+			<p>- Caso a célula possua um hífen (-) ou reticências (...),
+				transcreva do jeito que está na célula visualizada.</p>
+			<p>- Caso a célula esteja no lugar errado, indique isso fazendo
+				um comentário no campo de feedback, logo abaixo da tabela.</p>
+			<br>
+
 		</div>
 
-		<label id="pc-transcription-label">#</label> <span
-			id="transcription-field" class="input uneditable-input"></span> <label
-			id="human-transcription-label">Transcrição de outro usuário</label> <span
-			id="human-transcription-field" class="input uneditable-input"></span>
-
-		<label>Sua transcrição</label> <input id="edition-field" type="text">
-
-		<button id="button-finished-transcription" class="btn btn-success"
-			onclick="handleSaveCellEvent()">
-			<i class="icon icon-white icon-ok"></i> OK
-		</button>
-
-		<div id="instruction" class="alert alert-info">
-			<h5>
-				<strong> Informações </strong><br>
-				<ul>
-					<li>A célula em <strong style="color: #339ACD">azul</strong> é
-						a célula atualmente selecionada para você verficar a transcrição;
-					</li>
-					<li>Células em <strong style="color: #1BA038">verde</strong>
-						indicam transcrições corrigidas por você ou por outro usuário;
-					</li>
-					<li>Células em <strong style="color: #E93F2D">vermelho</strong>
-						indicam transcrições que faltam ser inspecionadas e finalizadas.
-					</li>
-					<br>
-					<li>Você pode salvar a tarefa a qualquer momento, caso não deseje fazer a transcrição da tabela
-					inteira, basta clicar em <strong>Salvar correções</strong>, para que outro usuário continue de onde você parou.</li>
-				</ul>
-			</h5>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Fechar</button>
 		</div>
 	</div>
-</div>
-
-<div id="helpModalTranscribe" class="modal hide fade" tabindex="-1"
-	role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
-	style="display: none">
-
-	<div class="modal-header">
-		<button class="close" data-dismiss="modal" aria-hidden="true">
-			<i class="icon-white icon-remove"></i>
-		</button>
-		<h3 id="myModalLabel">
-			<strong>Tutorial de Correção de Células da Tabela</strong>
-		</h3>
-	</div>
-
-	<div class="modal-body">
-		<h2>O que deve ser feito?</h2>
-
-		<p>A tarefa consiste em corrigir o conteúdo das células
-			selecionadas. Existe um campo correspondente à transcrição feita pelo
-			computador, com base em algoritmos de visão computacional. Esta
-			transcrição pode está correta ou conter algum erro, neste último
-			caso, você deve corrigir o conteúdo e clicar no botão Ok. A célula
-			que deve ser transcrita aparece em zoom, acima do campo de edição.</p>
-
-		<h2>Cores das células:</h2>
-
-		<p>
-			As células em <strong style="color: #E93F2D">vermelho</strong> são as
-			células que o computador tem uma baixa confiança na transcrição do
-			que está escrito, e que faltam ser inspecionadas e finalizadas.
-		</p>
-		<p>
-			As células em <strong style="color: #1BA038">verde</strong> são as
-			células que as transcrições corrigidas por você ou por outro usuário;
-		</p>
-		<p>
-			A célula em <strong style="color: #339ACD">azul</strong> é a célula
-			que está selecionada para você verificar a transcrição.
-		</p>
-		<br>
-
-		<h2>Atalhos de Navegação</h2>
-		<dl>
-			<dt>
-				Seta para esquerda <i class="icon-arrow-left"></i>
-			</dt>
-			<dd>Dirija-se para a célula à esquerda da célula atual, caso
-				exista.</dd>
-		</dl>
-		<dl>
-			<dt>
-				Seta para direita <i class="icon-arrow-right"></i>
-			</dt>
-			<dd>Dirija-se para a célula à direita da célula atual, caso
-				exista.</dd>
-		</dl>
-		<!--
-		<dl>
-			<dt>
-				Seta para cima <i class="icon-arrow-up"></i>
-			</dt>
-			<dd>Dirija-se para a célula acima da célula atual, caso exista.</dd>
-		</dl>
-		<dl>
-			<dt>
-				Seta para baixo <i class="icon-arrow-down"></i></dt>
-			<dd>
-				Dirija-se para a célula abaixo da célula atual, caso exista.
-			</dd>
-		</dl>
-		-->
-		<br>
-
-		<p>
-			<strong style="color: red">Atenção</strong>
-		</p>
-		<p>- Caso a célula não apresente nenhum conteúdo, não se preocupe,
-			pode deixá-la em branco.</p>
-		<p>- Caso a célula possua um hífen (-) ou reticências (...),
-			transcreva do jeito que está na célula visualizada.</p>
-		<p>- Caso a célula esteja no lugar errado, indique isso fazendo um
-			comentário no campo de feedback, logo abaixo da tabela.</p>
-		<br>
-
-	</div>
-
-	<div class="modal-footer">
-		<button class="btn" data-dismiss="modal" aria-hidden="true">Fechar</button>
-	</div>
-</div>
 </div>
 
 <link rel="stylesheet" href="#server/css/tt-transcribe.css" />
@@ -234,6 +212,8 @@
 						$("#question span:first").text($.i18n._('task_name'));
 						$("#success strong").text($.i18n._('well_done'));
 						$("#success span:nth-child(2)").text($.i18n._('saved'));
+						$("#button-finished-task span:first").text(
+								$.i18n._('button-finished-task'));
 						$("#finish strong").text($.i18n._('congratulations'));
 						$("#finish span:nth-child(2)").text(
 								$.i18n._('finished'));
@@ -242,6 +222,36 @@
 						$("#workflowtask").text($.i18n._('workflowtask'));
 						$("#progress-from").text($.i18n._('progress-from'));
 						$("#progress-to").text($.i18n._('progress-to'));
+
+						$("#task-instruction-p1").html(
+								$.i18n._('task-instruction-p1'));
+						$("#task-instruction-p2").html(
+								$.i18n._('task-instruction-p2'));
+						$("#task-instruction-p3").html(
+								$.i18n._('task-instruction-p3'));
+						$("#task-instruction-p4").html(
+								$.i18n._('task-instruction-p4'));
+						$("#task-instruction-p5").html(
+								$.i18n._('task-instruction-p5'));
+						$("#pc-transcription-p1").html(
+								$.i18n._('pc-transcription-p1'));
+						$("#pc-transcription-p2").html(
+								$.i18n._('pc-transcription-p2'));
+						$("#human-transcription-label").html(
+								$.i18n._('human-transcription-label'));
+						$("#your-transcription-label").html(
+								$.i18n._('your-transcription-label'));
+
+						$("#button-zoom-in").attr("title",
+								$.i18n._('button-zoom-in'));
+						$("#button-zoom-out").attr("title",
+								$.i18n._('button-zoom-out'));
+						$("#button-help")
+								.attr("title", $.i18n._('button-help'));
+						$("#button-next-cell").attr("title",
+								$.i18n._('button-next-cell'));
+						$("#button-previous-cell").attr("title",
+								$.i18n._('button-previous-cell'));
 
 						$("#task-bar-progress").tooltip({
 							'placement' : 'top',
@@ -260,7 +270,8 @@
 					var pct = Math.round((data.done * 100) / data.total);
 					$("#app-bar-progress").css("width", pct.toString() + "%");
 					$("#app-bar-progress").tooltip('destroy');
-					$("#app-bar-progress").attr("data-original-title", pct.toString() + "% completed!");
+					$("#app-bar-progress").attr("data-original-title",
+							pct.toString() + "% " + $.i18n._('completed'));
 					$("#app-bar-progress").tooltip({
 						'placement' : 'left'
 					});
@@ -284,8 +295,8 @@
 			$(".skeleton").hide();
 			$("#finish").fadeIn(200);
 			setTimeout(function() {
-			        $("#finish").fadeOut(200);
-			        enableNextTask();
+				$("#finish").fadeOut(200);
+				enableNextTask();
 			}, 2500);
 		}
 	}
@@ -303,26 +314,23 @@
 		$("#workflowtask").fadeIn(200);
 	}
 
-	$("#workflowtask").click(
-			function() {
-				redirectToANewTask(getARandomTask());
-			});
-	
+	$("#workflowtask").click(function() {
+		redirectToANewTask(getARandomTask());
+	});
+
 	function redirectToANewTask(taskSufix) {
-		window.open(endpoint
-				+ "/app/"
-				+ task_shortname
-						.replace("_tt4", "_" + taskSufix)
-				+ "/newtask", "_self");
+		window.open(endpoint + "/app/"
+				+ task_shortname.replace("_tt4", "_" + taskSufix) + "/newtask",
+				"_self");
 	}
 
 	function getARandomTask() {
-		var nextTaskArr = ["tt1", "tt2", "tt3"];
-		return nextTaskArr[getRandomInt(0,nextTaskArr.length-1)];
+		var nextTaskArr = [ "tt1", "tt2", "tt3" ];
+		return nextTaskArr[getRandomInt(0, nextTaskArr.length - 1)];
 	}
 
 	function getRandomInt(min, max) {
-	    return Math.floor(Math.random() * (max - min + 1)) + min;
+		return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 
 	// Function to submit and save the TaskRun in PyBossa

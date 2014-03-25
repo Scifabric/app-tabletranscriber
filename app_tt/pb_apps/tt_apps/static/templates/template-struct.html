@@ -46,36 +46,36 @@
 
 	<div id="toolbar" class="btn-group">
 		<button id="button_select" class="btn" rel="tooltip"
-			title="Habilita a ferramenta de seleção de segmentos"
+			title=""
 			onclick="handleSelectionToolEvent()">
 			<img class="icon" style="width: 20px"
 				src="#server/images/select_tool.png"></img>
 		</button>
 		<button id="button_area" class="btn" rel="tooltip"
-			title="Habilita a ferramenta de seleção em área"
+			title=""
 			onclick="handleAreaSelectionToolEvent()">
 			<img class="icon" style="width: 20px"
 				src="#server/images/area_tool.png"></img>
 		</button>
 		<button id="button_add" class="btn" rel="tooltip"
-			title="Habilita a ferramenta de adição de segmentos"
+			title=""
 			onclick="handleAddToolEvent()">
 			<img class="icon" style="width: 16px"
 				src="#server/images/add_tool.png"></img>
 		</button>
 		<button id="button_split" class="btn" rel="tooltip"
-			title="Habilita a ferramenta de partição de segmentos"
+			title=""
 			onclick="handleSplitToolEvent()">
 			<img class="icon" style="width: 18px"
 				src="#server/images/split_tool.png"></img>
 		</button>
 		<button id="button_remove" class="btn" rel="tooltip"
-			title="Remove os segmentos selecionadas (Atalho DEL)"
+			title=""
 			onclick="handleRemoveToolEvent()">
 			<i class="icon icon-trash"></i>
 		</button>
 		<button id="button_help" class="btn" rel="tooltip"
-			title="Abre a tela de ajuda" onclick="showHelpStruct()">
+			title="" onclick="showHelpStruct()">
 			<i class="icon icon-question-sign"></i>
 		</button>
 	</div>
@@ -85,33 +85,27 @@
 	<div id="task-info" class="task-info" style="display: none;">
 		<div id="instruction" class="alert alert-info" style="padding-right: 14px;">
 			<h5 id="task-instruction">
-				<strong> Instru&ccedil;&otilde;es b&aacute;sicas</strong><br>
+				<span id="task-instruction-p1"></span><br>
 				<ul>
-					<li>Use a ferramenta <img class="icon" style="width: 20px"
-						src="#server/images/select_tool.png"></img> para selecionar e
-						ajustar a posição de um segmento;
+					<li><span class="task-instruction-use-tool"></span><img class="icon" style="width: 20px"
+						src="#server/images/select_tool.png"></img><span id="task-instruction-p2"></span>
 					</li>
-					<li>Use a ferramenta <img class="icon" style="width: 20px"
-						src="#server/images/area_tool.png"></img> para selecionar os
-						segmentos de uma área;
+					<li><span class="task-instruction-use-tool"></span><img class="icon" style="width: 20px"
+						src="#server/images/area_tool.png"></img><span id="task-instruction-p3"></span>
 					</li>
-					<li>Clique na lixeira <i class="icon icon-trash"
-						style="color: #333333; font-size: 18px;"></i> ou use a tecla DEL
-						para remover os segmentos selecionados;
+					<li><span id="task-instruction-p4-1"></span><i class="icon icon-trash"
+						style="color: #333333; font-size: 18px;"></i><span id="task-instruction-p4-2"></span>
 					</li>
-					<li>Com a ferramenta <img class="icon"
+					<li><span id="task-instruction-p5-1"></span><img class="icon"
 						style="width: 16px; margin-bottom: 2px;"
-						src="#server/images/add_tool.png"></img>, clique e
-						arraste o mouse para adicionar um segmento;
+						src="#server/images/add_tool.png"></img><span id="task-instruction-p5-2"></span>
 					</li>
-					<li>Use a ferramenta <img class="icon"
+					<li><span class="task-instruction-use-tool"></span><img class="icon"
 						style="width: 18px; margin-bottom: 2px;"
-						src="#server/images/split_tool.png"></img> para dividir o segmento
-						na intersecção mais próxima;
+						src="#server/images/split_tool.png"></img><span id="task-instruction-p6"></span>
 					</li>
-					<li>Clique em <i class=" icon-question-sign"
-						style="color: #333333"></i> para soluções de dúvidas e atalhos
-						avançados.
+					<li><span id="task-instruction-p7-1"></span><i class=" icon-question-sign"
+						style="color: #333333"></i><span id="task-instruction-p7-2"></span>
 					</li>
 				</ul>
 			</h5>
@@ -257,17 +251,10 @@
 		$('#helpModalStruct').modal();
 	}
 
-	$("[rel=tooltip]").tooltip();
-
 	$("#template-container").ready(function() {
 		$("#question").text($.i18n._('question'));
 		$("#question span:first").text($.i18n._('task_name'));
 		$("#button_finished span:first").text($.i18n._('button_finished'));
-		$("#button_addline").text($.i18n._('button_addline'));
-		$("#button_addcolumn").text($.i18n._('button_addcolumn'));
-		$("#button_rmseg label").text($.i18n._('button_rmseg'));
-		$("#button_rmline label").text($.i18n._('button_rmline'));
-		$("#button_mvline label").text($.i18n._('button_mvline'));
 		$("#success strong").text($.i18n._('well_done'));
 		$("#success span:nth-child(2)").text($.i18n._('saved'));
 		$("#finish strong").text($.i18n._('congratulations'));
@@ -277,6 +264,26 @@
 		$("#workflowtask").text($.i18n._('workflowtask'));
 		$("#progress-from").text($.i18n._('progress-from'));
 		$("#progress-to").text($.i18n._('progress-to'));
+		
+		$(".task-instruction-use-tool").html($.i18n._('task-instruction-use-tool'));
+		$("#task-instruction-p1").html($.i18n._('task-instruction-p1'));
+		$("#task-instruction-p2").html($.i18n._('task-instruction-p2'));
+		$("#task-instruction-p3").html($.i18n._('task-instruction-p3'));
+		$("#task-instruction-p4-1").html($.i18n._('task-instruction-p4-1'));
+		$("#task-instruction-p4-2").html($.i18n._('task-instruction-p4-2'));
+		$("#task-instruction-p5-1").html($.i18n._('task-instruction-p5-1'));
+		$("#task-instruction-p5-2").html($.i18n._('task-instruction-p5-2'));
+		$("#task-instruction-p6").html($.i18n._('task-instruction-p6'));
+		$("#task-instruction-p7-1").html($.i18n._('task-instruction-p7-1'));
+		$("#task-instruction-p7-2").html($.i18n._('task-instruction-p7-2'));
+		
+		$("#button_select").attr("title", $.i18n._('button_select'));
+		$("#button_area").attr("title", $.i18n._('button_area'));
+		$("#button_add").attr("title", $.i18n._('button_add'));
+		$("#button_split").attr("title", $.i18n._('button_split'));
+		$("#button_remove").attr("title", $.i18n._('button_remove'));
+		$("#button_help").attr("title", $.i18n._('button_help'));
+		$("[rel=tooltip]").tooltip();
 	});
 
 	function loadUserProgress() {
@@ -285,7 +292,7 @@
 			var pct = Math.round((data.done * 100) / data.total);
 			$("#progress").css("width", pct.toString() + "%");
 			$("#progress").tooltip('destroy');
-			$("#progress").attr("data-original-title", pct.toString() + "% completed!");
+			$("#progress").attr("data-original-title", pct.toString() + "% " + $.i18n._('completed'));
 			$("#progress").tooltip({
 				'placement' : 'left'
 			});
