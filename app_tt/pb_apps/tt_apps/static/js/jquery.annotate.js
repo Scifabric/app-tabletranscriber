@@ -272,7 +272,9 @@
         var selected = this.note.text.assunto;
         var girar = this.note.text.girar;
         var nao_girar = this.note.text.nao_girar;
-		var fontes = typeof this.note.text.fontes == "undefined"? "" : this.note.text.fontes;
+		var fontes = typeof this.note.text.fontes == "undefined" ? "" : this.note.text.fontes;
+		var dataInicial = typeof this.note.text.dataInicial == "undefined" ? "" : this.note.text.dataInicial;
+		var dataFinal = typeof this.note.text.dataFinal == "undefined" ? "" : this.note.text.dataFinal; 
 		
         // Add the note (which we'll load with the form afterwards)
 		var form = $('<div id="image-annotate-edit-form">' + 
@@ -285,8 +287,8 @@
                 '<option value="3"' + (selected == "3" ? "selected" : "") + ' >Outros</option></select>' +                    
                 '<input type="text" id="outros" value="' + this.note.text.outros +'">' + '</input><br/>' +
 				'Fontes: <textarea type="textarea" id="fontes">' + fontes + '</textarea>' +
-				'Data Inicial (dd/mm/aaaa): <textarea type="textarea" id="dataInicial">' + this.note.text.dataInicial + '</textarea><br/>' +
-				'Data Final (dd/mm/aaaa): <textarea type="textarea" id="dataFinal">' + this.note.text.dataFinal + '</textarea><br/>' +
+				'Data Inicial (dd/mm/aaaa): <textarea type="textarea" id="dataInicial">' + dataInicial + '</textarea><br/>' +
+				'Data Final (dd/mm/aaaa): <textarea type="textarea" id="dataFinal">' + dataFinal + '</textarea><br/>' +
 				'<p><input id="nao_girar"' + (nao_girar ? "checked='true'" : "") + 'name="radio" type="radio" value="true" class="radiocheckbox" checked="true"> Tabela possui orientação horizontal</input></p>' +
                 '<p><input id="girar"' + (girar ? "checked='true'" : "") + 'name="radio" type="radio" value="true" class="radiocheckbox"> Tabela possui orientação vertical</input></p>' + 
                 '</form></div>');

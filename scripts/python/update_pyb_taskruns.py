@@ -3,6 +3,7 @@ from app_tt.core import app as flask_app, pbclient
 import ast
 import requests
 import json
+import sys
 
 def __fix_task_run_info_dict(d_str):
     d_str = d_str.replace('true', 'True')
@@ -25,6 +26,8 @@ def __undo_fix_task_run_info_dict(info):
     
     info['editable'] = 'true' if info['editable'] else 'false'
     
+    print "info_after undo: " + str(info)
+    
     return info
 
 def __change_fields(info_dict):
@@ -34,6 +37,11 @@ def __change_fields(info_dict):
         info_dict['text']['dataFinal'] = ''
     if info_dict.has_key('test'):
         info_dict.pop('test')
+    
+    #if info_dict['text'].has_key('dataInicial'):
+    #    info_dict['text'].pop('dataInicial')
+    #if info_dict['text'].has_key('dataFinal'):
+    #    info_dict['text'].pop('dataFinal')
     
     return info_dict
 
@@ -55,21 +63,27 @@ def fix_dates_t2(app_short_name):
     
     if len(apps) > 0:
         app = pbclient.find_app(short_name=app_short_name)[0]
-        trs = pbclient.find_taskruns(app.id)
+        trs = pbclient.find_taskruns(app.id, limit=sys.maxint)
         
         for tr in trs:
+#             if tr.id != 2559 and tr.id != 2558: 
+#                 continue
+            
             infos = tr.info[1:len(tr.info)-1]
             infos = __fix_task_run_info_dict(infos)
-            infos = ast.literal_eval(infos)
             
             if infos != "":
+                infos = ast.literal_eval(infos)
+                
                 if type(infos) is tuple:
                     info_list = []
                     for info in infos:
                         info = __change_fields(info)
                         info = __undo_fix_task_run_info_dict(info)
                         info_list.append(info)
-                        
+                    
+                    #print "info_list: " + str(info_list)
+                    #print "info_tuple: " + str(tuple(info_list))    
                     tr.info = json.dumps(tuple(info_list))        
                     
                 elif type(infos) is dict:
@@ -80,18 +94,20 @@ def fix_dates_t2(app_short_name):
                     tr.info = "[" + json.dumps(info_dict) + "]"        
                     
                 __update_taskrun(tr)
+            else:
+                print "(empty info): tr.id = " + str(tr.id)
             
 if __name__ == '__main__':
     short_names = ["caracterizaoeten2001bras_tt2",
-                   "recenseamento1872pb_tt2",
-                   "estatisticasdodi1949dist_tt2",
-                   "rpparaiba1841_tt2",
-                   "MemmoriaParaiba1841A1847_tt2",
-                   "estatisticasdodi1950depa_tt2",
-                   "anuario1916pb_tt2",
-                   "mensagemdogovern1912gove_tt2",
-                   "sinopse1937pb_tt2"]
+                    "recenseamento1872pb_tt2",
+                    "estatisticasdodi1949dist_tt2",
+                    "rpparaiba1841_tt2",
+                    "MemmoriaParaiba1841A1847_tt2",
+                    "estatisticasdodi1950depa_tt2",
+                    "anuario1916pb_tt2",
+                    "mensagemdogovern1912gove_tt2",
+                    "sinopse1937pb_tt2"]
 
     for sname in short_names:
-        ntrs = fix_dates_t2(sname)
+        fix_dates_t2(sname)
         
