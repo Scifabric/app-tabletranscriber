@@ -1053,6 +1053,7 @@
 
 		if (!isLastAnswer && hasZoom) filterLines();
 		layersRedraw();
+		unblockUI();
 	}
 
 	function adicionaSegmentosDaCelula(cellLines) {

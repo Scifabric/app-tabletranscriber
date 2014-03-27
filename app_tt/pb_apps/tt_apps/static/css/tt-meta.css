@@ -3,19 +3,17 @@
 }
 
 .TTImageContainer {
-
 	position: relative;
 	width: 550px;
 	height: 700px;
 	cursor: crosshair;
 }
 
-.TTImage{
+.TTImage {
 	overflow: hidden;
 	position: relative;
 	width: 550px;
-	height: 700px
-	
+	height: 700px;
 }
 
 #answer {
@@ -26,7 +24,12 @@
 	width: 550px;
 	height: 700px;
 	margin-left: 20px;
-	display: block;
+}
+
+#loading-container {
+	position: absolute;
+	margin-left: 225px;
+	margin-top: 225px;
 }
 
 #disqus_thread {

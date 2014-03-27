@@ -12,7 +12,13 @@
 	width: 550px;
 	height: 700px;
 	margin-left: 20px;
-	display: block;
+	display: table;
+}
+
+#loading-container {
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
 }
 
 #button_help {

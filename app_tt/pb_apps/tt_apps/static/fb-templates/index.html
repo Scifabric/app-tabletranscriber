@@ -36,7 +36,7 @@
 	min-height: 700px;
 }
 
-#loading-container {
+#fb-loading-container {
 	min-height: 700px;
 }
 
@@ -44,7 +44,7 @@ footer .span2 {
 	width: 117px;
 }
 
-#loading-container img {
+#fb-loading-container img {
 	position: absolute;
 	width: 80px;
 	top: 37%;
@@ -96,7 +96,7 @@ footer .span2 {
 	</div>
 	</header>
 
-	<div id="loading-container" class="container" style="display: none;">
+	<div id="fb-loading-container" class="container" style="display: none;">
 		<img src="img/loading.gif">
 	</div>
 
@@ -234,7 +234,7 @@ footer .span2 {
 			pybossa.setEndpoint(json.endpoint);
 			initFacebookSDK(json.app_id, json.facebook_permissions_type);
 			
-			$("#loading-container").show();
+			$("#fb-loading-container").show();
 			$("#long-description-content").load("long_description.html", function(){
 				$('#books_link').click(handleStartContributingClickEvent);
 			});
