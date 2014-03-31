@@ -5,9 +5,9 @@
 	var bookId;
 	
 	function loadAHTML(targetEl, htmlUrl, callback) {
-		$("#loading-container").show();
+		$("#fb-loading-container").show();
 		$(targetEl).load(htmlUrl, function(){
-			$("#loading-container").hide();
+			$("#fb-loading-container").hide();
 			callback();
 		});
 	}

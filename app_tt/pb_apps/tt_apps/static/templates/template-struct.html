@@ -80,7 +80,12 @@
 		</button>
 	</div>
 
-	<div id="canvas-container" style="float: left;"></div>
+	<div id="table-container">
+		<div id="canvas-container" style="float: left; display: none;"></div>
+		<div id="loading-container">
+			<img src="#server/images/loading.gif">
+		</div>
+	</div>
 
 	<div id="task-info" class="task-info" style="display: none;">
 		<div id="instruction" class="alert alert-info" style="padding-right: 14px;">
@@ -246,6 +251,23 @@
 	var minCanvasWidth = 540;
 	var minCanvasHeight = $("#task-info").height();
 	var minTaskInfoWidth = 325;
+	
+	function unblockUI() {
+		$("#loading-container").hide();
+		$("#canvas-container").show();
+		$.unblockUI();
+	}
+	
+	function blockUI() {
+		$("#canvas-container").hide();
+		$("#loading-container").show();
+		$.blockUI({
+			message : $("#success"),
+			css : {
+				height : $("#success").height()
+			}
+		});
+	}
 
 	function showHelpStruct() {
 		$('#helpModalStruct').modal();
@@ -357,6 +379,7 @@
 					serverName);
 			configureUI();
 		} else {
+			unblockUI();
 			$(".skeleton").hide();
 			$("#finish").fadeIn(
 					100,
@@ -402,16 +425,7 @@
 
 			clearCanvas();
 
-			$.blockUI({
-				message : $("#success"),
-				css : {
-					height : $("#success").height()
-				}
-			});
-
-			setTimeout(function() {
-				$.unblockUI();
-			}, 1500);
+			blockUI();
 
 			// Load new task
 			pybossa.newTask(task_shortname).done(function(data) {

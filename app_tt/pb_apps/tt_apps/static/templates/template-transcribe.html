@@ -66,7 +66,10 @@
 
 	<div class="skeleton">
 		<div id="table-viewer">
-			<div id="canvas-table-container"></div>
+			<div id="canvas-table-container" style="display: none;"></div>
+			<div id="loading-container">
+				<img src="#server/images/loading.gif">
+			</div>
 		</div>
 		<div id="right-panel">
 			<div class="btn-group" style="margin-bottom: 10px">
@@ -204,6 +207,23 @@
 	var endpoint = "/pybossa";
 	var minTableViewerWidth = 515;
 	var minTableViewerHeight = $("#right-panel").height();
+	
+	function unblockUI() {
+		$("#loading-container").hide();
+		$("#canvas-table-container").show();
+		$.unblockUI();
+	}
+	
+	function blockUI() {
+		$("#canvas-table-container").hide();
+		$("#loading-container").show();
+		$.blockUI({
+			message : $("#success"),
+			css : {
+				height : $("#success").height()
+			}
+		});
+	}
 
 	$("#template-container")
 			.ready(
@@ -291,9 +311,10 @@
 			createTableViewer(data.task.info, minTableViewerWidth,
 					minTableViewerHeight);
 		} else {
+			unblockUI();
 			$("#task-bar-progress").tooltip('destroy');
 			$(".skeleton").hide();
-			$("#finish").fadeIn(200);
+			$("#finish").fadeIn(200)
 			setTimeout(function() {
 				$("#finish").fadeOut(200);
 				enableNextTask();
@@ -343,16 +364,7 @@
 			taskRunDone(taskid);
 			clearCanvas();
 
-			$.blockUI({
-				message : $("#success"),
-				css : {
-					height : $("#success").height()
-				}
-			});
-
-			setTimeout(function() {
-				$.unblockUI();
-			}, 1500);
+			blockUI();
 
 			// Load a new task
 			pybossa.newTask(task_shortname).done(function(data) {

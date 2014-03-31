@@ -61,8 +61,8 @@
 </div>
 
 <div id="image-container" class="skeleton" rel="popover" title="Clique e arraste o mouse sobre uma área da tabela para compartilhar.">
-	<a id="image-link" href="#" target="_blank" style="float: left;"> 
-		<img id="image" class="ttImage" src="#" onload="$.unblockUI();">
+	<a id="image-link" href="#" target="_blank" style="float: left; display: none;"> 
+		<img id="image" class="ttImage" src="#" onload="unblockUI();">
 	</a>
 	<div id="share-container">
 		<ul id="share-menu" class="dropdown-menu" role="menu">
@@ -73,6 +73,9 @@
 		  </li>
 		</ul>
 		<div id="share-canvas-container"></div>
+	</div>
+	<div id="loading-container">
+		<img src="#server/images/loading.gif">
 	</div>
 </div>
 
@@ -131,6 +134,24 @@
 
 	var task_shortname = "#task_shortname#";
 	var endpoint = "/pybossa";
+	
+	function unblockUI() {
+		$("#loading-container").hide();
+		$("#image-link").show();
+		$.unblockUI();
+	}
+	
+	function blockUI() {
+		$("#image-link").hide();
+		$("#loading-container").show();
+		
+		$.blockUI({
+			message : $("#success"),
+			css : {
+				height : $("#success").height()
+			}
+		});
+	}
 
 	function showHelpSelect() {
 		$("#helpModalSelect").modal();
@@ -220,6 +241,7 @@
 				initSharer(task_id, userId);	
 			});
 		} else {
+			unblockUI();
 			$(".skeleton").hide();
 			$("#finish").fadeIn(
 					100,
@@ -262,12 +284,8 @@
 			//Call tt workflow api.
 			taskRunDone(taskid);
 
-			$.blockUI({
-				message : $("#success"),
-				css : {
-					height : $("#success").height()
-				}
-			});
+			blockUI();
+			
 			// Load a new task
 			pybossa.newTask(task_shortname).done(function(data) {
 				loadData(data);
@@ -277,6 +295,6 @@
 
 	pybossa.setEndpoint(endpoint);
 	pybossa.newTask(task_shortname).done(function(data) {
-		loadData(data)
+		loadData(data);
 	});
 </script>

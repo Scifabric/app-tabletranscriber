@@ -471,6 +471,7 @@
 
 		selectCell(cellsIterator.next());
 		updateTaskbarProgress();
+		unblockUI();
 	}
 
 	function createUnfixedLayer() {

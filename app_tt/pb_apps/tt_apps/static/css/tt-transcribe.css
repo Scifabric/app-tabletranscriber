@@ -4,6 +4,12 @@
 	position: relative;
 }
 
+#loading-container {
+	position: absolute;
+	margin-left: 190px;
+	margin-top: 100px;
+}
+
 #cell-viewer {
 	width: 400px;
 	height: 150px;
@@ -79,4 +85,3 @@
 #alert-container p {
 	margin-bottom: 0px;
 }
-
