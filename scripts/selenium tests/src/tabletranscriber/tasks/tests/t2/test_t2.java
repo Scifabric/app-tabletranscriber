@@ -1,80 +1,111 @@
 package tabletranscriber.tasks.tests.t2;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverBackedSelenium;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.interactions.Action;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
-import com.thoughtworks.selenium.Selenium;
+import tabletranscriber.tasks.tests.util.Util;
 
 public class test_t2 {
-	private Selenium selenium;
+	private final int NUMBER_OF_TASK_RUNS_T2_BY_USER = 5;
+
+	private StringBuffer verificationErrors = new StringBuffer();
+	private WebDriver driver;
+	private FirefoxProfile profile;
+	private String baseUrl = "http://localhost";
 
 	@Before
 	public void setUp() throws Exception {
-		WebDriver driver = new FirefoxDriver();
-		String baseUrl = "http://localhost";
-		selenium = new WebDriverBackedSelenium(driver, baseUrl);
-	}
-	
-	@Test
-	public void deleteTaskRunsType2() {
-		//tabletranscriber.tasks.tests.setup.delete_tasks_runs.deleteTaskRunsType2.run();
+		profile = new FirefoxProfile();
+		profile.setEnableNativeEvents(true);
+		driver = new FirefoxDriver(profile);
+		driver.manage().window().setSize(new Dimension(1200, 700));
+		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 	}
 
 	@Test
 	public void testTest_t2_aaa() throws Exception {
-		selenium.open("/pybossa/account/signin");
-		selenium.type("email", "aaa@gmail.com");
-		selenium.type("password", "aaa");
-		selenium.click("xpath=/html/body/div[2]/form/div[4]/input");
-		selenium.waitForPageToLoad("30000");
-		
-		selenium.open("/pybossa/app/anuario1916pb_tt2/newtask");
-		
-		assertEquals(selenium.getTitle(), "PyBossa · Application: Annuario Estatistico da Parahyba do Norte 1916 Marcação · Contribute");
+		Util.login(driver, baseUrl, "aaa@gmail.com", "aaa");
 
-		selenium.mouseDownAt("xpath=/html/body/div[2]/div[7]/div/div", "100,214");
-		//selenium.mouseOut("xpath=/html/body/div[2]/div[7]/div/div");
-		//selenium.
-		selenium.clickAt("xpath=/html/body/div[2]/div[7]/div/div", "451,284");
-		selenium.click("xpath=/html/body/div[3]/a[2]");
-		selenium.click("css=.btn-success");
+		driver.get(baseUrl
+				+ "/pybossa/app/caracterizaoeten2001bras_tt2/newtask");
+
 		
-//		selenium.clickAt("xpath=/html/body/div[2]/div[7]/div/div", "32,114");
-//		selenium.mouseMoveAt("xpath=/html/body/div[2]/div[7]/div/div", "518,508");
-//		selenium.click("xpath=/html/body/div[3]/a[2]");
-//		selenium.click("css=.btn-success");
-//		
-//		selenium.clickAt("xpath=/html/body/div[2]/div[7]/div/div", "");
-//		selenium.mouseMoveAt("xpath=/html/body/div[2]/div[7]/div/div", "");
-//		selenium.click("xpath=/html/body/div[3]/a[2]");
-//		selenium.click("css=.btn-success");
+		for (int i = 0; i < NUMBER_OF_TASK_RUNS_T2_BY_USER; i++) {
+			WebDriverWait wait = new WebDriverWait(driver, 60000);
+			wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//*[@id='TTImage']/div/div[1]"))));
+			
+			WebElement image = driver.findElement(By
+					.xpath("//*[@id='TTImage']/div/div[1]"));
+
+			Actions builder = new Actions(driver);
+			Action makeAnottation = builder.moveToElement(image).clickAndHold()
+					.moveByOffset(100, 200).click().build();
+			makeAnottation.perform();
+
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By
+					.xpath("//*[@id='image-annotate-edit-form']/a[1]")));
+
+			driver.findElement(
+					By.xpath("//*[@id='image-annotate-edit-form']/a[1]"))
+					.click();
+
+			driver.findElement(By.xpath("//*[@id='button']")).click();
+
+		}
 	}
-	
-//	@Test
-//	public void testTest_t2_bbb() throws Exception {
-//		selenium.open("/pybossa/account/signin");
-//		selenium.type("email", "aaa@gmail.com");
-//		selenium.type("password", "aaa");
-//		selenium.click("xpath=/html/body/div[2]/form/div[4]/input");
-//		selenium.waitForPageToLoad("30000");
-//		
-//		selenium.open("/pybossa/app/anuario1916pb_tt2/newtask");
-////		selenium.click("xpath=/html/body/div[2]/section[2]/div/div/div/p[2]/a[2]");
-//		
-//		for(int i = 0; i < 3; i++) {
-//			selenium.click("button_yes");
-//			assertEquals("PyBossa · Application: Seleção de tabelas · Contribute", selenium.getTitle());
-//		}
-//	}
+
+	@Test
+	public void testTest_t2_bbb() throws Exception {
+		Util.login(driver, baseUrl, "bbb@gmail.com", "bbb");
+
+		driver.get(baseUrl
+				+ "/pybossa/app/caracterizaoeten2001bras_tt2/newtask");
+
+		
+		for (int i = 0; i < NUMBER_OF_TASK_RUNS_T2_BY_USER; i++) {
+			WebDriverWait wait = new WebDriverWait(driver, 60000);
+			wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='TTImage']/div/div[1]")));
+			
+			WebElement image = driver.findElement(By
+					.xpath("//*[@id='TTImage']/div/div[1]"));
+
+			Actions builder = new Actions(driver);
+			Action makeAnottation = builder.moveToElement(image).clickAndHold()
+					.moveByOffset(100, 200).click().build();
+			makeAnottation.perform();
+
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By
+					.xpath("//*[@id='image-annotate-edit-form']/a[1]")));
+
+			driver.findElement(
+					By.xpath("//*[@id='image-annotate-edit-form']/a[1]"))
+					.click();
+
+			driver.findElement(By.xpath("//*[@id='button']")).click();
+		}
+	}
 
 	@After
 	public void tearDown() throws Exception {
-		selenium.stop();
+		driver.quit();
+		String verificationErrorString = verificationErrors.toString();
+		if (!"".equals(verificationErrorString)) {
+			fail(verificationErrorString);
+		}
 	}
 }

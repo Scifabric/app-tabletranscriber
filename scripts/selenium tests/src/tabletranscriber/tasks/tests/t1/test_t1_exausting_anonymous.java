@@ -6,7 +6,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverBackedSelenium;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import com.thoughtworks.selenium.Selenium;
@@ -18,7 +17,7 @@ public class test_t1_exausting_anonymous {
 	public void setUp() throws Exception {
 		WebDriver driver = new FirefoxDriver();
 		String baseUrl = "http://localhost";
-		selenium = new WebDriverBackedSelenium(driver, baseUrl);
+		selenium = new com.thoughtworks.selenium.webdriven.WebDriverBackedSelenium(driver, baseUrl);
 	}
 
 	@Test

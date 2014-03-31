@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
-import pbclient
+from app_tt.core import app as flask_app, pbclient
 import json
-import urllib2
-from app_tt.core import app as flask_app
-from app_tt.core import pbclient
-import os
 import sys
+import urllib2
 
 class Apptt(object):
     def __init__(self, name, short_name, description):
@@ -90,5 +87,5 @@ class Apptt(object):
         return pbclient.get_tasks(self.app_id, sys.maxint)
 
 
-    def add_task(self, task_info):
-        pbclient.create_task(self.app_id, task_info)
+    def add_task(self, task_info, priority=0):
+        pbclient.create_task(self.app_id, task_info, priority_0=priority)

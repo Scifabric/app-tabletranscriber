@@ -21,7 +21,10 @@ public class selectBookPagesInDB {
         String url = "jdbc:postgresql://localhost/pybossa";
         String user = "postgres";
         String password = "postgres";
-
+        
+        int START_INDEX = 10;
+        int FINAL_INDEX = 100;
+        
         try {
             con = DriverManager.getConnection(url, user, password);
             st = con.createStatement();
@@ -37,7 +40,7 @@ public class selectBookPagesInDB {
             
             ArrayList<Integer> arrayOfFinalIDs = new ArrayList<Integer>();
             
-            for(int i = 10; i < 30; i++) {
+            for(int i = START_INDEX; i < FINAL_INDEX; i++) {
             	arrayOfFinalIDs.add(firstID + i);
             	System.out.println("final IDs: " + (firstID + i - 1));
             }
@@ -50,7 +53,7 @@ public class selectBookPagesInDB {
             
             System.out.println("arrayFinalIDsToString: " + arrayFinalIDsToString);
             
-            st.execute("DELETE FROM task WHERE id NOT IN " + arrayFinalIDsToString);
+            //st.execute("DELETE FROM task WHERE id NOT IN " + arrayFinalIDsToString);
 
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(selectBookPagesInDB.class.getName());

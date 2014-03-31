@@ -6,7 +6,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverBackedSelenium;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import com.thoughtworks.selenium.Selenium;
@@ -18,11 +17,11 @@ public class test_t1_exausting {
 	public void setUp() throws Exception {
 		WebDriver driver = new FirefoxDriver();
 		String baseUrl = "http://localhost";
-		selenium = new WebDriverBackedSelenium(driver, baseUrl);
+		selenium = new com.thoughtworks.selenium.webdriven.WebDriverBackedSelenium(driver, baseUrl);
 	}
 
 	@Test
-	public void testTest_t1_guilherme() throws Exception {
+	public void testTest_t1_ccc() throws Exception {
 		selenium.open("/pybossa/account/signin");
 		selenium.type("email", "ccc@gmail.com");
 		selenium.type("password", "ccc");
