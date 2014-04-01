@@ -14,14 +14,14 @@ import os
 import cellsUtil
 import math
 from InvalidTaskGroupException import InvalidTaskGroupException
-from operator import itemgetter, attrgetter
+from operator import itemgetter
 from app_tt.data_mngr import data_manager
+from app_tt.pb_apps.tt_apps import priority_task_manager
 
 """
     Table transcriber tasks
     ~~~~~~~~~~~~~~~~~~~~~~
 """
-
 
 class TTTask1(pb_task):
     """
@@ -96,8 +96,11 @@ class TTTask2(pb_task):
 
         task_run = task_runs[len(task_runs) - 1]  # Get the last answer
         answer = task_run["info"]
-        answer_json = json.loads(answer)
-
+        
+        print "answer: " + str(answer)
+        
+        answer_info_json = json.loads(answer)
+        
         if (answer != "0"):
 
             tt3_app_short_name = self.app_short_name[:-1] + "3"
@@ -106,11 +109,13 @@ class TTTask2(pb_task):
             bookId = self.app_short_name[:-4]
             imgId = self.task.info["page"]
             
-            rotate = answer_json[0]["text"]["girar"]
+            rotate = answer_info_json[0]["text"]["girar"]
                         
             self.__downloadArchiveImages(bookId, imgId)
             self.__runLinesRecognition(bookId, imgId, rotate)
 
+            print "answer_info_json: " + str(answer_info_json)
+            
             try:
                 # file with the lines recognized
                 arch = open(
@@ -124,7 +129,13 @@ class TTTask2(pb_task):
 
                     image_pieces = self.__getAreaSelection(
                         bookId, imgId, tableId)
+                    
+                    table_subject_code = answer_info_json[tableId]['text']['assunto']
 
+                    print "table subject: " + table_subject_code
+                    
+                    next_task_priority = priority_task_manager.get_priority(table_subject_code)
+                    
                     if(len(image_pieces) > 0):
                         for image_piece in image_pieces:
                             info = dict(hasZoom=True, zoom=image_piece,
@@ -132,14 +143,17 @@ class TTTask2(pb_task):
                                         table_id=tableId,
                                         page=imgId, img_url=self.__url_table(
                                         bookId, imgId, tableId))
-                            tt3_app.add_task(info)  # add task to tt3_backend
+                            
+                            
+                            tt3_app.add_task(info, priority=next_task_priority)  # add task to tt3_backend
+                            
                     else:
                         info = dict(hasZoom=False,
                                     coords=tables_coords[tableId],
                                     table_id=tableId,
                                     page=imgId, img_url=self.__url_table(
                                     bookId, imgId, tableId))
-                        tt3_app.add_task(info)
+                        tt3_app.add_task(info, priority=next_task_priority)
 
             except IOError:
                 print "Error. File image%s_model%s.txt couldn't be opened" % (
@@ -183,22 +197,29 @@ class TTTask2(pb_task):
     def __compare_answers(self, answer1, answer2):
         threshold = 2
         
+        print "answer1: " + str(answer1)
+        print "answer2: " + str(answer2)
+        
         if len(answer1) != len(answer2):
                 return False
     
-        for i in range(0, len(answer1)):
+        for i in range(0, min(len(answer2), len(answer1))):
             table1 = answer1[i]
             table2 = answer2[i]
     
-            for answer_type in table1.keys():
-                a1_value = table1[answer_type]
-                a2_value = table2[answer_type]
-                if answer_type in ["top", "left", "width", "height"]:
+            for answer_key in table1.keys():
+                a1_value = table1[answer_key]
+                a2_value = table2[answer_key]
+                if answer_key in ["top", "left", "width", "height"]:
                     if a2_value < (a1_value - threshold) or a2_value > (a1_value + threshold):
                         return False
-                else:
+                elif answer_key in ["text"]:
+                    if a1_value["assunto"] != a2_value["assunto"]:
+                        return False
+                else: # some other key differ
                     if a1_value != a2_value:
                         return False
+                    
         return True
 
     def get_next_app(self):
@@ -268,7 +289,7 @@ class TTTask2(pb_task):
 
         if rotate:  # rotated table
             rotate = "-r"
-            command = 'cd %s/TableTranscriber2/; ./tabletranscriber2 ' \
+            command = 'cd %s/TableTranscriber2/; sudo ./tabletranscriber2 ' \
             '"/books/%s/baixa_resolucao/image%s.png" "model%s" "%s"' % (
             app.config['CV_MODULES'], bookId, imgId, model, rotate)
             
@@ -279,7 +300,7 @@ class TTTask2(pb_task):
         
         else:  # not rotated table
             rotate = "-nr"
-            command = 'cd %s/TableTranscriber2/; ./tabletranscriber2 ' \
+            command = 'cd %s/TableTranscriber2/; sudo ./tabletranscriber2 ' \
             '"/books/%s/baixa_resolucao/image%s.png" "model%s" "%s"' % (
             app.config['CV_MODULES'], bookId, imgId, model, rotate)
             
@@ -308,7 +329,7 @@ class TTTask2(pb_task):
         :rtype: bool
         """
         
-        command = 'cd %s/ZoomingSelector/; ./zoomingselector ' \
+        command = 'cd %s/ZoomingSelector/; sudo ./zoomingselector ' \
         '"/books/%s/metadados/tabelasAlta/image%s_%d.png"' % (
         app.config['CV_MODULES'], bookId, imgId, tableId)
         
@@ -374,6 +395,9 @@ class TTTask2(pb_task):
                 matrix[matrix_index].append(line)
 
         arch.close()
+        
+        print "matrix: " + str(matrix)
+        
         return matrix
 
     def __fileOutput(self, answer):
@@ -462,7 +486,7 @@ class TTTask3(pb_task):
             
             tt4_app_short_name = self.app_short_name[:-1] + "4"
             tt4_app = ttapps.Apptt_transcribe(short_name=tt4_app_short_name)
-            tt4_app.add_task(infoDict)
+            tt4_app.add_task(infoDict, priority=self.task.priority_0)
         
         except Exception, e:
             print str(e)
@@ -517,7 +541,7 @@ class TTTask3(pb_task):
         
         self.__saveCells(cells, book_id, page, table_id, maxX, maxY)
         
-        command = 'cd %s/TesseractExecutorApp2/; ./tesseractexecutorapp2 ' \
+        command = 'cd %s/TesseractExecutorApp2/; sudo ./tesseractexecutorapp2 ' \
         '"/books/%s/metadados/tabelasAlta/image%s_%d.png"' % (
         app.config['CV_MODULES'], book_id, page, table_id)
         
@@ -562,8 +586,6 @@ class TTTask3(pb_task):
      obs.: the properties returned in json_answer are modified in this method: if
      the task has zoom, the answer equivalent to the group of tasks similar to this
      will be returned, in the same format of one simple task, without zoom.
-     
-     
     """
     def __loadAnswers(self):
         if(self.task.info['hasZoom']):

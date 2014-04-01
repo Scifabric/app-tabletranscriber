@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
 import tabletranscriber.tasks.tests.setup.delete_tasks.deleteTasksType1;
 
 public class Util {
@@ -120,5 +123,14 @@ public class Util {
         }
         
         return app_ids;
+	}
+	
+	public static void login(WebDriver driver, String baseUrl,
+			String email, String pass) {
+		
+		driver.get(baseUrl + "/pybossa/account/signin");
+		driver.findElement(By.id("email")).sendKeys(email);
+		driver.findElement(By.id("password")).sendKeys(pass);
+		driver.findElement(By.xpath("//*[@id='signin']/div[4]/input[1]")).click();
 	}
 }

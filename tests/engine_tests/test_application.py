@@ -4,6 +4,7 @@ from unittest import TestCase
 from app_tt.core import pbclient
 import unittest
 import app_tt.engine.tasks as engine 
+from app_tt.meb_util import archiveBookData 
 
 class test_application(TestCase):
 
@@ -14,27 +15,31 @@ class test_application(TestCase):
         self.app = app.test_client()
         self.new_ttapplications("10304diinaavanas033859mbp")
     
-    
     def tearDown(self):
         self.del_ttapplications("10304diinaavanas033859mbp")
 
 
     def new_ttapplications(self, short_name):
-        return self.app.get("/api/%s/init" % short_name)
+        print self.app.application
+        o = self.app.get("mb/api/%s/init" % short_name)
+        print "o: " + str(o)
+        return o
+    
 
     def del_ttapplications(self, short_name):
-        for i in range(1,4):
+        for i in range(1,5):
             tt_app = pbclient.find_app(short_name="%s_tt%d" % (short_name, i))[0]
             pbclient.delete_app(tt_app.id)
 
 
     def bookdata(self, book_id):
-        return engine._archiveBookData(book_id)
+        return engine.archiveBookData(book_id)
 
 
     def test_home(self):
         rv = self.app.get('/')
         assert "<h1>Table Transcriber</h1>" in rv.data, rv
+
 
     def test_colabore(self):
         

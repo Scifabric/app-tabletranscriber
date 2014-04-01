@@ -1,36 +1,33 @@
 package tabletranscriber.tasks.tests.setup;
 
-import static org.junit.Assert.*;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverBackedSelenium;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
-import com.thoughtworks.selenium.Selenium;
-
 public class initAnuariopb {
-	private Selenium selenium;
+	private String baseUrl;
+	private FirefoxDriver driver;
 
 	@Before
 	public void setUp() throws Exception {
-		WebDriver driver = new FirefoxDriver();
-		String baseUrl = "http://localhost";
-		selenium = new WebDriverBackedSelenium(driver, baseUrl);
+		baseUrl = "http://localhost";
+		driver = new FirefoxDriver();
+		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 	}
 
 	@Test
 	public void testInitAnuariopb() throws Exception {
-		selenium.open("/mb/api/anuario1916pb/init");
-		assertEquals(selenium.getBodyText(), "True");
-		selenium.close();
+		driver.get(baseUrl + "/mb/api/anuario1916pb/init");
+//		assertEquals(selenium.getBodyText(), "True");
+		driver.close();
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		selenium.stop();
+		driver.quit();
 	}
 	
 	@After
