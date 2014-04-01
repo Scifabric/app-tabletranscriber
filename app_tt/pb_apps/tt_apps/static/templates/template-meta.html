@@ -446,10 +446,11 @@
 		// Get the task-id
 		taskid = $("#task-id").text();
 
-		answer = answer == "0" ? "0" : $.fn.annotateImage.exportJsonData();
+		var annotatedTables = $.fn.annotateImage.exportJsonData();
+		var answerToSave = answer == "0" || annotatedTables == "[]" ? "0" : annotatedTables;
 
 		// Save the task
-		pybossa.saveTask(taskid, answer).done(function(data) {
+		pybossa.saveTask(taskid, answerToSave).done(function(data) {
 
 			taskRunDone(taskid);
 			$.fn.annotateImage.clear(image);

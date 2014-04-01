@@ -98,7 +98,7 @@ class TTTask2(pb_task):
         answer = task_run["info"]
         answer_json = json.loads(answer)
 
-        if (answer != "0" and answer != "[]"):
+        if (answer != "0"):
 
             tt3_app_short_name = self.app_short_name[:-1] + "3"
             tt3_app = ttapps.Apptt_struct(short_name=tt3_app_short_name)
@@ -173,9 +173,9 @@ class TTTask2(pb_task):
             answer2_json = json.loads(answer2)
     
             if self.__compare_answers(answer1_json, answer2_json):
-                if answer2 != "0" and answer2 != "[]":
+                if answer2 != "0":
                     return self.__fileOutput(answer2_json)
-                elif answer2 == "0":  # There is one error at TTTask1 answer
+                else:  # There is one error at TTTask1 answer
                     pass
         else:
             return False

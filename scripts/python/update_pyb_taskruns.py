@@ -35,21 +35,23 @@ def __change_fields(info_dict):
         info_dict['text']['dataInicial'] = ''
     if not info_dict['text'].has_key('dataFinal'):
         info_dict['text']['dataFinal'] = ''
-    if info_dict.has_key('test'):
-        info_dict.pop('test')
-    
-    #if info_dict['text'].has_key('dataInicial'):
-    #    info_dict['text'].pop('dataInicial')
-    #if info_dict['text'].has_key('dataFinal'):
-    #    info_dict['text'].pop('dataFinal')
+        
+    if info_dict['text'].has_key('dataInicial') and info_dict['text']['dataInicial'] == "undefined":
+        info_dict['text']['dataInicial'] = ''
+    if info_dict['text'].has_key('dataFinal') and info_dict['text']['dataFinal'] == "undefined":
+        info_dict['text']['dataFinal'] = ''
+    if info_dict['text'].has_key('fontes') and info_dict['text']['fontes'] == "undefined":
+        info_dict['text']['fontes'] = ''
+        
+    if info_dict['text'].has_key('rodape'):
+        info_dict['text']['fontes'] = info_dict['text']['rodape']
+        info_dict['text'].pop('rodape')
     
     return info_dict
 
 def __update_taskrun(tr):
     print "tr.id: " + str(tr.id)
     print "tr.info: " + tr.info
-    #print "api_key=" + str(flask_app.config['API_KEY'])
-    #print "pybossa-url: " + flask_app.config['PYBOSSA_URL']
             
     r = requests.put("%s/api/taskrun/%s?api_key=%s" % 
                          (flask_app.config['PYBOSSA_URL'], tr.id, 
@@ -66,9 +68,6 @@ def fix_dates_t2(app_short_name):
         trs = pbclient.find_taskruns(app.id, limit=sys.maxint)
         
         for tr in trs:
-#             if tr.id != 2559 and tr.id != 2558: 
-#                 continue
-            
             infos = tr.info[1:len(tr.info)-1]
             infos = __fix_task_run_info_dict(infos)
             
