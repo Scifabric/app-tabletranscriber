@@ -5,6 +5,7 @@ PYBOSSA_HOST = "127.0.0.1" #Pybossa's address
 PYBOSSA_PORT = 80  #Pybossa's server
 PYBOSSA_ENDPOINT = "" #Pybossa's endpoint, found after pybossa's port number
 API_KEY = "insert-pybossa-api-key" # Pybossa's Api Key
+SSL_ACTIVATED = False
 
 # RabbitMQ definitions
 RABBIT_VHOST = "myvhost"

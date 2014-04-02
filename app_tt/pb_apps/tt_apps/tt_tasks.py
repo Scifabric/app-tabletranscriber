@@ -6,7 +6,6 @@ import ttapps
 from app_tt.core import app
 from subprocess import call
 import requests
-import urllib2
 from requests import RequestException
 import json
 import sys
@@ -90,9 +89,9 @@ class TTTask2(pb_task):
             return
 
         # Get the list of task_runs
-        task_runs = json.loads(urllib2.urlopen(
+        task_runs = json.loads(requests.get(
             "%s/api/taskrun?task_id=%s&limit=%d" % (
-                app.config['PYBOSSA_URL'], self.task.id, sys.maxint)).read())
+                app.config['PYBOSSA_URL'], self.task.id, sys.maxint)).content)
 
         task_run = task_runs[len(task_runs) - 1]  # Get the last answer
         answer = task_run["info"]
@@ -606,9 +605,9 @@ class TTTask3(pb_task):
             
             return answer_json
         else:
-            task_runs = json.loads(urllib2.urlopen(
+            task_runs = json.loads(requests.get(
                 "%s/api/taskrun?task_id=%s&limit=%d" % (
-                    app.config['PYBOSSA_URL'], self.task.id, sys.maxint)).read())
+                    app.config['PYBOSSA_URL'], self.task.id, sys.maxint)).content)
             
             task_run = task_runs[len(task_runs) - 1]  # Get the last answer
             answer = task_run["info"]
@@ -655,9 +654,9 @@ class TTTask3(pb_task):
     def __loadSimilarsTaskRunsAnswers(self, similarTasks):
         tasksRunsAnswers = []
         for t in similarTasks: 
-            task_runs = json.loads(urllib2.urlopen(
+            task_runs = json.loads(requests.get(
                     "%s/api/taskrun?task_id=%s&limit=%d" % (
-                        app.config['PYBOSSA_URL'], t.id, sys.maxint)).read())
+                        app.config['PYBOSSA_URL'], t.id, sys.maxint)).content)
                 
             task_run = task_runs[len(task_runs) - 1]  # Get the last answer
             answer = task_run["info"]

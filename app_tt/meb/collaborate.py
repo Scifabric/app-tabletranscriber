@@ -1,11 +1,9 @@
 # -*- coding:utf-8 -*-
-
-import urllib2
 import json
 
 from app_tt.core import app as flask_app
 from app_tt.core import pbclient
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template
 from app_tt.util import Pagination
 import sys
 import requests

@@ -28,9 +28,9 @@ def __configure_app(app):
     if os.path.exists(config_path):
         app.config.from_pyfile(config_path)
 
-    app.config['PYBOSSA_URL'] = "http://%s:%d%s" % (
+    app.config['PYBOSSA_URL'] = "http%s://%s%s" % (
+        's' if app.config['SSL_ACTIVATED'] else '',
         app.config['PYBOSSA_HOST'],
-        app.config['PYBOSSA_PORT'],
         app.config['PYBOSSA_ENDPOINT'])
 
     app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://%s:%s@%s/%s" % (
