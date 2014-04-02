@@ -283,8 +283,13 @@
                 'Assunto: <select size="1" id="assunto">' +
                 '<option value="0"' + (selected == "0" ? "selected" : "") + ' >Economia</option>' +
                 '<option value="1"' + (selected == "1" ? "selected" : "") + ' >População/Demografia</option>'+ 
-                '<option value="2" ' + (selected == "2" ? "selected" : "") + '>Violência/Criminalidade</option>' +
-                '<option value="3"' + (selected == "3" ? "selected" : "") + ' >Outros</option></select>' +                    
+                '<option value="2"' + (selected == "2" ? "selected" : "") + ' >Violência/Criminalidade</option>' +
+                '<option value="3"' + (selected == "3" ? "selected" : "") + ' >Outros</option>' +
+                '<option value="4"' + (selected == "4" ? "selected" : "") + ' >Finanças</option>' +
+                '<option value="5"' + (selected == "5" ? "selected" : "") + ' >Transporte</option>' +
+                '<option value="6"' + (selected == "6" ? "selected" : "") + ' >Educação</option>' +
+                '<option value="7"' + (selected == "7" ? "selected" : "") + ' >Saúde</option>' +
+                '<option value="8"' + (selected == "8" ? "selected" : "") + ' >Administração Pública</option></select>' +
                 '<input type="text" id="outros" value="' + this.note.text.outros +'">' + '</input><br/>' +
 				'Fontes: <textarea type="textarea" id="fontes">' + fontes + '</textarea>' +
 				'Data Inicial (dd/mm/aaaa): <textarea type="textarea" id="dataInicial">' + dataInicial + '</textarea><br/>' +
@@ -314,12 +319,13 @@
         $("#assunto").change(function(){
                 $("#assunto option:selected").each(function(){
                     var $option = $(this);
-                    if($option.attr("value") == 3){
+                    if ($option.attr("value") == 3){
                         $("#outros").show();                            
-                        }else{
-                            $("#outros").attr("value","");
-                            $("#outros").hide();
-                        }
+                    }
+                    else{
+                        $("#outros").attr("value","");
+                        $("#outros").hide();
+                    }
                 });
         });
 

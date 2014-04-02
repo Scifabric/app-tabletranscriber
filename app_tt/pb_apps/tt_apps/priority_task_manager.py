@@ -9,7 +9,7 @@ priorities_map = {
                    "5": ("Transporte", 0.5),
                    "6": ("Educação", 0.4),
                    "7": ("Saúde", 0.3),
-                   "8": ("Administração Pública", 0.2),
+                   "8": ("Administração Pública", 0.2)
                   }
 
 
