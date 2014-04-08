@@ -276,6 +276,9 @@
 		var dataInicial = typeof this.note.text.dataInicial == "undefined" ? "" : this.note.text.dataInicial;
 		var dataFinal = typeof this.note.text.dataFinal == "undefined" ? "" : this.note.text.dataFinal; 
 		
+		var msg = "Caso você identifique apenas o mês e o ano, coloque no seguinte formato: mm/aaaa. Caso identifique apenas" +
+				"o ano, coloque no seguinte formato: aaaa.";
+		
         // Add the note (which we'll load with the form afterwards)
 		var form = $('<div id="image-annotate-edit-form">' + 
                 '<form>	Título: <textarea type="textarea" id="titulo" rows="0">' + this.note.text.titulo + '</textarea><br/>' + 
@@ -292,8 +295,8 @@
                 '<option value="8"' + (selected == "8" ? "selected" : "") + ' >Administração Pública</option></select>' +
                 '<input type="text" id="outros" value="' + this.note.text.outros +'">' + '</input><br/>' +
 				'Fontes: <textarea type="textarea" id="fontes">' + fontes + '</textarea>' +
-				'Data Inicial (dd/mm/aaaa): <textarea type="textarea" id="dataInicial">' + dataInicial + '</textarea><br/>' +
-				'Data Final (dd/mm/aaaa): <textarea type="textarea" id="dataFinal">' + dataFinal + '</textarea><br/>' +
+				'Data Inicial (dd/mm/aaaa): <i class="icon icon-white icon-question-sign" rel="tooltip" title="' + msg + '"></i> <textarea type="textarea" id="dataInicial">' + dataInicial + '</textarea><br/>' +
+				'Data Final (dd/mm/aaaa): <i class="icon icon-white icon-question-sign" rel="tooltip" title="' + msg + '"></i> <textarea type="textarea" id="dataFinal">' + dataFinal + '</textarea><br/>' +
 				'<p><input id="nao_girar"' + (nao_girar ? "checked='true'" : "") + 'name="radio" type="radio" value="true" class="radiocheckbox" checked="true"> Tabela possui orientação horizontal</input></p>' +
                 '<p><input id="girar"' + (girar ? "checked='true'" : "") + 'name="radio" type="radio" value="true" class="radiocheckbox"> Tabela possui orientação vertical</input></p>' + 
                 '</form></div>');
@@ -328,7 +331,9 @@
                     }
                 });
         });
-
+        
+        $("[rel=tooltip]").tooltip({ placement: 'bottom'});
+        
 		this.form.css('left', (this.area.offset().left + this.area.width() + 7) + 'px');
 		this.form.css('top', parseInt(this.area.offset().top) + 'px');
 
