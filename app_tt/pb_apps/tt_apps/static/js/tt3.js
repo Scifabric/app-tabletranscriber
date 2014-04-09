@@ -931,11 +931,15 @@
             isLastAnswer = lastAnswer.linhas.length != 0 && lastAnswer.colunas.length != 0;
         }
 
-		var matrizDePontos = loadMatrizDePontos(taskInfo, isLastAnswer);
-		createStage(matrizDePontos, minCanvasWidth, minCanvasHeight, isLastAnswer);
+		var imageObj = new Image();
+		imageObj.src = img_url;
+		imageObj.onload = function() {
+			var matrizDePontos = loadMatrizDePontos(taskInfo, imageObj, isLastAnswer);
+			createStage(matrizDePontos, this, minCanvasWidth, minCanvasHeight, isLastAnswer);
+		}
 	}
 
-	function loadMatrizDePontos(taskInfo, isLastAnswer) {
+	function loadMatrizDePontos(taskInfo, imageObj, isLastAnswer) {
 		var matrizDePontos = new Array();
 
 		if (isLastAnswer) {
@@ -962,6 +966,13 @@
 				bottomY = arr[3];
 				if (bottomY > maxY) maxY = bottomY;
 			}
+			
+			if (matrizDePontos.length == 0) {
+				minX = 0;
+				minY = 0;
+				maxX = imageObj.width;
+				maxY = imageObj.height;
+			}
 		}
 
 		minX = minX + shiftOnCanvas;
@@ -972,61 +983,58 @@
 		return matrizDePontos;
 	}
 
-	function createStage(matrizDePontos, minCanvasWidth, minCanvasHeight, isLastAnswer) {
+	function createStage(matrizDePontos, imageObj, minCanvasWidth, minCanvasHeight, isLastAnswer) {
+			
 		var widthCanvas = getTableMaxX();
 		var heightCanvas = getTableMaxY();
-
+	
 		if ((widthCanvas + shiftOnCanvas) < minCanvasWidth) {
 			widthCanvas = minCanvasWidth;
 		} else {
 			// pad lateral
 			widthCanvas += shiftOnCanvas;
 		}
-
+	
 		if ((heightCanvas + shiftOnCanvas) < minCanvasHeight) {
 			heightCanvas = minCanvasHeight;
 		} else {
 			// pad inferior
 			heightCanvas += shiftOnCanvas;
 		}
-
+	
 		stage = new Kinetic.Stage({
 			container : 'canvas-container',
 			width : widthCanvas,
 			height : heightCanvas
 		});
-
-                stage.on("mousemove", function(evt){
+	
+	    stage.on("mousemove", function(evt){
 			handleMouseMoveEvent(evt);
-                });
-
-		var imageObj = new Image();
-		imageObj.src = img_url;
-		imageObj.onload = function() {
-			var tabela = new Kinetic.Image({
-				x : shiftOnCanvas,
-				y : shiftOnCanvas,
-				image : imageObj,
-				width : getTableMaxX() - shiftOnCanvas,
-				height : getTableMaxY() - shiftOnCanvas
-			});
-
-			imageLayer.add(tabela);
-			tabela.moveToBottom();
-
-			stage.add(imageLayer);
-			stage.add(colunasLayer);
-			stage.add(linhasLayer);
-			stage.add(pointsLayer);
-			stage.add(selectionLayer);
-
-			if (hasZoom) {
-				adicionarFocoZoom(zoom);
-		 		stage.add(layerZoom);
-			}
-
-			loadGrid(matrizDePontos, isLastAnswer);
-		};
+	    });
+		
+		var tabela = new Kinetic.Image({
+			x : shiftOnCanvas,
+			y : shiftOnCanvas,
+			image : imageObj,
+			width : getTableMaxX() - shiftOnCanvas,
+			height : getTableMaxY() - shiftOnCanvas
+		});
+	
+		imageLayer.add(tabela);
+		tabela.moveToBottom();
+	
+		stage.add(imageLayer);
+		stage.add(colunasLayer);
+		stage.add(linhasLayer);
+		stage.add(pointsLayer);
+		stage.add(selectionLayer);
+	
+		if (hasZoom) {
+			adicionarFocoZoom(zoom);
+	 		stage.add(layerZoom);
+		}
+	
+		loadGrid(matrizDePontos, isLastAnswer);
 	}
 
 	function loadGrid(matrizDePontos, isLastAnswer) {
@@ -1050,9 +1058,23 @@
 				adicionaSegmentosDaCelula(cellLines);
 			}
 		}
+		
+		if (matrizDePontos.length == 0) {
+			var cellLines = new Array();
+			cellLines.push([{'x': minX, 'y': minY}, {'x': maxX, 'y': minY}]);
+			cellLines.push([{'x': maxX, 'y': minY}, {'x': maxX, 'y': maxY}]);
+			cellLines.push([{'x': minX, 'y': maxY}, {'x': maxX, 'y': maxY}]);
+			cellLines.push([{'x': minX, 'y': minY}, {'x': minX, 'y': maxY}]);
 
+			adicionaSegmentosDaCelula(cellLines);
+		}
+		
 		if (!isLastAnswer && hasZoom) filterLines();
+		
 		layersRedraw();
+		
+		// Template functions
+		configureUI();
 		unblockUI();
 	}
 
