@@ -96,7 +96,7 @@ class TTTask2(pb_task):
         task_run = task_runs[len(task_runs) - 1]  # Get the last answer
         answer = task_run["info"]
         
-        print "answer: " + str(answer)
+        #print "answer: " + str(answer).encode('ascii', 'ignore')
         
         answer_info_json = json.loads(answer)
         
@@ -113,7 +113,7 @@ class TTTask2(pb_task):
             self.__downloadArchiveImages(bookId, imgId)
             self.__runLinesRecognition(bookId, imgId, rotate)
 
-            print "answer_info_json: " + str(answer_info_json)
+            #print "answer_info_json: " + str(answer_info_json).encode('ascii', 'ignore')
             
             try:
                 # file with the lines recognized
