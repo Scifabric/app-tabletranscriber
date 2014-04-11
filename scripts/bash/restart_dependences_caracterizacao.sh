@@ -8,10 +8,10 @@ python ../python/update_pyb_apps.py -u caracterizaoeten2001bras_tt3
 python ../python/update_pyb_apps.py -u caracterizaoeten2001bras_tt4
 deactivate
 
-sudo service rabbitmq-server restart
-sudo service supervisor stop
-sudo service supervisor start
-sudo service apache2 restart
+#sudo service rabbitmq-server restart
+#sudo service supervisor stop
+#sudo service supervisor start
+#sudo service apache2 restart
 
 #reload templates
 #. env/bin/activate

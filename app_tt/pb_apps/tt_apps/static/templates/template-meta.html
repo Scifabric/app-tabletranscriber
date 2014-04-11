@@ -405,8 +405,8 @@
 			var notes = data.task.info.last_answer != undefined ? JSON
 					.parse(data.task.info.last_answer) : [];
 
-			console.log("notes: ");
-			console.log(notes);
+			//console.log("notes: ");
+			//console.log(notes);
 
 			image = $("#table").annotateImage({
 				editable : true,
@@ -455,7 +455,7 @@
 
 		var annotatedTables = $.fn.annotateImage.exportJsonData();
 		var answerToSave = answer == "0" || annotatedTables == "[]" ? "0" : annotatedTables;
-
+		
 		// Save the task
 		pybossa.saveTask(taskid, answerToSave).done(function(data) {
 

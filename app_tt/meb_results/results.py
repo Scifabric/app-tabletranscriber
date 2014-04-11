@@ -51,6 +51,6 @@ def book():
                 por favor contate o administrador."
         return render_template('/error.html', error=error)
     
-    return render_template('/meb_results/book.html',
+    return render_template('/results.html',
             bookid=bookid_app,
             appTasks=app_tasks)

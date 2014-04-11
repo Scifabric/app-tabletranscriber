@@ -35,4 +35,8 @@ def record_page(page_info):
     except Exception as e:
         db.session.rollback()
         raise e
-    
+
+def record_report(task_id, reportInfo):
+    r = report(
+               
+               )     

@@ -53,7 +53,7 @@ def index(page):
 
     pagination = Pagination(page, per_page, count)
 
-    return render_template('/meb/index.html',
+    return render_template('/collaborate.html',
             books=books,
             pagination=pagination)
 
@@ -61,7 +61,7 @@ def index(page):
 @blueprint.route('/progress/<string(maxlength=255):bookid>')
 def progress(bookid):
 
-    tt_suffix = ['_tt1', '_tt2', '_tt3', '_tt4']  #TODO: Add tt4 when it's ready
+    tt_suffix = ['_tt1', '_tt2', '_tt3', '_tt4']
     overall = 0
     overall_completed = 0
     for suffix in tt_suffix:

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask import Blueprint, request
 from tasks import check_task, create_apps, close_task, close_t1
-from tasks import create_task, available_tasks, save_fact, get_fact_page, render_template
+from tasks import create_task, available_tasks, save_fact, submit_report, get_fact_page, render_template
 import json
 
 blueprint = Blueprint('api', __name__)
@@ -81,6 +81,12 @@ def execute_save_fact():
     done = save_fact.delay(factInfo)
     return str(done.get())
 
+@blueprint.route('/<task_id>/report', methods=['POST'])
+def report(task_id):
+    reportInfo = json.loads(request.data)
+    done = submit_report.delay(task_id, reportInfo)
+    return str(done.get())
+
 @blueprint.route('/fact/<fact_id>')
 def fact_page(fact_id):
     page = get_fact_page.delay(fact_id)
@@ -90,4 +96,6 @@ def fact_page(fact_id):
 def render_pages_template(task_shortname, page):
     rendered_page = render_template.delay(task_shortname, page)
     return rendered_page.get()
+
+
 

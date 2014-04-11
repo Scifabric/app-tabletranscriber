@@ -24,11 +24,24 @@
 	src="{{url_for('static', filename='js/jquery-ui-1.8.22.custom.min.js')}}"
 	type="text/javascript" charset="utf-8"></script>
 </head>
-<header> {% include "header.html" ignore missing %} </header>
-<body>{% set active_page = active_page | default('index') -%} {%
-	include "navbar.html" %} {% block content %}{% endblock %}
+
+<header> 
+	{% include "header.html" ignore missing %} 
+</header>
+<body>
+	{% set active_page = active_page | default('index') -%} 
+	{% include "navbar.html" %}
+	<div class="container-wrapper">
+		<div class="tabbable tabs-left">
+			{%include "sidebar.html" %}
+		</div>
+	</div>
+	{% block content %}
+	{% endblock %}
 </body>
-<footer> {% include "footer.html" ignore missing %} </footer>
+<footer> 
+	{% include "footer.html" ignore missing %}
+</footer>
 
 <script>
 	(function(i, s, o, g, r, a, m) {

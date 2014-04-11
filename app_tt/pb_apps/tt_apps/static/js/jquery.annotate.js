@@ -277,7 +277,7 @@
 		var dataFinal = typeof this.note.text.dataFinal == "undefined" ? "" : this.note.text.dataFinal; 
 		
 		var msg = "Caso você identifique apenas o mês e o ano, coloque no seguinte formato: mm/aaaa. Caso identifique apenas" +
-				"o ano, coloque no seguinte formato: aaaa.";
+				" o ano, coloque no seguinte formato: aaaa.";
 		
         // Add the note (which we'll load with the form afterwards)
 		var form = $('<div id="image-annotate-edit-form">' + 
