@@ -14,7 +14,6 @@ from app_tt.meb_util import archiveBookData
 from app_tt.pb_apps.tt_apps import task_factory
 from app_tt.data_mngr import data_manager as data_mngr
 
-BROKER_URL = "amqp://celery:celery@localhost:5672/celery"
 celery = Celery('tasks', backend='amqp', broker=app.config['BROKER_URL'])
 #celery.config_from_object('app_tt.engine.celeryconfig')
 
@@ -254,6 +253,12 @@ def save_fact(factInfo):
             con.close()
         return fact_id
 
+@task(name="app_tt.engine.tasks.submit_report")
+def submit_report(task_id, reportInfo):
+    print "report submitted: " + str(task_id) + " | info: " + str(reportInfo)
+    data_manager.record_report(task_id, reportInfo)
+    return True
+
 def __create_db_connection(db_name):
     conn_string = "host='"+ app.config['DB_HOST'] + "' dbname='" + db_name + "' user='" + app.config['DB_USER'] + "' password='" + app.config['DB_USER_PASSWD'] + "'"
     return psycopg2.connect(conn_string)
@@ -347,3 +352,4 @@ def render_template(task_shortname, page):
         line = line.replace("#task_shortname#", task_shortname.encode('utf-8'))
         text += line
     return text    
+

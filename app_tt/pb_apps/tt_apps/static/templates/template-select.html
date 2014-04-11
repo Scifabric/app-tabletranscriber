@@ -45,6 +45,7 @@
 			<img class="icon" style="width: 20px"
 				src="#server/images/share_icon.png"></img>
 		</button>
+		<button id="button_bug_report" class="btn btn-warning" rel="tooltip" title="Aponte um erro na tarefa" onclick="showBugReportForm()"> Bug Report</button>
 
 		<div style="margin-top:10px; margin-bottom: 10px;">
 			<span id="progress-from">#</span><span id="done"
@@ -57,6 +58,21 @@
 			<div id="progress" rel="tooltip" class="bar"
 				style="width: 0%;"></div>
 		</div>
+	</div>
+</div>
+
+<div id="bug_report_div" class="skeleton">
+	<div>
+		<h2 id="bug_report_question">  Selecione as opções abaixo que correspondem ao problema encontrado:</h2>
+		<form style="display: table; margin: 0 auto;">
+		<input id="loading" type="checkbox" value="1"> A imagem não carrega<br>
+		<input id="submission" type="checkbox" value="2"> A tarefa travou quando tentei submeter<br>
+		<input id="loading_next" type="checkbox" value="3"> A próxima tarefa não carrega<br>
+		<input id="other" type="checkbox" value="4"> Outro<br>
+		<textarea type="textarea" id="other_description" rows="0"></textarea><br>
+		<button class="btn btn-default btn-sm" style="float:left;" onclick="cancelSubmitReport()"> Cancelar</button>
+		<button class="btn btn-info btn-sm" style="float:right;" onclick="submitReport()"> Submeter Report</button><br><br>
+		</form>
 	</div>
 </div>
 
@@ -127,6 +143,7 @@
 <script type="text/javascript" src="#server/js/jquery.i18n.min.js"></script>
 <script type="text/javascript" src="#server/js/tt-select-i18n.js"></script>
 <script type="text/javascript" src="#server/js/jquery.blockUI.js"></script>
+<script type="text/javascript" src="#server/js/report.js"></script>
 
 <link rel="stylesheet" type="text/css" href="#server/css/tt-select.css" />
 
@@ -155,6 +172,45 @@
 
 	function showHelpSelect() {
 		$("#helpModalSelect").modal();
+	}
+	
+	function submitReport() {	
+		var submissionP = $("#submission")[0].checked;
+		var loadingCurrentTaskP = $("#loading")[0].checked;
+		var loadingNextTaskP = $("#loading_next")[0].checked;
+		var otherP = $("#other")[0].checked;
+		var otherTextDescriptionP;
+		
+		if (otherP) {
+			otherTextDescriptionP = $("#other_description").val();
+		}
+		
+		var report = {
+				'1' : submissionP, 
+				'2' : loadingCurrentTaskP, 
+				'3' : loadingNextTaskP,
+				'4' : otherP,
+				'5' : otherTextDescriptionP
+		};
+		console.log(report);
+		
+		var jreport = JSON.stringify(report);
+		
+		$.ajax({
+			type: 'POST',
+			url : '/mb/api/' + task_id + '/report',
+			dataType: 'json',
+			contentType: 'application/json; charset=utf-8',
+			data : jreport
+		})
+		.pipe( function( data ) {
+			if(data == "True") {
+				console.log("Report submitted");
+				$("#bug_report_div").fadeIn(200);
+			}
+        });
+		
+		console.log(a);
 	}
 
 	$("[rel=tooltip]").tooltip();

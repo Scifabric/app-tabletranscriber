@@ -1,0 +1,78 @@
+{% extends "/base.html" %} 
+{% set active_page = "collaborate" %}
+
+{% macro render_pagination(pagination) %}
+<div class="pagination pagination-centered">
+	{% if pagination.has_prev %}
+	<li><a href="{{ url_for_other_page(pagination.page - 1) }}">&laquo; Voltar</a></li> 
+	{% endif %} 
+	{%- for page in pagination.iter_pages() %} 
+	{% if page %} 
+	{% if page != pagination.page %}
+	<li><a href="{{ url_for_other_page(page) }}">{{ page }}</a></li> 
+	{% else %}
+	<li class="active"><a href="#">{{ page }}</a></li> 
+	{% endif %} 
+	{% endif %}
+	{%- endfor %}
+	{% if pagination.has_next %}
+	<li><a href="{{ url_for_other_page(pagination.page + 1)}}">Proxima&raquo;</a></li> 
+	{% endif %}
+</div>
+{% endmacro %}
+ 
+{% macro show_book(book) -%}
+<div class="container">
+	<div class="span12 well">
+		<div class="row">
+			<div class="span2">
+				<ul class="thumbnails">
+					<li>
+					{% if book.info.img %} 
+						<img class="thumbnail" src="{{ book.info.img }}" style="max-width: 100px; max-height: 100px"> 
+					{% else %} <img class="thumbnail" src="{{url_for('static', filename='images/noimgbook.info.png')}}">
+					{% endif %}
+					</li>
+				</ul>
+				<!-- End of class=thumbnails -->
+			</div>
+			<!-- End of span2 -->
+			<div id="data" class="span8">
+				<h2>
+					<a href="{{ book.info.newtask }}">{{ book.info.title }}</a>
+				</h2>
+				<ul>
+					<li><strong>Volume</strong>: {{ book.info.volume }}</li>
+					<li><strong>Publicado por</strong>: {{ book.info.publisher }}</li>
+					<li><strong>Acervo</strong>: {{ book.info.contributor }}</li>
+					<li><strong>Progresso: </strong>
+					<iframe align='center' height='20px' frameborder='0' scrolling='no'
+							src="{{url_for('collaborate.progress', bookid=book.info.bookid)}}"></iframe></li>
+				</ul>
+			</div>
+			<!-- end of id=data class=span8 -->
+		</div>
+		<!--end of class=row -->
+	</div>
+	<!-- end of class=span10 well -->
+</div>
+<!-- end of class=row -->
+{%- endmacro %} 
+
+{% block content %}
+<div id="books_div" class="tab-pane" style="width: 750px;">
+	<div class="container well" style="width: 750px;">
+		<!-- <div class="container-wrapper"> -->
+		<!-- 	<div class="container" style="padding-top: 19px"> -->
+		<h1>Mem&oacute;ria Estat&iacute;stica do Brasil - Livros</h1>
+	</div>
+	<br />
+	{% if books %} 
+	{% for book in books %}
+		{{ show_book( book )}} 
+	{% endfor %}
+
+	<div class="container">{{ render_pagination(pagination) }}</div>
+</div>
+{% endif %}
+{% endblock %}
