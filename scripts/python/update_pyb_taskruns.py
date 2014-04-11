@@ -46,6 +46,14 @@ def __change_fields(info_dict):
     if info_dict['text'].has_key('rodape'):
         info_dict['text']['fontes'] = info_dict['text']['rodape']
         info_dict['text'].pop('rodape')
+        
+    if not info_dict['text'].has_key('assunto'):
+        info_dict['text']['assunto'] = '3'
+         
+    info_dict['text']['titulo'] = info_dict['text']['titulo'].decode('unicode-escape')
+    info_dict['text']['subtitulo'] = info_dict['text']['subtitulo'].decode('unicode-escape')
+    info_dict['text']['fontes'] = info_dict['text']['fontes'].decode('unicode-escape')
+    info_dict['text']['outros'] = info_dict['text']['outros'].decode('unicode-escape')
     
     return info_dict
 
@@ -109,4 +117,4 @@ if __name__ == '__main__':
 
     for sname in short_names:
         fix_dates_t2(sname)
-        
+    
