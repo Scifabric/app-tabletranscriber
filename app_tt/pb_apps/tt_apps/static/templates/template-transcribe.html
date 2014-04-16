@@ -203,7 +203,7 @@
 <script type="text/javascript">
 	var taskid;
 	var serverName = "#server";
-	var task_shortname = "#task_shortname#";
+	var app_shortname = "#app_shortname#";
 	var endpoint = "/pybossa";
 	var minTableViewerWidth = 515;
 	var minTableViewerHeight = $("#right-panel").height();
@@ -284,7 +284,7 @@
 					});
 
 	function loadUserProgress() {
-		pybossa.userProgress(task_shortname).done(
+		pybossa.userProgress(app_shortname).done(
 				function(data) {
 					var lastTask = (data.done + 1) == data.total;
 					var pct = Math.round((data.done * 100) / data.total);
@@ -341,7 +341,7 @@
 
 	function redirectToANewTask(taskSufix) {
 		window.open(endpoint + "/app/"
-				+ task_shortname.replace("_tt4", "_" + taskSufix) + "/newtask",
+				+ app_shortname.replace("_tt4", "_" + taskSufix) + "/newtask",
 				"_self");
 	}
 
@@ -367,14 +367,14 @@
 			blockUI();
 
 			// Load a new task
-			pybossa.newTask(task_shortname).done(function(data) {
+			pybossa.newTask(app_shortname).done(function(data) {
 				loadData(data);
 			});
 		});
 	}
 
 	pybossa.setEndpoint(endpoint);
-	pybossa.newTask(task_shortname).done(function(data) {
+	pybossa.newTask(app_shortname).done(function(data) {
 		loadData(data)
 	});
 </script>

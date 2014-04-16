@@ -45,7 +45,7 @@
 			<img class="icon" style="width: 20px"
 				src="#server/images/share_icon.png"></img>
 		</button>
-		<button id="button_bug_report" class="btn btn-warning" rel="tooltip" title="Aponte um erro na tarefa" onclick="showBugReportForm()"> Bug Report</button>
+		<button id="button_bug_report" class="btn btn-warning" rel="tooltip" title="Aponte um erro na tarefa" onclick="showBugReportForm()"> Reportar Problema</button>
 
 		<div style="margin-top:10px; margin-bottom: 10px;">
 			<span id="progress-from">#</span><span id="done"
@@ -64,14 +64,14 @@
 <div id="bug_report_div" class="skeleton">
 	<div>
 		<h2 id="bug_report_question">  Selecione as opções abaixo que correspondem ao problema encontrado:</h2>
-		<form style="display: table; margin: 0 auto;">
+		<form id="bug_report_form" style="margin: 0 auto;">
 		<input id="loading" type="checkbox" value="1"> A imagem não carrega<br>
 		<input id="submission" type="checkbox" value="2"> A tarefa travou quando tentei submeter<br>
 		<input id="loading_next" type="checkbox" value="3"> A próxima tarefa não carrega<br>
 		<input id="other" type="checkbox" value="4"> Outro<br>
-		<textarea type="textarea" id="other_description" rows="0"></textarea><br>
+		<textarea type="textarea" id="other_description" rows="0" style="width:240px"></textarea><br>
 		<button class="btn btn-default btn-sm" style="float:left;" onclick="cancelSubmitReport()"> Cancelar</button>
-		<button class="btn btn-info btn-sm" style="float:right;" onclick="submitReport()"> Submeter Report</button><br><br>
+		<button class="btn btn-info btn-sm" style="float:right;width:140px" onclick="submitReport()"> Submeter</button><br><br>
 		</form>
 	</div>
 </div>
@@ -149,7 +149,7 @@
 
 <script type="text/javascript" charset="utf-8">
 
-	var task_shortname = "#task_shortname#";
+	var app_shortname = "#app_shortname#";
 	var endpoint = "/pybossa";
 	
 	function unblockUI() {
@@ -174,7 +174,7 @@
 		$("#helpModalSelect").modal();
 	}
 	
-	function submitReport() {	
+	function callbackGetUserId( u_ident ) {
 		var submissionP = $("#submission")[0].checked;
 		var loadingCurrentTaskP = $("#loading")[0].checked;
 		var loadingNextTaskP = $("#loading_next")[0].checked;
@@ -184,33 +184,39 @@
 		if (otherP) {
 			otherTextDescriptionP = $("#other_description").val();
 		}
+		else {
+			otherTextDescriptionP = "";
+		}
 		
-		var report = {
+		var msg = {
 				'1' : submissionP, 
 				'2' : loadingCurrentTaskP, 
 				'3' : loadingNextTaskP,
 				'4' : otherP,
 				'5' : otherTextDescriptionP
 		};
-		console.log(report);
 		
-		var jreport = JSON.stringify(report);
+		var jreport = JSON.stringify({ 'message':msg, 'u_id':u_ident });
 		
 		$.ajax({
 			type: 'POST',
-			url : '/mb/api/' + task_id + '/report',
+			url : '/mb/api/' + app_shortname + '/' + task_id + '/report',
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
-			data : jreport
-		})
-		.pipe( function( data ) {
-			if(data == "True") {
-				console.log("Report submitted");
+			data : jreport,
+			success: function() {
 				$("#bug_report_div").fadeIn(200);
 			}
-        });
-		
-		console.log(a);
+		});
+	}
+	
+	function submitReport() {
+		try {
+			pybossa.getCurrentUserId( callbackGetUserId );
+		}
+		catch(err) {
+			alert(err);
+		}
 	}
 
 	$("[rel=tooltip]").tooltip();
@@ -248,7 +254,7 @@
 	}); //Internationalization using jquery.i18n
 
 	function loadUserProgress() {
-		pybossa.userProgress(task_shortname).done(function(data) {
+		pybossa.userProgress(app_shortname).done(function(data) {
 			var pct = Math.round((data.done * 100) / data.total);
 			$("#progress").css("width", pct.toString() + "%");
 			
@@ -315,8 +321,7 @@
 	function redirectToANewTask(taskSufix) {
 		window.open(endpoint
 				+ "/app/"
-				+ task_shortname
-						.replace("_tt1", "_" + taskSufix)
+				+ app_shortname.replace("_tt1", "_" + taskSufix)
 				+ "/newtask", "_self");
 	}
 
@@ -343,14 +348,14 @@
 			blockUI();
 			
 			// Load a new task
-			pybossa.newTask(task_shortname).done(function(data) {
+			pybossa.newTask(app_shortname).done(function(data) {
 				loadData(data);
 			});
 		});
 	}
 
 	pybossa.setEndpoint(endpoint);
-	pybossa.newTask(task_shortname).done(function(data) {
+	pybossa.newTask(app_shortname).done(function(data) {
 		loadData(data);
 	});
 </script>

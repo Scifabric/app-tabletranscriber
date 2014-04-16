@@ -4,8 +4,9 @@ import urllib2
 import requests
 import json
 import psycopg2
+import datetime
 from celery import task
-from app_tt.core import app
+from app_tt.core import app, pbclient
 from app_tt.pb_apps.tt_apps.ttapps import Apptt_select
 from app_tt.pb_apps.tt_apps.ttapps import Apptt_meta
 from app_tt.pb_apps.tt_apps.ttapps import Apptt_struct
@@ -254,10 +255,28 @@ def save_fact(factInfo):
         return fact_id
 
 @task(name="app_tt.engine.tasks.submit_report")
-def submit_report(task_id, reportInfo):
-    print "report submitted: " + str(task_id) + " | info: " + str(reportInfo)
-    data_manager.record_report(task_id, reportInfo)
-    return True
+def submit_report(a_shortname, t_id, msg, u_ident):
+    print "a_shortname: " + a_shortname
+    print "t_id: " + str(t_id)
+    print "msg: " + str(msg)
+    print "u_ident: " + str(u_ident)
+    
+    a_id = pbclient.find_app(short_name=a_shortname)[0].id
+    
+    infos = {}
+    infos['msg'] = json.dumps(msg)
+    infos['app_id'] = a_id
+    infos['task_id'] = t_id
+    infos['user_id'] = str(u_ident)
+    infos['created'] = datetime.datetime.now()
+    
+    try:
+        data_mngr.record_report(infos)
+        return True
+    except Exception as e:
+        print e
+        return False  # TODO: send exception to log
+
 
 def __create_db_connection(db_name):
     conn_string = "host='"+ app.config['DB_HOST'] + "' dbname='" + db_name + "' user='" + app.config['DB_USER'] + "' password='" + app.config['DB_USER_PASSWD'] + "'"
@@ -342,14 +361,14 @@ def __get_user_name(user_id):
         return result
 
 @task(name="app_tt.engine.tasks.render_template")
-def render_template(task_shortname, page):
+def render_template(app_shortname, page):
     server_url = app.config['URL_TEMPLATES']
     templateArch = urllib2.urlopen(urllib2.Request(server_url + "/templates/" + page))
     
     text = ""
     for line in templateArch.readlines():
         line = line.replace("#server", server_url)
-        line = line.replace("#task_shortname#", task_shortname.encode('utf-8'))
+        line = line.replace("#app_shortname#", app_shortname.encode('utf-8'))
         text += line
     return text    
 

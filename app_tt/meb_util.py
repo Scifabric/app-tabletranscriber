@@ -35,7 +35,7 @@ def setUrl_(arch, short_name, server=flask_app.config['URL_TEMPLATES']):
     text = ""
     for line in arch.readlines():
         line = line.replace("#server", server)
-        line = line.replace("#task_shortname#", short_name.encode('utf-8'))
+        line = line.replace("#app_shortname#", short_name.encode('utf-8'))
         text += line
 
     return text

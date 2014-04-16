@@ -36,7 +36,15 @@ def record_page(page_info):
         db.session.rollback()
         raise e
 
-def record_report(task_id, reportInfo):
-    r = report(
-               
-               )     
+def record_report(infos):
+    r = report(infos['msg'], 
+               infos['app_id'],
+               infos['task_id'], 
+               infos['user_id'], 
+               infos['created']) 
+    try:
+        db.session.add(r)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        raise e     

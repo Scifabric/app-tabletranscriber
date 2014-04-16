@@ -352,11 +352,11 @@
 		});
 	}
 
-	var task_shortname = "#task_shortname#";
+	var app_shortname = "#app_shortname#";
 	var endpoint = "/pybossa";
 
 	function loadUserProgress() {
-		pybossa.userProgress(task_shortname).done(
+		pybossa.userProgress(app_shortname).done(
 				function(data) {
 					var pct = Math.round((data.done * 100) / data.total);
 					$("#progress").css("width", pct.toString() + "%");
@@ -435,7 +435,7 @@
 
 	function redirectToANewTask(taskSufix) {
 		window.open(endpoint + "/app/"
-				+ task_shortname.replace("_tt2", "_" + taskSufix) + "/newtask",
+				+ app_shortname.replace("_tt2", "_" + taskSufix) + "/newtask",
 				"_self");
 	}
 
@@ -465,14 +465,14 @@
 			blockUI();
 			
 			// Load a new task
-			pybossa.newTask(task_shortname).done(function(data) {
+			pybossa.newTask(app_shortname).done(function(data) {
 				loadData(data)
 			});
 		});
 	}
 
 	pybossa.setEndpoint(endpoint);
-	pybossa.newTask(task_shortname).done(function(data) {
+	pybossa.newTask(app_shortname).done(function(data) {
 		loadData(data)
 	});
 </script>
