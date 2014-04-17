@@ -1,6 +1,3 @@
-{% extends "/base.html" %} 
-{% set active_page = "collaborate" %}
-
 {% macro render_pagination(pagination) %}
 <div class="pagination pagination-centered">
 	{% if pagination.has_prev %}
@@ -60,19 +57,22 @@
 {%- endmacro %} 
 
 {% block content %}
-<div id="books_div" class="tab-pane" style="width: 750px;">
-	<div class="container well" style="width: 750px;">
-		<!-- <div class="container-wrapper"> -->
-		<!-- 	<div class="container" style="padding-top: 19px"> -->
-		<h1>Mem&oacute;ria Estat&iacute;stica do Brasil - Livros</h1>
-	</div>
-	<br />
-	{% if books %} 
-	{% for book in books %}
-		{{ show_book( book )}} 
-	{% endfor %}
 
-	<div class="container">{{ render_pagination(pagination) }}</div>
+
+<div class="container" style="padding-top: 19px">
+	<h1>Mem&oacuteria Estat&iacute;stica do Brasil - Livros</h1>
 </div>
+<br/>
+
+{% if books %}
+{% for book in books %}
+		{{ show_book(book )}}
+{% endfor %}
+
+<div class="container">
+	{{ render_pagination(pagination) }}
+</div>
+
+
 {% endif %}
 {% endblock %}

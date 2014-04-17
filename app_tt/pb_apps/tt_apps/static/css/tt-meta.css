@@ -73,17 +73,6 @@
 	display: none;
 }
 
-#throbber {
-	padding: 10px;
-	position: absolute;
-	left: 50%;
-	top: 10%;
-	margin: -50px 0 0 -50px;
-	z-index: 10000;
-	width: 100px;
-	height: 100px;
-}
-
 #alert-container p {
 	margin-bottom: 0px;
 }
@@ -99,3 +88,6 @@
 	text-align: center;
 }
 
+.tooltip-inner {
+    width: 200px;
+}

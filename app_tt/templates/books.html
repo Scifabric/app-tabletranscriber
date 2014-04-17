@@ -1,0 +1,13 @@
+{% block books_content %}
+
+<div id="books_div" class="container tab-pane">
+</div>
+
+<script>
+	function changeToBooksTab() {
+		$('#books-tab').trigger('click');
+	}
+	$('#books_div').load('/mb/collaborate');
+</script>
+
+{% endblock books_content %}
