@@ -1,36 +1,21 @@
-<style>
-#button-container {
-	margin-top: 20px;
-	margin-left: auto;
-	width: 250px;
-	margin-right: auto;
-	font-weight: bold;
-}
-</style>
-
-<div class="span3 bs-docs-sidebar" data-spy="affix-top"
-	data-offset-top="1">
-	<ul class="nav nav-tabs" style="margin-top: 70px;">
-
+<div class="span3" style="position: fixed; margin-top: 28px;">
+	<ul class="nav nav-tabs">
 		<li><a href="#home" data-toggle="tab"><i
 				class="icon-chevron-right"></i> In&iacute;cio</a></li>
-		<li><a href="#books_div" data-toggle="tab"><i
+		<li><a id="books-tab" href="#books_div" data-toggle="tab"><i
 				class="icon-chevron-right"></i> Livros para
 				Transcri&ccedil;&atilde;o</a></li>
-		<li><a href="#notebook" data-toggle="tab"><i
+		<!-- <li><a href="#notebook" data-toggle="tab"><i
 				class="icon-chevron-right"></i> Montar Caderno</a></li>
 		<li><a href="#results" data-toggle="tab"><i
 				class="icon-chevron-right"></i> Resultados</a></li>
 		<li><a href="#individual_contribution" data-toggle="tab"><i
 				class="icon-chevron-right"></i> Transcri&ccedil;&atilde;o Direta</a></li>
 		<li><a href="#admin" data-toggle="tab"><i
-				class="icon-chevron-right"></i> Administra&ccedil;&atilde;o</a></li>
+				class="icon-chevron-right"></i> Administra&ccedil;&atilde;o</a></li>-->
 		<li><a href="#other_links" data-toggle="tab"><i
 				class="icon-chevron-right"></i> Outros Links</a></li>
+		
 	</ul>
 </div>
 
-<div class="tab-content">
-	{% block home_content %}
-	{% endblock home_content %}
-</div>

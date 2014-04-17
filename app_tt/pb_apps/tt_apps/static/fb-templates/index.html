@@ -65,7 +65,6 @@ footer .span2 {
 					src="img/logo_societic.png" alt="Socientize"></a>
 				<div class="nav-collapse collapse">
 					<ul id="nav-buttons" class="nav">
-						<li><a id="books_link" href="">Books</a></li>
 						<li><a href="/pybossa/account/" target="_blank">Community</a></li>
 						<li><a href="/pybossa/about" target="_blank">About</a></li>
 					</ul>
@@ -100,11 +99,7 @@ footer .span2 {
 		<img src="img/loading.gif">
 	</div>
 
-	<div id="task-long-description" class="container">
-		<div id="long-description-content"></div>
-	</div>
-
-	<div id="task-template" class="container" style="display: none;"></div>
+	<div id="main-container"></div>
 
 	<footer>
 	<div class="container">
@@ -235,16 +230,9 @@ footer .span2 {
 			initFacebookSDK(json.app_id, json.facebook_permissions_type);
 			
 			$("#fb-loading-container").show();
-			$("#long-description-content").load("long_description.html", function(){
-				$('#books_link').click(handleStartContributingClickEvent);
-			});
+			$("#main-container").load("main_container.html");
 		});
 		
-		function showTaskTemplate() {
-			$("#task-template").show();
-			$("#task-long-description").hide();
-		}
-
 		/* MISC Functions */
 		function ChangeImage(img, url) {
 			img.src = url;

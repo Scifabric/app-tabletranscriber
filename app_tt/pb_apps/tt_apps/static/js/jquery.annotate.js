@@ -276,8 +276,10 @@
 		var dataInicial = typeof this.note.text.dataInicial == "undefined" ? "" : this.note.text.dataInicial;
 		var dataFinal = typeof this.note.text.dataFinal == "undefined" ? "" : this.note.text.dataFinal; 
 		
-		var msg = "Caso você identifique apenas o mês e o ano, coloque no seguinte formato: mm/aaaa. Caso identifique apenas" +
+		var data_tooltip_msg = "Caso você identifique apenas o mês e o ano, coloque no seguinte formato: mm/aaaa. Caso identifique apenas" +
 				" o ano, coloque no seguinte formato: aaaa.";
+		var h_orient_msg = "A orientação do conteúdo das células é predominantemente horizontal.";
+		var v_orient_msg = "A orientação do conteúdo das células é predominantemente vertical.";
 		
         // Add the note (which we'll load with the form afterwards)
 		var form = $('<div id="image-annotate-edit-form">' + 
@@ -295,10 +297,10 @@
                 '<option value="8"' + (selected == "8" ? "selected" : "") + ' >Administração Pública</option></select>' +
                 '<input type="text" id="outros" value="' + this.note.text.outros +'">' + '</input><br/>' +
 				'Fontes: <textarea type="textarea" id="fontes">' + fontes + '</textarea>' +
-				'Data Inicial (dd/mm/aaaa): <i class="icon icon-white icon-question-sign" rel="tooltip" title="' + msg + '"></i> <textarea type="textarea" id="dataInicial">' + dataInicial + '</textarea><br/>' +
-				'Data Final (dd/mm/aaaa): <i class="icon icon-white icon-question-sign" rel="tooltip" title="' + msg + '"></i> <textarea type="textarea" id="dataFinal">' + dataFinal + '</textarea><br/>' +
-				'<p><input id="nao_girar"' + (nao_girar ? "checked='true'" : "") + 'name="radio" type="radio" value="true" class="radiocheckbox" checked="true"> Tabela possui orientação horizontal</input></p>' +
-                '<p><input id="girar"' + (girar ? "checked='true'" : "") + 'name="radio" type="radio" value="true" class="radiocheckbox"> Tabela possui orientação vertical</input></p>' + 
+				'Data Inicial (dd/mm/aaaa): <i class="icon icon-white icon-question-sign" rel="tooltip" title="' + data_tooltip_msg + '"></i> <textarea type="textarea" id="dataInicial">' + dataInicial + '</textarea><br/>' +
+				'Data Final (dd/mm/aaaa): <i class="icon icon-white icon-question-sign" rel="tooltip" title="' + data_tooltip_msg + '"></i> <textarea type="textarea" id="dataFinal">' + dataFinal + '</textarea><br/>' +
+				'<p><input id="nao_girar"' + (nao_girar ? "checked='true'" : "") + 'name="radio" type="radio" value="true" class="radiocheckbox" checked="true"> Tabela possui orientação horizontal</input> <i class="icon icon-white icon-question-sign" rel="tooltip" title="' + h_orient_msg + '"></i></p>' +
+                '<p><input id="girar"' + (girar ? "checked='true'" : "") + 'name="radio" type="radio" value="true" class="radiocheckbox"> Tabela possui orientação vertical</input> <i class="icon icon-white icon-question-sign" rel="tooltip" title="' + v_orient_msg + '"></i></p>' + 
                 '</form></div>');
 		
         this.form = form;

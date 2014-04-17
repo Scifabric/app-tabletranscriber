@@ -35,6 +35,11 @@
 		<div class="tabbable tabs-left">
 			{%include "sidebar.html" %}
 		</div>
+		<div id="tab-container" class="tab-content">
+			{% include "/home.html" %}
+			{% include "/books.html" %}
+			{% include "/other_links.html" %}
+		</div>
 	</div>
 	{% block content %}
 	{% endblock %}

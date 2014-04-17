@@ -1,0 +1,75 @@
+<div id="mb" style="display: none"></div>
+<div id='task-template' class='container' style='display: none;'></div>
+
+<script>
+	var bookId;
+	
+	function loadAHTML(targetEl, htmlUrl, callback) {
+		$("#fb-loading-container").show();
+		$(targetEl).load(htmlUrl, function(){
+			$("#fb-loading-container").hide();
+			callback();
+		});
+	}
+	
+	function clearMBInterface() {
+		$('body').off('mouseup');
+		$('body').off('mousedown');
+		$('body').off('contextmenu');
+		$("[rel=tooltip]").tooltip('destroy');
+		$("[rel=popover]").popover('destroy');
+		document.body.style.cursor = "default";
+	}
+	
+	function showTaskTemplate() {
+		$("#task-template").show();
+		$("#tab-container").hide();
+		$('.nav-tabs li').removeClass("active");
+	}
+	
+	function showMainContainer() {
+		$("#task-template").hide();
+		$("#tab-container").show();
+	}
+	
+	loadAHTML('#mb', "https://" + server_name + "/mb", function() {
+		
+		$('#start-contributing').click(handleStartContributingClickEvent);
+		
+		$("#mb .navbar").hide();
+		$('#footer_links').hide();
+		$('#mb').show();
+		
+		$('#books_div').on('DOMSubtreeModified', function(){
+			$('#books_div a').click(function(e) {
+				e.preventDefault();
+
+				var addressValue = $(this).attr("href");
+				if (addressValue == "#")
+					return;
+
+				var POSITION_BOOK_ID = 5;
+				var tmp = addressValue.split("/")[POSITION_BOOK_ID];
+				bookId = tmp.substring(0, tmp.indexOf("_"));
+
+				$("#task-template").load("task_templates.html", function() {
+					showTaskTemplate();
+				});
+			});
+		});
+		
+		$("#books-tab").on("click", function() {
+			initFacebookLogin();
+		});
+		
+		$('.nav-tabs').on('click', function() {
+			clearMBInterface();
+			showMainContainer();
+		});
+	});
+	
+	function handleStartContributingClickEvent(e) {
+		e.preventDefault();
+		initFacebookLogin();
+	}
+</script>
