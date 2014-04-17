@@ -199,18 +199,12 @@
 			contentType: 'application/json; charset=utf-8',
 			data : jreport
 		});
+		
+		erase_bug_report_div();
 	}
 	
 	function subReport() {
-		try {
-			pybossa.getCurrentUserId( callbackGetUserId );
-		}
-		catch(err) {
-			alert(err);
-		}
-		finally {
-			erase_bug_report_div();
-		}
+		pybossa.getCurrentUserId( callbackGetUserId );
 	}
 	
 	$("[rel=tooltip]").tooltip();

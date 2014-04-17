@@ -264,7 +264,7 @@ def submit_report(a_shortname, t_id, msg, u_ident):
     a_id = pbclient.find_app(short_name=a_shortname)[0].id
     
     infos = {}
-    infos['msg'] = json.dumps(msg)
+    infos['msg'] = json.dumps(msg, ensure_ascii=False)
     infos['app_id'] = a_id
     infos['task_id'] = t_id
     infos['user_id'] = str(u_ident)

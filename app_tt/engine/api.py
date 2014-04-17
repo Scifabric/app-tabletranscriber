@@ -84,9 +84,6 @@ def execute_save_fact():
 @blueprint.route('/<app_shortname>/<task_id>/report', methods=['POST'])
 def report(app_shortname, task_id):
     reportInfo = json.loads(request.data)
-    
-    print "reportInfo (api.report): " + str(reportInfo)
-    
     done = submit_report.delay(app_shortname, task_id,
                                reportInfo['message'],
                                reportInfo['u_id'])
