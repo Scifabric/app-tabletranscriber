@@ -78,8 +78,26 @@
 			title="" onclick="showHelpStruct()">
 			<i class="icon icon-question-sign"></i>
 		</button>
+		<button id="button_bug_report" class="btn btn-warning" style="width:200px;" rel="tooltip" 
+			title="Aponte um erro na tarefa" onclick="showBugReportForm()"> Reportar Problema
+		</button>
 	</div>
-
+	
+	<div id="bug_report_div" class="skeleton">
+		<div>
+			<h2 id="bug_report_question">  Selecione as opções abaixo que correspondem ao problema encontrado:</h2>
+			<form id="bug_report_form" style="margin: 0 auto;">
+			<input id="loading" type="checkbox" value="1"> A imagem não carrega<br>
+			<input id="submission" type="checkbox" value="2"> A tarefa travou quando tentei submeter<br>
+			<input id="loading_next" type="checkbox" value="3"> A próxima tarefa não carrega<br>
+			<input id="other" type="checkbox" value="4"> Outro<br>
+			<textarea type="textarea" id="other_description" rows="0" style="width:240px"></textarea><br>
+			<a class="btn btn-default btn-sm" style="float:left;" onclick="cancelSubReport()"> Cancelar</a>
+			<a class="btn btn-info btn-sm" style="float:right;" onclick="subReport()"> Submeter</a><br><br>
+			</form>
+		</div>
+	</div>
+	
 	<div id="table-container">
 		<div id="canvas-container" style="float: left; display: none;"></div>
 		<div id="loading-container">
@@ -88,7 +106,7 @@
 	</div>
 
 	<div id="task-info" class="task-info" style="display: none;">
-		<div id="instruction" class="alert alert-info" style="padding-right: 14px;">
+		<div id="instruction" class="alert alert-info">
 			<h5 id="task-instruction">
 				<span id="task-instruction-p1"></span><br>
 				<ul>
@@ -242,11 +260,12 @@
 <script type="text/javascript" src="#server/js/tt-struct-i18n.js"></script>
 <script type="text/javascript" src="#server/js/jquery.blockUI.js"></script>
 <script type="text/javascript" charset="utf-8" src="#server/js/tt3.js"></script>
+<script type="text/javascript" src="#server/js/report.js"></script>
 
 <link rel="stylesheet" type="text/css" href="#server/css/tt-struct.css" />
 
 <script type="text/javascript" charset="utf-8">
-	var taskid;
+	var taskId;
 	var serverName = "#server";
 	var minCanvasWidth = 540;
 	var minCanvasHeight = $("#task-info").height();
@@ -271,6 +290,44 @@
 
 	function showHelpStruct() {
 		$('#helpModalStruct').modal();
+	}
+	
+	function callbackGetUserId( u_ident ) {
+		var submissionP = $("#submission")[0].checked;
+		var loadingCurrentTaskP = $("#loading")[0].checked;
+		var loadingNextTaskP = $("#loading_next")[0].checked;
+		var otherP = $("#other")[0].checked;
+		var otherTextDescriptionP = $("#other_description").val();
+		
+		var msg = {
+				'1' : submissionP, 
+				'2' : loadingCurrentTaskP, 
+				'3' : loadingNextTaskP,
+				'4' : otherP,
+				'5' : otherTextDescriptionP
+		};
+		
+		var jreport = JSON.stringify({ 'message':msg, 'u_id':u_ident });
+		
+		$.ajax({
+			type: 'POST',
+			url : '/mb/api/' + app_shortname + '/' + taskId + '/report',
+			dataType: 'json',
+			contentType: 'application/json; charset=utf-8',
+			data : jreport
+		});
+	}
+	
+	function subReport() {
+		try {
+			pybossa.getCurrentUserId( callbackGetUserId );
+		}
+		catch(err) {
+			alert(err);
+		}
+		finally {
+			erase_bug_report_div();
+		}
 	}
 
 	$("#template-container").ready(function() {
@@ -373,7 +430,7 @@
 				question = $.i18n._('question_with_focus');
 
 			$("#question").text(question);
-			taskid = data.task.id;
+			taskId = data.task.id;
 
 			initGrid(data.task.info, minCanvasWidth, minCanvasHeight,
 					serverName);
@@ -418,9 +475,9 @@
 	function submitTask() {
 		var answer = getGridLinesAnswer();
 
-		pybossa.saveTask(taskid, answer).done(function(data) {
+		pybossa.saveTask(taskId, answer).done(function(data) {
 			//Call tt workflow api
-			taskRunDone(taskid);
+			taskRunDone(taskId);
 
 			clearCanvas();
 

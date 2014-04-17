@@ -3,7 +3,12 @@ function showBugReportForm() {
 	$("#bug_report_div").show();
 }
 
-function cancelSubmitReport() {
+function cancelSubReport() {
+	document.getElementById("bug_report_form").reset();
 	$("#bug_report_div").hide();
-	$("#bug_report_form").css("display", "none");
+}
+
+function erase_bug_report_div() {
+	$("#bug_report_div").hide();
+	document.getElementById("bug_report_form").reset();
 }

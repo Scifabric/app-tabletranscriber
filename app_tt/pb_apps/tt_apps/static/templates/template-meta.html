@@ -57,7 +57,11 @@
 				<img class="icon" style="width: 20px"
 					src="#server/images/share_icon.png"></img>
 			</button>
-
+		
+			<button id="button_bug_report" class="btn btn-warning" rel="tooltip" 
+				title="Aponte um erro na tarefa" onclick="showBugReportForm()"> Reportar Problema
+			</button>
+			
 			<div style="margin-top: 10px; margin-bottom: 10px;">
 				<span id="progress-from">Voc&ecirc; fez </span><span id="done"
 					class="label label-info" style="margin-right: 5px"></span><span
@@ -292,7 +296,24 @@
 			</div>
 		</div>
 	</div>
-
+	
+	<div id="bug_report_div" class="skeleton">
+		<div>
+			<h2 id="bug_report_question">  Selecione as opções abaixo que correspondem ao problema encontrado:</h2>
+			<form id="bug_report_form" style="margin: 0 auto;">
+			<input id="loading" type="checkbox" value="1"> A imagem não carrega<br>
+			<input id="submission" type="checkbox" value="2"> A tarefa travou quando tentei submeter<br>
+			<input id="loading_next" type="checkbox" value="3"> A próxima tarefa não carrega<br>
+			<input id="other" type="checkbox" value="4"> Outro<br>
+			<textarea type="textarea" id="other_description" rows="0" style="width:240px"></textarea><br>
+			<a class="btn btn-default btn-sm" style="float:left;" onclick="cancelSubReport()"> Cancelar</a>
+<!-- 		<button class="btn btn-default btn-sm" style="float:left;" onclick="cancelSubReport()"> Cancelar</button> -->
+			<a class="btn btn-info btn-sm" style="float:right;" onclick="subReport()"> Submeter</a><br><br>
+<!-- 		<button class="btn btn-info btn-sm" style="float:right;width:140px" onclick="subReport()"> Submeter</button><br><br> -->
+			</form>
+		</div>
+	</div>
+	
 	<div id="image-container" class="skeleton" rel="popover"
 		title="Clique e arraste o mouse sobre uma área da tabela para compartilhar.">
 		<div id="TTImage" class="TTImageContainer" style="float: left; opacity: 0;">
@@ -317,14 +338,17 @@
 <script type="text/javascript" src="#server/js/share.js"></script>
 <script src="//connect.facebook.net/en_US/all.js"></script>
 <script src="#server/js/jquery.annotate.js" type="text/javascript"></script>
-<script type="text/javascript"
-	src="#server/js/jquery-ui-1.8.22.custom.min.js"></script>
+<script type="text/javascript" src="#server/js/jquery-ui-1.8.22.custom.min.js"></script>
 <script type="text/javascript" src="#server/js/jquery.blockUI.js"></script>
+<script type="text/javascript" src="#server/js/report.js"></script>
 
 <link rel="stylesheet" type="text/css" href="#server/css/annotation.css" />
 <link rel="stylesheet" type="text/css" href="#server/css/tt-meta.css" />
 
 <script type="text/javascript" charset="utf-8">
+	var app_shortname = "#app_shortname#";
+	var endpoint = "/pybossa";
+	
 	function showHelp() {
 		$("#helpModalMeta").modal();
 		$('#nav-header').affix();
@@ -351,10 +375,45 @@
 			}
 		});
 	}
-
-	var app_shortname = "#app_shortname#";
-	var endpoint = "/pybossa";
-
+	
+	function callbackGetUserId( u_ident ) {
+		var submissionP = $("#submission")[0].checked;
+		var loadingCurrentTaskP = $("#loading")[0].checked;
+		var loadingNextTaskP = $("#loading_next")[0].checked;
+		var otherP = $("#other")[0].checked;
+		var otherTextDescriptionP = $("#other_description").val();
+		
+		var msg = {
+				'1' : submissionP, 
+				'2' : loadingCurrentTaskP, 
+				'3' : loadingNextTaskP,
+				'4' : otherP,
+				'5' : otherTextDescriptionP
+		};
+		
+		var jreport = JSON.stringify({ 'message':msg, 'u_id':u_ident });
+		
+		$.ajax({
+			type: 'POST',
+			url : '/mb/api/' + app_shortname + '/' + taskId + '/report',
+			dataType: 'json',
+			contentType: 'application/json; charset=utf-8',
+			data : jreport
+		});
+	}
+	
+	function subReport() {
+		try {
+			pybossa.getCurrentUserId( callbackGetUserId );
+		}
+		catch(err) {
+			alert(err);
+		}
+		finally {
+			erase_bug_report_div();
+		}
+	}
+	
 	function loadUserProgress() {
 		pybossa.userProgress(app_shortname).done(
 				function(data) {
@@ -404,9 +463,6 @@
 
 			var notes = data.task.info.last_answer != undefined ? JSON
 					.parse(data.task.info.last_answer) : [];
-
-			//console.log("notes: ");
-			//console.log(notes);
 
 			image = $("#table").annotateImage({
 				editable : true,

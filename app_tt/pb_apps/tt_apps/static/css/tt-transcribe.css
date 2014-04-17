@@ -2,6 +2,7 @@
 	float: left;
 	overflow: auto;
 	position: relative;
+	margin-top: 10px;
 }
 
 #loading-container {
@@ -31,6 +32,7 @@
 	float: right;
 	width: 400px;
 	margin: auto;
+	margin-top: 10px;
 }
 
 #toolbar {
@@ -47,8 +49,25 @@
 	font-size: 18px;
 }
 
+#button_bug_report {
+	height: 35px;
+	float: left;
+	margin-left: 5px;
+}
+
+#bug_report_div {
+	display: none;
+	border-width: 1px;
+	border-style: dashed;
+	width: 940px;
+}
+
+#bug_report_question {
+	text-align: center;
+}
+
 #button-finished-task {
-	margin-left: 181px;
+	margin-left: 18px;
 	margin-right: 41px;
 	height: 35px;
 	width: 155px;

@@ -6,11 +6,31 @@ code_report_tt1 = {
                 "3" : "Problema no carregamento da próxima task",
                 "4" : "Outro problema",
                 "5" : "Descrição do outro problema"
-                   }
+                }
 
-code_report_tt2 = {}
-code_report_tt3 = {}
-code_report_tt4 = {}
+code_report_tt2 = {
+                "1" : "Problema de Submissão", 
+                "2" : "Problema no carregamento da task atual", 
+                "3" : "Problema no carregamento da próxima task",
+                "4" : "Outro problema",
+                "5" : "Descrição do outro problema"
+                }
+
+code_report_tt3 = {
+                "1" : "Problema de Submissão", 
+                "2" : "Problema no carregamento da task atual", 
+                "3" : "Problema no carregamento da próxima task",
+                "4" : "Outro problema",
+                "5" : "Descrição do outro problema"
+                }
+
+code_report_tt4 = {
+                "1" : "Problema de Submissão", 
+                "2" : "Problema no carregamento da task atual", 
+                "3" : "Problema no carregamento da próxima task",
+                "4" : "Outro problema",
+                "5" : "Descrição do outro problema"
+                }
 
 
 def get_message_from_report(report_code, task_type):

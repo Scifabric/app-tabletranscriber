@@ -15,11 +15,27 @@ canvas {
 #toolbar button {
 	width: 55px;
 	height: 35px;
-	font-size: 18px;
+	font-size: 14px;
 }
 
 #toolbar .tooltip-inner {
 	max-width: none;
+}
+
+#button_bug_report {
+	margin-right: 4px;
+}
+
+#bug_report_div {
+	display: none;
+	border-width: 1px;
+	border-style: dashed;
+	margin-left: 20px;
+	width: 920px;
+}
+
+#bug_report_question {
+	text-align: center;
 }
 
 div.container {
@@ -62,6 +78,11 @@ div.container {
 	font-size: 20px;
 	margin-left: 15px;
 	float: left;
+}
+
+#instruction {
+	padding-right: 14px;
+	margin-top: 10px;
 }
 
 #alert-container {

@@ -42,10 +42,11 @@
 			<i class="icon icon-question-sign"></i>
 		</button>
 		<button id="button_share" class="btn" rel="tooltip" title="Compartilhe algo interessante da página abaixo" onclick="share()">
-			<img class="icon" style="width: 20px"
-				src="#server/images/share_icon.png"></img>
+			<img class="icon" src="#server/images/share_icon.png"></img>
 		</button>
-		<button id="button_bug_report" class="btn btn-warning" rel="tooltip" title="Aponte um erro na tarefa" onclick="showBugReportForm()"> Reportar Problema</button>
+		<button id="button_bug_report" class="btn btn-warning" rel="tooltip" 
+			title="Aponte um erro na tarefa" onclick="showBugReportForm()"> Reportar Problema
+		</button>
 
 		<div style="margin-top:10px; margin-bottom: 10px;">
 			<span id="progress-from">#</span><span id="done"
@@ -70,8 +71,8 @@
 		<input id="loading_next" type="checkbox" value="3"> A próxima tarefa não carrega<br>
 		<input id="other" type="checkbox" value="4"> Outro<br>
 		<textarea type="textarea" id="other_description" rows="0" style="width:240px"></textarea><br>
-		<button class="btn btn-default btn-sm" style="float:left;" onclick="cancelSubmitReport()"> Cancelar</button>
-		<button class="btn btn-info btn-sm" style="float:right;width:140px" onclick="submitReport()"> Submeter</button><br><br>
+		<a class="btn btn-default btn-sm" style="float:left;" onclick="cancelSubReport()"> Cancelar</a>
+		<a class="btn btn-info btn-sm"style="float:right;" onclick="subReport()"> Submeter</a><br><br>
 		</form>
 	</div>
 </div>
@@ -179,14 +180,7 @@
 		var loadingCurrentTaskP = $("#loading")[0].checked;
 		var loadingNextTaskP = $("#loading_next")[0].checked;
 		var otherP = $("#other")[0].checked;
-		var otherTextDescriptionP;
-		
-		if (otherP) {
-			otherTextDescriptionP = $("#other_description").val();
-		}
-		else {
-			otherTextDescriptionP = "";
-		}
+		var otherTextDescriptionP = $("#other_description").val();
 		
 		var msg = {
 				'1' : submissionP, 
@@ -200,25 +194,25 @@
 		
 		$.ajax({
 			type: 'POST',
-			url : '/mb/api/' + app_shortname + '/' + task_id + '/report',
+			url : '/mb/api/' + app_shortname + '/' + taskId + '/report',
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
-			data : jreport,
-			success: function() {
-				$("#bug_report_div").fadeIn(200);
-			}
+			data : jreport
 		});
 	}
 	
-	function submitReport() {
+	function subReport() {
 		try {
 			pybossa.getCurrentUserId( callbackGetUserId );
 		}
 		catch(err) {
 			alert(err);
 		}
+		finally {
+			erase_bug_report_div();
+		}
 	}
-
+	
 	$("[rel=tooltip]").tooltip();
 	$("[rel=popover]").popover({"trigger": "manual"});
 
@@ -249,7 +243,7 @@
 		$("#error span:nth-child(2)").text($.i18n._('err_msg'));
 		$("#workflowtask").text($.i18n._('workflowtask'));
 		$("#progress-from").text($.i18n._('progress-from'));
-		$("#progress-to").text($.i18n._('progress-to'));
+		$("#progress-to").text($.i18n._('progresssm-to'));
 
 	}); //Internationalization using jquery.i18n
 
