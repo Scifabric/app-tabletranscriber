@@ -1,35 +1,41 @@
 
 
 code_report_tt1 = {
-                "1" : "Problema de Submissão", 
-                "2" : "Problema no carregamento da task atual", 
-                "3" : "Problema no carregamento da próxima task",
-                "4" : "Outro problema",
-                "5" : "Descrição do outro problema"
+                "1" : unicode("Problema de Submissão","utf-8"), 
+                "2" : unicode("Problema no carregamento da task atual", "utf-8"), 
+                "3" : unicode("Problema no carregamento da próxima task","utf-8"),
+                "4" : unicode("Outro problema","utf-8"),
+                "5" : unicode("Descrição do outro problema","utf-8")
                 }
 
 code_report_tt2 = {
-                "1" : "Problema de Submissão", 
-                "2" : "Problema no carregamento da task atual", 
-                "3" : "Problema no carregamento da próxima task",
-                "4" : "Outro problema",
-                "5" : "Descrição do outro problema"
+                "1" : unicode("Problema de Submissão","utf-8"), 
+                "2" : unicode("Problema no carregamento da task atual","utf-8"), 
+                "3" : unicode("Problema no carregamento da próxima task","utf-8"),
+                "4" : unicode("Não há tabela na página", "utf-8"),
+                "5" : unicode("Não consigo ver o conteúdo da página do livro", "utf-8"),
+                "6" : unicode("Outro problema","utf-8"),
+                "7" : unicode("Descrição do outro problema","utf-8")
                 }
 
 code_report_tt3 = {
-                "1" : "Problema de Submissão", 
-                "2" : "Problema no carregamento da task atual", 
-                "3" : "Problema no carregamento da próxima task",
-                "4" : "Outro problema",
-                "5" : "Descrição do outro problema"
+                "1" : unicode("Problema de Submissão","utf-8"), 
+                "2" : unicode("Problema no carregamento da task atual","utf-8"), 
+                "3" : unicode("Problema no carregamento da próxima task","utf-8"),
+                "4" : unicode("Não entendi como usar as ferramentas","utf-8"),
+                "5" : unicode("Não consigo deletar uma linha ou coluna para formar uma célula válida","utf-8"),
+                "6" : unicode("Outro problema","utf-8"),
+                "7" : unicode("Descrição do outro problema","utf-8")
                 }
 
 code_report_tt4 = {
-                "1" : "Problema de Submissão", 
-                "2" : "Problema no carregamento da task atual", 
-                "3" : "Problema no carregamento da próxima task",
-                "4" : "Outro problema",
-                "5" : "Descrição do outro problema"
+                "1" : unicode("Problema de Submissão","utf-8"), 
+                "2" : unicode("Problema no carregamento da task atual","utf-8"), 
+                "3" : unicode("Problema no carregamento da próxima task","utf-8"),
+                "4" : unicode("Não consigo ler o conteúdo da célula","utf-8"),
+                "5" : unicode("A célula está cortada","utf-8"),
+                "6" : unicode("Outro problema","utf-8"),
+                "7" : unicode("Descrição do outro problema","utf-8")
                 }
 
 

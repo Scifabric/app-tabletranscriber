@@ -100,7 +100,7 @@ class TTTask2(pb_task):
         
         answer_info_json = json.loads(answer)
         
-        if (answer != "0"):
+        if (answer != "0"): # dont has table in the page
 
             tt3_app_short_name = self.app_short_name[:-1] + "3"
             tt3_app = ttapps.Apptt_struct(short_name=tt3_app_short_name)
@@ -131,7 +131,7 @@ class TTTask2(pb_task):
                     
                     table_subject_code = answer_info_json[tableId]['text']['assunto']
 
-                    print "table subject: " + table_subject_code
+                    #print "table subject: " + table_subject_code
                     
                     next_task_priority = priority_task_manager.get_priority(table_subject_code)
                     

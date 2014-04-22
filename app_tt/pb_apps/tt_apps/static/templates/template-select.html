@@ -45,7 +45,8 @@
 			<img class="icon" src="#server/images/share_icon.png"></img>
 		</button>
 		<button id="button_bug_report" class="btn btn-warning" rel="tooltip" 
-			title="Aponte um erro na tarefa" onclick="showBugReportForm()"> Reportar Problema
+			title="Aponte um erro na tarefa" onclick="showBugReportForm()">
+			<i class="icon icon-warning-sign"></i>
 		</button>
 
 		<div style="margin-top:10px; margin-bottom: 10px;">
@@ -67,7 +68,7 @@
 		<h2 id="bug_report_question">  Selecione as opções abaixo que correspondem ao problema encontrado:</h2>
 		<form id="bug_report_form" style="margin: 0 auto;">
 		<input id="loading" type="checkbox" value="1"> A imagem não carrega<br>
-		<input id="submission" type="checkbox" value="2"> A tarefa travou quando tentei submeter<br>
+		<input id="submission" type="checkbox" value="2"> A página travou quando tentei submeter<br>
 		<input id="loading_next" type="checkbox" value="3"> A próxima tarefa não carrega<br>
 		<input id="other" type="checkbox" value="4"> Outro<br>
 		<textarea type="textarea" id="other_description" rows="0" style="width:240px"></textarea><br>

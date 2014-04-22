@@ -27,8 +27,9 @@ var en_US_dict = {
     'button-help' : 'Open the help window',
     'button-previous-cell' : 'Previous cell',
     'button-next-cell' : 'Next cell',
-    'completed' : 'completed!'
-}
+    'completed' : 'completed!',
+    'button_bug_report' : 'Point an error in the task'
+};
 
 var pt_dict= {
     'question': "Por favor. Corrija o conteúdo das células da tabela.",
@@ -59,8 +60,9 @@ var pt_dict= {
     'button-help' : 'Abre a tela de ajuda',
     'button-previous-cell' : 'Célula anterior',
     'button-next-cell' : 'Próxima célula',
-    'completed' : 'finalizados!'
-}
+    'completed' : 'finalizados!',
+    'button_bug_report' : 'Aponte um erro na tarefa'
+};
 
 var language = navigator.language? navigator.language : navigator.userLanguage;
 

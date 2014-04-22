@@ -256,11 +256,6 @@ def save_fact(factInfo):
 
 @task(name="app_tt.engine.tasks.submit_report")
 def submit_report(a_shortname, t_id, msg, u_ident):
-    print "a_shortname: " + a_shortname
-    print "t_id: " + str(t_id)
-    print "msg: " + str(msg)
-    print "u_ident: " + str(u_ident)
-    
     a_id = pbclient.find_app(short_name=a_shortname)[0].id
     
     infos = {}

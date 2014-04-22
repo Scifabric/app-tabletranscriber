@@ -44,9 +44,9 @@
 			<button id="button" class="btn btn-success" onclick="submitTask()">
 				<i class="icon icon-white icon-ok"></i> Salvar essas marcações
 			</button>
-			<button id="button" class="btn small" onclick="submitTask('0')">
-				<i class="icon icon-white icon-ok"></i> Não há tabelas
-			</button>
+<!-- 			<button id="button" class="btn small" onclick="submitTask('0')"> -->
+<!-- 				<i class="icon icon-white icon-ok"></i> Não há tabelas -->
+<!-- 			</button> -->
 			<button id="button_help" class="btn help" data-toggle="modal"
 				rel="tooltip" title="Abre a tela de ajuda" onclick="showHelp()">
 				<i class="icon-white icon-question-sign"></i>
@@ -59,7 +59,8 @@
 			</button>
 		
 			<button id="button_bug_report" class="btn btn-warning" rel="tooltip" 
-				title="Aponte um erro na tarefa" onclick="showBugReportForm()"> Reportar Problema
+				title="Aponte um erro na tarefa" onclick="showBugReportForm()">
+				<i class="icon icon-warning-sign"></i>
 			</button>
 			
 			<div style="margin-top: 10px; margin-bottom: 10px;">
@@ -302,14 +303,14 @@
 			<h2 id="bug_report_question">  Selecione as opções abaixo que correspondem ao problema encontrado:</h2>
 			<form id="bug_report_form" style="margin: 0 auto;">
 			<input id="loading" type="checkbox" value="1"> A imagem não carrega<br>
-			<input id="submission" type="checkbox" value="2"> A tarefa travou quando tentei submeter<br>
+			<input id="submission" type="checkbox" value="2"> A página travou quando tentei submeter<br>
 			<input id="loading_next" type="checkbox" value="3"> A próxima tarefa não carrega<br>
-			<input id="other" type="checkbox" value="4"> Outro<br>
+			<input id="no_tables" type="checkbox" value="4"> Não há tabela na página<br>
+			<input id="content_visualization" type="checkbox" value="5"> Não consigo ver o conteúdo da página do livro<br>
+			<input id="other" type="checkbox" value="6"> Outro<br>
 			<textarea type="textarea" id="other_description" rows="0" style="width:240px"></textarea><br>
 			<a class="btn btn-default btn-sm" style="float:left;" onclick="cancelSubReport()"> Cancelar</a>
-<!-- 		<button class="btn btn-default btn-sm" style="float:left;" onclick="cancelSubReport()"> Cancelar</button> -->
 			<a class="btn btn-info btn-sm" style="float:right;" onclick="subReport()"> Submeter</a><br><br>
-<!-- 		<button class="btn btn-info btn-sm" style="float:right;width:140px" onclick="subReport()"> Submeter</button><br><br> -->
 			</form>
 		</div>
 	</div>
@@ -380,6 +381,8 @@
 		var submissionP = $("#submission")[0].checked;
 		var loadingCurrentTaskP = $("#loading")[0].checked;
 		var loadingNextTaskP = $("#loading_next")[0].checked;
+		var noTablesP = $("#no_tables")[0].checked;
+		var contentVisualizationP = $("#content_visualization")[0].checked;
 		var otherP = $("#other")[0].checked;
 		var otherTextDescriptionP = $("#other_description").val();
 		
@@ -387,8 +390,10 @@
 				'1' : submissionP, 
 				'2' : loadingCurrentTaskP, 
 				'3' : loadingNextTaskP,
-				'4' : otherP,
-				'5' : otherTextDescriptionP
+				'4' : noTablesP,
+				'5' : contentVisualizationP,
+				'6' : otherP,
+				'7' : otherTextDescriptionP
 		};
 		
 		var jreport = JSON.stringify({ 'message':msg, 'u_id':u_ident });

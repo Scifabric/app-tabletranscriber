@@ -78,8 +78,9 @@
 			title="" onclick="showHelpStruct()">
 			<i class="icon icon-question-sign"></i>
 		</button>
-		<button id="button_bug_report" class="btn btn-warning" style="width:200px;" rel="tooltip" 
-			title="Aponte um erro na tarefa" onclick="showBugReportForm()"> Reportar Problema
+		<button id="button_bug_report" class="btn btn-warning" rel="tooltip" 
+			title="Aponte um erro na tarefa" onclick="showBugReportForm()">
+			<i class="icon icon-warning-sign"></i>
 		</button>
 	</div>
 	
@@ -88,9 +89,11 @@
 			<h2 id="bug_report_question">  Selecione as opções abaixo que correspondem ao problema encontrado:</h2>
 			<form id="bug_report_form" style="margin: 0 auto;">
 			<input id="loading" type="checkbox" value="1"> A imagem não carrega<br>
-			<input id="submission" type="checkbox" value="2"> A tarefa travou quando tentei submeter<br>
+			<input id="submission" type="checkbox" value="2"> A página travou quando tentei submeter<br>
 			<input id="loading_next" type="checkbox" value="3"> A próxima tarefa não carrega<br>
-			<input id="other" type="checkbox" value="4"> Outro<br>
+			<input id="using_tools" type="checkbox" value="4"> Não entendi como usar as ferramentas<br>
+			<input id="deleting_line" type="checkbox" value="5"> Não consigo deletar uma linha ou coluna para formar uma célula válida<br>
+			<input id="other" type="checkbox" value="6"> Outro<br>
 			<textarea type="textarea" id="other_description" rows="0" style="width:240px"></textarea><br>
 			<a class="btn btn-default btn-sm" style="float:left;" onclick="cancelSubReport()"> Cancelar</a>
 			<a class="btn btn-info btn-sm" style="float:right;" onclick="subReport()"> Submeter</a><br><br>
@@ -296,6 +299,8 @@
 		var submissionP = $("#submission")[0].checked;
 		var loadingCurrentTaskP = $("#loading")[0].checked;
 		var loadingNextTaskP = $("#loading_next")[0].checked;
+		var usingToolsP = $("#using_tools")[0].checked;
+		var deletingLineP = $("#deleting_line")[0].checked;
 		var otherP = $("#other")[0].checked;
 		var otherTextDescriptionP = $("#other_description").val();
 		
@@ -303,8 +308,10 @@
 				'1' : submissionP, 
 				'2' : loadingCurrentTaskP, 
 				'3' : loadingNextTaskP,
-				'4' : otherP,
-				'5' : otherTextDescriptionP
+				'4' : usingToolsP,
+				'5' : deletingLineP,
+				'6' : otherP,
+				'7' : otherTextDescriptionP
 		};
 		
 		var jreport = JSON.stringify({ 'message':msg, 'u_id':u_ident });

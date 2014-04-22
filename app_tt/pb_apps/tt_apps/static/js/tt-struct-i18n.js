@@ -32,7 +32,7 @@ var en_US_dict = {
     'task-instruction-p7-1' : "Click on ",
     'task-instruction-p7-2' : " to solve doubts and advanced shortcuts.",
     'completed' : 'completed!'
-}
+};
 
 var pt_dict= {
     'question': "Por favor. Corrija as linhas e colunas da tabela.",
@@ -68,7 +68,7 @@ var pt_dict= {
     'task-instruction-p7-1' : "Clique em ",
     'task-instruction-p7-2' : " para soluções de dúvidas e atalhos avançados.",
     'completed' : 'finalizados!'
-}
+};
 
 var language = navigator.language? navigator.language : navigator.userLanguage;
 

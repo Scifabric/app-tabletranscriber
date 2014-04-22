@@ -53,6 +53,11 @@
 	text-align: center;
 }
 
+#button_bug_report {
+	margin-right: 5px;
+	float: right;
+}
+
 #button_share {
 	float: right;
 	margin-right: 4px;
