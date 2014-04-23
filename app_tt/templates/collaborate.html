@@ -20,9 +20,8 @@
  
 {% macro show_book(book) -%}
 <div class="container">
-	<div class="span12 well">
-		<div class="row">
-			<div class="span2">
+	<div class="row well" style="margin-left: 0px;">
+			<div style="float: left;">
 				<ul class="thumbnails">
 					<li>
 					{% if book.info.img %} 
@@ -49,8 +48,6 @@
 			</div>
 			<!-- end of id=data class=span8 -->
 		</div>
-		<!--end of class=row -->
-	</div>
 	<!-- end of class=span10 well -->
 </div>
 <!-- end of class=row -->

@@ -1,6 +1,13 @@
 function showBugReportForm() {
-	$("#bug_report_form").css("display", "table");
-	$("#bug_report_div").show();
+	
+	if ($("#button_bug_report").hasClass("active")) {
+		$("#button_bug_report").removeClass("active");
+		cancelSubReport();
+	} else {
+		$("#bug_report_form").css("display", "table");
+		$("#bug_report_div").show();
+		$("#button_bug_report").addClass("active");
+	}
 }
 
 function cancelSubReport() {

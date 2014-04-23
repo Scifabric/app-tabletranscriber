@@ -47,6 +47,11 @@
 <!-- 			<button id="button" class="btn small" onclick="submitTask('0')"> -->
 <!-- 				<i class="icon icon-white icon-ok"></i> Não há tabelas -->
 <!-- 			</button> -->
+			<button id="button_bug_report" class="btn btn-warning" rel="tooltip" 
+				title="Aponte um erro na tarefa" onclick="showBugReportForm()">
+				<i class="icon icon-warning-sign"></i>
+			</button>
+
 			<button id="button_help" class="btn help" data-toggle="modal"
 				rel="tooltip" title="Abre a tela de ajuda" onclick="showHelp()">
 				<i class="icon-white icon-question-sign"></i>
@@ -56,11 +61,6 @@
 				onclick="share()">
 				<img class="icon" style="width: 20px"
 					src="#server/images/share_icon.png"></img>
-			</button>
-		
-			<button id="button_bug_report" class="btn btn-warning" rel="tooltip" 
-				title="Aponte um erro na tarefa" onclick="showBugReportForm()">
-				<i class="icon icon-warning-sign"></i>
 			</button>
 			
 			<div style="margin-top: 10px; margin-bottom: 10px;">

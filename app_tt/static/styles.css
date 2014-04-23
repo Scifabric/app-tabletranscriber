@@ -444,3 +444,7 @@ ul.users li a {
     margin: 10px 18px 18px 0px;
   }
 }
+
+.container {
+	width: 800px;
+}

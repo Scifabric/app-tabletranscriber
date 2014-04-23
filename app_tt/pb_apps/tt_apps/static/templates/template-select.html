@@ -37,6 +37,10 @@
 			<i class="icon icon-white icon-remove"></i>
 		</button>
 		<button id="button_ntk" class="btn" onclick="submitTask('NotKnown')"></button>
+		<button id="button_bug_report" class="btn btn-warning" rel="tooltip" 
+			title="Aponte um erro na tarefa" onclick="showBugReportForm()">
+			<i class="icon icon-warning-sign"></i>
+		</button>
 		<button id="button_help" class="btn help" data-toggle="modal" rel="tooltip" title="Abre a tela de ajuda"
 			onclick="showHelpSelect()">
 			<i class="icon icon-question-sign"></i>
@@ -44,11 +48,6 @@
 		<button id="button_share" class="btn" rel="tooltip" title="Compartilhe algo interessante da página abaixo" onclick="share()">
 			<img class="icon" src="#server/images/share_icon.png"></img>
 		</button>
-		<button id="button_bug_report" class="btn btn-warning" rel="tooltip" 
-			title="Aponte um erro na tarefa" onclick="showBugReportForm()">
-			<i class="icon icon-warning-sign"></i>
-		</button>
-
 		<div style="margin-top:10px; margin-bottom: 10px;">
 			<span id="progress-from">#</span><span id="done"
 				class="label label-info" style="margin-right: 5px"></span><span
@@ -238,7 +237,7 @@
 		$("#error span:nth-child(2)").text($.i18n._('err_msg'));
 		$("#workflowtask").text($.i18n._('workflowtask'));
 		$("#progress-from").text($.i18n._('progress-from'));
-		$("#progress-to").text($.i18n._('progresssm-to'));
+		$("#progress-to").text($.i18n._('progress-to'));
 
 	}); //Internationalization using jquery.i18n
 

@@ -23,11 +23,13 @@
 
 #button_help {
 	float: right;
+	margin-right: 4px;
+	height: 30px;
 }
 
 #button_bug_report {
-	margin-right: 4px;
 	float: right;
+	height: 30px;
 }
 
 #button_share {

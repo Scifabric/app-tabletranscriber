@@ -39,6 +39,8 @@
 
 #button_help {
 	float: right;
+	margin-right: 4px;
+	height: 30px;
 }
 
 #bug_report_div {
@@ -54,8 +56,8 @@
 }
 
 #button_bug_report {
-	margin-right: 5px;
 	float: right;
+	height: 30px;
 }
 
 #button_share {
