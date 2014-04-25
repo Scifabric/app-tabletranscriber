@@ -1,17 +1,16 @@
-import os
 from app_tt.core import app as application
 from unittest import TestCase
 from app_tt.core import pbclient
-import unittest
-import app_tt.engine.tasks as engine 
 from app_tt.meb_util import archiveBookData 
+import unittest
+import app_tt.engine.tasks as engine
+import os 
 
 class test_application(TestCase):
 
 
     def setUp(self):
         app = application
-        app.config['TESTING'] = True
         self.app = app.test_client()
         self.new_ttapplications("10304diinaavanas033859mbp")
     

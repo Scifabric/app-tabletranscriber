@@ -446,5 +446,14 @@ ul.users li a {
 }
 
 .container {
-	width: 800px;
+	width: 700px;
+}
+
+.tab-content {
+	margin: 0 auto;
+	width: 1030px;
+}
+
+.tab-pane {
+	margin-left: 210px;
 }
