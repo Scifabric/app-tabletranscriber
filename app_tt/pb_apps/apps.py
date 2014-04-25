@@ -3,6 +3,7 @@ from app_tt.core import app as flask_app, pbclient
 import json
 import sys
 import urllib2
+from app_tt.meb_exceptions import meb_exception
 
 class Apptt(object):
     def __init__(self, name, short_name, description):
@@ -13,15 +14,22 @@ class Apptt(object):
         :arg string short_name: The slug application name.
         :arg string description: A short description of the application.
         """
-
+        
+        if name == "":
+            raise meb_exception(1)
+        elif short_name == "":
+            raise meb_exception(2) 
+        elif description == "":
+            raise meb_exception(3)
+        
         self.short_name = short_name
         self.api_key = pbclient._opts['api_key']
         self.pybossa_url = pbclient._opts['endpoint']
         self.description = description
         self.name = name
-        self.app_id = self._create_app()
+        self.app_id = self.__create_app()
         
-    def _create_app(self):
+    def __create_app(self):
 
         info = dict(newtask="%s/app/%s/newtask" % (flask_app.config['PYBOSSA_URL'], self.short_name))
         data = dict(name=self.name, short_name=self.short_name,
