@@ -19,3 +19,8 @@ DB_USER = "mbuser"
 DB_USER_PASSWD = "your-dbuser-password"
 DB_NAME = "mbdb"
 DB_HOST = "127.0.0.1"
+
+#Log file definitions
+LOG_DIR = "/var/log/meb/"
+LOG_FILE = "error.log"
+LOG_FILE_MODE = 0640

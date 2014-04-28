@@ -6,15 +6,13 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 
-#from app_tt import default_settings as settings
-
-# from flask.ext.sqlalchemy import SQLAlchemy
-# from flask.ext.script import Manager
-# from flask.ext.migrate import Migrate, MigrateCommand
+import logging
+from logging import FileHandler, Formatter
 
 def create_app():
     app = Flask(__name__)
     __configure_app(app)
+    __setup_logging(app)
     __setup_pbclient(app)
     return app
 
@@ -46,12 +44,32 @@ def __configure_app(app):
 
     app.config['CV_MODULES'] = os.path.join(
             os.path.dirname(here), 'cv-modules')
-
+    
 def __setup_pbclient(app):
     pbclient.set('endpoint', app.config['PYBOSSA_URL'])
     pbclient.set('api_key', app.config['API_KEY'])
 
+def __setup_logging(app):
+    log_path = app.config['LOG_DIR'] + app.config['LOG_FILE']
+    log_level = app.config.get('LOG_LEVEL', logging.INFO)
+    
+    if not os.path.isdir(app.config['LOG_DIR']):
+        os.makedirs(app.config['LOG_DIR'], mode=app.config['LOG_FILE_MODE'])
+    
+    if not os.path.isfile(log_path):
+        open(log_path, 'a').close()
+    
+    log_file_handler = FileHandler(filename=log_path, encoding='utf-8')
+    log_file_handler.setLevel(log_level)
+    log_file_handler.setFormatter(Formatter(
+        '[%(asctime)s] [%(levelname)s] %(message)s %(module)s:%(funcName)s:%(lineno)d'
+    ))
+    
+    app.logger.addHandler(log_file_handler)
+    app.logger.setLevel(log_level)
+    
 app = create_app()
+logger = app.logger
 
 db = SQLAlchemy(app)
 

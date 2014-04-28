@@ -36,7 +36,7 @@ class Apptt_select(app.Apptt):
                     + "/templates"
                     + "/long_description-select.html")), short_name))
         
-        print "Create task type 1"
+        logger.info("Create task type 1")
 
 
 class Apptt_meta(app.Apptt):
@@ -68,7 +68,8 @@ class Apptt_meta(app.Apptt):
                     flask_app.config['URL_TEMPLATES']
                     + "/templates"
                     + "/long_description-meta.html")), short_name))
-        print "Create task type 2"
+        
+        logger.info("Create task type 2")
 
 
 class Apptt_struct(app.Apptt):
@@ -102,16 +103,13 @@ class Apptt_struct(app.Apptt):
                     + "/templates"
                     + "/long_description-struct.html")), short_name))
 
-        print "Create task type 3"
-
         try:
-            self.__create_dirs(
-                short_name[:-4],
-                flask_app.config['CV_MODULES'])
-            print "TT folders created"
-        
+            self.__create_dirs(short_name[:-4], flask_app.config['CV_MODULES'])
+            logger.info("TT folders created")
         except OSError, e:
-            print str(e)
+            logger.error(e)
+        
+        logger.info("Create task type 3")
 
     def __create_dirs(self, short_name, path):
         dirs = ["alta_resolucao",
@@ -162,6 +160,6 @@ class Apptt_transcribe(app.Apptt):
                     + "/templates"
                     + "/long_description-transcribe.html")), short_name))
 
-        print "Create task type 4"
+        logger.info("Create task type 4")
 
 

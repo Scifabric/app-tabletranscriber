@@ -2,7 +2,9 @@
 excepts = {
            1 : "MEB-1: App with empty name",
            2 : "MEB-2: App with empty shortname",
-           3 : "MEB-3: App with empty description"
+           3 : "MEB-3: App with empty description",
+           4 : "MEB-4: Error creating the application",
+           5 : "MEB-5: Error you must supply values into info dict"
           }
 
 

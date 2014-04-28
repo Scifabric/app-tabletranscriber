@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from app_tt.core import app as flask_app, pbclient
+from app_tt.core import app as flask_app, pbclient, logger
 import json
 import sys
 import urllib2
@@ -16,10 +16,13 @@ class Apptt(object):
         """
         
         if name == "":
+            logger.error(meb_exception(1))
             raise meb_exception(1)
         elif short_name == "":
+            logger.error(meb_exception(2))
             raise meb_exception(2) 
         elif description == "":
+            logger.error(meb_exception(3))
             raise meb_exception(3)
         
         self.short_name = short_name
@@ -41,13 +44,14 @@ class Apptt(object):
         apps = pbclient.get_apps(sys.maxint)
         for app in apps:
             if app.short_name == self.short_name:
-                print('{app_name} app is already registered in the DB'
-                        .format(app_name=app.name.encode('utf-8','replace')))
+                logger.info('{app_name} app is already registered in the DB'
+                         .format(app_name=app.name.encode('utf-8','replace')))
+                
                 return app.id
-
-        print("The application is not registered in PyBOSSA. Creating it...")
         
-        print("request: " + self.pybossa_url + '/api/app?api_key=' +
+        logger.info("The application is not registered in PyBOSSA. Creating it...")
+        
+        logger.info("request: " + self.pybossa_url + '/api/app?api_key=' +
                 self.api_key)
         
         # Setting the POST action
@@ -62,7 +66,8 @@ class Apptt(object):
         if (output['id'] is not None):
             return output['id']
         else:
-            raise ValueError("Error creating the application")
+            logger.error(meb_exception(4))
+            raise meb_exception(4)
 
     def set_name(self, name):
         app = pbclient.get_app(self.app_id)
@@ -86,7 +91,8 @@ class Apptt(object):
             for info_key in info_values.keys():
                 app.info[str(info_key)] = info_values[info_key]
         else:
-            raise ValueError("Error you must supply values in a dict")
+            logger.error(meb_exception(5))
+            raise meb_exception(5)
 
         pbclient.update_app(app)
 
