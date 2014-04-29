@@ -7,7 +7,22 @@
 	function changeToBooksTab() {
 		$('#books-tab').trigger('click');
 	}
-	$('#books_div').load('/mb/collaborate');
+	
+	function loadBooksPage(url) {
+		
+		$('#books_div').load(url, function() {
+			$("#books_pagination a").on("click", function(e) {
+					var addressValue = $(this).attr("href");
+					if (addressValue.indexOf("collaborate") != -1) {
+						e.preventDefault();
+						loadBooksPage(addressValue);
+						return;
+					}
+			});
+		});
+	}
+	
+	loadBooksPage('/mb/collaborate');
 </script>
 
 {% endblock books_content %}

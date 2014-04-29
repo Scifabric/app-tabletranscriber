@@ -18,8 +18,9 @@
 </div>
 {% endmacro %}
  
+ 
 {% macro show_book(book) -%}
-<div class="container">
+<div class="container ">
 	<div class="row well" style="margin-left: 0px;">
 			<div style="float: left;">
 				<ul class="thumbnails">
@@ -61,15 +62,16 @@
 </div>
 <br/>
 
+<div id="books-inner">
 {% if books %}
 {% for book in books %}
 		{{ show_book(book )}}
 {% endfor %}
-
-<div class="container">
-	{{ render_pagination(pagination) }}
 </div>
 
+<div id="books_pagination" class="container">
+	{{ render_pagination(pagination) }}
+</div>
 
 {% endif %}
 {% endblock %}
