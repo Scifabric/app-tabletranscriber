@@ -1,7 +1,7 @@
 from unittest import TestCase
 from app_tt.application import app as application
 from app_tt.core import pbclient
-from tests.base import delete_app
+from tests.base import delete_app, create_tt_apps
 import unittest
 import sys
 import requests
@@ -21,16 +21,14 @@ class test_api(TestCase):
         
     def test_00_init(self):
         # Creating new tt applications
-        a = self.app.get("/api/custodevida1946bras/init", follow_redirects=True)
+        create_tt_apps(self.app, "custodevida1946bras")
         pb_app = pbclient.find_app(short_name="custodevida1946bras_tt1")
-            
         self.assertTrue(len(pb_app) > 0, "Error tt_app was not created")
         
 
     def test_02_init(self):
         # Creating new tt applications
-        a = self.app.get("/api/custodevida1946bras/init", follow_redirects=True)
-        
+        create_tt_apps(self.app, "custodevida1946bras")
         pb_app = pbclient.find_app(short_name="custodevida1946bras_tt1")
         
         # application is already created
@@ -48,7 +46,7 @@ class test_api(TestCase):
     def test_03_init(self):
         # Creating tt_app where book_id does not exist
         inexistent_id = "XX_does_not_exist_XX"
-        init_req = self.app.get("/api/%s/init" % inexistent_id)
+        init_req = create_tt_apps(self.app, inexistent_id)
 
         self.assertEqual(init_req.data, "False",
                 "Error application can not be created")

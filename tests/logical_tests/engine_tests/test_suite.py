@@ -1,4 +1,3 @@
-import os
 import test_application
 import test_api
 import unittest
