@@ -50,16 +50,27 @@ def __setup_pbclient(app):
     pbclient.set('api_key', app.config['API_KEY'])
 
 def __setup_logging(app):
-    log_path = app.config['LOG_DIR'] + app.config['LOG_FILE']
+    log_file_path = ""
+    log_dir_path = ""
     log_level = app.config.get('LOG_LEVEL', logging.INFO)
     
-    if not os.path.isdir(app.config['LOG_DIR']):
-        os.makedirs(app.config['LOG_DIR'], mode=app.config['LOG_FILE_MODE'])
+    if os.path.isabs(app.config['LOG_DIR']):
+        log_dir_path = app.config['LOG_DIR']
+        log_file_path = log_dir_path + app.config['LOG_FILE']
+        
+    else:
+        here = os.path.dirname(os.path.abspath(__file__))
+        log_dir_path = os.path.join(
+            os.path.dirname(here), app.config['LOG_DIR'])
+        log_file_path = log_dir_path + app.config['LOG_FILE']
     
-    if not os.path.isfile(log_path):
-        open(log_path, 'a').close()
+    if not os.path.isdir(log_dir_path):
+        os.makedirs(log_dir_path, mode=app.config['LOG_FILE_MODE'])    
     
-    log_file_handler = FileHandler(filename=log_path, encoding='utf-8')
+    if not os.path.isfile(log_file_path):
+        open(log_file_path, 'a').close()
+    
+    log_file_handler = FileHandler(filename=log_file_path, encoding='utf-8')
     log_file_handler.setLevel(log_level)
     log_file_handler.setFormatter(Formatter(
         '[%(asctime)s] [%(levelname)s] %(message)s %(module)s:%(funcName)s:%(lineno)d'

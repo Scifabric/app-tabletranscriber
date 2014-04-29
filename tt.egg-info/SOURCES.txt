@@ -3,6 +3,7 @@ app_tt/__init__.py
 app_tt/application.py
 app_tt/core.py
 app_tt/default_settings.py
+app_tt/meb_util.py
 app_tt/util.py
 app_tt/administration/__init__.py
 app_tt/administration/admin.py
@@ -12,11 +13,6 @@ app_tt/engine/__init__.py
 app_tt/engine/api.py
 app_tt/engine/models.py
 app_tt/engine/tasks.py
-app_tt/engine_tests/__init__.py
-app_tt/engine_tests/test_api.py
-app_tt/engine_tests/test_application.py
-app_tt/engine_tests/test_model.py
-app_tt/engine_tests/test_suite.py
 app_tt/meb/__init__.py
 app_tt/meb/collaborate.py
 app_tt/meb_results/__init__.py

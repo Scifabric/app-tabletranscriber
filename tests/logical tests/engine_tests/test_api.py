@@ -35,7 +35,7 @@ class test_api(TestCase):
         
         # application is already created
         n_app_tasks = len(pbclient.get_tasks(pb_app[0].id, sys.maxint))
-        rv = self.app.get("mb/api/custodevida1946bras/init")
+        rv = self.app.get("/api/custodevida1946bras/init")
 
         self.assertTrue(rv.data, "Error tt_app was not created")
             

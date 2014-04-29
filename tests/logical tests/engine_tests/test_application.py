@@ -1,6 +1,7 @@
-from app_tt.core import app as application
 from unittest import TestCase
+from app_tt.application import app as application
 from app_tt.core import pbclient
+from tests.base import delete_app
 from app_tt.meb_util import archiveBookData 
 import unittest
 import app_tt.engine.tasks as engine
@@ -12,40 +13,28 @@ class test_application(TestCase):
     def setUp(self):
         app = application
         self.app = app.test_client()
-        self.new_ttapplications("10304diinaavanas033859mbp")
+        delete_app("estatisticasdodi1950depa")
     
-    def tearDown(self):
-        self.del_ttapplications("10304diinaavanas033859mbp")
-
 
     def new_ttapplications(self, short_name):
-        print self.app.application
-        o = self.app.get("mb/api/%s/init" % short_name)
-        print "o: " + str(o)
+        o = self.app.get("/api/%s/init" % short_name)
         return o
     
-
-    def del_ttapplications(self, short_name):
-        for i in range(1,5):
-            tt_app = pbclient.find_app(short_name="%s_tt%d" % (short_name, i))[0]
-            pbclient.delete_app(tt_app.id)
-
-
     def bookdata(self, book_id):
         return engine.archiveBookData(book_id)
 
 
     def test_home(self):
         rv = self.app.get('/')
-        assert "<h1>Table Transcriber</h1>" in rv.data, rv
+        assert "<h1>Mem&oacute;ria Estat&iacute;stica do Brasil</h1>" in rv.data
 
 
     def test_colabore(self):
+        self.new_ttapplications('estatisticasdodi1950depa')
+        pb_app = pbclient.find_app(short_name="estatisticasdodi1950depa_tt1")
         
-        tt_apps = pbclient.get_apps()
-        
-        if len(tt_apps) > 0:
-            tt_app = tt_apps[0]
+        if len(pb_app) > 0:
+            tt_app = pb_app[0]
             coll_request = self.app.get('/collaborate', follow_redirects=True)
 
             book_data = self.bookdata(tt_app.short_name[:-4])

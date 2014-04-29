@@ -21,6 +21,6 @@ DB_NAME = "mbdb"
 DB_HOST = "127.0.0.1"
 
 #Log file definitions
-LOG_DIR = "/var/log/meb/"
-LOG_FILE = "error.log"
-LOG_FILE_MODE = 0640
+LOG_DIR = "log/"
+LOG_FILE = "mb-error.log"
+LOG_FILE_MODE = 0744

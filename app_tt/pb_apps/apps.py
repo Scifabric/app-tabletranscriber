@@ -3,7 +3,7 @@ from app_tt.core import app as flask_app, pbclient, logger
 import json
 import sys
 import urllib2
-from app_tt.meb_exceptions import meb_exception
+from app_tt.meb_exceptions.meb_exception import Meb_apps_exception
 
 class Apptt(object):
     def __init__(self, name, short_name, description):
@@ -16,14 +16,14 @@ class Apptt(object):
         """
         
         if name == "":
-            logger.error(meb_exception(1))
-            raise meb_exception(1)
+            logger.error(Meb_apps_exception(1))
+            raise Meb_apps_exception(1)
         elif short_name == "":
-            logger.error(meb_exception(2))
-            raise meb_exception(2) 
+            logger.error(Meb_apps_exception(2))
+            raise Meb_apps_exception(2) 
         elif description == "":
-            logger.error(meb_exception(3))
-            raise meb_exception(3)
+            logger.error(Meb_apps_exception(3))
+            raise Meb_apps_exception(3)
         
         self.short_name = short_name
         self.api_key = pbclient._opts['api_key']
@@ -51,7 +51,7 @@ class Apptt(object):
         
         logger.info("The application is not registered in PyBOSSA. Creating it...")
         
-        logger.info("request: " + self.pybossa_url + '/api/app?api_key=' +
+        logger.info("Request: " + self.pybossa_url + '/api/app?api_key=' +
                 self.api_key)
         
         # Setting the POST action
@@ -66,8 +66,8 @@ class Apptt(object):
         if (output['id'] is not None):
             return output['id']
         else:
-            logger.error(meb_exception(4))
-            raise meb_exception(4)
+            logger.error(Meb_apps_exception(4))
+            raise Meb_apps_exception(4)
 
     def set_name(self, name):
         app = pbclient.get_app(self.app_id)
@@ -91,8 +91,8 @@ class Apptt(object):
             for info_key in info_values.keys():
                 app.info[str(info_key)] = info_values[info_key]
         else:
-            logger.error(meb_exception(5))
-            raise meb_exception(5)
+            logger.error(Meb_apps_exception(5))
+            raise Meb_apps_exception(5)
 
         pbclient.update_app(app)
 
