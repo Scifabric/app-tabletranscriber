@@ -44,9 +44,8 @@ class Apptt(object):
         apps = pbclient.get_apps(sys.maxint)
         for app in apps:
             if app.short_name == self.short_name:
-                logger.info('{app_name} app is already registered in the DB'
-                         .format(app_name=app.name.encode('utf-8','replace')))
-                
+                msg = '{app_name} app is already registered in the DB'.format(app_name=app.name.encode('utf-8', 'replace'))
+                logger.info(unicode(msg, "utf-8"))
                 return app.id
         
         logger.info("The application is not registered in PyBOSSA. Creating it...")
@@ -96,10 +95,11 @@ class Apptt(object):
 
         pbclient.update_app(app)
 
-
     def get_tasks(self):
         return pbclient.get_tasks(self.app_id, sys.maxint)
 
-
     def add_task(self, task_info, priority=0):
+        if priority < 0 or priority > 1:
+            raise Meb_apps_exception(6)
+        
         pbclient.create_task(self.app_id, task_info, priority_0=priority)

@@ -2,15 +2,14 @@
 """
 """
 
-from app_tt.pb_apps.apps import Apptt
-from app_tt.meb_exceptions.meb_exception import Meb_apps_exception
+from app_tt.pb_apps.pb_task import pb_task
+#from app_tt.meb_exceptions.meb_exception import Meb_pbtask_exception
 
 import pbclient
 
 import unittest
-import random
 
-class Apps_TestCase(unittest.TestCase):
+class PBTask_TestCase(unittest.TestCase):
     
     def setUp(self):
         self.app_tt = Apptt("name1", "shortname1", "desc1")

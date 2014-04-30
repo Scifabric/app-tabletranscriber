@@ -11,6 +11,7 @@ class pb_task(object):
     def __init__(self, task_id, app_short_name):
         """
         Constructor of pb_task
+        
         :params task_id: Pybossa Task Id
         """
         self.task = self.__get_pbtask(task_id)
@@ -26,10 +27,17 @@ class pb_task(object):
         """
         Closes current task at pybossa
         """
-        raise NotImplemented("Should have implemented this")
+        
+        self.task.state = "completed"
+        pbclient.update_task(self.task)
+        
+        #requests.put("%s/api/task/%s?api_key=%s" % 
+        #             (app.config['PYBOSSA_URL'], self.task.id, app.config['API_KEY']),
+        #                data=json.dumps(dict(state=)))
 
     def check_answer(self):
-        """Verify if the task's answers are ok to finish it
+        """
+        Verify if the task's answers are ok to finish it
 
         :returns: A confirmation that the task is ready to be finished
         :rtype: boolean
@@ -41,7 +49,7 @@ class pb_task(object):
 
     def get_task_runs(self):
         """
-        Get all the task runs for this taskrun
+        Get all the task runs for this task
 
         :returns: A list with TaskRun objects
         :rtype: list

@@ -40,7 +40,12 @@ class TTTask1(pb_task):
             tt2_app.add_task(info)
 
     def close_task(self):
-        pass
+        #requests.put("%s/api/task/%s?api_key=%s" % 
+        #             (app.config['PYBOSSA_URL'], self.task.id, app.config['API_KEY']),
+        #                data=json.dumps(dict(state="completed")))
+        self.task.state = "completed"
+        self.task.info = "Yes"
+        pbclient.update_task(self.task)
 
     def check_answer(self):
         task_runs = self.get_task_runs()
@@ -171,9 +176,6 @@ class TTTask2(pb_task):
             if (t.info['page'] == page_num):
                 return True
         return False
-
-    def close_task(self):
-        pass
 
     def check_answer(self):
         task_runs = self.get_task_runs()
@@ -860,9 +862,6 @@ class TTTask3(pb_task):
                 columns[i] = [column[0], column[1], column[2], newY]
         return columns
 
-    def close_task(self):
-        pass
-
     def check_answer(self):
         task_runs = self.get_task_runs()
         n_taskruns = len(task_runs)  # task_runs goes from 0 to n-1
@@ -948,9 +947,6 @@ class TTTask4(pb_task):
     def add_next_task(self):
         #TODO
         return
-    
-    def close_task(self):
-        pass
     
     def check_answer(self):
         task_runs = self.get_task_runs()

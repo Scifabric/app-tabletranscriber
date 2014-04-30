@@ -67,6 +67,7 @@ def create_apps(book_id):
     :rtype: bool
 
     """
+    
     imgs = __get_tt_images(book_id)
 
     if(imgs):
@@ -77,34 +78,6 @@ def create_apps(book_id):
         app_tt_struct = Apptt_struct(short_name=book_id + "_tt3", title=bookInfo['title'])
         app_tt_transcribe = Apptt_transcribe(short_name=book_id + "_tt4", title=bookInfo['title'])
         
-        app_tt_select.add_app_infos(
-            dict(
-                 thumbnail=app.config['URL_TEMPLATES']
-                 + "/images" 
-                 + "/long_description_selection.png"))
-
-        app_tt_meta.add_app_infos(
-            dict(
-                sched="incremental",
-                thumbnail=app.config['URL_TEMPLATES']
-                + "/images"
-                + "/long_description_meta.png"))
-
-        app_tt_struct.add_app_infos(
-            dict(
-                sched="incremental",
-                thumbnail=app.config['URL_TEMPLATES']
-                + "/images"
-                + "/long_description_struct.png"))
-        
-        app_tt_transcribe.add_app_infos(
-            dict(
-                 sched="incremental",
-                 thumbnail=app.config['URL_TEMPLATES']
-                 + "/images"
-                 + "/long_description_transcribe.png"))
-
-                
         app_tt_select.add_app_infos(bookInfo)
         app_tt_meta.add_app_infos(bookInfo)
         app_tt_struct.add_app_infos(bookInfo)
@@ -133,27 +106,39 @@ def close_task(task_id):
     :arg task_id: Integer pybossa task id
 
     """
-    requests.put("%s/api/task/%s?api_key=%s" % (
-        app.config['PYBOSSA_URL'], task_id, app.config['API_KEY']),
-        data=json.dumps(dict(state="completed")))
-
+    
+    current_task = task_factory.get_task(task_id)
+    current_task.close_task()
+    
 
 @task(name="app_tt.engine.tasks.close_t1")
 def close_t1(book_id):
+    """
+    Celery queued task that set's pybossa task type 1 (selection) 
+    state to completed and close it. This function is is useful into case 
+    that the book has only pages with tables.
+
+    :arg task_id: Integer pybossa task id
+
+    """
+    
     tt_select = Apptt_select(short_name=book_id + "_tt1")
     tasks = tt_select.get_tasks()
     
     for task in tasks:
         
-        if ('answer' in task.info.keys()):
-            continue
+        #if ('answer' in task.info.keys()):
+        #    continue
         
-        task.info["answer"] = 'Yes'
+        #task.info["answer"] = 'Yes'
+        
         # put the answer into task info
-        requests.put("%s/api/task/%s?api_key=%s" % (
-            app.config['PYBOSSA_URL'], task.id,
-            app.config['API_KEY']),
-            data=json.dumps(dict(info=task.info, state="completed")))
+        #requests.put("%s/api/task/%s?api_key=%s" % (
+        #    app.config['PYBOSSA_URL'], task.id,
+        #    app.config['API_KEY']),
+        #    data=json.dumps(dict(info=task.info, state="completed")))
+        
+        task.close_task()
         
         tt_task = task_factory.get_task(task.id)
         tt_task.add_next_task()
