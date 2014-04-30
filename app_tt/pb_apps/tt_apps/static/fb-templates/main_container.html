@@ -41,7 +41,7 @@
 		$('#mb').show();
 		
 		$('#books_div').on('DOMSubtreeModified', function(){
-			$('#books_div a').click(function(e) {
+			$('#books-inner a').click(function(e) {
 				e.preventDefault();
 
 				var addressValue = $(this).attr("href");
