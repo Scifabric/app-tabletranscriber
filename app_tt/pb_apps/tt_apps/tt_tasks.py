@@ -25,7 +25,9 @@ from app_tt.pb_apps.tt_apps import priority_task_manager
 class TTTask1(pb_task):
     """
     Table Transcriber Task type 1
+    
     """
+    
     def __init__(self, task_id, app_short_name):
         super(TTTask1, self).__init__(task_id, app_short_name)
 
@@ -39,12 +41,9 @@ class TTTask1(pb_task):
 
             tt2_app.add_task(info)
 
-    def close_task(self):
-        #requests.put("%s/api/task/%s?api_key=%s" % 
-        #             (app.config['PYBOSSA_URL'], self.task.id, app.config['API_KEY']),
-        #                data=json.dumps(dict(state="completed")))
+    def special_close_task(self):
         self.task.state = "completed"
-        self.task.info = "Yes"
+        self.task.info["answer"] = "Yes"
         pbclient.update_task(self.task)
 
     def check_answer(self):

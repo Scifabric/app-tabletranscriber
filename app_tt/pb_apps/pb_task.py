@@ -33,7 +33,7 @@ class pb_task(object):
         
         #requests.put("%s/api/task/%s?api_key=%s" % 
         #             (app.config['PYBOSSA_URL'], self.task.id, app.config['API_KEY']),
-        #                data=json.dumps(dict(state=)))
+        #                data=json.dumps(dict(state='completed')))
 
     def check_answer(self):
         """
