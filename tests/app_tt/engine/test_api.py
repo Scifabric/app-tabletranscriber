@@ -1,15 +1,12 @@
 from unittest import TestCase
 from app_tt.application import app as application
 from app_tt.core import pbclient
-from tests.base import delete_app, create_tt_apps
+from tests.app_tt.base import delete_app, create_tt_apps
 import unittest
 import sys
-import requests
-import json
 
 class test_api(TestCase):
     def setUp(self):
-        app = application
         self.app = application.test_client()
         pybossa_api = self.app.get("/api")
         
