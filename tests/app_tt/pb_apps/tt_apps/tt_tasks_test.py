@@ -1,65 +1,40 @@
 # -*- coding: utf-8 -*-
-import os
 from app_tt.pb_apps.tt_apps.tt_tasks import TTTask1
+from app_tt.pb_apps.tt_apps.tt_tasks import TTTask2
+from app_tt.pb_apps.tt_apps.tt_tasks import TTTask3
+from app_tt.pb_apps.tt_apps.tt_tasks import TTTask4
+from app_tt.pb_apps.tt_apps.ttapps import Apptt_select
+
+from app_tt.core import pbclient
 import unittest
-import tempfile
 
+from app_tt.meb_exceptions.meb_exception import Meb_pb_task_exception
 
-class TT_Tasks_TestCase(unittest.TestCase):
-
+class TT_Task1_TestCase(unittest.TestCase):
+    
     def setUp(self):
-        """Before each test, set up a blank database"""
-        self.db_fd, flaskr.app.config['DATABASE'] = tempfile.mkstemp()
-        flaskr.app.config['TESTING'] = True
-        self.app = flaskr.app.test_client()
-        flaskr.init_db()
+        self.app = Apptt_select(short_name="sh_tt1", title="title1")
+        self.app.add_task(task_info={"info1":1, "info2":2})
+        self.app.add_task(task_info={"info3":3, "info4":4})
+        
+        tasks = pbclient.get_tasks(app_id=self.app.app_id)
+        
+        self.task1 = TTTask1(tasks[0].id, app_short_name=self.app.short_name)
+        self.task2 = TTTask1(tasks[1].id, app_short_name=self.app.short_name)
 
     def tearDown(self):
-        """Get rid of the database again after each test."""
-        os.close(self.db_fd)
-        os.unlink(flaskr.app.config['DATABASE'])
-
-    def login(self, username, password):
-        return self.app.post('/login', data=dict(
-            username=username,
-            password=password
-        ), follow_redirects=True)
-
-    def logout(self):
-        return self.app.get('/logout', follow_redirects=True)
-
+        pbclient.delete_task(self.task1.task.id)
+        pbclient.delete_task(self.task2.task.id)
+        pbclient.delete_app(self.app.app_id)
+    
     # testing functions
 
-    def test_empty_db(self):
-        """Start with a blank database."""
-        rv = self.app.get('/')
-        assert b'No entries here so far' in rv.data
-
-    def test_login_logout(self):
-        """Make sure login and logout works"""
-        rv = self.login(flaskr.app.config['USERNAME'],
-                        flaskr.app.config['PASSWORD'])
-        assert b'You were logged in' in rv.data
-        rv = self.logout()
-        assert b'You were logged out' in rv.data
-        rv = self.login(flaskr.app.config['USERNAME'] + 'x',
-                        flaskr.app.config['PASSWORD'])
-        assert b'Invalid username' in rv.data
-        rv = self.login(flaskr.app.config['USERNAME'],
-                        flaskr.app.config['PASSWORD'] + 'x')
-        assert b'Invalid password' in rv.data
-
-    def test_messages(self):
-        """Test that messages work"""
-        self.login(flaskr.app.config['USERNAME'],
-                   flaskr.app.config['PASSWORD'])
-        rv = self.app.post('/add', data=dict(
-            title='<Hello>',
-            text='<strong>HTML</strong> allowed here'
-        ), follow_redirects=True)
-        assert b'No entries here so far' not in rv.data
-        assert b'&lt;Hello&gt;' in rv.data
-        assert b'<strong>HTML</strong> allowed here' in rv.data
+    def test_init_01(self):
+        try:
+            t1 = TTTask1( "-1", "sh")
+        except Meb_pb_task_exception as e:
+            self.assertEquals(e.code, 1)
+            self.assertEquals(e.msg, "MEB-PB-TASK-FACTORY-1: Cannot find task | task_id : -1")
 
 
 if __name__ == '__main__':
