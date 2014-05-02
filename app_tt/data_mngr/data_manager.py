@@ -15,7 +15,7 @@ def record_book_info_mbdb(info_book):
               info_book['publisher'],
               info_book['contributor'],
               info_book['volume'],
-              info_book['img'])   
+              info_book['img']) 
     try:
         db.session.add(bk)
         db.session.commit()

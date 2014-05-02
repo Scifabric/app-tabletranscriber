@@ -1,7 +1,7 @@
 from unittest import TestCase
 from app_tt.application import app as application
 from app_tt.core import pbclient
-from tests.base import delete_app, create_tt_apps, get_book_data
+from tests.app_tt.base import delete_app, create_tt_apps, get_book_data
 import unittest
 
 
@@ -41,7 +41,6 @@ class test_application(TestCase):
 
         else:
             raise AssertionError("Application was not created")
-
 
 def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(test_application)
