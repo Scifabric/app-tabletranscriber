@@ -126,21 +126,8 @@ def close_t1(book_id):
     tasks = tt_select.get_tasks()
     
     for task in tasks:
-        
-        #if ('answer' in task.info.keys()):
-        #    continue
-        
-        #task.info["answer"] = 'Yes'
-        
-        # put the answer into task info
-        #requests.put("%s/api/task/%s?api_key=%s" % (
-        #    app.config['PYBOSSA_URL'], task.id,
-        #    app.config['API_KEY']),
-        #    data=json.dumps(dict(info=task.info, state="completed")))
-        
-        task.close_task()
-        
         tt_task = task_factory.get_task(task.id)
+        tt_task.special_close_task()
         tt_task.add_next_task()
     
 

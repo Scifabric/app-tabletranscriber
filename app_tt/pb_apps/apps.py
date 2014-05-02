@@ -13,6 +13,7 @@ class Apptt(object):
         :arg string name: The application name.
         :arg string short_name: The slug application name.
         :arg string description: A short description of the application.
+        
         """
         
         if name == "":
@@ -33,57 +34,79 @@ class Apptt(object):
         self.app_id = self.__create_app()
         
     def __create_app(self):
-
-        info = dict(newtask="%s/app/%s/newtask" % (flask_app.config['PYBOSSA_URL'], self.short_name))
-        data = dict(name=self.name, short_name=self.short_name,
-                description=self.description, hidden=0,
-                info=info, category_id=1)
-        data = json.dumps(data)
-
-        # Checking which apps have been already registered in the DB
-        apps = pbclient.get_apps(sys.maxint)
-        for app in apps:
-            if app.short_name == self.short_name:
-                msg = '{app_name} app is already registered in the DB'.format(app_name=app.name.encode('utf-8', 'replace'))
-                logger.info(unicode(msg, "utf-8"))
-                return app.id
+        """
+          Create a new app with name, shortname and description passed in constructor
+          and with category_id = 1 and return app.id. Or return the app.id from the app registered
+          in pybossa database.
+          
+          :returns: app.id
+          :rtype: int
+          
+        """
         
-        logger.info("The application is not registered in PyBOSSA. Creating it...")
-        
-        logger.info("Request: " + self.pybossa_url + '/api/app?api_key=' +
-                self.api_key)
-        
-        # Setting the POST action
-        request = urllib2.Request(self.pybossa_url + '/api/app?api_key=' +
-                self.api_key)
-        request.add_data(data)
-        request.add_header('Content-type', 'application/json')
-        
-        # Create the app in PyBOSSA
-        output = json.loads(urllib2.urlopen(request).read())
-        
-        if (output['id'] is not None):
-            return output['id']
+        apps = pbclient.find_app(short_name=self.short_name)
+        if not len(apps) == 0:
+            app = apps[0]
+            msg = '{app_name} app is already registered in the DB'.format(app_name=app.name.encode('utf-8', 'replace'))
+            logger.info(unicode(msg, "utf-8"))
+            return app.id
         else:
-            logger.error(Meb_apps_exception(4))
-            raise Meb_apps_exception(4)
-
+            logger.info("The application is not registered in PyBOSSA. Creating it...")
+            ans = pbclient.create_app(name=self.name, short_name=self.short_name, description=self.description)
+            if ans:
+                app = pbclient.find_app(short_name=self.short_name)[0]
+                app.info = dict(newtask="%s/app/%s/newtask" % (flask_app.config['PYBOSSA_URL'], self.short_name))
+                app.category_id = 1
+                pbclient.update_app(app)
+                return app.id
+            else:
+                logger.error(Meb_apps_exception(4))
+                raise Meb_apps_exception(4)
+        
     def set_name(self, name):
+        """
+          Set app name
+          
+          :arg string name: name of the app
+        """
+        
         app = pbclient.get_app(self.app_id)
         app.name = name
         pbclient.update_app(app)
 
     def set_template(self, template_text):
+        """
+          Set app's template
+          
+          :arg string template_text: content of template in string format
+          
+        """
+        
         app = pbclient.get_app(self.app_id)
         app.info['task_presenter'] = template_text
         pbclient.update_app(app)
 
     def set_long_description(self, long_description_text):
+        """
+          Set app's long description template
+          
+          :arg string long_description_text: content of long description template
+                                      in string format
+        """
+        
         app = pbclient.get_app(self.app_id)
         app.long_description = long_description_text
         pbclient.update_app(app)
 
     def add_app_infos(self, info_values):
+        """
+           Add new info values to info attribute from this app
+           
+           :arg dict info_values: dict with infos and respectives values to add
+                             to the app
+           
+        """
+        
         app = pbclient.get_app(self.app_id)
 
         if(type(info_values) is dict):
@@ -96,9 +119,25 @@ class Apptt(object):
         pbclient.update_app(app)
 
     def get_tasks(self):
+        """
+           Return tasks from this app
+           
+           :return list of tasks
+           :rtype list
+           
+        """
+        
         return pbclient.get_tasks(self.app_id, sys.maxint)
 
     def add_task(self, task_info, priority=0):
+        """
+          Add task to this app
+          
+          :arg dict task_info: dict with info to task
+          :arg float priority: priority of task (must be between 0 and 1), default = 0
+          
+        """
+        
         if priority < 0 or priority > 1:
             raise Meb_apps_exception(6)
         

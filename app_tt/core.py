@@ -16,10 +16,7 @@ def create_app():
     __setup_pbclient(app)
     return app
 
-
 def __configure_app(app):
-    #app.config.from_object(settings)
-    #app.config.from_envvar('TT_SETTINGS', silent=True)
     # parent directory
     here = os.path.dirname(os.path.abspath(__file__))
     config_path = os.path.join(os.path.dirname(here), 'settings_local.py')
@@ -81,6 +78,7 @@ def __setup_logging(app):
     
 app = create_app()
 logger = app.logger
+logger.warn("------ STARTING MEB APP --------");
 
 db = SQLAlchemy(app)
 

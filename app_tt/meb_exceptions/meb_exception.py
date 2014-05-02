@@ -49,4 +49,13 @@ class Meb_ttapps_exception( Meb_exception ):
     def __init__(self, exc_code):
         self.set_exception_msgs(self.exception_msgs)
         super(Meb_ttapps_exception, self).__init__(exc_code)
-    
+
+class Meb_task_factory_exception( Meb_exception ):
+    exception_msgs = {
+           1 : "MEB-TASK-FACTORY-1: Cannot find app by task id"
+          }
+       
+    def __init__(self, exc_code):
+        self.set_exception_msgs(self.exception_msgs)
+        super(Meb_task_factory_exception, self).__init__(exc_code)
+
