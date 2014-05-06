@@ -6,14 +6,16 @@ import json
 import psycopg2
 import datetime
 from celery import task
+
 from app_tt.core import app, pbclient
 from app_tt.pb_apps.tt_apps.ttapps import Apptt_select
 from app_tt.pb_apps.tt_apps.ttapps import Apptt_meta
 from app_tt.pb_apps.tt_apps.ttapps import Apptt_struct
 from app_tt.pb_apps.tt_apps.ttapps import Apptt_transcribe
-from app_tt.meb_util import archiveBookData
 from app_tt.pb_apps.tt_apps import task_factory
 from app_tt.data_mngr import data_manager as data_mngr
+
+import app_tt.meb_util as meb_util
 
 celery = Celery('tasks', backend='amqp', broker=app.config['BROKER_URL'])
 #celery.config_from_object('app_tt.engine.celeryconfig')
@@ -67,11 +69,10 @@ def create_apps(book_id):
     :rtype: bool
 
     """
-    
-    imgs = __get_tt_images(book_id)
 
-    if(imgs):
-        bookInfo = archiveBookData(book_id)
+    try:
+        imgs = meb_util.get_tt_images(book_id)
+        bookInfo = meb_util.get_archive_book_data(book_id)
         
         app_tt_select = Apptt_select(short_name=book_id + "_tt1", title=bookInfo['title'])
         app_tt_meta = Apptt_meta(short_name=book_id + "_tt2", title=bookInfo['title'])
@@ -91,12 +92,9 @@ def create_apps(book_id):
 
         return True
 
-    else:
-        print "Error didn't find book id"
+    except Exception as e:
         return False
-
-    return False
-
+        
 
 @task(name="app_tt.engine.tasks.close_task")
 def close_task(task_id):
@@ -144,43 +142,6 @@ def create_task(task_id):
     task = task_factory.get_task(task_id)
     task.add_next_task()
 
-def __get_tt_images(bookId):
-    """
-    Get public book images from internet archive server
-
-    :returns: A list with dicts containing images urls and index.
-    :rtype: list
-
-    """
-    WIDTH = 550
-    HEIGHT = 700
-
-    print('Contacting archive.org')
-
-    url = "http://archive.org/metadata/"
-    query = url + bookId
-    urlobj = urllib2.urlopen(query)
-    data = urlobj.read()
-    urlobj.close()
-    output = json.loads(data)
-    imgList = []
-
-    if output:
-        try:
-            imagecount = output['metadata']['imagecount']
-        except KeyError:
-            raise
-            
-        imgUrls = "http://www.archive.org/download/" + bookId + "/page/n"
-        for idx in range(int(imagecount)):
-            print 'Retrieved img: %s' % idx
-            page = idx
-            imgUrl_m = imgUrls + "%d_w%d_h%d" % (idx, WIDTH, HEIGHT)
-            imgUrl_b = imgUrls + str(idx)
-            imgList.append({'url_m':  imgUrl_m, 'url_b': imgUrl_b,
-                            'page': page})
-
-    return imgList
 
 @task(name="app_tt.engine.tasks.save_fact")
 def save_fact(factInfo):
@@ -280,7 +241,7 @@ def __createFactPage(fact_id, user_id, book_id, page_id, top_pos, left_pos, bott
     book_app_url=  "http://" + app.config['PYBOSSA_HOST'] + "/pybossa/app/" + book_id + "_tt1/newtask"
     page_url = "http://www.archive.org/download/%s/page/n%d_w%d_h%d" % (book_id, page_id, 550, 700)
     
-    bookInfo = archiveBookData(book_id)
+    bookInfo = meb_util.getArchiveBookData(book_id)
     book_title = bookInfo['title'].encode('utf-8')
     top_pos = str(top_pos)
     left_pos = str(left_pos)

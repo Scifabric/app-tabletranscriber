@@ -2,7 +2,8 @@ from app_tt.core import app
 import tt_tasks
 import json
 import requests
-
+from app_tt.meb_exceptions.meb_exception import Meb_task_factory_exception
+from app_tt.core import logger
 
 def get_task(task_id):
     """
@@ -30,9 +31,9 @@ def get_task(task_id):
 
         return task
     
-    except TaskNotFoundException:
-        return 0
-
+    except Exception:
+        logger.error(Meb_task_factory_exception(1, task_id))
+        raise Meb_task_factory_exception(1, task_id)
 
 def __find_app(**keyargs):
     """""
@@ -62,9 +63,4 @@ def __find_app_by_taskid(task_id):
         task = json.loads(meta_task)  # get task data
         return __find_app(id=task["app_id"])
     except:
-        raise TaskNotFoundException
-
-
-class TaskNotFoundException(Exception):
-    def __init__(self):
-        super(Exception, self).__init__("Task not Found")
+        raise

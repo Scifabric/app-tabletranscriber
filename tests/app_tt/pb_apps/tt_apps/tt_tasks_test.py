@@ -31,11 +31,55 @@ class TT_Task1_TestCase(unittest.TestCase):
 
     def test_init_01(self):
         try:
-            t1 = TTTask1( "-1", "sh")
+            t1 = TTTask1( -1, "sh_tt1")
         except Meb_pb_task_exception as e:
             self.assertEquals(e.code, 1)
-            self.assertEquals(e.msg, "MEB-PB-TASK-FACTORY-1: Cannot find task | task_id : -1")
+    
+    def test_init_02(self):
+        try:
+            t1 = TTTask1( self.app.app_id, "sh_t")
+        except Meb_pb_task_exception as e:
+            self.assertEquals(e.code, 2)
+
+    def test_get_next_app_01(self):
+        try:
+            nx_app = self.task1.get_next_app()
+            self.assertEquals(nx_app.short_name, self.app.short_name[:-1] + "2")
+        except Exception:
+            assert False
+    
+    def test_check_answer_01(self):
+        try:
+            trs = self.task1.get_task_runs()
+            
+            for i in range(0,2):
+                trs[i] = pbclient.TaskRun()
+                trs[i].info["answer"] = "Yes"
+            
+            self.assertTrue(self.task1.check_answer())
+        
+        except Exception as e:
+            print e
+            assert False
+    
+    def test_check_answer_02(self):
+        try:
+            trs = self.task1.get_task_runs()
+            
+            for i in range(0,2):
+                trs[i] = pbclient.TaskRun()
+                if i == 0:
+                    trs[i].info["answer"] = "Yes"
+                else:
+                    trs[i].info["answer"] = "No"
+            
+            self.assertFalse(self.task1.check_answer())
+        
+        except Exception as e:
+            print e
+            assert False
 
 
 if __name__ == '__main__':
     unittest.main()
+

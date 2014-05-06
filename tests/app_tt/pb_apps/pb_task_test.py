@@ -49,6 +49,29 @@ class PBTask_TestCase(unittest.TestCase):
             self.assertEquals(e.code, 2)
             msg = "MEB-PB-TASK-2: Invalid shortname | task_id : %d | app_short_name : %s" % (self.pb_task1.task.id, "sh_tt")
             self.assertEquals(e.msg, msg)
-       
+    
+    def test_get_book_id_01(self):
+        try:
+            self.assertEquals(self.pb_task1.app_short_name, self.app.short_name)
+            self.assertEquals(self.pb_task1.get_book_id(), "sh")
+        except Exception as e:
+            assert False
+    
+    def test_close_task_01(self):
+        try:
+            self.pb_task1.close_task()
+            self.assertEquals(self.pb_task1.task.state, 'completed')
+        except Exception:
+            assert False
+    
+    def test_get_task_runs_01(self):
+        try:
+            trs = self.pb_task1.get_task_runs()
+            self.assertEquals(len(trs), 0)
+            self.assertFalse(self.pb_task1.task.info.has_key('answer'))
+            self.assertFalse(self.pb_task2.task.info.has_key('answer'))
+        except Exception:
+            assert False
+    
 if __name__ == '__main__':
     unittest.main()

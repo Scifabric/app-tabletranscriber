@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from app_tt.pb_apps.pb_task import pb_task
-from app_tt.core import pbclient
+from app_tt.core import pbclient, logger
 import ttapps
 from app_tt.core import app
 from subprocess import call
@@ -65,13 +65,14 @@ class TTTask1(pb_task):
                     app.config['API_KEY']),
                     data=json.dumps(dict(info=self.task.info)))
                 
-                bookId = self.app_short_name[:-4]
+                bookId = self.get_book_id()
                 archiveURL = self.task.info["url_m"]
                 page = self.task.info["page"]
                 
                 data_manager.record_page((bookId, archiveURL, page))
                 
                 return True
+        
         return False
 
     def get_next_app(self):
@@ -109,7 +110,7 @@ class TTTask2(pb_task):
             tt3_app_short_name = self.app_short_name[:-1] + "3"
             tt3_app = ttapps.Apptt_struct(short_name=tt3_app_short_name)
 
-            bookId = self.app_short_name[:-4]
+            bookId = self.get_book_id()
             imgId = self.task.info["page"]
             
             rotate = answer_info_json[0]["text"]["girar"]
@@ -463,7 +464,7 @@ class TTTask3(pb_task):
             #print "linesAndColumnsMap: " + str(linesAndColumnsMap)
             
             linkImg = self.task.info['img_url']
-            book_id = self.app_short_name[:-4]
+            book_id = self.get_book_id()
             page = self.task.info['page']
             table_id = self.task.info['table_id']
             maxX = linesAndColumnsMap["maxX"]

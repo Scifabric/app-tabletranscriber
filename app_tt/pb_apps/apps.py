@@ -17,14 +17,14 @@ class Apptt(object):
         """
         
         if name == "":
-            logger.error(Meb_apps_exception(1))
-            raise Meb_apps_exception(1)
+            logger.error(Meb_apps_exception(1, -1, "-"))
+            raise Meb_apps_exception(1, -1, "-")
         elif short_name == "":
-            logger.error(Meb_apps_exception(2))
-            raise Meb_apps_exception(2) 
+            logger.error(Meb_apps_exception(2, -1, "-"))
+            raise Meb_apps_exception(2, -1, "-") 
         elif description == "":
-            logger.error(Meb_apps_exception(3))
-            raise Meb_apps_exception(3)
+            logger.error(Meb_apps_exception(3, -1, "-"))
+            raise Meb_apps_exception(3, -1, "-")
         
         self.short_name = short_name
         self.api_key = pbclient._opts['api_key']
@@ -60,14 +60,15 @@ class Apptt(object):
                 pbclient.update_app(app)
                 return app.id
             else:
-                logger.error(Meb_apps_exception(4))
-                raise Meb_apps_exception(4)
+                logger.error(Meb_apps_exception(4, -1, self.short_name))
+                raise Meb_apps_exception(4, -1, self.short_name)
         
     def set_name(self, name):
         """
           Set app name
           
           :arg string name: name of the app
+          
         """
         
         app = pbclient.get_app(self.app_id)
@@ -113,8 +114,8 @@ class Apptt(object):
             for info_key in info_values.keys():
                 app.info[str(info_key)] = info_values[info_key]
         else:
-            logger.error(Meb_apps_exception(5))
-            raise Meb_apps_exception(5)
+            logger.error(Meb_apps_exception(5, self.app_id, self.short_name))
+            raise Meb_apps_exception(5, self.app_id, self.short_name)
 
         pbclient.update_app(app)
 
@@ -139,6 +140,7 @@ class Apptt(object):
         """
         
         if priority < 0 or priority > 1:
-            raise Meb_apps_exception(6)
+            logger.error(Meb_apps_exception(6, self.app_id, self.short_name))
+            raise Meb_apps_exception(6, self.app_id, self.short_name)
         
         pbclient.create_task(self.app_id, task_info, priority_0=priority)

@@ -25,21 +25,18 @@ class Apps_TestCase(unittest.TestCase):
             app = Apptt("", "", "")
         except Meb_apps_exception as e:
             self.assertEquals(e.code, 1)
-            self.assertEquals(e.msg, "MEB-APPS-1: App with empty name | app_id : %d | app_short_name : %s" % (app.app_id, app.short_name))
 
     def test_init_02(self):
         try:
             app = Apptt("name1", "", "")
         except Meb_apps_exception as e:
             self.assertEquals(e.code, 2)
-            self.assertEquals(e.msg, "MEB-APPS-2: App with empty shortname | app_id : %d | app_short_name : %s" % (app.app_id, app.short_name))
     
     def test_init_03(self):
         try:
             app = Apptt("name1", "shortname1", "")
         except Meb_apps_exception as e:
-            self.assertTrue(e.code == 3) 
-            self.assertTrue(e.msg == "MEB-APPS-3: App with empty description | app_id : %d | app_short_name : %s" % (app.app_id, app.short_name))
+            self.assertEquals(e.code, 3) 
     
     def test_init_04(self):
         try:
@@ -128,7 +125,7 @@ class Apps_TestCase(unittest.TestCase):
             self.app_tt.add_task({1: "info1", 2: "info2"}, priority=1.3)
             assert False
         except Meb_apps_exception as e:
-            self.assertEquals(e.msg, "MEB-APPS-6: Task must be priority between 0 and 1 | app_id : %d | app_short_name : %s" % (app.app_id, app.short_name))
+            self.assertEquals(e.code, 6)
     
     def test_get_tasks_01(self):
         try:

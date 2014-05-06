@@ -1,25 +1,12 @@
 # -*- coding: utf-8 -*-
 
 class Meb_exception( Exception ):
-    #exception_msgs = {}
-    
-    def __init__(self):
-        #try:
-            #if self.exception_msgs.has_key(exc_code):
-            self.code = None
-            #    self.msg = self.exception_msgs[self.code]
-            self.msg = None   
-            #else:
-            #    raise
-        #except Exception:
-        #    print "Invalid MEB Exception code"
+    def __init__(self, code, msg):
+        self.code = code
+        self.msg = msg  
     
     def __str__(self):
-        #return repr(unicode(self.exception_msgs[self.code], "utf-8"))
         return repr(unicode(self.msg, "utf-8"))
-    
-    #def set_exception_msgs(self, msgs):
-    #    self.exception_msgs = msgs
     
     def config_msg(self, *args):
         raise NotImplemented("Should have implemented this")
@@ -34,16 +21,15 @@ class Meb_apps_exception( Meb_exception ):
            6 : "MEB-APPS-6: Task must be priority between 0 and 1"
           }
 
-    def __init__(self, exc_code):
-        #self.set_exception_msgs(self.exception_msgs)
-        self.exc_code = exc_code
-        self.msg = self.config_msg(exc_code, app_id, app_short_name)
-        #super(Meb_apps_exception, self).__init__(exc_code)
+    def __init__(self, exc_code, app_id, app_sh_name):
+        msg = self.config_msg(exc_code, app_id, app_sh_name)
+        super(Meb_apps_exception, self).__init__(exc_code, msg)
     
-    def config_msg(self, exc_code, app_id, app_short_name):
+    def config_msg(self, exc_code, app_id, app_sh_name):
         return "%s | app_id : %d | app_short_name: %s" % (self.std_exception_msgs[exc_code], app_id, app_sh_name)
     
-class Meb_ttapps_exception( Meb_exception ):
+
+class Meb_ttapps_exception( Meb_apps_exception ):
     std_exception_msgs = {
            1 : "MEB-TTAPPS-1: Selection app with empty shortname",
            2 : "MEB-TTAPPS-2: Meta app with empty shortname",
@@ -56,13 +42,9 @@ class Meb_ttapps_exception( Meb_exception ):
           }
 
     def __init__(self, exc_code, app_id, app_sh_name):
-        #self.set_exception_msgs(self.exception_msgs)
-        self.exc_code = exc_code
-        self.msg = self.config_msg(exc_code, app_id, app_sh_name)
-        #super(Meb_ttapps_exception, self).__init__(exc_code, msg)
+        msg = super(Meb_ttapps_exception, self).config_msg(exc_code, app_id, app_sh_name)
+        super(Meb_ttapps_exception, self).__init__(exc_code, app_id, app_sh_name)
         
-    def config_msg(self, app_id, app_sh_name):
-        return "%s | app_id : %d | app_short_name: %s" % (self.std_exception_msgs[exc_code], app_id, app_sh_name)
 
 class Meb_pb_task_exception( Meb_exception ):
     std_exception_msgs = {
@@ -71,18 +53,36 @@ class Meb_pb_task_exception( Meb_exception ):
           }
        
     def __init__(self, exc_code, task_id, app_sh_name):
-        self.exc_code = exc_code
-        self.msg = self.config_msg(exc_code, task_id, app_sh_name)
-        #super(Meb_pb_task_exception, self).__init__(exc_code, msg)
+        msg = self.config_msg(exc_code, task_id, app_sh_name)
+        super(Meb_pb_task_exception, self).__init__(exc_code, msg)
     
     def config_msg(self, exc_code, t_id, app_sh_name):
         return "%s | task_id : %d | app_short_name : %s" % (self.std_exception_msgs[exc_code], t_id, app_sh_name)   
+
         
 class Meb_task_factory_exception( Meb_exception ):
-    exception_msgs = {
-           1 : "MEB-TASK-FACTORY-1: Cannot find app by task"
+    std_exception_msgs = {
+           1 : "MEB-TASK-FACTORY-2: Task not found"
           }
        
-    def __init__(self, exc_code):
-        self.set_exception_msgs(self.exception_msgs)
-        super(Meb_task_factory_exception, self).__init__(exc_code)
+    def __init__(self, exc_code, task_id):
+        msg = self.config_msg(exc_code, task_id)
+        super(Meb_task_factory_exception, self).__init__(exc_code, msg)
+    
+    def config_msg(self, exc_code, task_id):
+        return "%s | task_id : %d" % (self.std_exception_msgs[exc_code], task_id)
+    
+
+class Archive_book_data_exception( Meb_exception ):
+    std_exception_msgs = {
+                          1 : "This book does not have one key"
+                          }
+    
+    def __init__(self, exc_code, key):
+        msg = self.config_msg(key)
+        super(Meb_util_exception, self).__init__(exc_code, msg)
+        
+    def config_msg(self, exc_code, key):
+        return "%s | key : %s" % (key)
+    
+    

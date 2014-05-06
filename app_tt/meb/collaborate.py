@@ -4,7 +4,7 @@ import json
 from app_tt.core import app as flask_app
 from app_tt.core import pbclient
 from flask import Blueprint, render_template
-from app_tt.util import Pagination
+from app_tt.pagination import Pagination
 import sys
 import requests
 

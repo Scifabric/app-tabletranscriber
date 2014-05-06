@@ -57,7 +57,6 @@ class TTApp_select_TestCase(unittest.TestCase):
             
         except Meb_ttapps_exception as e:
             self.assertEquals(e.code, 1)
-            self.assertEquals(e.msg, "MEB-TTAPPS-1: Selection app with empty shortname")
     
     def test_init_04(self):
         try:
@@ -66,7 +65,6 @@ class TTApp_select_TestCase(unittest.TestCase):
             
         except Meb_ttapps_exception as e:
             self.assertEquals(e.code, 5)
-            self.assertEquals(e.msg, "MEB-TTAPPS-5: Invalid selection app shortname")
 
 class TTApp_meta_TestCase(unittest.TestCase):
      
@@ -108,7 +106,6 @@ class TTApp_meta_TestCase(unittest.TestCase):
             
         except Meb_ttapps_exception as e:
             self.assertEquals(e.code, 2)
-            self.assertEquals(e.msg, "MEB-TTAPPS-2: Meta app with empty shortname")
 
     def test_init_04(self):
         try:
@@ -117,7 +114,6 @@ class TTApp_meta_TestCase(unittest.TestCase):
             
         except Meb_ttapps_exception as e:
             self.assertEquals(e.code, 6)
-            self.assertEquals(e.msg, "MEB-TTAPPS-6: Invalid meta app shortname")
 
 class TTApp_struct_TestCase(unittest.TestCase):
     
@@ -159,7 +155,6 @@ class TTApp_struct_TestCase(unittest.TestCase):
             
         except Meb_ttapps_exception as e:
             self.assertEquals(e.code, 3)
-            self.assertEquals(e.msg, "MEB-TTAPPS-3: Struct app with empty shortname")
 
     def test_init_04(self):
         try:
@@ -168,7 +163,6 @@ class TTApp_struct_TestCase(unittest.TestCase):
             
         except Meb_ttapps_exception as e:
             self.assertEquals(e.code, 7)
-            self.assertEquals(e.msg, "MEB-TTAPPS-7: Invalid struct app shortname")
 
     def test_create_dirs_01(self):
         try:
@@ -237,7 +231,6 @@ class TTApp_transcribe_TestCase(unittest.TestCase):
             
         except Meb_ttapps_exception as e:
             self.assertEquals(e.code, 4)
-            self.assertEquals(e.msg, "MEB-TTAPPS-4: Transcribe app with empty shortname")
 
     def test_init_04(self):
         try:
@@ -246,7 +239,6 @@ class TTApp_transcribe_TestCase(unittest.TestCase):
             
         except Meb_ttapps_exception as e:
             self.assertEquals(e.code, 8)
-            self.assertEquals(e.msg, "MEB-TTAPPS-8: Invalid transcribe app shortname")
             
 if __name__ == '__main__':
     unittest.main()

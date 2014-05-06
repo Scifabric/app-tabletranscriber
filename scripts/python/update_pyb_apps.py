@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from app_tt.meb_util import archiveBookData, setUrl_
+import app_tt.meb_util as meb_util
 from optparse import OptionParser
 from app_tt.core import app as flask_app, pbclient
 import urllib2
@@ -51,14 +51,14 @@ if __name__ == "__main__":
             app_name = unicode("Transcrição", "utf-8")
  
         if template_type:
-            new_template = setUrl_(
+            new_template = meb_util.set_url(
                 urllib2.urlopen(
                     urllib2.Request(
                         flask_app.config['URL_TEMPLATES']
                         + "/templates/" + template_type)),
                 app_short_name)
             
-            new_long_desc_template = setUrl_(
+            new_long_desc_template = meb_util.set_url(
                 urllib2.urlopen(
                     urllib2.Request(
                         flask_app.config['URL_TEMPLATES'] + 
@@ -70,6 +70,6 @@ if __name__ == "__main__":
             app.long_description = new_long_desc_template
              
             book_id = app_short_name[:-4]
-            bookInfo = archiveBookData(book_id)
+            bookInfo = meb_util.get_archive_book_data(book_id)
             app.name = bookInfo['title'] + " " + app_name
             pbclient.update_app(app)
