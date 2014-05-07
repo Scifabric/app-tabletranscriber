@@ -1,3 +1,5 @@
+DEBUG = False
+
 URL_TEMPLATES = "http://localhost/mb-static" #Static files url
 
 # Pybossa's definitions
