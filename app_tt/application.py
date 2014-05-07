@@ -22,6 +22,5 @@ def url_for_other_page(page):
 
 app.jinja_env.globals['url_for_other_page'] = url_for_other_page
 
-# LEMBRAR DE TIRAR O DEBUG MODE QUANDO EM PRODUCAO ==> RISCO DE SEGURANCA
 if(__name__ == "__main__"):
     app.run(debug=app.config['DEBUG'], host=app.config['HOST'], port=app.config['PORT'])

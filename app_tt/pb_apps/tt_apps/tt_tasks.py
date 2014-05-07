@@ -201,6 +201,10 @@ class TTTask2(pb_task):
         print "answer1: " + str(answer1)
         print "answer2: " + str(answer2)
         
+        # TODO: RESOLVER ISSO DEPOIS
+        if answer1 == 0 or answer2 == 0:
+            return False
+        
         if len(answer1) != len(answer2):
                 return False
     
