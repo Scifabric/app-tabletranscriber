@@ -85,4 +85,21 @@ class Archive_book_data_exception( Meb_exception ):
     def config_msg(self, exc_code, key):
         return "%s | key : %s" % (key)
     
+
+class Meb_pagination_exception( Meb_exception ):
+    std_exception_msgs = {
+                          1 : "MEB-PAGINATION-1: Invalid page",
+                          2 : "MEB-PAGINATION-1: Invalid number of items per page",
+                          3 : "MEB-PAGINATION-1: Invalid total number of pages"
+                          }
     
+    def __init__(self, exc_code):
+        msg = self.config_msg(exc_code)
+        super(Meb_pagination_exception, self).__init__(exc_code, msg)
+    
+    def config_msg(self, exc_code):
+        return self.std_exception_msgs[exc_code]
+    
+        
+        
+        

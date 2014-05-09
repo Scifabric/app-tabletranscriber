@@ -89,3 +89,4 @@ def set_url(arch, short_name, server=flask_app.config['URL_TEMPLATES']):
         text += line
 
     return text
+

@@ -1,9 +1,17 @@
 from math import ceil
-
+from app_tt.meb_exceptions.meb_exception import Meb_pagination_exception
 
 class Pagination(object):
 
     def __init__(self, page, per_page, total_count):
+        
+        if page <= 0:
+            raise Meb_pagination_exception(1)
+        if per_page <= 0:
+            raise Meb_pagination_exception(2)
+        if total_count < 1:
+            raise Meb_pagination_exception(3)
+        
         self.page = page
         self.per_page = per_page
         self.total_count = total_count
