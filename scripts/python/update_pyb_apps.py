@@ -67,6 +67,7 @@ if __name__ == "__main__":
                      app_short_name)
 
             app.info['task_presenter'] = new_template
+            #app.info['thumbnail'] = app.info['thumbnail'].replace("alfa2", "alfa"))
             app.long_description = new_long_desc_template
              
             book_id = app_short_name[:-4]

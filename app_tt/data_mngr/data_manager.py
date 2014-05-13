@@ -23,7 +23,6 @@ def record_book_info_mbdb(info_book):
         db.session.rollback()
         raise e
     
-    
 def record_page(page_info):
     pg = page(bookid=page_info[0],
               archiveURL=page_info[1],
@@ -48,3 +47,11 @@ def record_report(infos):
     except Exception as e:
         db.session.rollback()
         raise e     
+    
+def delete_book(book_id):
+    try:
+        db.session.query(book).filter(book.id == book_id).delete()
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        raise e   

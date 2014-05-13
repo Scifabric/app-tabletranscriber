@@ -1,9 +1,10 @@
 from unittest import TestCase
 from app_tt.application import app as application
 from app_tt.core import pbclient
-from tests.app_tt.base import delete_app, create_tt_apps
+from tests.app_tt.base import delete_app, create_tt_apps, create_and_close_t1
 import unittest
 import sys
+import time
 
 class test_api(TestCase):
     def setUp(self):
@@ -13,24 +14,24 @@ class test_api(TestCase):
         if pybossa_api.data.find('404') != -1:
             raise AssertionError("Pybossa's not working")
         
-        delete_app("custodevida1946bras")
+        delete_app("rpparaiba1918")
         
         
-    def test_00_init(self):
+    def test_01_init(self):
         # Creating new tt applications
-        create_tt_apps(self.app, "custodevida1946bras")
-        pb_app = pbclient.find_app(short_name="custodevida1946bras_tt1")
+        create_tt_apps(self.app, "rpparaiba1918")
+        pb_app = pbclient.find_app(short_name="rpparaiba1918_tt1")
         self.assertTrue(len(pb_app) > 0, "Error tt_app was not created")
         
 
     def test_02_init(self):
         # Creating new tt applications
-        create_tt_apps(self.app, "custodevida1946bras")
-        pb_app = pbclient.find_app(short_name="custodevida1946bras_tt1")
+        create_tt_apps(self.app, "rpparaiba1918")
+        pb_app = pbclient.find_app(short_name="rpparaiba1918_tt1")
         
         # application is already created
         n_app_tasks = len(pbclient.get_tasks(pb_app[0].id, sys.maxint))
-        rv = self.app.get("/api/custodevida1946bras/init")
+        rv = self.app.get("/api/rpparaiba1918/init")
 
         self.assertTrue(rv.data, "Error tt_app was not created")
             
@@ -52,11 +53,23 @@ class test_api(TestCase):
 
         self.assertTrue(len(search_list) == 0,
                 "Error application with inexistent id was found")
-
-
-    def test_check_app_done(self):
-        return True
-
+        
+    def test_04_init_and_close(self):
+        # Creating new tt applications
+        create_and_close_t1(self.app, "rpparaiba1918")
+        time.sleep(15)
+        pb_app = pbclient.find_app(short_name="rpparaiba1918_tt1")
+        tasks_t1 = pbclient.get_tasks(pb_app[0].id, sys.maxint)
+        
+        for task in tasks_t1:
+            self.assertTrue(task.state == "completed")
+        
+        pb_app = pbclient.find_app(short_name="rpparaiba1918_tt2")
+        tasks_t2 = pbclient.get_tasks(pb_app[0].id, sys.maxint)
+        self.assertTrue(len(tasks_t1) == len(tasks_t2))
+    
+    
 def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(test_api)
     return suite
+
