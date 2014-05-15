@@ -25,6 +25,10 @@ def create_and_close_t1(app, short_name):
     o = app.get("/api/%s/init_and_close_t1" % short_name)
     return o
 
+def done_task(app, task_id):
+    o = app.get("/api/" + str(task_id) + "/done")
+    return o
+
 def get_book_data(book_id):
     return get_archive_book_data(book_id)
 
@@ -35,6 +39,5 @@ def authenticate_fb_user(base_url):
     return auth
 
 def submit_answer(base_url, task_run):
-    r = requests.post(base_url + "/api/taskrun", data=json.dumps(task_run), headers={'dataType': 'json', 'content-type': 'application/json'})
-    print(r)
+    requests.post(base_url + "/api/taskrun", data=json.dumps(task_run), headers={'dataType': 'json', 'content-type': 'application/json'})
     
