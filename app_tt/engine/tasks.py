@@ -84,7 +84,7 @@ def create_apps(book_id):
         app_tt_struct.add_app_infos(bookInfo)
         app_tt_transcribe.add_app_infos(bookInfo)
         
-        data_mngr.record_book_info_mbdb(bookInfo)
+        data_mngr.record_book(bookInfo)
         
         if len(app_tt_select.get_tasks()) == 0:
             for img in imgs:

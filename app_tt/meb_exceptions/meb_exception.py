@@ -75,7 +75,7 @@ class Meb_task_factory_exception( Meb_exception ):
 
 class Archive_book_data_exception( Meb_exception ):
     std_exception_msgs = {
-                          1 : "This book does not have one key"
+                          1 : "MEB-UTIL-ARCHIVE: This book does not have one key"
                           }
     
     def __init__(self, exc_code, key):
@@ -89,8 +89,8 @@ class Archive_book_data_exception( Meb_exception ):
 class Meb_pagination_exception( Meb_exception ):
     std_exception_msgs = {
                           1 : "MEB-PAGINATION-1: Invalid page",
-                          2 : "MEB-PAGINATION-1: Invalid number of items per page",
-                          3 : "MEB-PAGINATION-1: Invalid total number of pages"
+                          2 : "MEB-PAGINATION-2: Invalid number of items per page",
+                          3 : "MEB-PAGINATION-3: Invalid total number of pages"
                           }
     
     def __init__(self, exc_code):
@@ -100,6 +100,77 @@ class Meb_pagination_exception( Meb_exception ):
     def config_msg(self, exc_code):
         return self.std_exception_msgs[exc_code]
     
+
+class Meb_exception_tt1( Meb_exception ):
+    std_exception_msgs = {
+                          1 : "MEB-TT1-TASKS-1: New task did not was created",
+                          2 : "MEB-TT1_TASKS-2: Unexpected answer"
+                          }        
+    
+    def __init__(self, exc_code, task_id):
+        msg = self.config_msg(exc_code, task_id)
+        super(Meb_exception_tt1, self).__init__(exc_code, msg)
+    
+    def config_msg(self, exc_code, task_id):
+        return "%s | origin task id : %d" % (self.std_exception_msgs[exc_code], task_id)
         
-        
+
+class Meb_exception_tt2( Meb_exception ):
+    std_exception_msgs = {
+                          1 : "MEB-TT2-TASKS-1: Unexpected answer",
+                          2 : "MEB-TT2-TASKS-2: Error executing tabletranscriber (lines recognition software)",
+                          3 : "MEB-TT2-TASKS-3: TableTranscriber output file wasn't generated",
+                          4 : "MEB-TT2-TASKS-4: Zooming selector execution failed",
+                          5 : "MEB-TT2-TASKS-5: Download archive images failed"
+                          }        
+    
+    def __init__(self, exc_code, task_id):
+        msg = self.config_msg(exc_code, task_id)
+        super(Meb_exception_tt2, self).__init__(exc_code, msg)
+    
+    def config_msg(self, exc_code, task_id):
+        return "%s | origin task id : %d" % (self.std_exception_msgs[exc_code], task_id)
+    
+
+
+class Meb_file_output_exception_tt2( Meb_exception ):
+    std_exception_msgs = {
+                          1 : "MEB-FILE-OUTPUT-TT2-TASKS-1: Couldn't open output file"
+                          }
+    
+    def __init__(self, exc_code, task_id, bookId, imgId):
+        msg = self.config_msg(exc_code, task_id, bookId, imgId)
+        super(Meb_file_output_exception_tt2, self).__init__(exc_code, msg)
+    
+    def config_msg(self, exc_code, taskid, bookId, imgId):
+        return "%s | origin task id : %d | file url : books/%s/metadados/saida/image%d_model1.txt" % \
+            (self.std_exception_msgs[exc_code], taskid, bookId, imgId)
+    
+    
+class Meb_exception_tt3( Meb_exception ):
+    std_exception_msgs = {
+                          1 : "MEB-TT3-TASKS-1: New task did not was created",
+                          2 : "MEB-TT2-TASKS-2: Unexpected answer"
+                          }        
+    
+    def __init__(self, exc_code, task_id):
+        msg = self.config_msg(exc_code, task_id)
+        super(Meb_exception_tt1, self).__init__(exc_code, msg)
+    
+    def config_msg(self, exc_code, task_id):
+        return "%s | origin task id : %d" % (self.std_exception_msgs[exc_code], task_id)
+    
+    
+class Meb_exception_tt4( Meb_exception ):
+    std_exception_msgs = {
+                          1 : "MEB-TT4-TASKS-1: New task did not was created",
+                          2 : "MEB-TT2-TASKS-2: Unexpected answer"
+                          }        
+    
+    def __init__(self, exc_code, task_id):
+        msg = self.config_msg(exc_code, task_id)
+        super(Meb_exception_tt1, self).__init__(exc_code, msg)
+    
+    def config_msg(self, exc_code, task_id):
+        return "%s | origin task id : %d" % (self.std_exception_msgs[exc_code], task_id)    
         

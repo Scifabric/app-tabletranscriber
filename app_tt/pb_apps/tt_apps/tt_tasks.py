@@ -16,6 +16,9 @@ from InvalidTaskGroupException import InvalidTaskGroupException
 from operator import itemgetter
 from app_tt.data_mngr import data_manager
 from app_tt.pb_apps.tt_apps import priority_task_manager
+from app_tt.meb_exceptions.meb_exception import Meb_exception_tt1, \
+    Meb_exception_tt2, Meb_exception_tt3, Meb_exception_tt4, Meb_exception,\
+    Meb_file_output_exception_tt2
 
 """
     Table transcriber tasks
@@ -32,14 +35,23 @@ class TTTask1(pb_task):
         super(TTTask1, self).__init__(task_id, app_short_name)
 
     def add_next_task(self):
-        # Verify the answer of the question to create a new task
-        if(self.task.info["answer"] == "Yes"):
-            info = dict(link=self.task.info["url_m"],
-                        page=self.task.info["page"])
-            tt2_app_short_name = self.app_short_name[:-1] + "2"
-            tt2_app = ttapps.Apptt_meta(short_name=tt2_app_short_name)
+        try:
+            # Verify the answer of the question to create a new task
+            if(self.task.info.has_key("answer") and self.task.info["answer"] == "Yes"):
+                info = dict(link=self.task.info["url_m"],
+                            page=self.task.info["page"])
+                tt2_app_short_name = self.app_short_name[:-1] + "2"
+                tt2_app = ttapps.Apptt_meta(short_name=tt2_app_short_name)
+    
+                tt2_app.add_task(info)
+                
+                return True
+            else:
+                raise Meb_exception_tt1(1, self.task.id)
 
-            tt2_app.add_task(info)
+        except Meb_exception_tt1 as e:
+            logger.error(e)
+            return False
 
     def special_close_task(self):
         self.task.state = "completed"
@@ -47,33 +59,34 @@ class TTTask1(pb_task):
         pbclient.update_task(self.task)
 
     def check_answer(self):
-        task_runs = self.get_task_runs()
-        N_ANSWER = 2
-        answers = {}
-        for taskrun in task_runs:
-            answer = taskrun.info
-            if(answer not in answers.keys()):
-                answers[answer] = 1
-            else:
-                answers[answer] += 1
-
-            if(answers[answer] == N_ANSWER and answer != "NotKnown"):
-                self.task.info["answer"] = answer
-                # put the answer into task info
-                requests.put("%s/api/task/%s?api_key=%s" % (
-                    app.config['PYBOSSA_URL'], self.task.id,
-                    app.config['API_KEY']),
-                    data=json.dumps(dict(info=self.task.info)))
-                
-                bookId = self.get_book_id()
-                archiveURL = self.task.info["url_m"]
-                page = self.task.info["page"]
-                
-                data_manager.record_page((bookId, archiveURL, page))
-                
-                return True
+        try:
+            task_runs = self.get_task_runs()
+            N_ANSWERS = 2
+            answers = {}
+            for taskrun in task_runs:
+                answer = taskrun.info
+                if(answer not in answers.keys()):
+                    answers[answer] = 1
+                else:
+                    answers[answer] += 1
+    
+                if(answers[answer] == N_ANSWERS and answer != "NotKnown"):
+                    self.task.info["answer"] = answer
+                    
+                    # put the answer into task info
+                    pbclient.update_task(self.task)                
+                    
+                    bookId = self.get_book_id()
+                    archurl = self.task.info["url_m"]
+                    pg = self.task.info["page"]
+                    
+                    data_manager.record_page(dict(bookid=bookId, archiveURL=archurl, page_num=pg))
+                    
+                    return True
         
-        return False
+        except Exception:
+            logger.error(Meb_exception_tt1(2, self.task.id))
+            raise Meb_exception_tt1(2, self.task.id)
 
     def get_next_app(self):
         curr_app_name = self.app_short_name
@@ -91,53 +104,44 @@ class TTTask2(pb_task):
     def add_next_task(self):
 
         if (self.__checkIfNextTaskWasCreated()):
-            return
+            return False
 
         # Get the list of task_runs
-        task_runs = json.loads(requests.get(
-            "%s/api/taskrun?task_id=%s&limit=%d" % (
-                app.config['PYBOSSA_URL'], self.task.id, sys.maxint)).content)
-
-        task_run = task_runs[len(task_runs) - 1]  # Get the last answer
-        answer = task_run["info"]
+        task_runs = self.get_task_runs()
+        task_run = task_runs[-1]  # Get only the last answer
         
-        #print "answer: " + str(answer).encode('ascii', 'ignore')
-        
+        #answer = task_run["info"]
+        answer = task_run.info
         answer_info_json = json.loads(answer)
         
-        if (answer != "0"): # dont has table in the page
+        if (answer != "0"): # don't has table in the page
 
             tt3_app_short_name = self.app_short_name[:-1] + "3"
             tt3_app = ttapps.Apptt_struct(short_name=tt3_app_short_name)
 
             bookId = self.get_book_id()
             imgId = self.task.info["page"]
-            
             rotate = answer_info_json[0]["text"]["girar"]
                         
-            self.__downloadArchiveImages(bookId, imgId)
-            self.__runLinesRecognition(bookId, imgId, rotate)
-
-            #print "answer_info_json: " + str(answer_info_json).encode('ascii', 'ignore')
-            
             try:
+                self.__downloadArchiveImages(bookId, imgId)
+                self.__runLinesRecognition(bookId, imgId, rotate)
+    
                 # file with the lines recognized
                 arch = open(
                     "%s/books/%s/metadados/saida/image%s_model%s.txt" % (
                     app.config['CV_MODULES'], bookId, imgId, "1"))
+                
                 # get the lines recognitions
                 tables_coords = self.__splitFile(arch)
+                
                 for tableId in range(len(tables_coords)):
-                    self.__runAreaSelection(
-                        bookId, imgId, tableId, rotate)
+                    self.__runAreaSelection(bookId, imgId, tableId, rotate)
 
-                    image_pieces = self.__getAreaSelection(
-                        bookId, imgId, tableId)
+                    image_pieces = self.__getAreaSelection(bookId, imgId, tableId)
                     
                     table_subject_code = answer_info_json[tableId]['text']['assunto']
 
-                    #print "table subject: " + table_subject_code
-                    
                     next_task_priority = priority_task_manager.get_priority(table_subject_code)
                     
                     if(len(image_pieces) > 0):
@@ -158,14 +162,13 @@ class TTTask2(pb_task):
                                     page=imgId, img_url=self.__url_table(
                                     bookId, imgId, tableId))
                         tt3_app.add_task(info, priority=next_task_priority)
-
-            except IOError:
-                print "Error. File image%s_model%s.txt couldn't be opened" % (
-                    imgId, "1")
-            # TODO: the task will not be created,
-            # routine to solve this must be implemented
-            except Exception, e:
-                print str(e)
+                
+                return True
+                
+            except Meb_exception_tt2 as e:
+                raise e
+            
+        return False
 
     def __checkIfNextTaskWasCreated(self):
         page_num = self.task.info['page']
@@ -181,51 +184,58 @@ class TTTask2(pb_task):
         task_runs = self.get_task_runs()
         n_taskruns = len(task_runs)  # task_runs goes from 0 to n-1
         
-        if(n_taskruns > 1):
-            answer1 = task_runs[n_taskruns - 1].info
-            answer2 = task_runs[n_taskruns - 2].info
-            answer1_json = json.loads(answer1)
-            answer2_json = json.loads(answer2)
-    
-            if self.__compare_answers(answer1_json, answer2_json):
-                if answer2 != "0":
-                    return self.__fileOutput(answer2_json)
-                else:  # There is one error at TTTask1 answer
-                    pass
-        else:
-            return False
+        try:
+            if(n_taskruns > 1):
+                answer1 = task_runs[n_taskruns - 1].info
+                answer2 = task_runs[n_taskruns - 2].info
+                answer1_json = json.loads(answer1)
+                answer2_json = json.loads(answer2)
+                
+                if self.__compare_answers(answer1_json, answer2_json):
+                    if answer2 != "0":
+                        return self.__fileOutput(answer2_json)
+                
+                return False
+        
+        except Exception as ex:
+            logger.error(Meb_exception_tt2(1, self.task.id))
+            logger.error(ex)
+            raise Meb_exception_tt2(1, self.task.id)
 
     def __compare_answers(self, answer1, answer2):
         threshold = 2
         
-        print "answer1: " + str(answer1)
-        print "answer2: " + str(answer2)
-        
-        # TODO: RESOLVER ISSO DEPOIS
-        if answer1 == 0 or answer2 == 0:
-            return False
-        
-        if len(answer1) != len(answer2):
+        try:
+            # TODO: RESOLVER ISSO DEPOIS: CASO EM QUE USUARIO NAO FAZ MARCACAO NA PAGINA
+            if answer1 == 0 or answer2 == 0:
                 return False
-    
-        for i in range(0, min(len(answer2), len(answer1))):
-            table1 = answer1[i]
-            table2 = answer2[i]
-    
-            for answer_key in table1.keys():
-                a1_value = table1[answer_key]
-                a2_value = table2[answer_key]
-                if answer_key in ["top", "left", "width", "height"]:
-                    if a2_value < (a1_value - threshold) or a2_value > (a1_value + threshold):
-                        return False
-                elif answer_key in ["text"]:
-                    if a1_value["assunto"] != a2_value["assunto"]:
-                        return False
-                else: # some other key differ
-                    if a1_value != a2_value:
-                        return False
-                    
-        return True
+            
+            if len(answer1) != len(answer2):
+                return False
+            
+            for i in range(0, min(len(answer2), len(answer1))):
+                table1 = answer1[i]
+                table2 = answer2[i]
+        
+                for answer_key in table1.keys():
+                    a1_value = table1[answer_key]
+                    a2_value = table2[answer_key]
+                    if answer_key in ["top", "left", "width", "height"]:
+                        if a2_value < (a1_value - threshold) or a2_value > (a1_value + threshold):
+                            return False
+                    elif answer_key in ["text"]:
+                        if a1_value["assunto"] != a2_value["assunto"]:
+                            return False
+                    else: # some other key differ
+                        if a1_value != a2_value:
+                            return False
+                        
+            return True
+        
+        except Exception as ex:
+            logger.error(Meb_exception_tt2(1, self.task.id))
+            logger.error(ex)
+            raise Meb_exception_tt2(1, self.task.id)
 
     def get_next_app(self):
         curr_app_name = self.app_short_name
@@ -235,8 +245,10 @@ class TTTask2(pb_task):
     def __downloadArchiveImages(self, bookId, imgId, width=550, height=700, max_width=1650, max_height=2100):
         """
         Download internet archive images to tt3_backend project
+        
         :returns: True if the download was successful
         :rtype: bool
+        
         """
 
         try:
@@ -265,18 +277,18 @@ class TTTask2(pb_task):
 
             command += 'convert %s -resize %dx%d! %s' % (
                 fullImgPathPNG, width, height, lowImgPathPNG)
-
-            print("Command: " + command)
+            
+            msg = "Command to download archive images: " + command
+            logger.info(msg)
+            
             call([command], shell=True)  # calls the shell command
             
             return True
-        except IOError, e:
-            print str(e)
-        # TODO: Implement strategies for exceptions cases
-        except RequestException, e:
-            print str(e)
-        except Exception, e:
-            print str(e)
+        
+        except Exception as ex:
+            logger.error(Meb_exception_tt2(5, self.task.id))
+            logger.error(ex)
+            raise Meb_exception_tt2(5, self.task.id)
 
         return False
 
@@ -288,42 +300,54 @@ class TTTask2(pb_task):
 
         :returns: True if the write was successful
         :rtype: bool
-        """
-        # command shell to enter into the tt3 backend project and
-        # calls the lines recognizer software
-
-        if rotate:  # rotated table
-            rotate = "-r"
-            command = 'cd %s/TableTranscriber2/; sudo ./tabletranscriber2 ' \
-            '"/books/%s/baixa_resolucao/image%s.png" "model%s" "%s"' % (
-            app.config['CV_MODULES'], bookId, imgId, model, rotate)
-            
-            print("command: " + command)
-            
-            call([command], shell=True)  # calls the shell command
-            # TODO: implements exception strategy
         
-        else:  # not rotated table
-            rotate = "-nr"
-            command = 'cd %s/TableTranscriber2/; sudo ./tabletranscriber2 ' \
-            '"/books/%s/baixa_resolucao/image%s.png" "model%s" "%s"' % (
-            app.config['CV_MODULES'], bookId, imgId, model, rotate)
+        """
+        
+        try:
+            if rotate:  # rotated table
+                rotate = "-r"
+                command = 'cd %s/TableTranscriber2/; sudo ./tabletranscriber2 ' \
+                '"/books/%s/baixa_resolucao/image%s.png" "model%s" "%s"' % (
+                app.config['CV_MODULES'], bookId, imgId, model, rotate)
+                
+                msg = "Command to run lines recognition software: " + command
+                logger.info(msg)
+                
+                call([command], shell=True)  # calls the shell command
             
-            print("command: " + command)
+            else:  # not rotated table
+                rotate = "-nr"
+                command = 'cd %s/TableTranscriber2/; sudo ./tabletranscriber2 ' \
+                '"/books/%s/baixa_resolucao/image%s.png" "model%s" "%s"' % (
+                app.config['CV_MODULES'], bookId, imgId, model, rotate)
+                
+                msg = "Command to run lines recognition software: " + command
+                logger.info(msg)
+                
+                call([command], shell=True)  # calls the shell command
+                
+            return self.__checkFile(bookId, imgId)
             
-            call([command], shell=True)  # calls the shell command
-            # TODO: implements exception strategy
+        except Meb_exception_tt2 as e:
+            logger.error(Meb_exception_tt2(3, self.task.id))
+            raise e
+        except Exception as ex:
+            logger.error(Meb_exception_tt2(2), self.task.id)
+            raise ex
             
-        return self.__checkFile(bookId, imgId)
-
     def __checkFile(self, bookId, imgId):
         directory = "%s/books/%s/metadados/saida/" % (
             app.config['CV_MODULES'], bookId)
         output_files = os.listdir(directory)
         images = [f.split('_')[0] for f in output_files]
-
-        return ("image%s" % imgId) in images
-
+        
+        ans = ("image%s" % imgId) in images
+    
+        if ans:
+            return True
+        else:
+            raise Meb_exception_tt2(3, self.task.id)
+            
     def __runAreaSelection(self, bookId, imgId, tableId, rotate):
         """
         Call cpp ZoomingSelector software that splits the
@@ -333,12 +357,19 @@ class TTTask2(pb_task):
         :returns: True if the execution was ok
         :rtype: bool
         """
+        try:
+            command = 'cd %s/ZoomingSelector/; sudo ./zoomingselector ' \
+            '"/books/%s/metadados/tabelasAlta/image%s_%d.png"' % (
+            app.config['CV_MODULES'], bookId, imgId, tableId)
+            
+            msg = "Command to run zoomingselector (area selection software) " + command 
+            logger.info(msg)
+            
+            call([command], shell=True)
         
-        command = 'cd %s/ZoomingSelector/; sudo ./zoomingselector ' \
-        '"/books/%s/metadados/tabelasAlta/image%s_%d.png"' % (
-        app.config['CV_MODULES'], bookId, imgId, tableId)
-        
-        call([command], shell=True)
+        except Exception as ex:
+            logger.error(Meb_exception_tt2(4, self.task.id))
+            raise ex
 
     def __getAreaSelection(self, bookId, imgId, tableId):
 
@@ -354,22 +385,26 @@ class TTTask2(pb_task):
                 selections.append([
                     int(coord) for coord in data[data_idx].split(',')])
 
-        except IOError:
-            print "Error! Couldn't open" \
-                "image%s_%d.txt selection file" % (
-                imgId, tableId)
-
-        except Exception, e:
-            print str(e)
+        except IOError as ioe:
+            msg = "Error! Couldn't open image%s_%d.txt selection file" % (imgId, tableId)
+            logger.error(Meb_exception_tt2(4, self.task.id))
+            logger.error(msg)
+            raise ioe
+        except Exception as ex:
+            logger.error(Meb_exception_tt2(4, self.task.id))
+            raise ex
 
         return selections
 
     def __url_table(self, bookId, imgId, idx):
         """""
         Build a url of a splited image for the lines recognizer
+        
         :returns: a indexed book table image
         :rtype: str
+        
         """
+        
         return "%s/books/%s/metadados/tabelasBaixa/image%s_%d.png" % (
             app.config['URL_TEMPLATES'], bookId, imgId, idx)
 
@@ -382,6 +417,7 @@ class TTTask2(pb_task):
 
         :returns: a list of matrix
         :rtype: list
+        
         """
 
         strLines = arch.read().strip().split("\n")
@@ -401,7 +437,7 @@ class TTTask2(pb_task):
 
         arch.close()
         
-        print "matrix: " + str(matrix)
+        #print "matrix: " + str(matrix)
         
         return matrix
 
@@ -412,13 +448,16 @@ class TTTask2(pb_task):
         :returns: True if the answer is saved at the file
         :rtype: bool
         """
-        pb_app_name = self.app_short_name
-        bookId = pb_app_name[:-4]
-        imgId = self.task.info["page"]
 
         try:
-            print("File path:" + "%s/books/%s/metadados/entrada/image%s.txt" % (
-                app.config["CV_MODULES"], bookId, imgId), "a")
+            pb_app_name = self.app_short_name
+            bookId = pb_app_name[:-4]
+            imgId = self.task.info["page"]
+            
+            msg = "File path:" + "%s/books/%s/metadados/entrada/image%s.txt" % \
+                (app.config["CV_MODULES"], bookId, imgId), "a"
+            logger.info(msg)
+            
             arch = open("%s/books/%s/metadados/entrada/image%s.txt" % (
                 app.config["CV_MODULES"], bookId, imgId), "w")
             for table in answer:
@@ -432,20 +471,14 @@ class TTTask2(pb_task):
             arch.close()
 
             return True
-        except IOError:
-            print "Error: Couldn't open %s to write image%s.txt file" % (
-                bookId, imgId)
-            # TODO: see what to do with the flow in exceptions
+        
+        except IOError as e:
+            print e
+            logger.error(Meb_file_output_exception_tt2(1, self.task.id, bookId, imgId))
+            raise Meb_file_output_exception_tt2(1, self.task.id, bookId, imgId)
 
         return False
 
-# TODO ==> rodar OCR (TesseractExecutor)
-     
-# Se tiver zoom checar se as tasks do grupo terminaram
-      
-# 1. inserir carregar respostas de TesseractExecutor
-# 2. verificar niveis de confianca para ocrzacoes de celulas
-# 3. inserir respostas em T4
 
 class TTTask3(pb_task):
     """

@@ -3,7 +3,7 @@ from engine.api import blueprint as api
 from meb.collaborate import blueprint as collaborate
 from administration.admin import blueprint as admin
 from meb_results.results import blueprint as results
-from core import app, logger
+from core import app
 
 app.register_blueprint(collaborate, url_prefix='/collaborate')
 app.register_blueprint(api, url_prefix='/api')

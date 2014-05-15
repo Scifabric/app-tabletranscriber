@@ -3,19 +3,19 @@
 from app_tt.core import db
 from app_tt.engine.models import *
 
-def record_book_info_mbdb(info_book):
-    bk = book.query.filter_by(id=info_book['bookid']).first()
+def record_book(info_book_dict):
+    bk = book.query.filter_by(id=info_book_dict['bookid']).first()
 
     if (bk != None):
         print("The book " + bk.title + " already exists in mbdb.")
         return
     
-    bk = book(info_book['bookid'],
-              info_book['title'],
-              info_book['publisher'],
-              info_book['contributor'],
-              info_book['volume'],
-              info_book['img']) 
+    bk = book(info_book_dict['bookid'],
+              info_book_dict['title'],
+              info_book_dict['publisher'],
+              info_book_dict['contributor'],
+              info_book_dict['volume'],
+              info_book_dict['img']) 
     try:
         db.session.add(bk)
         db.session.commit()
@@ -23,10 +23,10 @@ def record_book_info_mbdb(info_book):
         db.session.rollback()
         raise e
     
-def record_page(page_info):
-    pg = page(bookid=page_info[0],
-              archiveURL=page_info[1],
-              page_num=page_info[2])
+def record_page(page_info_dict):
+    pg = page(page_info_dict["bookid"],
+              page_info_dict["archiveURL"],
+              page_info_dict["page_num"])
     
     try:
         db.session.add(pg)
