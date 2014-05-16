@@ -35,7 +35,7 @@ var en_US_dict = {
 };
 
 var pt_dict= {
-    'question': "Por favor. Corrija as linhas e colunas da tabela.",
+    'question': "Posicione as linhas e colunas, em vermelho, da tabela abaixo. Se o posicionamento estiver adequado, basta salvar.",
     'question_with_focus': "Por favor. Corrija as linhas e colunas da área em foco da tabela.",
     'button_finished': "Salvar correções",
     'button_select': "Habilita a ferramenta de seleção de segmentos",

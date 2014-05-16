@@ -92,10 +92,10 @@ footer .span2 {
 	</div>
 	</header>
 
-	<div id="fb-loading-container" class="container" style="display: none;">
-		<img src="img/loading.gif">
+	<div id="fb-loading-container" class="container" style="display: none; float: left;">
+			<img src="img/loading.gif">
 	</div>
-
+	
 	<div id="main-container"></div>
 
 	<footer>
@@ -214,6 +214,34 @@ footer .span2 {
 
 	<!-- PyBossa Application Template Load -->
 	<script type="text/javascript" charset="utf-8">
+		/* MISC Functions */
+		function loadAHTML(targetEl, htmlUrl, callback) {
+			$("#fb-loading-container").show();
+			$(targetEl).load(htmlUrl, function(){
+				$("#fb-loading-container").hide();
+				callback();
+			});
+		}
+		
+		function ChangeImage(img, url) {
+			img.src = url;
+		}
+		
+		function openShareWindow(url) {
+			window
+					.open(
+							url,
+							"_blank",
+							"toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, copyhistory=yes, width=500, height=300");
+		}
+		
+		function shareProjectOnFacebook(url) {
+			FB.ui({
+				method : 'feed',
+				link : url
+			});
+		}
+	
 		var app_shortname;
 		var successfullyLogged = false;
 		var numOfTaskRunDone = 0;
@@ -226,29 +254,8 @@ footer .span2 {
 			pybossa.setEndpoint(json.endpoint);
 			initFacebookSDK(json.app_id, json.facebook_permissions_type);
 			
-			$("#fb-loading-container").show();
-			$("#main-container").load("main_container.html");
+			loadAHTML("#main-container", "main_container.html")
 		});
-		
-		/* MISC Functions */
-		function ChangeImage(img, url) {
-			img.src = url;
-		}
-
-		function openShareWindow(url) {
-			window
-					.open(
-							url,
-							"_blank",
-							"toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, copyhistory=yes, width=500, height=300");
-		}
-
-		function shareProjectOnFacebook(url) {
-			FB.ui({
-				method : 'feed',
-				link : url
-			});
-		}
 	</script>
 </body>
 </html>

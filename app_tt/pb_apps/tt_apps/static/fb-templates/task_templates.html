@@ -10,12 +10,21 @@
 	
 	function loadTaskTemplate(bookId, taskType) {
 		clearCurrentTemplate();
+		$('#'+ taskType).hide();
+		currentTaskType = taskType;
+		
 		$("#" + taskType).load('https://' + server_name + '/mb/api/render_template/' + bookId + '_' + taskType + '/' + taskType2html[taskType], function() {
-			currentTaskType = taskType;
 			redirectToANewTask = function(taskSufix) {
 				loadTaskTemplate(bookId, taskSufix);
 			}
 		});
+	}
+	
+	function loadDataEvent(task) {
+		if (!$.isEmptyObject(task)) {
+			$("#fb-loading-container").hide();
+			$('#'+ currentTaskType).show();
+		}
 	}
 	
 	function clearCurrentTemplate() {

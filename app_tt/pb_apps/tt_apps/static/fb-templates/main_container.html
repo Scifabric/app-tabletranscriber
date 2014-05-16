@@ -4,14 +4,6 @@
 <script>
 	var bookId;
 	
-	function loadAHTML(targetEl, htmlUrl, callback) {
-		$("#fb-loading-container").show();
-		$(targetEl).load(htmlUrl, function(){
-			$("#fb-loading-container").hide();
-			callback();
-		});
-	}
-	
 	function clearMBInterface() {
 		$('body').off('mouseup');
 		$('body').off('mousedown');
@@ -51,7 +43,8 @@
 				var POSITION_BOOK_ID = 5;
 				var tmp = addressValue.split("/")[POSITION_BOOK_ID];
 				bookId = tmp.substring(0, tmp.indexOf("_"));
-
+				
+				$("#fb-loading-container").show();
 				$("#task-template").load("task_templates.html", function() {
 					showTaskTemplate();
 				});
