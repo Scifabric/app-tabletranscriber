@@ -57,7 +57,7 @@ class test_api(TestCase):
     def test_04_init_and_close(self):
         # Creating new tt applications
         create_and_close_t1(self.app, "rpparaiba1918")
-        time.sleep(15)
+        time.sleep(20)
         pb_app = pbclient.find_app(short_name="rpparaiba1918_tt1")
         tasks_t1 = pbclient.get_tasks(pb_app[0].id, sys.maxint)
         
@@ -73,3 +73,5 @@ def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(test_api)
     return suite
 
+if __name__ == '__main__':
+    unittest.main()

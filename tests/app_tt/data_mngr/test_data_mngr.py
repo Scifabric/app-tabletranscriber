@@ -13,8 +13,9 @@ class test_data_mngr(TestCase):
         info_book = dict(bookid="book_name_test", title="title_test", publisher="publisher_test", contributor="contributor_test", volume="volume_test", img="img_test")
         
         try:
-            data_mngr.record_book_info_mbdb(info_book)
-        except Exception:
+            data_mngr.record_book(info_book)
+        except Exception as e:
+            print e
             raise AssertionError("Book insertion failed")
 
     def test_page_insertion(self):
