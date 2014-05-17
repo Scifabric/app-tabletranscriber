@@ -453,15 +453,31 @@
 	}
 
 	function loadData(data) {
-		if (!$.isEmptyObject(data.task)) {
+		var current_task = data.task;
+		
+		// Defined by FB-template
+		if (typeof loadDataEvent != "undefined") {
+			loadDataEvent(current_task);	
+		}
+		
+		if (!$.isEmptyObject(current_task)) {
 			loadUserProgress();
 			var task_id = data.task.id;
-			$("#question h1").text(data.question);
 			$("#task-id").text(task_id);
-			$("#table").attr("src", data.task.info.link);
+			$("#table").attr("src", current_task.info.link);
 
-			var notes = data.task.info.last_answer != undefined ? JSON
-					.parse(data.task.info.last_answer) : [];
+			var isLastAnswer = current_task.info.last_answer != undefined;
+			var notes = isLastAnswer ? JSON
+					.parse(current_task.info.last_answer) : [];
+			
+			var question = ""
+			if (isLastAnswer) {
+				question = "Corrija as marcações das tabelas abaixo se houver erros. Se não houver, basta salvar.";
+			} else {
+				question = "Marque a área das tabelas da página abaixo e descreva as informações que serão pedidas após a marcação.";
+			}
+			
+			$("#question h1").text(question);
 
 			image = $("#table").annotateImage({
 				editable : true,

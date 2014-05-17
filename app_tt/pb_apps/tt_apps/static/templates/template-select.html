@@ -279,13 +279,20 @@
 					redirectToANewTask("tt2");
 				});
 	}
-
+	
 	function loadData(data) {
-		if (!$.isEmptyObject(data.task)) {
+		var current_task = data.task;
+		
+		// Defined by FB-template
+		if (typeof loadDataEvent != "undefined") {
+			loadDataEvent(current_task);	
+		}
+		
+		if (!$.isEmptyObject(current_task)) {
 			loadUserProgress();
-			task_id = data.task.id;
-			$("#image-link").attr("href", data.task.info.url_b);
-			$("#image").attr("src", data.task.info.url_m);
+			task_id = current_task.id;
+			$("#image-link").attr("href", current_task.info.url_b);
+			$("#image").attr("src", current_task.info.url_m);
 			pybossa.getCurrentUserId(function(userId) {
 				initSharer(task_id, userId);	
 			});

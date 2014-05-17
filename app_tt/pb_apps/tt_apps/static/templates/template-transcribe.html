@@ -364,10 +364,17 @@
 	}
 
 	function loadData(data) {
-		if (!$.isEmptyObject(data.task)) {
+		var current_task = data.task;
+		
+		// Defined by FB-template
+		if (typeof loadDataEvent != "undefined") {
+			loadDataEvent(current_task);	
+		}
+		
+		if (!$.isEmptyObject(current_task)) {
 			loadUserProgress();
-			taskId = data.task.id;
-			createTableViewer(data.task.info, minTableViewerWidth,
+			taskId = current_task.id;
+			createTableViewer(current_task.info, minTableViewerWidth,
 					minTableViewerHeight);
 		} else {
 			unblockUI();

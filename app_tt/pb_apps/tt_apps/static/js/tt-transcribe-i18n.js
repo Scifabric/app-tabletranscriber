@@ -32,7 +32,7 @@ var en_US_dict = {
 };
 
 var pt_dict= {
-    'question': "Por favor. Corrija o conteúdo das células da tabela.",
+    'question': "Verifique a transcrição do conteúdo da célula em destaque e corrija quando necessário. Se estiver adequada, clique em OK.",
     'task_name': "Tarefa: ",
     'well_done': "Muito bem! ",
     'saved': "Sua resposta foi salva",
@@ -51,10 +51,10 @@ var pt_dict= {
     'task-instruction-p4' : "Células em <strong style='color: #E93F2D'>vermelho</strong> indicam transcrições que faltam ser inspecionadas e finalizadas.",
     'task-instruction-p5' : "Você pode salvar a tarefa a qualquer momento, caso não queira fazer a transcrição da tabela inteira, basta clicar em <strong>Salvar correções</strong>, para que outro usuário continue de onde você parou.",
     'button-finished-task' : 'Salvar correções',
-    'pc-transcription-p1' : 'O computador tem ',
-    'pc-transcription-p2' : '% de confiança na transcrição abaixo.',
+    'pc-transcription-p1' : 'Transcrição feita pelo computador (',
+    'pc-transcription-p2' : '% de confiança).',
     'human-transcription-label' : 'Transcrição de outro usuário',
-    'your-transcription-label' : 'Sua transcrição',
+    'your-transcription-label' : 'Sua correção (se necessário)',
     'button-zoom-in' : 'Ferramenta de Zoom In',
     'button-zoom-out' : 'Ferramenta de Zoom Out',
     'button-help' : 'Abre a tela de ajuda',
