@@ -104,7 +104,8 @@ class TTTask2(pb_task):
     def add_next_task(self):
 
         if (self.__checkIfNextTaskWasCreated()):
-            return False
+            logger.warn(Meb_exception_tt2(6, self.task.id))
+            raise Meb_exception_tt2(6, self.task.id)
 
         # Get the list of task_runs
         task_runs = self.get_task_runs()

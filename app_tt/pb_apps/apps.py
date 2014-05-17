@@ -31,7 +31,12 @@ class Apptt(object):
         self.pybossa_url = pbclient._opts['endpoint']
         self.description = description
         self.name = name
-        self.app_id = self.__create_app()
+        
+        try:
+           self.app_id = self.__create_app()
+        except Exception as e:
+            logger.error(e)
+            raise e
         
     def __create_app(self):
         """
@@ -60,7 +65,6 @@ class Apptt(object):
                 pbclient.update_app(app)
                 return app.id
             else:
-                logger.error(Meb_apps_exception(4, -1, self.short_name))
                 raise Meb_apps_exception(4, -1, self.short_name)
         
     def set_name(self, name):

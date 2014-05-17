@@ -121,7 +121,8 @@ class Meb_exception_tt2( Meb_exception ):
                           2 : "MEB-TT2-TASKS-2: Error executing tabletranscriber (lines recognition software)",
                           3 : "MEB-TT2-TASKS-3: TableTranscriber output file wasn't generated",
                           4 : "MEB-TT2-TASKS-4: Zooming selector execution failed",
-                          5 : "MEB-TT2-TASKS-5: Download archive images failed"
+                          5 : "MEB-TT2-TASKS-5: Download archive images failed",
+                          6 : "MEB-TT2-TASKS-6: Next workflow task ready was created"
                           }        
     
     def __init__(self, exc_code, task_id):
