@@ -919,20 +919,24 @@ class TTTask3(pb_task):
         task_runs = self.get_task_runs()
         n_taskruns = len(task_runs)  # task_runs goes from 0 to n-1
         
-        if(n_taskruns > 1):
-            answer1 = task_runs[n_taskruns - 1].info
-            answer2 = task_runs[n_taskruns - 2].info
-            
-            answer1_json = json.loads(answer1)
-            answer2_json = json.loads(answer2)
-            if(self.__compare_answers(answer1_json, answer2_json)):
-                return True
+        try:
+            if(n_taskruns > 1):
+                answer1 = task_runs[n_taskruns - 1].info
+                answer2 = task_runs[n_taskruns - 2].info
+                
+                answer1_json = json.loads(answer1)
+                answer2_json = json.loads(answer2)
+                if(self.__compare_answers(answer1_json, answer2_json)):
+                    return True
+                else:
+                    return False
             else:
                 return False
-        else:
-            return False
         
-        return False
+        except Exception as ex:
+            logger.error(Meb_exception_tt3(2, self.task.id))
+            logger.error(ex)
+            raise ex
 
     def get_next_app(self):
         curr_app_name = self.app_short_name
