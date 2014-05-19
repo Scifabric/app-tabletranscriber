@@ -58,14 +58,16 @@ class Apptt(object):
         else:
             logger.info("The application is not registered in PyBOSSA. Creating it...")
             ans = pbclient.create_app(name=self.name, short_name=self.short_name, description=self.description)
-            if ans:
-                app = pbclient.find_app(short_name=self.short_name)[0]
-                app.info = dict(newtask="%s/app/%s/newtask" % (flask_app.config['PYBOSSA_URL'], self.short_name))
-                app.category_id = 1
-                pbclient.update_app(app)
-                return app.id
-            else:
-                raise Meb_apps_exception(4, -1, self.short_name)
+            try:
+                if ans:
+                    app = pbclient.find_app(short_name=self.short_name)[0]
+                    app.info = dict(newtask="%s/app/%s/newtask" % (flask_app.config['PYBOSSA_URL'], self.short_name))
+                    app.category_id = 1
+                    pbclient.update_app(app)
+                    return app.id
+            except Exception as ex:
+                logger.error(Meb_apps_exception(4, -1, self.short_name))
+                raise ex
         
     def set_name(self, name):
         """

@@ -1,14 +1,14 @@
 # -*- coding:utf-8 -*-
 
-from app_tt.core import db
+from app_tt.core import db, logger
 from app_tt.engine.models import *
 
 def record_book(info_book_dict):
     bk = book.query.filter_by(id=info_book_dict['bookid']).first()
 
     if (bk != None):
-        print("The book " + bk.title + " already exists in mbdb.")
-        return
+        logger.info("The book " + bk.title + " already exists in mbdb.")
+        raise
     
     bk = book(info_book_dict['bookid'],
               info_book_dict['title'],
@@ -55,3 +55,7 @@ def delete_book(book_id):
     except Exception as e:
         db.session.rollback()
         raise e   
+
+def get_book(book_id):
+    return db.session.query(book).filter(book.id == book_id).first()
+    

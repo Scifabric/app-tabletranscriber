@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from app_tt.pb_apps.tt_apps.tt_tasks import TTTask2
-from app_tt.pb_apps.tt_apps.ttapps import Apptt_meta
+from app_tt.pb_apps.tt_apps.tt_tasks import TTTask3
+from app_tt.pb_apps.tt_apps.ttapps import Apptt_struct
 
 from app_tt.core import pbclient, app as app_flask
 import unittest
@@ -11,24 +11,25 @@ import time
 from tests.app_tt.base import delete_book, authenticate_fb_user, submit_answer
 from app_tt.data_mngr import data_manager as data_mngr 
 
-from app_tt.meb_exceptions.meb_exception import Meb_pb_task_exception, Meb_exception_tt2
+from app_tt.meb_exceptions.meb_exception import Meb_pb_task_exception, Meb_exception_tt3
 
-class TT_Task2_TestCase(unittest.TestCase):
+class TT_Task3_TestCase(unittest.TestCase):
     
     def setUp(self):
         book_title = "rpparaiba1918_title"
-        self.app = Apptt_meta(short_name="rpparaiba1918_tt2", title=book_title)
+        self.app = Apptt_struct(short_name="rpparaiba1918_tt3", title=book_title)
         self.app.add_task(task_info=dict(link="http://archive.org/download/livro1/n1", page=1))
         self.app.add_task(task_info=dict(link="http://archive.org/download/livro1/n2", page=2))
         
         tasks = pbclient.get_tasks(app_id=self.app.app_id)
         
-        self.task1 = TTTask2(tasks[0].id, app_short_name=self.app.short_name)
-        self.task2 = TTTask2(tasks[1].id, app_short_name=self.app.short_name)
+        self.task1 = TTTask3(tasks[0].id, app_short_name=self.app.short_name)
+        self.task2 = TTTask3(tasks[1].id, app_short_name=self.app.short_name)
         
         self.base_url = app_flask.config['PYBOSSA_URL']
         self.fb_user = authenticate_fb_user(self.base_url)
         
+        data_mngr.record_page(dict())
         
     def tearDown(self):
         next_app = None 

@@ -104,7 +104,8 @@ class Meb_pagination_exception( Meb_exception ):
 class Meb_exception_tt1( Meb_exception ):
     std_exception_msgs = {
                           1 : "MEB-TT1-TASKS-1: New task did not was created",
-                          2 : "MEB-TT1_TASKS-2: Unexpected answer"
+                          2 : "MEB-TT1_TASKS-2: Unexpected answer",
+                          3 : "MEB-TT1-TASKS-3: Next workflow task ready was created"
                           }        
     
     def __init__(self, exc_code, task_id):

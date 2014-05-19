@@ -35,6 +35,10 @@ class TTTask1(pb_task):
         super(TTTask1, self).__init__(task_id, app_short_name)
 
     def add_next_task(self):
+        if (self.__checkIfNextTaskWasCreated()):
+            logger.warn(Meb_exception_tt1(3, self.task.id))
+            raise Meb_exception_tt1(3, self.task.id)
+        
         try:
             # Verify the answer of the question to create a new task
             if(self.task.info.has_key("answer") and self.task.info["answer"] == "Yes"):
@@ -93,6 +97,15 @@ class TTTask1(pb_task):
         next_app_name = curr_app_name[:-1] + "2"
         return ttapps.Apptt_meta(short_name=next_app_name)
 
+    def __checkIfNextTaskWasCreated(self):
+        page_num = self.task.info['page']
+        tt2_app = self.get_next_app()
+        tt2_tasks = tt2_app.get_tasks()
+
+        for t in tt2_tasks:
+            if (t.info['page'] == page_num):
+                return True
+        return False
 
 class TTTask2(pb_task):
     """
@@ -255,6 +268,8 @@ class TTTask2(pb_task):
         try:
             archiveURL = "http://archive.org/download/%s/page/n%s_w%s_h%s" % (
                 bookId, imgId, max_width, max_height)
+            
+            logger.info("Downloading archive image: " + archiveURL)
             
             url_request = requests.get(archiveURL)
 
