@@ -13,7 +13,7 @@ import app_tt.data_mngr.data_manager as data_mngr
 
 from app_tt.meb_exceptions.meb_exception import Meb_pb_task_exception, Meb_exception_tt1, Meb_exception
 
-class TT_Task1_TestCase(unittest.TestCase):
+class tt1_task_test(unittest.TestCase):
     
     def setUp(self):
         bookinfo = dict(
@@ -226,6 +226,10 @@ class TT_Task1_TestCase(unittest.TestCase):
              
         except Meb_exception_tt1 as e:
             self.assertEquals(e.code, 3)
+
+def suite():
+    suite = unittest.TestLoader().loadTestsFromTestCase(tt1_task_test)
+    return suite
     
 if __name__ == '__main__':
     unittest.main()

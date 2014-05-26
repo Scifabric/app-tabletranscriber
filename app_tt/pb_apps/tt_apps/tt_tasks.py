@@ -10,15 +10,16 @@ from requests import RequestException
 import json
 import sys
 import os
-import cellsUtil
+import cells_util
 import math
-from InvalidTaskGroupException import InvalidTaskGroupException
 from operator import itemgetter
 from app_tt.data_mngr import data_manager
 from app_tt.pb_apps.tt_apps import priority_task_manager
+
 from app_tt.meb_exceptions.meb_exception import Meb_exception_tt1, \
-    Meb_exception_tt2, Meb_exception_tt3, Meb_exception_tt4, Meb_exception,\
-    Meb_file_output_exception_tt2
+    Meb_exception_tt2, Meb_exception_tt3, Meb_exception_tt4, Meb_exception
+from app_tt.meb_exceptions.meb_file_output_exception import Meb_file_output_exception_tt2,\
+    Meb_file_output_exception_tt3
 
 """
     Table transcriber tasks
@@ -217,7 +218,7 @@ class TTTask2(pb_task):
             raise Meb_exception_tt2(1, self.task.id)
 
     def __compare_answers(self, answer1, answer2):
-        threshold = 2
+        THRESHOLD = 2
         
         try:
             # TODO: RESOLVER ISSO DEPOIS: CASO EM QUE USUARIO NAO FAZ MARCACAO NA PAGINA
@@ -235,7 +236,7 @@ class TTTask2(pb_task):
                     a1_value = table1[answer_key]
                     a2_value = table2[answer_key]
                     if answer_key in ["top", "left", "width", "height"]:
-                        if a2_value < (a1_value - threshold) or a2_value > (a1_value + threshold):
+                        if a2_value < (a1_value - THRESHOLD) or a2_value > (a1_value + THRESHOLD):
                             return False
                     elif answer_key in ["text"]:
                         if a1_value["assunto"] != a2_value["assunto"]:
@@ -506,15 +507,19 @@ class TTTask3(pb_task):
     def add_next_task(self):
 
         if (self.__checkIfNextTaskWasCreated()):
-            return
-
+            logger.warn(Meb_exception_tt3(3, self.task.id))
+            raise Meb_exception_tt3(3, self.task.id)
+        
         try:
             linesAndColumnsMap = self.__loadAnswers()
             
-            cells = cellsUtil.create_cells(linesAndColumnsMap["linhas"], linesAndColumnsMap["colunas"], 
-            linesAndColumnsMap["maxX"], linesAndColumnsMap["maxY"])
+            if self.task.info['hasZoom'] and len(linesAndColumnsMap) == 0:  # didnt found a valid task group
+                return False
             
-            #print "linesAndColumnsMap: " + str(linesAndColumnsMap)
+            cells = cells_util.create_cells(linesAndColumnsMap["linhas"], 
+                                           linesAndColumnsMap["colunas"], 
+                                           linesAndColumnsMap["maxX"],
+                                           linesAndColumnsMap["maxY"])
             
             linkImg = self.task.info['img_url']
             book_id = self.get_book_id()
@@ -541,114 +546,42 @@ class TTTask3(pb_task):
             tt4_app_short_name = self.app_short_name[:-1] + "4"
             tt4_app = ttapps.Apptt_transcribe(short_name=tt4_app_short_name)
             tt4_app.add_task(infoDict, priority=self.task.priority_0)
+            
+            return True
         
-        except Exception, e:
-            print str(e)
+        except Exception as e:
+            logger.error(e)
+            raise e
     
     def __checkIfNextTaskWasCreated(self):
         img_url = self.task.info['img_url']
         tt4_app = self.get_next_app()
         tt4_tasks = tt4_app.get_tasks()
-
+        
         for t in tt4_tasks:
             if (t.info['img_url'] == img_url):
                 return True
-        return False
 
-    """
-     Load values transcripted by tesseract ocr for this table
-    """
-    def __loadValues(self, book_id, page, table_id):
-        
-        f = open("%s/books/%s/transcricoes/texts/image%s_%s.txt" % (
-                       app.config['CV_MODULES'], book_id, page, table_id), 'r')
-        tmp = f.readlines()
-        f.close()
-        
-        values = []
-        for val in tmp[1:]:
-            values.append(val[:-1]) # exclude \n
-        
-        return values #excluding header
+        return False
     
-    """
-     Load confidences identified in transcriptions by tesseract ocr for
-     this table.
-    """
-    def __loadConfidences(self, book_id, page, table_id):
-        f = open("%s/books/%s/transcricoes/confidences/image%s_%s.txt" % (
-                       app.config['CV_MODULES'], book_id, page, table_id), 'r')
-        tmp = f.readlines()
-        
-        f.close()
-        
-        confidences = []
-        for conf in tmp[1:]:
-            confidences.append( int(conf[:-1])) # exclude \n
-        
-        return confidences # excluding header
-    
-    """
-      Run tesseract executor
-    """
-    def __runOCR(self, cells, book_id, page, table_id, maxX, maxY):
-        
-        self.__saveCells(cells, book_id, page, table_id, maxX, maxY)
-        
-        command = 'cd %s/TesseractExecutorApp2/; sudo ./tesseractexecutorapp2 ' \
-        '"/books/%s/metadados/tabelasAlta/image%s_%d.png"' % (
-        app.config['CV_MODULES'], book_id, page, table_id)
-        
-        call([command], shell=True)
-        
-    
-    """
-      Save cells in /books/<book_id>/metadados/respostaUsuarioTT/image<page>_<table_id>.png
-      
-      obs.: the algorithm used open the file two times to
-       don't accept duplicated answers.
-    """
-    def __saveCells(self, cells, book_id, page, table_id, maxX, maxY):
-        
-        try:
-            # file with the cells identified by users
-            
-            header = "#0,0" + "," + str(maxX) + "," + str(maxY) + "\n"
-            arch = open("%s/books/%s/metadados/respostaUsuarioTT/image%s_%s.txt" % (
-                       app.config['CV_MODULES'], book_id, page, table_id), 'w')
-            arch.write(header)
-            arch.close()
-            
-            arch = open("%s/books/%s/metadados/respostaUsuarioTT/image%s_%s.txt" % (
-                       app.config['CV_MODULES'], book_id, page, table_id), 'a')
-            for cell in cells:
-                cStr = str(cell[0]) + "," + str(cell[1]) + "," + str(cell[2]) + "," + str(cell[3]) + "\n"
-                arch.write(cStr)
-            
-            arch.close()
-        
-        except IOError:
-            print "Error. File image%s_%s.txt couldn't be opened" % (
-                    page, table_id)
-        except Exception, e:
-            print str(e)
-    
-    """
-     Returns the info in json format to tasks, be them either zoom
-     or not.
-     
-     obs.: the properties returned in json_answer are modified in this method: if
-     the task has zoom, the answer equivalent to the group of tasks similar to this
-     will be returned, in the same format of one simple task, without zoom.
-    """
     def __loadAnswers(self):
+        """
+         Returns the info in json format to tasks, be them either zoom
+         or not.
+         
+         obs.: the properties returned in json_answer are modified in this method: if
+         the task has zoom, the answer equivalent to the group of tasks similar to this
+         will be returned, in the same format of one simple task, without zoom.
+        """
+        
         if(self.task.info['hasZoom']):
             
             similarTasks = self.__searchSimilarsTasks()
             groupedAnswers = None
                 
             if(not self.__validateTaskGroup(similarTasks)):
-                raise InvalidTaskGroupException()
+                logger.info("** Invalid task group detected **")
+                return {}
             else:
                 groupedAnswers = self.__joinTaskGroupAnswers(similarTasks)
             
@@ -660,20 +593,19 @@ class TTTask3(pb_task):
             
             return answer_json
         else:
-            task_runs = json.loads(requests.get(
-                "%s/api/taskrun?task_id=%s&limit=%d" % (
-                    app.config['PYBOSSA_URL'], self.task.id, sys.maxint)).content)
+            task_runs = self.get_task_runs()
             
-            task_run = task_runs[len(task_runs) - 1]  # Get the last answer
-            answer = task_run["info"]
+            task_run = task_runs[-1]  # Get the last answer
+            answer = task_run.info
             answer_json = json.loads(answer)
             
             return answer_json
     
-    """
-      Search similar tasks to this task in pybossa task table
-    """        
     def __searchSimilarsTasks(self):
+        """
+          Search similar tasks to this task in pybossa task table
+        """
+                
         img_url = self.task.info['img_url']
         table_id = self.task.info['table_id']
         
@@ -686,44 +618,31 @@ class TTTask3(pb_task):
         
         return similarTasks
     
-    """
-     Get tasks with this.app_id
-    """
     def __get_tasks(self):
-        return pbclient.get_tasks(self.task.app_id, sys.maxint)
+        """
+         Get tasks with self.app_id
+        """
         
-    """
-      Verify if all tasks, that are similar to this task, and this task
-      are completed.
-    """
+        return pbclient.get_tasks(self.task.app_id, sys.maxint)
+    
     def __validateTaskGroup(self, similarTasks):
+        """
+          Verify if all tasks, that are similar to this task, and this task
+          are completed.
+        """
+        
+        NUMBER_OF_SIMILAR_TASKS = 3
+        
         for t in similarTasks:
             if(not t.state == "completed"):
                 return False
-        return self.task.state == "completed"
+        return self.task.state == "completed" and len(similarTasks) == NUMBER_OF_SIMILAR_TASKS
     
-    """
-     Load last answer in json format of the last task_run of
-     each task in similarTasks.
-    """
-    def __loadSimilarsTaskRunsAnswers(self, similarTasks):
-        tasksRunsAnswers = []
-        for t in similarTasks: 
-            task_runs = json.loads(requests.get(
-                    "%s/api/taskrun?task_id=%s&limit=%d" % (
-                        app.config['PYBOSSA_URL'], t.id, sys.maxint)).content)
-                
-            task_run = task_runs[len(task_runs) - 1]  # Get the last answer
-            answer = task_run["info"]
-            answer_json = json.loads(answer)
-            tasksRunsAnswers.append(answer_json)
-        
-        return tasksRunsAnswers
     
-    """
-      Join all answers of task_runs to return a table grid.
-    """
     def __joinTaskGroupAnswers(self, similarTasks):
+        """
+          Join all answers of task_runs to return a table grid.
+        """
         
         similarTaskRunsAnswers = self.__loadSimilarsTaskRunsAnswers(similarTasks)
         
@@ -750,18 +669,129 @@ class TTTask3(pb_task):
             if maxY < info['maxY']:
                 maxY = info['maxY']
         
-        #print "lines"
-        #print lines
-        
-        #print "columns"
-        #print columns
-        
         mapWithNewAnswer = self.__transformSegmentsInLines(lines, columns)
         mapWithNewAnswer['maxX'] = maxX
         mapWithNewAnswer['maxY'] = maxY
         
         return mapWithNewAnswer
+    
+    def __loadValues(self, book_id, page, table_id):
+        """
+         Load values transcripted by tesseract ocr for this table
+        """
+        
+        try:
+            f = open("%s/books/%s/transcricoes/texts/image%s_%s.txt" % (
+                           app.config['CV_MODULES'], book_id, page, table_id), 'r')
+            tmp = f.readlines()
+            f.close()
+            
+            values = []
+            for val in tmp[1:]:
+                values.append(val[:-1]) # exclude \n
+            
+            return values #excluding header
+        
+        except IOError as ioe:
+            logger.error(ioe)
+            raise Meb_exception_tt3(5, self.task.id)
+        
+    
+    def __loadConfidences(self, book_id, page, table_id):
+        """
+         Load confidences identified in transcriptions by tesseract ocr for
+         this table.
+        """
+        
+        try:
+            f = open("%s/books/%s/transcricoes/confidences/image%s_%s.txt" % (
+                           app.config['CV_MODULES'], book_id, page, table_id), 'r')
+            tmp = f.readlines()
+            
+            f.close()
+            
+            confidences = []
+            for conf in tmp[1:]:
+                confidences.append( int(conf[:-1])) # exclude \n
+            
+            return confidences # excluding header
 
+        except IOError as ioe:
+            logger.error(ioe)
+            raise Meb_exception_tt3(6, self.task.id)
+    
+    
+    def __runOCR(self, cells, book_id, page, table_id, maxX, maxY):
+        """
+          Run tesseract executor
+        """
+        
+        self.__saveCells(cells, book_id, page, table_id, maxX, maxY)
+        
+        try:
+            command = 'cd %s/TesseractExecutorApp2/; sudo ./tesseractexecutorapp2 ' \
+            '"/books/%s/metadados/tabelasAlta/image%s_%d.png"' % (
+            app.config['CV_MODULES'], book_id, page, table_id)
+            
+            msg = "Command to run tesseract executor: " + command
+            logger.info(msg)
+            
+            call([command], shell=True)
+
+        except Exception as ex:
+            logger.error(Meb_exception_tt3(4, self.task.id))
+            raise ex
+        
+
+    def __saveCells(self, cells, book_id, page, table_id, maxX, maxY):
+        """
+          Save cells in /books/<book_id>/metadados/respostaUsuarioTT/image<page>_<table_id>.png
+          
+          obs.: the algorithm used open the file two times for
+           doesn't accept duplicated answers.
+        """
+        
+        try:
+            # file with the cells identified by users
+            
+            header = "#0,0" + "," + str(maxX) + "," + str(maxY) + "\n"
+            arch = open("%s/books/%s/metadados/respostaUsuarioTT/image%s_%s.txt" % (
+                       app.config['CV_MODULES'], book_id, page, table_id), 'w')
+            arch.write(header)
+            arch.close()
+            
+            arch = open("%s/books/%s/metadados/respostaUsuarioTT/image%s_%s.txt" % (
+                       app.config['CV_MODULES'], book_id, page, table_id), 'a')
+            for cell in cells:
+                cStr = str(cell[0]) + "," + str(cell[1]) + "," + str(cell[2]) + "," + str(cell[3]) + "\n"
+                arch.write(cStr)
+            
+            arch.close()
+        
+        except IOError as ioe:
+            raise Meb_file_output_exception_tt3(1, self.task.id, self.task.get_book_id(),
+                                                       page, table_id)
+        except Exception as e:
+            raise e
+    
+    """
+     Load last answer in json format of the last task_run of
+     each task in similarTasks.
+    """
+    def __loadSimilarsTaskRunsAnswers(self, similarTasks):
+        tasksRunsAnswers = []
+        for t in similarTasks: 
+            task_runs = json.loads(requests.get(
+                    "%s/api/taskrun?task_id=%s&limit=%d" % (
+                        app.config['PYBOSSA_URL'], t.id, sys.maxint)).content)
+                
+            task_run = task_runs[len(task_runs) - 1]  # Get the last answer
+            answer = task_run["info"]
+            answer_json = json.loads(answer)
+            tasksRunsAnswers.append(answer_json)
+        
+        return tasksRunsAnswers
+    
     def __getLineOverlapping(self, line, lines):
         MIN_GAP_BETWEEN_LINES = 5
         for i in range(0, len(lines)):
@@ -933,19 +963,13 @@ class TTTask3(pb_task):
             else:
                 return False
         
-        except Exception as ex:
-            logger.error(Meb_exception_tt3(2, self.task.id))
+        except Meb_exception_tt3 as ex:
             logger.error(ex)
             raise ex
 
-    def get_next_app(self):
-        curr_app_name = self.app_short_name
-        next_app_name = curr_app_name[:-1] + "4"
-        return ttapps.Apptt_transcribe(short_name=next_app_name)
-
     def __compare_answers(self, answer1, answer2):
         if len(answer1) != len(answer2):
-            return False
+            raise Meb_exception_tt3(2, self.task.id)
         
         col1 = answer1['colunas']
         lin1 = answer1['linhas']
@@ -958,46 +982,52 @@ class TTTask3(pb_task):
         else:
             r1 = self.__compareCols(col1, col2) 
             r2 = self.__compareLin(lin1, lin2)
-            #print ("r1: " + str(r1))
-            #print ("r2: " + str(r2))
             
             if (r1 and r2):
                 return True
             else:
                 return False
     
-    """
-     Compare columns of different answers. Return true if <column1> and
-     <column2> are the same.
-    """
     def __compareCols(self, column1, column2):
-        threshold = 5
+        """
+         Compare columns of different answers. Return true if <column1> and
+         <column2> are the same.
+        """
+        
+        THRESHOLD = 5
         
         for i in range(0,len(column1)):
             for j in range(0, 4):
-                if (column1[i][j] > (column2[i][j] + threshold) or column1[i][j] < (column2[i][j] - threshold)):
+                if (column1[i][j] > (column2[i][j] + THRESHOLD) or column1[i][j] < (column2[i][j] - THRESHOLD)):
                     return False
                     
         return True
     
-    """
-     Compare lines of different answers. Return true if <line1> and
-     <line2> are the same.
-    """
     def __compareLin(self, line1, line2):
-        threshold = 5
+        """
+         Compare lines of different answers. Return true if <line1> and
+         <line2> are the same.
+        """
+        
+        THRESHOLD = 5
         
         for i in range(0, len(line1)):
             for j in range(0, 4):
-                if (line1[i][j] > (line2[i][j] + threshold) or line1[i][j] < (line2[i][j] - threshold)):
+                if (line1[i][j] > (line2[i][j] + THRESHOLD) or line1[i][j] < (line2[i][j] - THRESHOLD)):
                     return False
         
         return True
-
+    
+    def get_next_app(self):
+        curr_app_name = self.app_short_name
+        next_app_name = curr_app_name[:-1] + "4"
+        return ttapps.Apptt_transcribe(short_name=next_app_name)
+    
 class TTTask4(pb_task):
     """
     Table Transcriber Task type 4
     """
+    
     def __init__(self, task_id, app_short_name):
         super(TTTask4, self).__init__(task_id, app_short_name)
         
@@ -1009,29 +1039,25 @@ class TTTask4(pb_task):
         task_runs = self.get_task_runs()
         n_taskruns = len(task_runs)  # task_runs goes from 0 to n-1
         
-        if (n_taskruns > 0):
-            last_answer = task_runs[n_taskruns - 1].info
-            last_answer_json = json.loads(last_answer)
-            confirmations = last_answer_json['num_of_confirmations']
-
-            for confirmation in confirmations:
-                if (int(confirmation) < 2):
-                    return False
-            return True
-        else:
-            return False
-
-    def __compare_answers(self, answer1, answer2):
-        val1 = answer1['human_values']
-        val2 = answer2['human_values']
-
-        if len(val1) != len(val2):
-            return False
-        
-        for i in range(0, len(val1)):
-            if val1[i] != val2[i]:
-                return False
-        return True
+        try:
+            if (n_taskruns > 0):
+                last_answer_info = task_runs[-1].info
+                last_answer_info_json = json.loads(last_answer_info)
+                confirmations = last_answer_info_json['num_of_confirmations']
     
+                for confirmation in confirmations:
+                    if (int(confirmation) < 2):
+                        return False
+                return True
+            else:
+                return False
+        
+        except Exception as e:
+            logger.error(Meb_exception_tt4(1, self.task.id))
+            logger.error(e)
+            raise Meb_exception_tt4(1, self.task.id)
+
     def get_next_app(self):
         return
+    
+    
