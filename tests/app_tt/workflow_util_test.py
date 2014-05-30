@@ -1,13 +1,11 @@
 from app_tt.core import pbclient
 from tests.app_tt.base import submit_answer, done_task
 import sys
-import json
 import time
 
 def create_t2_task(test_case, book_id, task_t1):
     # creating an answer for the T1 app
     task_run = dict(app_id=task_t1.app_id, task_id=task_t1.id, info="Yes")
-    print(json.dumps(task_run))
 
     # Anonymous submission
     submit_answer(test_case.base_url, task_run)
@@ -47,7 +45,7 @@ def create_t3_task(test_case, book_id, task_t2):
     
     # Signalling the T2 task completion
     done_task(test_case.app, task_t2.id)
-    time.sleep(10)
+    time.sleep(15)
     
     # check if T2 task is closed
     task_t2 = pbclient.get_tasks(task_t2.app_id, sys.maxint)[0]

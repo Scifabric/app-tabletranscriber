@@ -15,15 +15,15 @@ class test_workflow(TestCase):
         if pybossa_api.data.find('404') != -1:
             raise AssertionError("Pybossa's not working")
         
-        self.book_id = "rpparaiba1918"
-        
-        delete_app(self.book_id)
-        delete_book(self.book_id)
+        self.book_id = "rpparaiba1918"     
         
         # create/authenticate a fb user
         self.base_url = application.config['PYBOSSA_URL']
         self.fb_user = authenticate_fb_user(self.base_url)
-
+        
+    def tearDown(self):
+        delete_app(self.book_id)
+        delete_book(self.book_id)
 
     def test_01_t2_creation(self):
         # Creating new tt applications
