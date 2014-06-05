@@ -8,9 +8,9 @@ class test_data_mngr(TestCase):
     def setUp(self):
         self.book_info = dict(bookid="book_name_test", title="title_test", publisher="publisher_test", contributor="contributor_test", volume="volume_test", img="img_test")
         self.page_info = dict(bookid=self.book_info['bookid'], archiveURL="www.test.com", page_num="10")
-        self.page_table_info = dict(bookid=self.book_info['bookid'], pageid=0, initialDate=datetime.datetime.now(), finalDate=datetime.datetime.now(), local_url="www.teste.com", top_pos=0, left_pos=0, right_pos=500, bottom_pos=800)
+        self.page_table_info = dict(bookid=self.book_info['bookid'], pageid=0, local_url="www.teste.com", top_pos=0, left_pos=0, right_pos=500, bottom_pos=800)
         self.cell_info = dict(bookid=self.book_info['bookid'], pageid=0, pagetableid=0, text="text_test", x0=0, y0=0, x1=200, y1=300)
-        self.metadata_info = dict(bookid=self.book_info['bookid'], pageid=0, pagetableid=0, source="source_test", footer="footer_test", title="title_test", subtitle="subtitle_test", subject="subject_test")
+        self.metadata_info = dict(bookid=self.book_info['bookid'], pageid=0, pagetableid=0, source="source_test", footer="footer_test", title="title_test", subtitle="subtitle_test", subject="subject_test", initial_date="01/01/1900", final_date="01/01/1901")
         self.workflow_transaction_info = dict(task_id_1="123", task_id_2=None, task_id_3=None, task_id_4=None)
 
     def tearDown(self):
@@ -95,7 +95,7 @@ class test_data_mngr(TestCase):
         self.metadata_info['pagetableid'] = page_table[0].id
         
         self.add_metadata(self.metadata_info)
-        self.assertTrue(get_metadata(self.page_table_info['bookid'], self.page_table_info['pageid'], self.metadata_info['pagetableid']))
+        self.assertTrue(get_metadata(self.metadata_info['pagetableid']))
         
     
     def test_cell_insertion(self):
@@ -112,7 +112,7 @@ class test_data_mngr(TestCase):
         self.cell_info['pagetableid'] = page_table[0].id
         
         self.add_cell(self.cell_info)
-        self.assertTrue(get_cell(self.page_table_info['bookid'], self.page_table_info['pageid'], self.cell_info['pagetableid']))
+        self.assertTrue(get_cell(self.cell_info['pagetableid']))
         
     def test_workflow_transation_insertion(self):
         self.add_workflow_transaction(self.workflow_transaction_info)

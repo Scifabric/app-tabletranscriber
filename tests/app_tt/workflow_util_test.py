@@ -16,7 +16,7 @@ def create_t2_task(test_case, book_id, task_t1):
     
     # Signalling the T1 task completion
     done_task(test_case.app, task_t1.id)
-    time.sleep(2)
+    time.sleep(5)
     
     # check if T1 task is closed
     task_t1 = pbclient.get_tasks(task_t1.app_id, sys.maxint)[0]
@@ -33,7 +33,7 @@ def create_t2_task(test_case, book_id, task_t1):
 
 def create_t3_task(test_case, book_id, task_t2):
     # creating an answer for the T2 app
-    answer_t2 = '[{\"id\":\"new\",\"top\":244,\"left\":24,\"width\":506,\"height\":177,\"text\":{\"titulo\":\"\",\"subtitulo\":\"\",\"assunto\":\"0\",\"fontes\":\"\",\"outros\":\"\",\"dataInicial\":\"\",\"dataFinal\":\"\",\"girar\":false,\"nao_girar\":true},\"editable\":true}]'
+    answer_t2 = '[{\"id\":\"new\",\"top\":244,\"left\":24,\"width\":506,\"height\":177,\"text\":{\"titulo\":\"test-titulo\",\"subtitulo\":\"test-subtitulo\",\"assunto\":\"0\",\"fontes\":\"test-fontes\",\"outros\":\"\",\"dataInicial\":\"01/01/1901\",\"dataFinal\":\"01/01/1902\",\"girar\":false,\"nao_girar\":true},\"editable\":true}, {\"id\":\"new\",\"top\":100,\"left\":300,\"width\":250,\"height\":230,\"text\":{\"titulo\":\"test-titulo\",\"subtitulo\":\"test-subtitulo\",\"assunto\":\"3\",\"fontes\":\"test-fontes\",\"outros\":\"test-outros\",\"dataInicial\":\"01/01/1901\",\"dataFinal\":\"01/01/1902\",\"girar\":false,\"nao_girar\":true},\"editable\":true}]'
     task_run = dict(app_id=task_t2.app_id, task_id=task_t2.id, info=answer_t2)
     
     # Anonymous submission
@@ -56,12 +56,12 @@ def create_t3_task(test_case, book_id, task_t2):
     test_case.assertTrue(len(app_t3) > 0, "Error tt_app was not created")
     
     t3_tasks = pbclient.get_tasks(app_t3[0].id, sys.maxint)
-    test_case.assertTrue(len(t3_tasks) == 1)
+    test_case.assertTrue(len(t3_tasks) == 2)
     
-    return t3_tasks[0]
+    return t3_tasks
 
 
-def create_t4_task(test_case, book_id, task_t3):
+def create_t4_task(test_case, book_id, task_t3, number_of_expected_t4_tasks):
     # creating an answer for the T3 app
     answer_t3 = '{\"img_url\":\"https://localhost/mb-static/books/rpparaiba1918/metadados/tabelasBaixa/image0_0.png\",\"linhas\":[[0,0,507,0],[0,54,507,54],[0,103,507,103],[0,178,507,178]],\"colunas\":[[0,0,0,178],[239,0,239,178],[507,0,507,178]],\"maxX\":507,\"maxY\":178}'
     task_run = dict(app_id=task_t3.app_id, task_id=task_t3.id, info=answer_t3)
@@ -86,9 +86,9 @@ def create_t4_task(test_case, book_id, task_t3):
     test_case.assertTrue(len(app_t4) > 0, "Error tt_app was not created")
     
     t4_tasks = pbclient.get_tasks(app_t4[0].id, sys.maxint)
-    test_case.assertTrue(len(t4_tasks) == 1)
+    test_case.assertTrue(len(t4_tasks) == number_of_expected_t4_tasks)
     
-    return t4_tasks[0]
+    return t4_tasks
 
 
 def close_t4_task(test_case, book_id, task_t4):
@@ -108,6 +108,8 @@ def close_t4_task(test_case, book_id, task_t4):
     time.sleep(1)
     
     # check if T4 task is closed
-    task_t4 = pbclient.get_tasks(task_t4.app_id, sys.maxint)[0]
-    test_case.assertTrue(task_t4.state == "completed")
+    tasks_t4 = pbclient.get_tasks(task_t4.app_id, sys.maxint)
+    
+    for task in tasks_t4:
+        test_case.assertTrue(task.state == "completed")
     

@@ -40,24 +40,19 @@ class page(db.Model):
     def __repr__(self):
         return '<page %r, %r, %r, %r>' % (self.id, self.book_id, self.archiveURL, self.page_num)
 
-
 class page_table(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     page_id = db.Column(db.Integer, db.ForeignKey('page.id'))
     book_id = db.Column(db.String(100), db.ForeignKey('book.id'))
-    initialDate = db.Column(db.DateTime, nullable=False)
-    finalDate = db.Column(db.DateTime, nullable=False)
     local_url = db.Column(db.String(255), nullable=False)
     top_pos = db.Column(db.Integer, nullable=False) 
     left_pos = db.Column(db.Integer, nullable=False)
     right_pos = db.Column(db.Integer, nullable=False)
     bottom_pos = db.Column(db.Integer, nullable=False)
 
-    def __init__(self, bookid=None, pageid=None, initialDate=None, finalDate=None, local_url=None, top_pos=None, left_pos=None, right_pos=None, bottom_pos=None):
+    def __init__(self, bookid=None, pageid=None, local_url=None, top_pos=None, left_pos=None, right_pos=None, bottom_pos=None):
         self.book_id = bookid
         self.page_id = pageid
-        self.initialDate = initialDate
-        self.finalDate = finalDate
         self.local_url = local_url
         self.top_pos = top_pos
         self.left_pos = left_pos
@@ -65,7 +60,7 @@ class page_table(db.Model):
         self.bottom_pos = bottom_pos
         
     def __repr__(self):
-        return '<page_table %r, %r, %r, %r, %r, %r, %r, %r, %r, %r>' % (self.id, self.book_id, self.page_id, self.initialDate, self.finalDate, self.local_url, self.top_pos, self.left_pos, self.right_pos, self.bottom_pos)
+        return '<page_table %r, %r, %r, %r, %r, %r, %r, %r>' % (self.id, self.book_id, self.page_id, self.local_url, self.top_pos, self.left_pos, self.right_pos, self.bottom_pos)
 
 class metadata(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -73,23 +68,25 @@ class metadata(db.Model):
     page_id = db.Column(db.Integer, db.ForeignKey('page.id'))
     book_id = db.Column(db.String(100), db.ForeignKey('book.id'))
     source = db.Column(db.String(255))       
-    footer = db.Column(db.String(255))        
     title = db.Column(db.String(255))
     subtitle = db.Column(db.String(255))        
     subject = db.Column(db.String(255))
+    initial_date = db.Column(db.DateTime, nullable=False)
+    final_date = db.Column(db.DateTime, nullable=False)
     
-    def __init__(self, book_id=None, page_id=None, page_table_id=None, source=None, footer=None, title=None, subtitle=None, subject=None):
+    def __init__(self, book_id=None, page_id=None, page_table_id=None, source=None, title=None, subtitle=None, subject=None, initial_date=None, final_date=None):
         self.page_table_id = page_table_id
         self.page_id = page_id
         self.book_id = book_id
         self.source = source
-        self.footer = footer
         self.title = title
         self.subtitle = subtitle
         self.subject = subject
+        self.initial_date = initial_date
+        self.final_date = final_date
         
     def __repr__(self):
-        return '<metadata %r, %r, %r, %r, %r, %r, %r, %r, %r>' % (self.id, self.page_table_id, self.page_id, self.book_id, self.source, self.footer, self.title, self.subtitle, self.subject)  
+        return '<metadata %r, %r, %r, %r, %r, %r, %r, %r, %r, %r>' % (self.id, self.page_table_id, self.page_id, self.book_id, self.source, self.title, self.subtitle, self.subject, self.initial_date, self.final_date)  
 
 class cell(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -108,7 +105,7 @@ class cell(db.Model):
         self.book_id = book_id
         self.text = text
         self.x0 = x0
-        self.y0 = x0
+        self.y0 = y0
         self.x1 = x1
         self.y1 = y1
         

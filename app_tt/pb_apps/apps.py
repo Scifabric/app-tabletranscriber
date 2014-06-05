@@ -149,4 +149,4 @@ class Apptt(object):
             logger.error(Meb_apps_exception(6, self.app_id, self.short_name))
             raise Meb_apps_exception(6, self.app_id, self.short_name)
         
-        pbclient.create_task(self.app_id, task_info, priority_0=priority)
+        return pbclient.create_task(self.app_id, task_info, priority_0=priority)        
