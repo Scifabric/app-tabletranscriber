@@ -8,15 +8,11 @@ Instalação do Memória Estatística do Brasil (app-tabletranscriber)
    e o público em geral, tabelas dos livros da Biblioteca do Ministério da Fazenda
    no Rio de Janeiro.
    
-   Os livros são digitalizados e colocados no arquive.org, de onde, por meio
+   Os livros são digitalizados e colocados no _archive.org, de onde, por meio
    da API disponibilizada, fazemos o download dos livros que serão utilizados na
-   nosssa aplicação.
-   
-   Somente acontece o download das páginas que possuem tabelas, as quais são
-   processadas e permanecem no sistema de arquivos, de acordo com a estrutura descrita
-   para o folder cv-modules, descrito posteriormente. Essas imagens são utilizadas diretamente
-   pela aplicação (na exibição na interface gráfica) ou como parte do log das execuções
-   dos cv-modules.
+   nosssa aplicação. Amostras de livros que estão no archive.org podem ser visualizadas
+   aqui: http://memoria.org.br/. Essas primeiras amostras são a origem do atual projeto
+   Memória Estatística do Brasil, cuja localização atual é: http://alfa.pybossa.socientize.eu/mb
 
 Pré-requisitos (instalados via pip):
 
