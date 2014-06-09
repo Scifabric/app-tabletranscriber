@@ -154,7 +154,7 @@ Pronto, o BD foi criado, agora saia do usuário postgres::
     
     $ exit
 
-Agora com o BD criado e estando com o ambiente virtual ativo e estando no folder app-tabletranscriber:
+Agora com o BD criado e estando com o ambiente virtual ativo e no folder app-tabletranscriber::
 
     $ python app_tt/core.py mbdb upgrade
 
@@ -219,7 +219,7 @@ substitua <env-dir> pelo caminho do diretório do virtualenv criado::
     [program:redis]                                                               
     command=<path to pybossa>/contrib/redis/redis-server <path to pybossa>/contrib/redis/sentinel.conf --sentinel               
     autorestart=true                                                              
-    user=guilhermeg                                                               
+    user=<user>                                                               
     stdout_logfile=<path to pybossa>/log/redis/stdout.log         
     stderr_logfile=<path to pybossa>/log/redis/stderr.log
 
@@ -260,12 +260,12 @@ Por fim recarregue o apache para que as configurações sejam iniciadas::
 Instalando e configurando o PhpPgAdmin
 ======================================
 
-Para instalar o phppgadmin, faça:
+Para instalar o phppgadmin, faça::
+   
    sudo apt-get install phppgadmin
 
 
-..note::
-
+.. note::
    Para permitir o login com o usuário padrão do PostgresSQL (usuário postgres)
    na interface web, modifique a variável $conf['extra-login-security'] para false
    no arquivo /etc/phppgadmin/config.ini.php.
