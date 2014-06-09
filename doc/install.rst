@@ -1,20 +1,58 @@
-============================
-Instalação do Memória Brasil
-============================
+===================================================================
+Instalação do Memória Estatística do Brasil (app-tabletranscriber)
+===================================================================
 
 
-A aplicação Memória Brasil é uma aplicação desenvolvida
-utilizando o micro-framework Flask e componentes de aplicações
-crowdsource para o PyBossa.
+   A aplicação Memória Estatística do Brasil é uma aplicação desenvolvida
+   com a finalidade de indexar, transcrever e disponibilizar para pesquisadores
+   e o público em geral, tabelas dos livros da Biblioteca do Ministério da Fazenda
+   no Rio de Janeiro.
+   
+   Os livros são digitalizados e colocados no arquive.org, de onde, por meio
+   da API disponibilizada, fazemos o download dos livros que serão utilizados na
+   nosssa aplicação.
+   
+   Somente acontece o download das páginas que possuem tabelas, as quais são
+   processadas e permanecem no sistema de arquivos, de acordo com a estrutura descrita
+   para o folder cv-modules, descrito posteriormente. Essas imagens são utilizadas diretamente
+   pela aplicação (na exibição na interface gráfica) ou como parte do log das execuções
+   dos cv-modules.
 
-Pré-requisitos:
+Pré-requisitos (instalados via pip):
 
-    * Python >= 2.7, <3.0
-    * SGBD PostgreeSQL 9.1
-    * pip - instalador de bibliotecas para python
+    * Flask-0.9_ - framework para criação de aplicações web em python
+    * Jinja2 - framework para renderização de templates para aplicações web
+    * Flask-Testing - framework para teste de aplicações Flask
+    * Flask-SQLAlchemy_ - interface entre o framework Flask e o SQLAlchemy para utilização de esquemas objeto-relacionais em python
+    * Flask-Migrate_ - extensão que manipula migrações de banco de dados utilizando SQLALchemy e Flask
+    * Psycopg2_ - biblioteca para consultas a banco de dados usando python
+    * Celery_ - enfileirados de tasks (sentido mais genérico) usado em aplicações distribuídas
+    * Python >= 2.7, <3.0 - linguagem usada para desenvolver o app-tabletranscriber
+    * PIP - instalador de bibliotecas para python
+    * SQLALchemy-0.9_: kit de ferramentas Python SQL e Object Relational Mapper que dá aos desenvolvedores de aplicativos o poder e a flexibilidade do SQL.
+    * Alembic_ - ferramenta para criação de scripts de migração de banco de dados em python, que utiliza SQLAlchemy-0.9_
     * PyBossa_ - Framework para criar aplicações de crowdsource
+    
+Instalados junto com o PyBossa:
+    
+    * PostgreeSQL 9.1 - sgbd utilizado pelo pybossa e pelo app-tabletranscriber
+    * Supervisor 3.0 - sistema cliente-servidor que permite ao usuário controlar processos em sistemas unix-like
+    * Apache 2.2 - servidor utilizado para rodar o pybossa
+    * Apache Mod_WSGI - plugin do apache para interface universal para aplicações web em python
+    * Virtualenv - ambiente virtual para rodar aplicações python com libs com diferentes versões simultaneamente na mesma máquina
+    * Redis - silo de dados não estruturados (key-value) para gerenciamento e utilização de cache no pybossa
+    * RabbitMQ - é um broker de mensagens. Ele dá a seus aplicativos uma plataforma comum para enviar e receber mensagens, e às mensagens um lugar seguro para viver até que sejam entregues
 
-    .. _PyBossa: http://github.com/pybossa/pybossa
+Recomendável:
+    * PhpPgAdmin_ - interface web para gerenciamento de banco de dados
+    
+.. _PhpPgAdmin: http://phppgadmin.sourceforge.net/doku.php
+.. _Flask-0.9: http://flask.pocoo.org/docs/
+.. _Flask-SQLAlchemy: http://pythonhosted.org/Flask-SQLAlchemy/
+.. _Flask-Migrate: http://flask-migrate.readthedocs.org/en/latest/
+.. _Psycopg2: http://initd.org/psycopg/docs/
+.. _Alembic: http://alembic.readthedocs.org/en/latest/tutorial.html
+.. _SQLAlchemy-0.9: http://docs.sqlalchemy.org/en/rel_0_9/
 
 .. note::
 
@@ -32,6 +70,7 @@ Pré-requisitos:
 
 
     .. _PyBossa: http://github.com/pybossa/pybossa
+
 
 Preparando o ambiente
 =====================
@@ -76,11 +115,11 @@ Criando o vhost no RabbitMQ::
 
 Criando um usuário RabbitMQ::
     
-    $ sudo rabbitmqctl add_user myuser mypassword
+    $ sudo rabbitmqctl add_user mbuser mbuser
 
 Adicionando permissões de usuário para o host criado::
     
-    $ sudo rabbitmqctl set_permissions -p myvhost myuser ".*" ".*" ".*"
+    $ sudo rabbitmqctl set_permissions -p myvhost mbuser ".*" ".*" ".*"
 
 
 Por fim, inicialize o broker e guarde o usuário e senha criados::
@@ -92,8 +131,8 @@ Por fim, inicialize o broker e guarde o usuário e senha criados::
 .. _RabbitMQ: http://www.rabbitmq.com/
 
 
-Configurando o BD do Memória Brasil
-===================================
+Configurando o BD do Memória Estatística do Brasil
+==================================================
 
 Agora vamos criar a base de dados para a nossa aplicação.
 Para alterar as configurações do SGBD execute::
@@ -119,9 +158,12 @@ Pronto, o BD foi criado, agora saia do usuário postgres::
     
     $ exit
 
-Agora com o BD criado e estando com o ambiente virtual ativo, execute o script que criará as tabelas necessárias::
+Agora com o BD criado e estando com o ambiente virtual ativo e estando no folder app-tabletranscriber:
 
-    $ python create_db.py
+    $ python app_tt/core.py mbdb upgrade
+
+Note que com esse comando o esquema estará criado automaticamente, ele funciona basicamente em cima de uma interface
+própria do Flask com o gerenciador de versões de esquemas Alembic.
 
 
 Instalando o Memória Brasil
@@ -151,10 +193,11 @@ Edite esse arquivo de configurações inserindo as informações necessárias
 obtidas nos passos anteriores.
 
 
-Celery como Daemon
-==================
-Para que o celery funcione como um Daemon, utilizamos o `supervisor`_ que
-é software em python que permite monitorar e controlar processos unix.
+Celery e Redis-Sentinel como Daemons
+====================================
+Para que o celery e o redis sentinel (para o PyBossa) funcione como um daemons, 
+utilizamos o `supervisor`_ que é software em python que permite monitorar e 
+controlar processos unix.
 
 Para instalar o supervisor execute o seguinte::
 
@@ -176,10 +219,18 @@ substitua <env-dir> pelo caminho do diretório do virtualenv criado::
     autorestart=true
     startsecs=10
     stopwaitsecs=600
+    
+    [program:redis]                                                               
+    command=<path to pybossa>/contrib/redis/redis-server <path to pybossa>/contrib/redis/sentinel.conf --sentinel               
+    autorestart=true                                                              
+    user=guilhermeg                                                               
+    stdout_logfile=<path to pybossa>/log/redis/stdout.log         
+    stderr_logfile=<path to pybossa>/log/redis/stderr.log
 
 Reinicie o supervisor::
 
-    sudo /etc/init.d/supervisor restart
+    sudo /etc/init.d/supervisor stop
+    sudo /etc/init.d/supervisor start
 
 
 .. _supervisor: http://supervisord.org
@@ -210,15 +261,17 @@ Por fim recarregue o apache para que as configurações sejam iniciadas::
     
     sudo service apache2 reload
 
-.. 
-    instalação sem o pybossa ###############
-    Instalando o Git
-    ================
+Instalando e configurando o PhpPgAdmin
+======================================
 
-    O git_ é um sistema de controle de versão distribuído e gerenciamento de código.
+Para instalar o phppgadmin, faça:
+   sudo apt-get install phppgadmin
 
-    .. _git: http://git-scm.com/
 
-     Para instalá-lo basta executar o comando::
+..note::
 
-    sudo apt-get install git
+   Para permitir o login com o usuário padrão do PostgresSQL (usuário postgres)
+   na interface web, modifique a variável $conf['extra-login-security'] para false
+   no arquivo /etc/phppgadmin/config.ini.php.
+
+
