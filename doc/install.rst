@@ -27,6 +27,7 @@ Pré-requisitos (instalados via pip):
     * PIP - instalador de bibliotecas para python
     * SQLALchemy-0.9_: kit de ferramentas Python SQL e Object Relational Mapper que dá aos desenvolvedores de aplicativos o poder e a flexibilidade do SQL.
     * Alembic_ - ferramenta para criação de scripts de migração de banco de dados em python, que utiliza SQLAlchemy-0.9_
+    * PyLucene_ - wrapper para python da máquina de busca feita em java da apache.org (Lucene_) utilizada na indexação e busca de resultados do app-tabletranscriber
     * PyBossa_ - Framework para criar aplicações de crowdsource
     
 Instalados junto com o PyBossa:
@@ -49,6 +50,8 @@ Recomendável:
 .. _Psycopg2: http://initd.org/psycopg/docs/
 .. _Alembic: http://alembic.readthedocs.org/en/latest/tutorial.html
 .. _SQLAlchemy-0.9: http://docs.sqlalchemy.org/en/rel_0_9/
+.. _PyLucene: http://lucene.apache.org/pylucene/
+.. _Lucene: http://lucene.apache.org/core/4_8_1/index.html
 
 .. note::
 
