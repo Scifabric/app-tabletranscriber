@@ -20,7 +20,7 @@ class Ticker(object):
 
     def run(self):
         while self.tick:
-            sys.stdout.write('.')
+            sys.stdout.write(' ... ')
             sys.stdout.flush()
             time.sleep(1.0)
 
@@ -47,13 +47,20 @@ class PyLucene:
         self.store.close()
 
     def index_doc(self, doc_dict):
+        """
+          Index a doc to pylucene
+          
+          obs.: docid is a string not an integer
+        """
+        
         doc = Document()
-
-        doc.add(Field("general_info", doc_dict["general_info"], TextField.TYPE_STORED))
-        doc.add(Field("subject", doc_dict["subject"], TextField.TYPE_STORED))
-        doc.add(Field("source", doc_dict["source"], TextField.TYPE_STORED))
-        doc.add(Field("initial_date", doc_dict["initial_date"], TextField.TYPE_STORED))
-        doc.add(Field("final_date", doc_dict["final_date"], TextField.TYPE_STORED))
+        
+        doc.add(Field("doc_id", doc_dict["doc_id"], TextField.TYPE_STORED))
+        doc.add(Field("general_info", doc_dict["general_info"], TextField.TYPE_NOT_STORED))
+        doc.add(Field("subject", doc_dict["subject"], TextField.TYPE_NOT_STORED))
+        doc.add(Field("source", doc_dict["source"], TextField.TYPE_NOT_STORED))
+        doc.add(Field("initial_date", doc_dict["initial_date"], TextField.TYPE_NOT_STORED))
+        doc.add(Field("final_date", doc_dict["final_date"], TextField.TYPE_NOT_STORED))
         
         body_text = doc_dict["content"]
         body_reader = StringReader(body_text)
@@ -71,13 +78,20 @@ class PyLucene:
         print 'done'
         
     def search_docs(self, value, field="general_info"):
-        try:
-            searcher = IndexSearcher(DirectoryReader.open(self.store))
-            query = QueryParser(Version.LUCENE_CURRENT, field,
-                                self.analyzer).parse(value)
-            topDocs = searcher.search(query, 50)
-            return topDocs
-        finally:
-            self.close_store()
+        MAX_RESULTS = 1000
+        searcher = IndexSearcher(DirectoryReader.open(self.store))
+        query = QueryParser(Version.LUCENE_CURRENT, field,
+                            self.analyzer).parse(value)
+        topDocs = searcher.search(query, MAX_RESULTS)
+        
+        return [searcher.doc(hit.doc) for hit in topDocs.scoreDocs]
+        
+    
+    #def get_doc(self, hit_doc):
+    #    searcher = IndexSearcher(DirectoryReader.open(self.store))
+    #    doc = searcher.doc(hit_doc)
+    #    return doc
+    
+    
     
     

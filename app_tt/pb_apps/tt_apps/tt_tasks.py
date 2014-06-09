@@ -513,7 +513,8 @@ class TTTask3(pb_task):
         try:
             linesAndColumnsMap = self.__loadAnswers()
             
-            if self.task.info['hasZoom'] and len(linesAndColumnsMap) == 0:  # didnt found a valid task group
+            # didnt found a valid task group
+            if self.task.info['hasZoom'] and linesAndColumnsMap == None:  
                 return False
             
             cells = cells_util.create_cells(linesAndColumnsMap["linhas"], 
@@ -577,21 +578,20 @@ class TTTask3(pb_task):
         if(self.task.info['hasZoom']):
             
             similarTasks = self.__searchSimilarsTasks()
-            groupedAnswers = None
                 
             if(not self.__validateTaskGroup(similarTasks)):
                 logger.info("** Invalid task group detected **")
-                return {}
+                return
             else:
                 groupedAnswers = self.__joinTaskGroupAnswers(similarTasks)
             
-            answer_json = {}
-            answer_json['linhas'] = groupedAnswers['lines']
-            answer_json['colunas'] = groupedAnswers['columns']
-            answer_json['maxX'] = groupedAnswers['maxX']
-            answer_json['maxY'] = groupedAnswers['maxY']
-            
-            return answer_json
+                answer_json = {}
+                answer_json['linhas'] = groupedAnswers['lines']
+                answer_json['colunas'] = groupedAnswers['columns']
+                answer_json['maxX'] = groupedAnswers['maxX']
+                answer_json['maxY'] = groupedAnswers['maxY']
+                
+                return answer_json
         else:
             task_runs = self.get_task_runs()
             
@@ -631,12 +631,20 @@ class TTTask3(pb_task):
           are completed.
         """
         
-        NUMBER_OF_SIMILAR_TASKS = 3
+        #NUMBER_OF_SIMILAR_TASKS = 3
         
         for t in similarTasks:
             if(not t.state == "completed"):
+                #m = "invalid task (not completed): " + str(t)
+                logger.warn(m)
                 return False
-        return self.task.state == "completed" and len(similarTasks) == NUMBER_OF_SIMILAR_TASKS
+        
+        #m1 = "similar tasks: " + str(similarTasks)
+        #m2 = "self.task.state: " + str(self.task.state)
+        #logger.warn(m1)
+        #logger.warn(m2)
+        
+        return True #self.task.state == "completed" and len(similarTasks) == NUMBER_OF_SIMILAR_TASKS
     
     
     def __joinTaskGroupAnswers(self, similarTasks):
@@ -774,11 +782,12 @@ class TTTask3(pb_task):
         except Exception as e:
             raise e
     
-    """
-     Load last answer in json format of the last task_run of
-     each task in similarTasks.
-    """
     def __loadSimilarsTaskRunsAnswers(self, similarTasks):
+        """
+         Load last answer in json format of the last task_run of
+         each task in similarTasks.
+        """
+        
         tasksRunsAnswers = []
         for t in similarTasks: 
             task_runs = json.loads(requests.get(
