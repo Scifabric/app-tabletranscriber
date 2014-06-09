@@ -1,7 +1,7 @@
 from unittest import TestCase
 from app_tt.application import app as application
 from app_tt.core import pbclient
-from tests.app_tt.base import delete_app, create_tt_apps, create_and_close_t1
+from tests.app_tt.base import delete_app, delete_book, create_tt_apps, create_and_close_t1
 import unittest
 import sys
 import time
@@ -14,8 +14,9 @@ class test_api(TestCase):
         if pybossa_api.data.find('404') != -1:
             raise AssertionError("Pybossa's not working")
         
+    def tearDown(self):
+        delete_book("rpparaiba1918")
         delete_app("rpparaiba1918")
-        
         
     def test_01_init(self):
         # Creating new tt applications
@@ -57,7 +58,7 @@ class test_api(TestCase):
     def test_04_init_and_close(self):
         # Creating new tt applications
         create_and_close_t1(self.app, "rpparaiba1918")
-        time.sleep(20)
+        time.sleep(40)
         pb_app = pbclient.find_app(short_name="rpparaiba1918_tt1")
         tasks_t1 = pbclient.get_tasks(pb_app[0].id, sys.maxint)
         

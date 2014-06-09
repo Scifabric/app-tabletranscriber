@@ -6,7 +6,7 @@ from app_tt.meb_exceptions.meb_exception import Archive_book_data_exception
 import unittest
 
 
-class MebUtil_TestCase(unittest.TestCase):
+class meb_util_test(unittest.TestCase):
     
     # testing functions
 
@@ -53,6 +53,10 @@ class MebUtil_TestCase(unittest.TestCase):
         except Exception as e:
             print e
             assert False
+
+def suite():
+    suite = unittest.TestLoader().loadTestsFromTestCase(meb_util_test)
+    return suite
 
 if __name__ == '__main__':
     unittest.main()

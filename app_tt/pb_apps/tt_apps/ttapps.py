@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
-from app_tt.core import app as flask_app
+from app_tt.core import app as flask_app, logger
 import app_tt.pb_apps.apps as app
-import urllib2
-import os
 import app_tt.meb_util as meb_util
 from app_tt.meb_exceptions.meb_exception import Meb_ttapps_exception
-from app_tt.core import logger
+import app_tt.data_mngr.data_manager as data_mngr 
+
+import urllib2
+import os
+
 
 class Apptt_select(app.Apptt):
     """
@@ -27,6 +29,9 @@ class Apptt_select(app.Apptt):
             title = keyargs['title'] + " "
         else:
             title = ""
+        
+        if keyargs.has_key("book_info"):
+            data_mngr.record_book(keyargs["book_info"])
         
         app_name = title + unicode("Seleção", "utf-8")
 
