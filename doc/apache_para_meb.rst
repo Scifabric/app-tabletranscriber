@@ -54,7 +54,7 @@ forma::
         </Directory>
     </VirtualHost>
 
-Em seguida copie o arquivo contrib/apache2/mb-site para a pasta::
+Em seguida, copie o arquivo contrib/apache2/mb-site para a pasta::
 
     /etc/apache2/sites-available/
 
@@ -70,12 +70,8 @@ Reinicie o Apache para que as configurações tenham efeito::
 Configurando o Apache para servir duas aplicações wsgi
 ======================================================
 
-.. note:: 
-    
-    Caso seja necessário ter duas aplicacões wsgi rodando no mesmo
-    Virtual Host, como por exemplo o PyBossa e o Memória Brasil.
-
-Nesse caso o que muda é apenas a configuração do virtual host no apache. Abaixo um exemplo desssa configuração para o PyBossa + Memória Brasil::
+Nesse caso o que muda é apenas a configuração do virtual host no apache. 
+Abaixo um exemplo desssa configuração para o PyBossa + Memória Brasil::
 
     <VirtualHost *:80>
         ServerName example.com

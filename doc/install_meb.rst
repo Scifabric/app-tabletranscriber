@@ -42,6 +42,7 @@ Instalados junto com o PyBossa:
 
 Recomendável:
     * PhpPgAdmin_ - interface web para gerenciamento de banco de dados
+    * Sphinx_ - biblioteca para criação de documentação, como esta
     
 .. _PhpPgAdmin: http://phppgadmin.sourceforge.net/doku.php
 .. _Flask-0.9: http://flask.pocoo.org/docs/
@@ -52,6 +53,7 @@ Recomendável:
 .. _SQLAlchemy-0.9: http://docs.sqlalchemy.org/en/rel_0_9/
 .. _PyLucene: http://lucene.apache.org/pylucene/
 .. _Lucene: http://lucene.apache.org/core/4_8_1/index.html
+.. _Sphinx: http://sphinx-doc.org/
 
 .. note::
 
@@ -273,4 +275,9 @@ Para instalar o phppgadmin, faça::
    na interface web, modifique a variável $conf['extra-login-security'] para false
    no arquivo /etc/phppgadmin/config.ini.php.
 
+Instalando o Sphinx
+===================
 
+Para instalar o Sphincx, faça::
+
+	sudo apt-get install python-sphinx
