@@ -42,7 +42,7 @@
 					<li><strong>Volume</strong>: {{ book.info.volume }}</li>
 					<li><strong>Publicado por</strong>: {{ book.info.publisher }}</li>
 					<li><strong>Acervo</strong>: {{ book.info.contributor }}</li>
-					<li><strong>Progresso: </strong>
+					<li><strong>Progresso</strong>: 
 					<iframe align='center' height='20px' frameborder='0' scrolling='no'
 							src="{{url_for('collaborate.progress', bookid=book.info.bookid)}}"></iframe></li>
 				</ul>
