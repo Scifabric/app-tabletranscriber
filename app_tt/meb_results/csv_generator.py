@@ -32,7 +32,7 @@ class CSV_Generator:
             
             f.write("Título: " + metadata_dict["title"] + "\n")
             f.write("Subtítulo: " + metadata_dict["subtitle"] + "\n")
-            f.write("Assunto: " + subject_table_map.get_subject_from_code(metadata_dict["subject"]) + "\n")
+            f.write("Assunto: " + subject_table_map.get_subject(metadata_dict["subject"]) + "\n")
             f.write("Fontes: " + metadata_dict["source"] + "\n")
             f.write("Título do Livro: " + metadata_dict["book_title"] + "\n")
             f.write("Página do Livro: " + str(metadata_dict["page_number"]) + "\n")
