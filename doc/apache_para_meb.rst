@@ -96,5 +96,16 @@ Abaixo um exemplo desssa configuração para o PyBossa + Memória Brasil::
             Order deny,allow
             Allow from all
         </Directory>
-
+        
     </VirtualHost>
+    
+
+Configurando o MEB para funcionar com o Facebook
+=================================================================
+
+Para fazer o MEB funcionar como uma aplicação no Facebook basta criar um
+alias no apache para atender a URL indicada no facebook no momento da
+criação da app no facebook::
+
+	Alias /memoriadobrasil <path para app_tt/pb_apps/tt_apps/static/fb-templates>
+

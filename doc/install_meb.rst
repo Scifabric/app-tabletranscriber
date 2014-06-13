@@ -43,7 +43,8 @@ Instalados junto com o PyBossa:
 Recomendável:
     * PhpPgAdmin_ - interface web para gerenciamento de banco de dados
     * Sphinx_ - biblioteca para criação de documentação, como esta
-    
+
+.. _archive.org: https://archive.org    
 .. _PhpPgAdmin: http://phppgadmin.sourceforge.net/doku.php
 .. _Flask-0.9: http://flask.pocoo.org/docs/
 .. _Flask-SQLAlchemy: http://pythonhosted.org/Flask-SQLAlchemy/
@@ -98,6 +99,7 @@ de instalação do Pybossa`_ e realize a sua instalação.
 
 Configurando o Celery
 =====================
+
 O celery_ é um enfileirador de tarefas baseado em troca de mensagens que utilizamos para criar
 o workflow desejado entre as várias aplicações crowdsource que rodam no PyBossa.
 
@@ -112,15 +114,15 @@ Agora para usar o celery precisamos criar um host virtual no rabbitMQ e um usuá
 
 Criando o vhost no RabbitMQ::
     
-    $ sudo rabbitmqctl add_vhost myvhost
+    $ sudo rabbitmqctl add_vhost <host>
 
 Criando um usuário RabbitMQ::
     
-    $ sudo rabbitmqctl add_user mbuser mbuser
+    $ sudo rabbitmqctl add_user <user> <password>
 
 Adicionando permissões de usuário para o host criado::
     
-    $ sudo rabbitmqctl set_permissions -p myvhost mbuser ".*" ".*" ".*"
+    $ sudo rabbitmqctl set_permissions -p <host> <user> ".*" ".*" ".*"
 
 
 Por fim, inicialize o broker e guarde o usuário e senha criados::
@@ -142,7 +144,7 @@ Para alterar as configurações do SGBD execute::
 
 Agora precisamos criar um usuário que utilizará o BD da aplicação::
 
-    $ createuser -P mbuser
+    $ createuser -P <user>
 
 Após executar o comando e digitar a senha responda as perguntas que
 apareceração da seguinte forma:
@@ -153,7 +155,7 @@ apareceração da seguinte forma:
 
 Com o usuário criado, agora é só criar o BD::
 
-    $ createdb mbdb -O mbuser
+    $ createdb mbdb -O <user>
 
 Pronto, o BD foi criado, agora saia do usuário postgres::
     
@@ -196,6 +198,7 @@ obtidas nos passos anteriores.
 
 Celery e Redis-Sentinel como Daemons
 ====================================
+
 Para que o celery e o redis sentinel (para o PyBossa) funcione como um daemons, 
 utilizamos o `supervisor`_ que é software em python que permite monitorar e 
 controlar processos unix.
@@ -222,11 +225,18 @@ substitua <env-dir> pelo caminho do diretório do virtualenv criado::
     stopwaitsecs=600
     
     [program:redis]                                                               
-    command=<path to pybossa>/contrib/redis/redis-server <path to pybossa>/contrib/redis/sentinel.conf --sentinel               
+    command=redis-server <path to pybossa>/contrib/redis/sentinel.conf --sentinel               
+    autostart=true
     autorestart=true                                                              
     user=<user>                                                               
     stdout_logfile=<path to pybossa>/log/redis/stdout.log         
     stderr_logfile=<path to pybossa>/log/redis/stderr.log
+
+
+.. note::
+	
+	Note que os arquivos stdout.log e stderr.log devem existir e root
+	deve ser capaz de escrever neles.
 
 Reinicie o supervisor::
 
@@ -235,6 +245,7 @@ Reinicie o supervisor::
 
 
 .. _supervisor: http://supervisord.org
+
 
 Instalando e configurando o Apache2
 ===================================
@@ -262,6 +273,7 @@ Por fim recarregue o apache para que as configurações sejam iniciadas::
     
     sudo service apache2 reload
 
+
 Instalando e configurando o PhpPgAdmin
 ======================================
 
@@ -274,6 +286,7 @@ Para instalar o phppgadmin, faça::
    Para permitir o login com o usuário padrão do PostgresSQL (usuário postgres)
    na interface web, modifique a variável $conf['extra-login-security'] para false
    no arquivo /etc/phppgadmin/config.ini.php.
+
 
 Instalando o Sphinx
 ===================
