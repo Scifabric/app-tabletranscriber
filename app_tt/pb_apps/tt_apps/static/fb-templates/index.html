@@ -55,9 +55,9 @@ footer .span2 {
 </head>
 <body>
 	<header>
-	<div class="navbar navbar-fixed-top">
-		<div class="navbar-inner">
-			<div class="container" style="width: 840px;">
+	<div class="navbar navbar-fixed-top" style="background: #FFF;">
+		<div class="navbar-inner" style="float: left; margin-left: 25px;">
+			<div class="container">
 				</a> <a class="brand" href="http://www.socientize.eu/" target="_blank"><img
 					src="img/logo_societic.png" alt="Socientize"></a>
 				<div class="nav-collapse collapse">
@@ -68,7 +68,7 @@ footer .span2 {
 				</div>
 				<div style="float: left; margin-top: 25px; margin-left: 5px;">
 					<a
-						href="javascript:openShareWindow('http://twitter.com/share?text=Contribute%20with%20our%20project!&url=https://apps.facebook.com/memoriadobrasil/');"
+						href="javascript:openShareWindow('https://twitter.com/share?text=Contribute%20with%20our%20project!&url=https://apps.facebook.com/memoriadobrasil/');"
 						data-toggle="tooltip" title="Share the project on Twitter"> <img
 						src="img/twitter.png"
 						onmouseover="javascript:ChangeImage(this,'img/twitterHover.png');"
@@ -219,7 +219,10 @@ footer .span2 {
 			$("#fb-loading-container").show();
 			$(targetEl).load(htmlUrl, function(){
 				$("#fb-loading-container").hide();
-				callback();
+				
+				if (typeof callback != "undefined") {
+					callback();	
+				}
 			});
 		}
 		

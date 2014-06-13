@@ -1,5 +1,8 @@
 var default_dict = { 
     'question': "Is there a table in this page?",
+    'question-warning': "<i>*Don't worry if you think you’ve made a mistake, just keep contributing! Each task is executed by many volunteers – you are not alone!</i>",
+    'book-info': "You're helping the transcription of the book:",
+    'task-type': 'Selection task',
     'button_yes': " Yes",
     'button_no':  " No",
     'button_ntk': " I don't know",
@@ -22,6 +25,9 @@ var en_US_dict = default_dict;
 
 var pt_dict= {
 	    'question': "Existe uma tabela nessa página?",
+	    'question-warning': "<i>*Não se preocupe se você acha que fez algo errado, continue contribuindo! Cada tarefa é executada por diversos voluntários – você não está sozinho!</i>",
+	    'book-info': 'Você está ajudando a transcrever o livro:',
+	    'task-type': 'Tarefa de seleção',
 	    'button_yes': " Sim",
 	    'button_no':  " Não",
 	    'button_ntk': " Não sei",
@@ -36,7 +42,7 @@ var pt_dict= {
 	    'err_msg': "Algo ocorreu errado, por favor contate o administrador do site.",
         'workflowtask' : "Existe um novo tipo de tarefa disponível. Clique para ir.",
         'progress-from' : "Você fez ",
-        'progress-to' : "tarefas de ",
+        'progress-to' : "tarefas de um total de ",
         'completed' : 'finalizados!'
 };
 

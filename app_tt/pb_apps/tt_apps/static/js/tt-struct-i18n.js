@@ -1,6 +1,9 @@
 var en_US_dict = { 
-    'question': "Please. Fix the lines and columns from the table.",
-    'question_with_focus': "Please. Fix the lines and columns from the focused area in table.",
+    'question': "Place the lines and columns, in red, on the table below. If the placement is right, you only need to save.",
+    'question_with_focus': "Place the lines and columns, in red, from the focused area on the table below. If their position is right, you only need to save",
+    'question-warning': "<i>*Don't worry if you think you’ve made a mistake, just keep contributing! Each task is executed by many volunteers – you are not alone!</i>",
+    'book-info': "You're helping the transcription of the book:",
+    'task-type': 'Structure drawing task',
     'button_finished': "Save fixes",
     'button_select': "Enable the tool to select segments",
     'button_area': "Enable the tool to select the segments from a area",
@@ -18,7 +21,7 @@ var en_US_dict = {
     'error': "Error! ",
     'err_msg': "Something went wrong, please contact the site administrators.",
     'workflowtask' : "There are other types of tasks available. Click to try it.",
-    'progress-from' : "You have completed: ",
+    'progress-from' : "You have completed ",
     'progress-to' : "tasks from",
     'task-instruction-p1' : "<strong> Basic Instructions </strong>",
     'task-instruction-use-tool' : "You can use the tool ",
@@ -36,7 +39,10 @@ var en_US_dict = {
 
 var pt_dict= {
     'question': "Posicione as linhas e colunas, em vermelho, da tabela abaixo. Se o posicionamento estiver adequado, basta salvar.",
-    'question_with_focus': "Por favor. Corrija as linhas e colunas da área em foco da tabela.",
+    'question_with_focus': "Posicione as linhas e colunas, em vermelho, da área em foco da tabela abaixo. Se o posicionamento estiver adequado, basta salvar.",
+    'question-warning': "<i>*Não se preocupe se você acha que fez algo errado, continue contribuindo! Cada tarefa é executada por diversos voluntários – você não está sozinho!</i>",
+    'book-info': 'Você está ajudando a transcrever o livro:',
+    'task-type': 'Tarefa de desenho da estrutura',
     'button_finished': "Salvar correções",
     'button_select': "Habilita a ferramenta de seleção de segmentos",
     'button_area': "Habilita a ferramenta de seleção em área",
@@ -55,7 +61,7 @@ var pt_dict= {
     'err_msg': "Algo ocorreu errado, por favor contate o administrador do site.",
     'workflowtask' : "Há outros tipos de tarefas disponíveis. Clique para ir.",
     'progress-from' : "Você fez ",
-    'progress-to' : "tarefas de ",
+    'progress-to' : "tarefas de um total de",
     'task-instruction-p1' : "<strong> Instru&ccedil;&otilde;es b&aacute;sicas</strong>",
     'task-instruction-use-tool' : "Use a ferramenta ",
     'task-instruction-p2' : " para selecionar e ajustar a posição de um segmento;",
@@ -77,6 +83,5 @@ switch(language){
 	case 'pt-BR': var dict = pt_dict; break;
 	default: var dict = en_US_dict; 
 }
-
 
 $.i18n.setDictionary(dict);
