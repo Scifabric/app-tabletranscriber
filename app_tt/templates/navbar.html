@@ -4,11 +4,12 @@
 }
 </style>
 
-<div class="navbar navbar-fixed-top">
-	<div class="navbar-inner" style="background: #FFF">
+<div class="navbar navbar-fixed-top" style="background: #FFF;">
+	<div class="navbar-inner" style="float: left; margin-left: 25px;">
 		<div class="container" style="height: 83px; width: 840px;">
 			<a class="brand" href="/pybossa/" target="_blank"><img
-				src="{{ url_for('static', filename='images/logo_societic.png') }}" alt="PyBossa"></a>
+				src="{{ url_for('static', filename='images/logo_societic.png') }}"
+				alt="PyBossa"></a>
 			<div class="nav-collapse collapse">
 				<ul id="nav-buttons" class="nav">
 					<li><a href="/pybossa/account/" target="_blank">Community</a></li>
@@ -16,6 +17,37 @@
 					<li><a href="/pybossa/about" target="_blank">About</a></li>
 				</ul>
 			</div>
+			<div style="float: left; margin-top: 25px; margin-left: 5px;">
+				<a
+					href="javascript:openShareWindow('https://twitter.com/share?text=Contribute%20with%20our%20project!&url=https://alfa.pybossa.socientize.eu/mb');"
+					data-toggle="tooltip" title="Share the project on Twitter"> <img
+					src="{{ url_for('static', filename='images/twitter.png') }}"
+					onmouseover="javascript:ChangeImage(this,'{{ url_for('static', filename='images/twitterHover.png') }}');"
+					onmouseout="javascript:ChangeImage(this,'{{ url_for('static', filename='images/twitter.png') }}');"
+					style="margin-right: 10px;" /></a> <a
+					href="javascript:openShareWindow('https://www.facebook.com/sharer.php?u=https://alfa.pybossa.socientize.eu/mb')"
+					data-toggle="tooltip" title="Share the project on Facebook"> <img
+					src="{{ url_for('static', filename='images/face.png') }}"
+					onmouseover="javascript:ChangeImage(this,'{{ url_for('static', filename='images/faceHover.png') }}');"
+					onmouseout="javascript:ChangeImage(this,'{{ url_for('static', filename='images/face.png') }}');"
+					style="margin-right: 10px;" /></a> <a
+					href="javascript:openShareWindow('https://plus.google.com/share?url=https://alfa.pybossa.socientize.eu/mb');"
+					data-toggle="tooltip" title="Share the project on Google+"> <img
+					src="{{ url_for('static', filename='images/google.png') }}"
+					onmouseover="javascript:ChangeImage(this,'{{ url_for('static', filename='images/googleHover.png') }}');"
+					onmouseout="javascript:ChangeImage(this,'{{ url_for('static', filename='images/google.png') }}');"
+					style="margin-right: 10px;" /></a>
+			</div>
 		</div>
 	</div>
 </div>
+<script>
+function ChangeImage(img, url) {
+	console.log(url)
+	img.src = url;
+}
+
+function openShareWindow(url) {
+	window.open(url, "_blank", "toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, copyhistory=yes, width=500, height=300");
+}
+</script>

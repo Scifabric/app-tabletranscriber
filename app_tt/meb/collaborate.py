@@ -23,7 +23,7 @@ def index(page):
     book_stack = []
     book_data = []
     
-    valid_books = ['estatisticasdodi1950depa', 'mensagemdogovern1912gove','caracterizaoeten2001bras', 'MemmoriaParaiba1841A1847', 'anuario1916pb']
+    valid_books = ['estatisticasdodi1950depa', 'mensagemdogovern1912gove','caracterizaoeten2001bras', 'MemmoriaParaiba1841A1847', 'anuario1916pb', 'sinopse1937pb', 'rpparaiba1918']
     
     for app in apps:
         book_id = app["short_name"][:-4]
@@ -31,7 +31,7 @@ def index(page):
         if(book_id not in book_stack and app["hidden"] == 0):
             try:
                 app["info"]["title"]
-                app["info"]["newtask"] = pybossa_server + '/app/' + book_id + '_tt1/newtask'
+                app["info"]["newtask"] = get_new_task_link(book_id)
                 book_stack.append(book_id)
                 
                 if app["short_name"][:-4] in valid_books:
@@ -57,23 +57,40 @@ def index(page):
             books=books,
             pagination=pagination)
 
+def get_new_task_link(bookid):
+    app_with_available_task = 'tt1'
+    tt_suffix = ['tt1', 'tt2', 'tt3', 'tt4']
+    tasks_progress = get_tasks_progress(bookid)
+    for suffix in tt_suffix:
+        if (tasks_progress[suffix]['total'] > tasks_progress[suffix]['completed']):
+            app_with_available_task = suffix
+            break
+    return pybossa_server + '/app/' + bookid + '_' + app_with_available_task + '/newtask'
+
+
+def get_tasks_progress(bookid):
+    tt_suffix = ['tt1', 'tt2', 'tt3', 'tt4']
+    result = dict(tt1=dict(total=0, completed=0), tt2=dict(total=0, completed=0), tt3=dict(total=0, completed=0), tt4=dict(total=0, completed=0))
+    
+    for suffix in tt_suffix:
+        app = pbclient.find_app(short_name=str(bookid) + "_" + suffix)[0]
+        tasks = pbclient.get_tasks(app.id, limit=max_limit)
+        result[suffix]['total'] = len(tasks)
+        
+        for task in tasks:
+            if task.state == 'completed':
+                result[suffix]['completed'] += 1
+    return result
 
 @blueprint.route('/progress/<string(maxlength=255):bookid>')
 def progress(bookid):
-
-    tt_suffix = ['_tt1', '_tt2', '_tt3', '_tt4']
+    tasks_progress = get_tasks_progress(bookid)
+    tt_suffix = ['tt1', 'tt2', 'tt3', 'tt4']
     overall = 0
     overall_completed = 0
     for suffix in tt_suffix:
-        completed = 0
-        app = pbclient.find_app(short_name=str(bookid) + suffix)[0]
-        tasks = pbclient.get_tasks(app.id, limit=max_limit)
-        overall += len(tasks)
-        for task in tasks:
-            if task.state == 'completed':
-                completed += 1
-        
-        overall_completed += completed
+        overall += tasks_progress[suffix]['total']       
+        overall_completed += tasks_progress[suffix]['completed']
 
     try:
         progress = (overall_completed/float(overall)) * 100

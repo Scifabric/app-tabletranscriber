@@ -86,7 +86,9 @@ def create_apps(book_id):
         
         if len(app_tt_select.get_tasks()) == 0:
             for img in imgs:
-                app_tt_select.add_task(img)
+                task = app_tt_select.add_task(img)
+                workflow_transaction_info = dict(task_id_1=task.id, task_id_2=None, task_id_3=None, task_id_4=None)
+                data_mngr.record_workflow_transaction(workflow_transaction_info)
 
         return True
 

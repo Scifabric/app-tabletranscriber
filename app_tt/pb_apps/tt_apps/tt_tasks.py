@@ -36,24 +36,33 @@ class TTTask1(pb_task):
         super(TTTask1, self).__init__(task_id, app_short_name)
 
     def add_next_task(self):
-        if (self.__checkIfNextTaskWasCreated()):
-            logger.warn(Meb_exception_tt1(3, self.task.id))
-            raise Meb_exception_tt1(3, self.task.id)
-        
         try:
             # Verify the answer of the question to create a new task
-            if(self.task.info.has_key("answer") and self.task.info["answer"] == "Yes"):
+            if (self.task.info.has_key("answer") and self.task.info["answer"] == "Yes"):
+                
+                # record a page on mbdb
+                bookId = self.get_book_id()
+                archurl = self.task.info["url_m"]
+                pg = self.task.info["page"]
+                data_manager.record_page(dict(bookid=bookId, archiveURL=archurl, page_num=pg))
+        
+                if (self.__checkIfNextTaskWasCreated()):
+                    logger.warn(Meb_exception_tt1(3, self.task.id))
+                    raise Meb_exception_tt1(3, self.task.id)    
+                
                 info = dict(link=self.task.info["url_m"],
                             page=self.task.info["page"])
                 tt2_app_short_name = self.app_short_name[:-1] + "2"
                 tt2_app = ttapps.Apptt_meta(short_name=tt2_app_short_name)
-    
-                tt2_app.add_task(info)
+                
+                tt2_task = tt2_app.add_task(info)
+                
+                workflow_transaction_info = dict(task_id_1=self.task.id, task_id_2=tt2_task.id, task_id_3=None, task_id_4=None)
+                data_manager.update_workflow_transaction_t2(workflow_transaction_info)
                 
                 return True
             else:
                 raise Meb_exception_tt1(1, self.task.id)
-
         except Meb_exception_tt1 as e:
             logger.error(e)
             return False
@@ -80,13 +89,6 @@ class TTTask1(pb_task):
                     
                     # put the answer into task info
                     pbclient.update_task(self.task)                
-                    
-                    bookId = self.get_book_id()
-                    archurl = self.task.info["url_m"]
-                    pg = self.task.info["page"]
-                    
-                    data_manager.record_page(dict(bookid=bookId, archiveURL=archurl, page_num=pg))
-                    
                     return True
         
         except Exception:
@@ -117,20 +119,22 @@ class TTTask2(pb_task):
 
     def add_next_task(self):
 
-        if (self.__checkIfNextTaskWasCreated()):
-            logger.warn(Meb_exception_tt2(6, self.task.id))
-            raise Meb_exception_tt2(6, self.task.id)
-
         # Get the list of task_runs
         task_runs = self.get_task_runs()
         task_run = task_runs[-1]  # Get only the last answer
         
-        #answer = task_run["info"]
         answer = task_run.info
         answer_info_json = json.loads(answer)
         
-        if (answer != "0"): # don't has table in the page
+        if (answer != "0"): # page don't have table
+            
+            # record the page tables and its metadata on mbdb
+            self.__record_page_table_and_metadata(answer_info_json)
 
+            if (self.__checkIfNextTaskWasCreated()):
+                logger.warn(Meb_exception_tt2(6, self.task.id))
+                raise Meb_exception_tt2(6, self.task.id)
+            
             tt3_app_short_name = self.app_short_name[:-1] + "3"
             tt3_app = ttapps.Apptt_struct(short_name=tt3_app_short_name)
 
@@ -149,6 +153,7 @@ class TTTask2(pb_task):
                 
                 # get the lines recognitions
                 tables_coords = self.__splitFile(arch)
+                t3_tasks = []
                 
                 for tableId in range(len(tables_coords)):
                     self.__runAreaSelection(bookId, imgId, tableId, rotate)
@@ -159,16 +164,14 @@ class TTTask2(pb_task):
 
                     next_task_priority = priority_task_manager.get_priority(table_subject_code)
                     
-                    if(len(image_pieces) > 0):
+                    if (len(image_pieces) > 0):
                         for image_piece in image_pieces:
                             info = dict(hasZoom=True, zoom=image_piece,
                                         coords=tables_coords[tableId],
                                         table_id=tableId,
                                         page=imgId, img_url=self.__url_table(
                                         bookId, imgId, tableId))
-                            
-                            
-                            tt3_app.add_task(info, priority=next_task_priority)  # add task to tt3_backend
+                            t3_tasks.append(tt3_app.add_task(info, priority=next_task_priority))  # add task to tt3_backend
                             
                     else:
                         info = dict(hasZoom=False,
@@ -176,14 +179,52 @@ class TTTask2(pb_task):
                                     table_id=tableId,
                                     page=imgId, img_url=self.__url_table(
                                     bookId, imgId, tableId))
-                        tt3_app.add_task(info, priority=next_task_priority)
-                
+                        t3_tasks.append(tt3_app.add_task(info, priority=next_task_priority))
+                    
+                    workflow_transaction = data_manager.get_workflow_transaction_by_task_id_2(self.task.id)
+                    workflow_transaction_info = dict(task_id_1=workflow_transaction.task_id_1, task_id_2=workflow_transaction.task_id_2, task_id_3=workflow_transaction.task_id_3, task_id_4=workflow_transaction.task_id_4)
+                    
+                    for i in range(0, len(t3_tasks)):
+                        workflow_transaction_info['task_id_3'] = t3_tasks[i].id
+                        if i == 0:
+                            data_manager.update_workflow_transaction_t3(workflow_transaction_info)
+                        else:
+                            data_manager.record_workflow_transaction(workflow_transaction_info)
+                        
                 return True
                 
             except Meb_exception_tt2 as e:
                 raise e
             
         return False
+
+    def __record_page_table_and_metadata(self, answers):
+        # retrieve page (testar none)
+        book_id = self.get_book_id()
+        page_num = self.task.info["page"]
+        page = data_manager.get_page(book_id, page_num)
+        
+        if (page == None):
+            logger.warn("The page from the book " + book_id + " and page number " +  str(page_num) + " doesn't exist.")
+            return
+        
+        for i in range(0, len(answers)):
+            answer = answers[i]
+            page_table_dict = dict(bookid=book_id, pageid=page.id, local_url="/books/" + book_id + "/metadados/tabelasBaixa/image" + str(page_num) + "_" + str(i) + ".png", top_pos=answer['top'], left_pos=answer['left'], right_pos=(answer['left'] + answer['width']), bottom_pos=(answer['top'] + answer['height']))
+            data_manager.record_page_table(page_table_dict)
+            
+            # retrieve page table
+            page_table = data_manager.get_page_table_by_position(page.id, page_table_dict['top_pos'], page_table_dict['left_pos'], page_table_dict['right_pos'], page_table_dict['bottom_pos'])
+            
+            if (page_table == None):
+                logger.warn("The page table from the book " + book_id + " and page " +  str(page.id) + " doesn't exist.")
+                return
+            
+            metadata = answer['text']
+            subject_name = priority_task_manager.get_subject(metadata['assunto'])
+            
+            data_manager.record_metadata(dict(bookid=book_id, pageid=page.id, pagetableid=page_table.id, source=metadata['fontes'], title=metadata['titulo'], subtitle=metadata['subtitulo'], subject=(metadata['outros'] if subject_name == "Outros" else subject_name), initial_date=metadata['dataInicial'], final_date=metadata['dataFinal']))
+
 
     def __checkIfNextTaskWasCreated(self):
         page_num = self.task.info['page']
@@ -546,7 +587,10 @@ class TTTask3(pb_task):
             
             tt4_app_short_name = self.app_short_name[:-1] + "4"
             tt4_app = ttapps.Apptt_transcribe(short_name=tt4_app_short_name)
-            tt4_app.add_task(infoDict, priority=self.task.priority_0)
+            tt4_task = tt4_app.add_task(infoDict, priority=self.task.priority_0)
+            
+            workflow_transaction_info = dict(task_id_1=None, task_id_2=None, task_id_3=self.task.id, task_id_4=tt4_task.id)
+            data_manager.update_workflow_transaction_t4(workflow_transaction_info)
             
             return True
         
@@ -1041,8 +1085,43 @@ class TTTask4(pb_task):
         super(TTTask4, self).__init__(task_id, app_short_name)
         
     def add_next_task(self):
+        # Get the list of task_runs
+        task_runs = self.get_task_runs()
+        task_run = task_runs[-1]  # Get only the last answer
+        
+        answer = task_run.info
+        answer_info_json = json.loads(answer)
+        
+        self.__record_cells(answer_info_json)
+        
         #TODO
         return
+    
+    def __record_cells(self, answer_json):
+        book_id = self.get_book_id()
+        page_num = self.task.info["page"]
+        page = data_manager.get_page(book_id, page_num)
+        
+        if (page == None):
+            logger.warn("The page from the book " + book_id + " and page number " +  str(page_num) + " doesn't exist.")
+            return
+        
+        cells = answer_json['cells']
+        human_values = answer_json['human_values']
+        
+        for i in range(0, len(cells)):
+            cell = cells[i]
+            human_value = human_values[i]
+            
+            # retrieve page table
+            page_table = data_manager.get_page_table_by_local_url(page.id, self.task.info["img_url"])
+            
+            if (page_table == None):
+                logger.warn("The page table from the book " + book_id + " and page " +  str(page.id) + " doesn't exist.")
+                return
+            
+            cell_info_dict = dict(bookid=book_id, pageid=page.id, pagetableid=page_table.id, text=human_value, x0=cell[0], y0=cell[1], x1=cell[2], y1=cell[3])
+            data_manager.record_cell(cell_info_dict)
     
     def check_answer(self):
         task_runs = self.get_task_runs()
