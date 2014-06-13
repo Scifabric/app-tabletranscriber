@@ -348,19 +348,18 @@
 			.ready(
 					function() {
 						// update book title on header		
-						$.each($(".row a"),
-								function() {
-									if ($(this).attr('href').indexOf(
-											"/pybossa/app/") != -1) {
-										var book_title = $(this).text()
-												.replace(" Seleção", "");
-										$("#book_title").html(book_title);
+						$.each($(".row a"), function() {
+							if ($(this).attr('href').indexOf("/pybossa/app/") != -1) {
 
-										// remove PyBossa app's header
-										$(this).parent().parent().parent()
-												.remove();
-									}
-								});
+								if ($(this).text().indexOf("Estrutura") != -1) {
+									// remove PyBossa app's header
+									$(this).parent().parent().parent().remove();
+								}
+
+								var book_title = $(this).text().replace(" Estrutura", "");
+								$("#book_title").html(book_title);
+							}
+						});
 
 						$("#question").text($.i18n._('question'));
 						$("#question-warning").html(
