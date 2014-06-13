@@ -74,7 +74,7 @@ def create_apps(book_id):
         imgs = meb_util.get_tt_images(book_id)
         bookInfo = meb_util.get_archive_book_data(book_id)
         
-        app_tt_select = Apptt_select(short_name=book_id + "_tt1", title=bookInfo['title'])
+        app_tt_select = Apptt_select(short_name=book_id + "_tt1", title=bookInfo['title'], book_info=bookInfo)
         app_tt_meta = Apptt_meta(short_name=book_id + "_tt2", title=bookInfo['title'])
         app_tt_struct = Apptt_struct(short_name=book_id + "_tt3", title=bookInfo['title'])
         app_tt_transcribe = Apptt_transcribe(short_name=book_id + "_tt4", title=bookInfo['title'])
@@ -84,11 +84,11 @@ def create_apps(book_id):
         app_tt_struct.add_app_infos(bookInfo)
         app_tt_transcribe.add_app_infos(bookInfo)
         
-        data_mngr.record_book(bookInfo)
-        
         if len(app_tt_select.get_tasks()) == 0:
             for img in imgs:
-                app_tt_select.add_task(img)
+                task = app_tt_select.add_task(img)
+                workflow_transaction_info = dict(task_id_1=task.id, task_id_2=None, task_id_3=None, task_id_4=None)
+                data_mngr.record_workflow_transaction(workflow_transaction_info)
 
         return True
 

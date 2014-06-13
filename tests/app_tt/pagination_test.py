@@ -5,7 +5,7 @@ from app_tt.meb_exceptions.meb_exception import Meb_pagination_exception
 
 import unittest
 
-class Pagination_TestCase(unittest.TestCase):
+class pagination_test(unittest.TestCase):
     
     def setUp(self):
         self.p1 = Pagination(1, 10, 70) 
@@ -112,6 +112,11 @@ class Pagination_TestCase(unittest.TestCase):
         except Exception as e:
             print e 
             assert False
+    
+    
+def suite():
+    suite = unittest.TestLoader().loadTestsFromTestCase(pagination_test)
+    return suite
     
 if __name__ == '__main__':
     unittest.main()

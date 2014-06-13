@@ -26,8 +26,6 @@
 	
 	loadAHTML('#mb', "https://" + server_name + "/mb", function() {
 		
-		$('#start-contributing').click(handleStartContributingClickEvent);
-		
 		$("#mb .navbar").hide();
 		$('#footer_links').hide();
 		$('#mb').show();
@@ -51,13 +49,13 @@
 			});
 		});
 		
-		$("#books-tab").on("click", function() {
-			initFacebookLogin();
-		});
-		
 		$('.nav-tabs').on('click', function() {
 			clearMBInterface();
 			showMainContainer();
+		});
+		
+		$("#books-tab").on("click", function() {
+			initFacebookLogin();
 		});
 	});
 	

@@ -40,6 +40,93 @@ class page(db.Model):
     def __repr__(self):
         return '<page %r, %r, %r, %r>' % (self.id, self.book_id, self.archiveURL, self.page_num)
 
+class page_table(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    page_id = db.Column(db.Integer, db.ForeignKey('page.id'))
+    book_id = db.Column(db.String(100), db.ForeignKey('book.id'))
+    local_url = db.Column(db.String(255), nullable=False)
+    top_pos = db.Column(db.Integer, nullable=False) 
+    left_pos = db.Column(db.Integer, nullable=False)
+    right_pos = db.Column(db.Integer, nullable=False)
+    bottom_pos = db.Column(db.Integer, nullable=False)
+
+    def __init__(self, bookid=None, pageid=None, local_url=None, top_pos=None, left_pos=None, right_pos=None, bottom_pos=None):
+        self.book_id = bookid
+        self.page_id = pageid
+        self.local_url = local_url
+        self.top_pos = top_pos
+        self.left_pos = left_pos
+        self.right_pos = right_pos
+        self.bottom_pos = bottom_pos
+        
+    def __repr__(self):
+        return '<page_table %r, %r, %r, %r, %r, %r, %r, %r>' % (self.id, self.book_id, self.page_id, self.local_url, self.top_pos, self.left_pos, self.right_pos, self.bottom_pos)
+
+class metadata(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    page_table_id = db.Column(db.Integer, db.ForeignKey('page_table.id'))
+    page_id = db.Column(db.Integer, db.ForeignKey('page.id'))
+    book_id = db.Column(db.String(100), db.ForeignKey('book.id'))
+    source = db.Column(db.String(255))       
+    title = db.Column(db.String(255))
+    subtitle = db.Column(db.String(255))        
+    subject = db.Column(db.String(255))
+    initial_date = db.Column(db.DateTime, nullable=False)
+    final_date = db.Column(db.DateTime, nullable=False)
+    
+    def __init__(self, book_id=None, page_id=None, page_table_id=None, source=None, title=None, subtitle=None, subject=None, initial_date=None, final_date=None):
+        self.page_table_id = page_table_id
+        self.page_id = page_id
+        self.book_id = book_id
+        self.source = source
+        self.title = title
+        self.subtitle = subtitle
+        self.subject = subject
+        self.initial_date = initial_date
+        self.final_date = final_date
+        
+    def __repr__(self):
+        return '<metadata %r, %r, %r, %r, %r, %r, %r, %r, %r, %r>' % (self.id, self.page_table_id, self.page_id, self.book_id, self.source, self.title, self.subtitle, self.subject, self.initial_date, self.final_date)  
+
+class cell(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    page_table_id = db.Column(db.Integer, db.ForeignKey('page_table.id'))
+    page_id = db.Column(db.Integer, db.ForeignKey('page.id'))
+    book_id = db.Column(db.String(100), db.ForeignKey('book.id'))
+    text = db.Column(db.String(255))
+    x0 = db.Column(db.Integer, nullable=False)
+    y0 = db.Column(db.Integer, nullable=False)
+    x1 = db.Column(db.Integer, nullable=False)
+    y1 = db.Column(db.Integer, nullable=False)
+    
+    def __init__(self, book_id=None, page_id=None, page_table_id=None, text=None, x0=None, y0=None, x1=None, y1=None):
+        self.page_table_id = page_table_id
+        self.page_id = page_id
+        self.book_id = book_id
+        self.text = text
+        self.x0 = x0
+        self.y0 = y0
+        self.x1 = x1
+        self.y1 = y1
+        
+    def __repr__(self):
+        return '<cell %r, %r, %r, %r, %r, %r, %r, %r, %r>' % (self.id, self.page_table_id, self.page_id, self.book_id, self.text, self.x0, self.y0, self.x1, self.y1)
+
+class workflow_transaction(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    task_id_1 = db.Column(db.Integer, nullable=False)
+    task_id_2 = db.Column(db.Integer, nullable=False)
+    task_id_3 = db.Column(db.Integer, nullable=True)   
+    task_id_4 = db.Column(db.Integer, nullable=True)
+    
+    def __init__(self, task_id_1=None, task_id_2=None, task_id_3=None, task_id_4=None):
+        self.task_id_1 = task_id_1
+        self.task_id_2 = task_id_2
+        self.task_id_3 = task_id_3
+        self.task_id_4 = task_id_4
+        
+    def __repr__(self):
+        return '<workflow_transaction %r, %r, %r, %r, %r>' % (self.id, self.task_id_1, self.task_id_2, self.task_id_3, self.task_id_4)
 
 class report(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -60,7 +147,7 @@ class report(db.Model):
         return '<report %r, %r, %r, %r, %r, %r>' % (self.id, self.message,
                                            self.app_id, self.task_id,
                                            self.user_id, self.created)
-    
+
     
 #class fact(db.Model):
     #id = db.Column(db.Integer, primary_key=True, autoincrement=True)

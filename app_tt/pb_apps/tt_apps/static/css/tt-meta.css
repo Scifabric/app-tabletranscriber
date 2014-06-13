@@ -1,5 +1,6 @@
 #template-container {
 	margin-left: 170px;
+	width: 595px;
 }
 
 .TTImageContainer {
@@ -97,4 +98,8 @@
 
 .tooltip-inner {
     width: 200px;
+}
+
+#answer {
+	margin-bottom: 10px;
 }

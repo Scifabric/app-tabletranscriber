@@ -8,7 +8,7 @@ import pbclient
 
 import unittest
 
-class PBTask_TestCase(unittest.TestCase):
+class pb_task_test(unittest.TestCase):
     
     def setUp(self):
         self.app = Apptt_select(short_name="sh_tt1", title="title1")
@@ -72,6 +72,10 @@ class PBTask_TestCase(unittest.TestCase):
             self.assertFalse(self.pb_task2.task.info.has_key('answer'))
         except Exception:
             assert False
+    
+def suite():
+    suite = unittest.TestLoader().loadTestsFromTestCase(pb_task_test)
+    return suite
     
 if __name__ == '__main__':
     unittest.main()

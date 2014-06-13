@@ -5,7 +5,9 @@
 
 <script>
 	function changeToBooksTab() {
-		$('#books-tab').trigger('click');
+		$('#books-tab').ready(function(){
+			$('#books-tab').trigger('click');
+		});
 	}
 	
 	function loadBooksPage(url) {
