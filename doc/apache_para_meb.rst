@@ -54,7 +54,7 @@ forma::
         </Directory>
     </VirtualHost>
 
-Em seguida copie o arquivo contrib/apache2/mb-site para a pasta::
+Em seguida, copie o arquivo contrib/apache2/mb-site para a pasta::
 
     /etc/apache2/sites-available/
 
@@ -70,12 +70,8 @@ Reinicie o Apache para que as configurações tenham efeito::
 Configurando o Apache para servir duas aplicações wsgi
 ======================================================
 
-.. note:: 
-    
-    Caso seja necessário ter duas aplicacões wsgi rodando no mesmo
-    Virtual Host, como por exemplo o PyBossa e o Memória Brasil.
-
-Nesse caso o que muda é apenas a configuração do virtual host no apache. Abaixo um exemplo desssa configuração para o PyBossa + Memória Brasil::
+Nesse caso o que muda é apenas a configuração do virtual host no apache. 
+Abaixo um exemplo desssa configuração para o PyBossa + Memória Brasil::
 
     <VirtualHost *:80>
         ServerName example.com
@@ -100,5 +96,16 @@ Nesse caso o que muda é apenas a configuração do virtual host no apache. Abai
             Order deny,allow
             Allow from all
         </Directory>
-
+        
     </VirtualHost>
+    
+
+Configurando o MEB para funcionar com o Facebook
+=================================================================
+
+Para fazer o MEB funcionar como uma aplicação no Facebook basta criar um
+alias no apache para atender a URL indicada no facebook no momento da
+criação da app no facebook::
+
+	Alias /memoriadobrasil <path para app_tt/pb_apps/tt_apps/static/fb-templates>
+

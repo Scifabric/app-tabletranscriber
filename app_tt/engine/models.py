@@ -148,6 +148,23 @@ class report(db.Model):
                                            self.app_id, self.task_id,
                                            self.user_id, self.created)
 
+
+
+class metadata_file(db.Model):
+    book_id = db.Column(db.String(100), primary_key=True)
+    page_id = db.Column(db.Integer, primary_key=True)
+    page_table_id = db.Column(db.Integer, primary_key=True)
+    mt_file = db.Column(db.BLOB, nullable=False)
+    
+    def __init__(self, book_id=None, page_id=None, page_table_id=None, mt_file=None):
+        self.book_id = book_id
+        self.page_id = page_id
+        self.page_table_id = page_table_id
+        self.mt_file = mt_file
+    
+    def __repr__(self):
+        return '<metadata_file %r, %r, %r>' % (self.book_id, self.page_id, self.page_table_id)
+        
     
 #class fact(db.Model):
     #id = db.Column(db.Integer, primary_key=True, autoincrement=True)
