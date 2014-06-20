@@ -29,7 +29,7 @@
 		<div style="margin-top: 10px; margin-bottom: 10px;">
 			<span id="progress-from">#</span><span id="done"
 				class="label label-info" style="margin-right: 5px"></span><span
-				id="progress-to">#</span> Progress bar for the user <span id="total"
+				id="progress-to">#</span><span id="total"
 				class="label label-inverse"></span>
 		</div>
 		<div class="progress progress-striped">
@@ -47,7 +47,6 @@
 	</div>
 
 	<div class="skeleton">
-		Answer buttons
 		<div id="answer">
 			<button id="button_yes" class="btn btn-success"
 				onclick="submitTask('Yes')">
@@ -233,56 +232,53 @@
 		"trigger" : "manual"
 	});
 
-	$("#template-container").ready(
-			function() {
-				// update book title on header		
-				$.each($(".row a"),
-								function() {
-									if ($(this).attr('href').indexOf(
-											"/pybossa/app/") != -1) {
-										
-										if ($(this).text().indexOf("Seleção") != -1) {
-											// remove PyBossa app's header
-											$(this).parent().parent().parent().remove();
-										}
-										
-										var book_title = $(this).text()	.replace(" Seleção", "");
-										$("#book_title").html(book_title);
-									}
-								});
+	$("#template-container").ready(function() {
+		// update book title on header		
+		$.each($(".row a"), function() {
+			if ($(this).attr('href').indexOf("/pybossa/app/") != -1) {
 
-				$("#question").text($.i18n._('question'));
-				$("#question-warning").html($.i18n._('question-warning'));
-				$("#book-info").text($.i18n._('book-info'));
-				$("#task-type").text($.i18n._('task-type'));
+				if ($(this).text().indexOf("Seleção") != -1) {
+					// remove PyBossa app's header
+					$(this).parent().parent().parent().remove();
+				}
 
-				$("#button_yes").text($.i18n._('button_yes'));
-				$("#button_yes").button({
-					icons : {
-						primary : "icon icon-white icon-ok"
-					}
-				});
+				var book_title = $(this).text().replace(" Seleção", "");
+				$("#book_title").html(book_title);
+			}
+		});
 
-				$("#button_no").text($.i18n._('button_no'));
-				$("#button_no").button({
-					icons : {
-						primary : "icon icon-white icon-remove"
-					}
-				});
+		$("#question").text($.i18n._('question'));
+		$("#question-warning").html($.i18n._('question-warning'));
+		$("#book-info").text($.i18n._('book-info'));
+		$("#task-type").text($.i18n._('task-type'));
 
-				$("#button_ntk").text($.i18n._('button_ntk'));
+		$("#button_yes").text($.i18n._('button_yes'));
+		$("#button_yes").button({
+			icons : {
+				primary : "icon icon-white icon-ok"
+			}
+		});
 
-				$("#success strong").text($.i18n._('well_done'));
-				$("#success span:nth-child(2)").text($.i18n._('saved'));
-				$("#finish strong").text($.i18n._('congratulations'));
-				$("#finish span:nth-child(2)").text($.i18n._('finished'));
-				$("#error strong").text($.i18n._('error'));
-				$("#error span:nth-child(2)").text($.i18n._('err_msg'));
-				$("#workflowtask").text($.i18n._('workflowtask'));
-				$("#progress-from").text($.i18n._('progress-from'));
-				$("#progress-to").text($.i18n._('progress-to'));
+		$("#button_no").text($.i18n._('button_no'));
+		$("#button_no").button({
+			icons : {
+				primary : "icon icon-white icon-remove"
+			}
+		});
 
-			}); //Internationalization using jquery.i18n
+		$("#button_ntk").text($.i18n._('button_ntk'));
+
+		$("#success strong").text($.i18n._('well_done'));
+		$("#success span:nth-child(2)").text($.i18n._('saved'));
+		$("#finish strong").text($.i18n._('congratulations'));
+		$("#finish span:nth-child(2)").text($.i18n._('finished'));
+		$("#error strong").text($.i18n._('error'));
+		$("#error span:nth-child(2)").text($.i18n._('err_msg'));
+		$("#workflowtask").text($.i18n._('workflowtask'));
+		$("#progress-from").text($.i18n._('progress-from'));
+		$("#progress-to").text($.i18n._('progress-to'));
+
+	}); //Internationalization using jquery.i18n
 
 	function loadUserProgress() {
 		pybossa.userProgress(app_shortname).done(
