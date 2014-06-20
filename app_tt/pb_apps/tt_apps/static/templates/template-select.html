@@ -1,140 +1,159 @@
 <div id="template-container">
-<div class="row">
-	<div id="alert-container" class="span7" style="height: 50px">
-		<div id="success" class="alert alert-success" style="display: none;">
-			<p>
-				<span><strong>#</strong></span><span>#</span>
-			</p>
+	<div class="row">
+		<div id="alert-container" class="span7" style="height: 50px">
+			<div id="success" class="alert alert-success" style="display: none;">
+				<p>
+					<span><strong>#</strong></span><span>#</span>
+				</p>
+			</div>
+			<div id="finish" class="alert alert-success" style="display: none;">
+				<p>
+					<span><strong>#</strong></span><span>#</span>
+				</p>
+			</div>
+			<div id="error" class="alert alert-error" style="display: none;">
+				<p>
+					<span><strong>#</strong></span><span>#</span>
+				</p>
+			</div>
+			<div id="workflowtask" class="alert alert-success"
+				style="display: none; text-align: center; cursor: pointer; position: relative; margin-top: 5px;"></div>
 		</div>
-		<div id="finish" class="alert alert-success" style="display: none;">
-			<p>
-				<span><strong>#</strong></span><span>#</span>
-			</p>
-		</div>
-		<div id="error" class="alert alert-error" style="display: none;">
-			<p>
-				<span><strong>#</strong></span><span>#</span>
-			</p>
-		</div>
-		<div id="workflowtask" class="alert alert-success"
-			style="display: none; text-align: center; cursor: pointer; position: relative; margin-top: 5px;"></div>
 	</div>
-</div>
 
-<div class="skeleton">
-	<h1 id="question"></h1>
-</div>
+	<div class="skeleton">
+		<h1>
+			Mem&oacute;ria Estat&iacute;stica do Brasil (<span id="task-type"></span>)
+		</h1>
 
-<div class="skeleton">
-	<!-- Answer buttons -->
-	<div id="answer">
-		<button id="button_yes" class="btn btn-success"
-			onclick="submitTask('Yes')">
-			<i class="icon icon-white icon-ok"></i>
-		</button>
-		<button id="button_no" class="btn btn-danger"
-			onclick="submitTask('No')">
-			<i class="icon icon-white icon-remove"></i>
-		</button>
-		<button id="button_bug_report" class="btn btn-warning" rel="tooltip" 
-			title="Aponte um erro na tarefa" onclick="showBugReportForm()">
-			<i class="icon icon-warning-sign"></i>
-		</button>
-		<button id="button_help" class="btn help" data-toggle="modal" rel="tooltip" title="Abre a tela de ajuda"
-			onclick="showHelpSelect()">
-			<i class="icon icon-question-sign"></i>
-		</button>
-		<button id="button_share" class="btn" rel="tooltip" title="Compartilhe algo interessante da página abaixo" onclick="share()">
-			<img class="icon" src="#server/images/share_icon.png"></img>
-		</button>
-		<div style="margin-top:10px; margin-bottom: 10px;">
+		<div style="margin-top: 10px; margin-bottom: 10px;">
 			<span id="progress-from">#</span><span id="done"
 				class="label label-info" style="margin-right: 5px"></span><span
-				id="progress-to">#</span>
-			<!-- Progress bar for the user -->
-			<span id="total" class="label label-inverse"></span>
+				id="progress-to">#</span><span id="total"
+				class="label label-inverse"></span>
 		</div>
 		<div class="progress progress-striped">
-			<div id="progress" rel="tooltip" class="bar"
-				style="width: 0%;"></div>
+			<div id="progress" rel="tooltip" class="bar" style="width: 0%;"></div>
+		</div>
+
+		<h5>
+			<strong><span id="book-info"></span></strong> <i><span
+				id="book_title"></span></i>
+		</h5>
+		<h1>
+			<strong><span id="question"></span></strong>
+		</h1>
+		<h5 id="question-warning"></h5>
+	</div>
+
+	<div class="skeleton">
+		<div id="answer">
+			<button id="button_yes" class="btn btn-success"
+				onclick="submitTask('Yes')">
+				<i class="icon icon-white icon-ok"></i>
+			</button>
+			<button id="button_no" class="btn btn-danger"
+				onclick="submitTask('No')">
+				<i class="icon icon-white icon-remove"></i>
+			</button>
+			<button id="button_bug_report" class="btn btn-warning" rel="tooltip"
+				title="Aponte um erro na tarefa" onclick="showBugReportForm()">
+				<i class="icon icon-warning-sign"></i>
+			</button>
+			<button id="button_help" class="btn help" data-toggle="modal"
+				rel="tooltip" title="Abre a tela de ajuda"
+				onclick="showHelpSelect()">
+				<i class="icon icon-question-sign"></i>
+			</button>
+			<button id="button_share" class="btn" rel="tooltip"
+				title="Compartilhe algo interessante da página abaixo"
+				onclick="share()">
+				<img class="icon" src="#server/images/share_icon.png"></img>
+			</button>
 		</div>
 	</div>
-</div>
 
-<div id="bug_report_div" class="skeleton">
-	<div>
-		<h2 id="bug_report_question">  Selecione as opções abaixo que correspondem ao problema encontrado:</h2>
-		<form id="bug_report_form" style="margin: 0 auto;">
-		<input id="loading" type="checkbox" value="1"> A imagem não carrega<br>
-		<input id="submission" type="checkbox" value="2"> A página travou quando tentei submeter<br>
-		<input id="loading_next" type="checkbox" value="3"> A próxima tarefa não carrega<br>
-		<input id="other" type="checkbox" value="4"> Outro<br>
-		<textarea type="textarea" id="other_description" rows="0" style="width:240px"></textarea><br>
-		<a class="btn btn-default btn-sm" style="float:left;" onclick="cancelSubReport()"> Cancelar</a>
-		<a class="btn btn-info btn-sm"style="float:right;" onclick="subReport()"> Submeter</a><br><br>
-		</form>
-	</div>
-</div>
-
-<div id="image-container" class="skeleton" rel="popover" title="Clique e arraste o mouse sobre uma área da tabela para compartilhar.">
-	<a id="image-link" href="#" target="_blank" style="float: left; display: none;"> 
-		<img id="image" class="ttImage" src="#" onload="unblockUI();">
-	</a>
-	<div id="share-container">
-		<ul id="share-menu" class="dropdown-menu" role="menu">
-		  <li><a style="padding: 3px 12px;" onclick="shareOnFacebook()"> 
-			<img class="icon" style="width: 20px; margin-right: 3px;" src="#server/images/social_facebook.png"></img>
-			Facebook
-		      </a>
-		  </li>
-		</ul>
-		<div id="share-canvas-container"></div>
-	</div>
-	<div id="loading-container">
-		<img src="#server/images/loading.gif">
-	</div>
-</div>
-
-<div id="helpModalSelect" class="modal hide fade" tabindex="-1"
-	role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
-	style="display: none">
-
-	<div class="modal-header">
-		<button class="close" data-dismiss="modal" aria-hidden="true">
-			<i class="icon-white icon-remove"></i>
-		</button>
-		<h3 id="myModalLabel">
-			<strong>Tutorial de Seleção de Tabelas</strong>
-		</h3>
+	<div id="bug_report_div" class="skeleton">
+		<div>
+			<h2 id="bug_report_question">Selecione as opções abaixo que
+				correspondem ao problema encontrado:</h2>
+			<form id="bug_report_form" style="margin: 0 auto;">
+				<input id="loading" type="checkbox" value="1"> A imagem não
+				carrega<br> <input id="submission" type="checkbox" value="2">
+				A página travou quando tentei submeter<br> <input
+					id="loading_next" type="checkbox" value="3"> A próxima
+				tarefa não carrega<br> <input id="other" type="checkbox"
+					value="4"> Outro<br>
+				<textarea type="textarea" id="other_description" rows="0"
+					style="width: 240px"></textarea>
+				<br> <a class="btn btn-default btn-sm" style="float: left;"
+					onclick="cancelSubReport()"> Cancelar</a> <a
+					class="btn btn-info btn-sm" style="float: right;"
+					onclick="subReport()"> Submeter</a><br> <br>
+			</form>
+		</div>
 	</div>
 
-	<div class="modal-body">
-		<h2>O que deve ser feito?</h2>
-		<p>A tarefa consiste em selecionar as páginas em que existe pelo
-			menos uma tabela.</p>
-		<br>
-		<p>
-			<strong style="color: red">Atenção</strong>
-		</p>
-		<p>- Caso esteja visível apenas uma parte da tabela confirme que
-			existe uma tabela na página.</p>
-		<p>- Caso você tenha alguma dúvida se existe ou não uma tabela na
-			página, envie um feedback com sua dúvida no campo logo abaixo da
-			página.</p>
-		<br>
-		<h2>O que devo considerar uma tabela?</h2>
-		<p>Você deve considerar uma tabela qualquer estrutura que possua
-			dados sobre economia, geografia, demografia ou outra matéria para
-			fins estatísticos.</p>
-		<p style="color:red">Índices e sumários dos livros não são considerados
-			tabelas válidas para nossa aplicação.</p>
-		<br>
+	<div id="image-container" class="skeleton" rel="popover"
+		title="Clique e arraste o mouse sobre uma área da tabela para compartilhar.">
+		<a id="image-link" href="#" target="_blank"
+			style="float: left; display: none;"> <img id="image"
+			class="ttImage" src="#" onload="unblockUI();">
+		</a>
+		<div id="share-container">
+			<ul id="share-menu" class="dropdown-menu" role="menu">
+				<li><a style="padding: 3px 12px;" onclick="shareOnFacebook()">
+						<img class="icon" style="width: 20px; margin-right: 3px;"
+						src="#server/images/social_facebook.png"></img> Facebook
+				</a></li>
+			</ul>
+			<div id="share-canvas-container"></div>
+		</div>
+		<div id="loading-container">
+			<img src="#server/images/loading.gif">
+		</div>
 	</div>
 
-	<div class="modal-footer">
-		<button class="btn" data-dismiss="modal" aria-hidden="true">Fechar</button>
+	<div id="helpModalSelect" class="modal hide fade" tabindex="-1"
+		role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+		style="display: none">
+
+		<div class="modal-header">
+			<button class="close" data-dismiss="modal" aria-hidden="true">
+				<i class="icon-white icon-remove"></i>
+			</button>
+			<h3 id="myModalLabel">
+				<strong>Tutorial de Seleção de Tabelas</strong>
+			</h3>
+		</div>
+
+		<div class="modal-body">
+			<h2>O que deve ser feito?</h2>
+			<p>A tarefa consiste em selecionar as páginas em que existe pelo
+				menos uma tabela.</p>
+			<br>
+			<p>
+				<strong style="color: red">Atenção</strong>
+			</p>
+			<p>- Caso esteja visível apenas uma parte da tabela confirme que
+				existe uma tabela na página.</p>
+			<p>- Caso você tenha alguma dúvida se existe ou não uma tabela na
+				página, envie um feedback com sua dúvida no campo logo abaixo da
+				página.</p>
+			<br>
+			<h2>O que devo considerar uma tabela?</h2>
+			<p>Você deve considerar uma tabela qualquer estrutura que possua
+				dados sobre economia, geografia, demografia ou outra matéria para
+				fins estatísticos.</p>
+			<p style="color: red">Índices e sumários dos livros não são
+				considerados tabelas válidas para nossa aplicação.</p>
+			<br>
+		</div>
+
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Fechar</button>
+		</div>
 	</div>
-</div>
 </div>
 
 <script src="#server/js/kinetic.js"></script>
@@ -148,20 +167,19 @@
 <link rel="stylesheet" type="text/css" href="#server/css/tt-select.css" />
 
 <script type="text/javascript" charset="utf-8">
-
 	var app_shortname = "#app_shortname#";
 	var endpoint = "/pybossa";
-	
+
 	function unblockUI() {
 		$("#loading-container").hide();
 		$("#image-link").show();
 		$.unblockUI();
 	}
-	
+
 	function blockUI() {
 		$("#image-link").hide();
 		$("#loading-container").show();
-		
+
 		$.blockUI({
 			message : $("#success"),
 			css : {
@@ -173,44 +191,66 @@
 	function showHelpSelect() {
 		$("#helpModalSelect").modal();
 	}
-	
-	function callbackGetUserId( u_ident ) {
+
+	function callbackGetUserId(u_ident) {
 		var submissionP = $("#submission")[0].checked;
 		var loadingCurrentTaskP = $("#loading")[0].checked;
 		var loadingNextTaskP = $("#loading_next")[0].checked;
 		var otherP = $("#other")[0].checked;
 		var otherTextDescriptionP = $("#other_description").val();
-		
+
 		var msg = {
-				'1' : submissionP, 
-				'2' : loadingCurrentTaskP, 
-				'3' : loadingNextTaskP,
-				'4' : otherP,
-				'5' : otherTextDescriptionP
+			'1' : submissionP,
+			'2' : loadingCurrentTaskP,
+			'3' : loadingNextTaskP,
+			'4' : otherP,
+			'5' : otherTextDescriptionP
 		};
-		
-		var jreport = JSON.stringify({ 'message':msg, 'u_id':u_ident });
-		
+
+		var jreport = JSON.stringify({
+			'message' : msg,
+			'u_id' : u_ident
+		});
+
 		$.ajax({
-			type: 'POST',
+			type : 'POST',
 			url : '/mb/api/' + app_shortname + '/' + taskId + '/report',
-			dataType: 'json',
-			contentType: 'application/json; charset=utf-8',
+			dataType : 'json',
+			contentType : 'application/json; charset=utf-8',
 			data : jreport
 		});
-		
+
 		erase_bug_report_div();
 	}
-	
+
 	function subReport() {
-		pybossa.getCurrentUserId( callbackGetUserId );
+		pybossa.getCurrentUserId(callbackGetUserId);
 	}
-	
+
 	$("[rel=tooltip]").tooltip();
-	$("[rel=popover]").popover({"trigger": "manual"});
+	$("[rel=popover]").popover({
+		"trigger" : "manual"
+	});
 
 	$("#template-container").ready(function() {
+		// update book title on header		
+		$.each($(".row a"), function() {
+			if ($(this).attr('href').indexOf("/pybossa/app/") != -1) {
+
+				if ($(this).text().indexOf("Seleção") != -1) {
+					// remove PyBossa app's header
+					$(this).parent().parent().parent().remove();
+				}
+
+				var book_title = $(this).text().replace(" Seleção", "");
+				$("#book_title").html(book_title);
+			}
+		});
+
 		$("#question").text($.i18n._('question'));
+		$("#question-warning").html($.i18n._('question-warning'));
+		$("#book-info").text($.i18n._('book-info'));
+		$("#task-type").text($.i18n._('task-type'));
 
 		$("#button_yes").text($.i18n._('button_yes'));
 		$("#button_yes").button({
@@ -241,18 +281,20 @@
 	}); //Internationalization using jquery.i18n
 
 	function loadUserProgress() {
-		pybossa.userProgress(app_shortname).done(function(data) {
-			var pct = Math.round((data.done * 100) / data.total);
-			$("#progress").css("width", pct.toString() + "%");
-			
-			$("#progress").tooltip('destroy');
-			$("#progress").attr("data-original-title", pct.toString() + "% " + $.i18n._('completed'));
-			$("#progress").tooltip({
-				'placement' : 'left'
-			});
-			$("#total").text(data.total);
-			$("#done").text(data.done);
-		});
+		pybossa.userProgress(app_shortname).done(
+				function(data) {
+					var pct = Math.round((data.done * 100) / data.total);
+					$("#progress").css("width", pct.toString() + "%");
+
+					$("#progress").tooltip('destroy');
+					$("#progress").attr("data-original-title",
+							pct.toString() + "% " + $.i18n._('completed'));
+					$("#progress").tooltip({
+						'placement' : 'left'
+					});
+					$("#total").text(data.total);
+					$("#done").text(data.done);
+				});
 	}
 
 	function taskRunDone(taskId) {
@@ -274,59 +316,55 @@
 			}
 		});
 
-		$("#workflowtask").click(
-				function() {
-					redirectToANewTask("tt2");
-				});
+		$("#workflowtask").click(function() {
+			redirectToANewTask("tt2");
+		});
 	}
-	
+
 	function loadData(data) {
 		var current_task = data.task;
-		
+
 		// Defined by FB-template
 		if (typeof loadDataEvent != "undefined") {
-			loadDataEvent(current_task);	
+			loadDataEvent(current_task);
 		}
-		
+
 		if (!$.isEmptyObject(current_task)) {
 			loadUserProgress();
 			task_id = current_task.id;
 			$("#image-link").attr("href", current_task.info.url_b);
 			$("#image").attr("src", current_task.info.url_m);
 			pybossa.getCurrentUserId(function(userId) {
-				initSharer(task_id, userId);	
+				initSharer(task_id, userId);
 			});
 		} else {
 			unblockUI();
 			$(".skeleton").hide();
-			$("#finish").fadeIn(
-					100,
-					function() {
-						setTimeout(function() {
-							redirectToANewTask(getARandomTask());
-						}, 1500);
-					});
+			$("#finish").fadeIn(100, function() {
+				setTimeout(function() {
+					redirectToANewTask(getARandomTask());
+				}, 1500);
+			});
 		}
 		if ($("#button_share").hasClass("active")) {
-			disableShare();			
+			disableShare();
 		}
 	}
-	
+
 	function redirectToANewTask(taskSufix) {
-		window.open(endpoint
-				+ "/app/"
-				+ app_shortname.replace("_tt1", "_" + taskSufix)
-				+ "/newtask", "_self");
+		window.open(endpoint + "/app/"
+				+ app_shortname.replace("_tt1", "_" + taskSufix) + "/newtask",
+				"_self");
 	}
 
 	function getARandomTask() {
-		var nextTaskArr = ["tt2", "tt3", "tt4"];
+		var nextTaskArr = [ "tt2", "tt3", "tt4" ];
 		//return nextTaskArr[getRandomInt(0,nextTaskArr.length-1)];
 		return "tt2";
 	}
 
 	function getRandomInt(min, max) {
-	    return Math.floor(Math.random() * (max - min + 1)) + min;
+		return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 
 	// Function to submit and save the TaskRun in PyBossa
@@ -340,7 +378,7 @@
 			taskRunDone(taskid);
 
 			blockUI();
-			
+
 			// Load a new task
 			pybossa.newTask(app_shortname).done(function(data) {
 				loadData(data);
@@ -352,4 +390,20 @@
 	pybossa.newTask(app_shortname).done(function(data) {
 		loadData(data);
 	});
+</script>
+<script>
+	(function(i, s, o, g, r, a, m) {
+		i['GoogleAnalyticsObject'] = r;
+		i[r] = i[r] || function() {
+			(i[r].q = i[r].q || []).push(arguments)
+		}, i[r].l = 1 * new Date();
+		a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+		a.async = 1;
+		a.src = g;
+		m.parentNode.insertBefore(a, m)
+	})(window, document, 'script', '//www.google-analytics.com/analytics.js',
+			'ga');
+
+	ga('create', 'UA-16766566-2', 'socientize.eu');
+	ga('send', 'pageview');
 </script>

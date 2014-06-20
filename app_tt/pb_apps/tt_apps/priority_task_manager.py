@@ -18,6 +18,13 @@ def get_priority(code):
         return priorities_map[code][1]
     except Exception, e:
         raise e
+    
+def get_subject(code):
+    try:
+        return priorities_map[code][0]
+    except Exception, e:
+        raise e
+
 
 def set_priority(code, name, value):
     priorities_map[code] = (name, value)

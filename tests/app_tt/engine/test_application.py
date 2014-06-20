@@ -1,7 +1,7 @@
 from unittest import TestCase
 from app_tt.application import app as application
 from app_tt.core import pbclient
-from tests.app_tt.base import delete_app, create_tt_apps, get_book_data
+from tests.app_tt.base import delete_app, delete_book, create_tt_apps, get_book_data
 import unittest
 
 
@@ -11,7 +11,10 @@ class test_application(TestCase):
     def setUp(self):
         app = application
         self.app = app.test_client()
+    
+    def tearDown(self):
         delete_app("estatisticasdodi1950depa")
+        delete_book("estatisticasdodi1950depa")
     
     def test_home(self):
         rv = self.app.get('/')

@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-"""
 
 from app_tt.pb_apps.apps import Apptt
 from app_tt.meb_exceptions.meb_exception import Meb_apps_exception
@@ -10,7 +8,7 @@ import pbclient
 import unittest
 import random
 
-class Apps_TestCase(unittest.TestCase):
+class apps_test(unittest.TestCase):
     
     def setUp(self):
         self.app_tt = Apptt("name1", "shortname1", "desc1")
@@ -147,6 +145,10 @@ class Apps_TestCase(unittest.TestCase):
         except Exception as e:
             print e
             assert False
-            
+    
+def suite():
+    suite = unittest.TestLoader().loadTestsFromTestCase(apps_test)
+    return suite
+    
 if __name__ == '__main__':
     unittest.main()

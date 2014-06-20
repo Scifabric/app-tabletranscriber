@@ -43,8 +43,8 @@ def create_cells(lines, columns, maxX, maxY):
 		ptsLinha = lines[iteradorLinha]
 	
 
-	print("Length:" + str(len(resultado)))
-	print(resultado)
+	#print("Length:" + str(len(resultado)))
+	#print(resultado)
 	return resultado
 
 def __findColunaPerpendicular(ptsLinha, colunas):

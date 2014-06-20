@@ -68,35 +68,35 @@
 
 	Cell.prototype.getNumberOfConfirmations = function() {
 		return this.numberOfConfirmations;
-	}
+	};
 
 	Cell.prototype.setNumberOfConfirmations = function(newVal) {
 		this.numberOfConfirmations = newVal;
-	}
+	};
 
 	Cell.prototype.increaseNumberOfConfirmation = function() {
 		this.numberOfConfirmations++;
-	}
+	};
 
 	Cell.prototype.isEditEnabled = function() {
 		return this.enableEdit;
-	}
+	};
 
 	Cell.prototype.isFixed = function() {
 		return this.fixed;
-	}
+	};
 
 	Cell.prototype.setFixed = function(fixed) {
 		this.fixed = fixed;
-	}
+	};
 
 	Cell.prototype.getConfidence = function() {
 		return this.confidence;
-	}
+	};
 
 	Cell.prototype.getLastAnswer = function() {
 		return this.lastAnswer;
-	}
+	};
 
 	Cell.prototype.getHumanTranscription = function() {
 		return this.humanTranscription;
@@ -189,11 +189,11 @@
 					opacity: 0.25
 				});
 		return this.rect;	
-	}
+	};
 
 	Cell.prototype.setRectangleOpacity = function(value) {
 		this.rect.setOpacity(value);
-	}
+	};
 
 	function CellsIterator(cells) {
 		this.cells = cells;
@@ -206,19 +206,19 @@
 			if (!this.cells[i].isFixed()) return true;
 		}
 		return false;
-	}
+	};
 
 	CellsIterator.prototype.getNextIndex = function(actualIndex) {
 		return actualIndex + 1 < this.cells.length ? actualIndex + 1 : 0;
-	}
+	};
 
 	CellsIterator.prototype.getPreviousIndex = function(actualIndex) {
 		return actualIndex - 1 >= 0 ? actualIndex - 1 : (this.cells.length - 1);
-	}
+	};
 
 	CellsIterator.prototype.getPreviousCell = function() {
 		return this.cells[this.previousIndex];
-	}
+	};
 
 	CellsIterator.prototype.next = function() {
 		var computedNextIndex = this.getNextIndex(this.actualIndex);
@@ -815,8 +815,7 @@
 			var borders = cell.getBorders();
 			cellsToSave.push([borders[0] - shiftOnCanvas, borders[1] - shiftOnCanvas,
 				borders[2] - shiftOnCanvas, borders[3] - shiftOnCanvas]);
-			var incConfirmation = cell.getNumberOfConfirmations() + 1;
-
+			
 			computerValuesToSave.push(cell.getComputerTranscription());
 			humanValuesToSave.push(typeof cell.getHumanTranscription() == "undefined" ? "" : cell.getHumanTranscription());
 			confidencesToSave.push(cell.getConfidence());

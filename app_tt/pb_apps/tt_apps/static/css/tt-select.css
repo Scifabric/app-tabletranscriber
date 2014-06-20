@@ -1,5 +1,5 @@
 #template-container {
-	margin-left: 170px;
+	width: 595px;
 }
 
 .ttImage {
@@ -83,3 +83,6 @@
 	text-align: center;
 }
 
+#answer {
+	margin-bottom: 10px;
+}

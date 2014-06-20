@@ -24,11 +24,15 @@
 		$("#tab-container").show();
 	}
 	
+	function configureShareLinks() {
+		$("#share-on-facebook").attr("href", "javascript:shareProjectOnFacebook('https://apps.facebook.com/memoriadobrasil/')");
+		$("#share-on-twitter").attr("href", "javascript:openShareWindow('https://twitter.com/share?text=Contribua%20com%20o%20Projeto%20Memória%20Estatística%20do%20Brasil!&url=https://apps.facebook.com/memoriadobrasil/');");
+		$("#share-on-google-plus").attr("href", "javascript:openShareWindow('https://plus.google.com/share?url=https://apps.facebook.com/memoriadobrasil/)");
+	}
+	
 	loadAHTML('#mb', "https://" + server_name + "/mb", function() {
 		
-		$('#start-contributing').click(handleStartContributingClickEvent);
-		
-		$("#mb .navbar").hide();
+		configureShareLinks();
 		$('#footer_links').hide();
 		$('#mb').show();
 		
@@ -43,6 +47,7 @@
 				var POSITION_BOOK_ID = 5;
 				var tmp = addressValue.split("/")[POSITION_BOOK_ID];
 				bookId = tmp.substring(0, tmp.indexOf("_"));
+				currentTaskType = tmp.substring(tmp.indexOf("_")+1);
 				
 				$("#fb-loading-container").show();
 				$("#task-template").load("task_templates.html", function() {
@@ -51,18 +56,13 @@
 			});
 		});
 		
-		$("#books-tab").on("click", function() {
-			initFacebookLogin();
-		});
-		
 		$('.nav-tabs').on('click', function() {
 			clearMBInterface();
 			showMainContainer();
 		});
+		
+		$("#books-tab").on("click", function() {
+			initFacebookLogin();
+		});
 	});
-	
-	function handleStartContributingClickEvent(e) {
-		e.preventDefault();
-		initFacebookLogin();
-	}
 </script>
