@@ -4,7 +4,8 @@ from app_tt.data_mngr import data_manager2 as data_mngr2
 from app_tt.core import logger
 import app_tt.pb_apps.tt_apps.priority_task_manager as subject_table_map
 
-import tempfile, os
+import tempfile, os, sys
+import math
 
 """
  
@@ -18,6 +19,8 @@ import tempfile, os
  5. chama o lucene e indexa o doc
  
 """
+
+MAX_THRESHOLD = 5
 
 class CSV_Generator:
     
@@ -74,29 +77,62 @@ class CSV_Generator:
             
     
     def create_lines(self, cells_coordinates_list):
-        lines = self.group_cells_in_lines(cells_coordinates_list)
+        """
+          Modify the cells bigger than the line height,
+          splitting them into two cells of different heights.
+        """
         
-        MAX_THRESHOLD = 5
+        global MAX_THRESHOLD
         
-        for i in range(len(lines.keys())-1):
-            line_height = lines.keys()[i+1] - lines.keys()[i]
-            for cell in lines[lines.keys()[i]]:
-                if cell[3] - cell[1] > line_height:
+        lines_dict = self.group_cells_in_lines(cells_coordinates_list)
+        
+        print "lines_dict: " + str(lines_dict)
+        
+        lines_keys_sorted = lines_dict.keys()
+        lines_keys_sorted.sort()
+        
+        for i in range(len(lines_dict.keys())):
+            j = i + 1
+            
+            line_heigth = None
+            if len(lines_dict.keys()) == j:
+                line_height = sys.maxint
+            else:
+                line_height = lines_keys_sorted[j] - lines_keys_sorted[i]
+            
+            print "line_height: " + str(line_height)
+            
+            for cell in lines_dict[lines_dict.keys()[i]]:
+                cond1 = cell[3] - cell[1] > line_height + MAX_THRESHOLD
+                cond2 = cell[3] - cell[1] > line_height
+                if cond1 and not cond2:
                     cell1 = [cell[0], cell[1], cell[2], line_height] 
                     cell2 = [cell[0], cell[1] + line_height , cell[2], cell[3]]
+                    
+                    print "cell1: " + str(cell1)
+                    print "cell2: " + str(cell2)
+                    
+                    self.__append_cell_to_lines_dict(cell1)
+                    self.__append_cell_to_lines_dict(cell2)
+                elif cond2:
+                    cell1 = [cell[0], cell[1], cell[2], line_height] 
+                    cell2 = [cell[0], cell[1] + line_height , cell[2], cell[3]]
+                    
+                    print "cell1: " + str(cell1)
+                    print "cell2: " + str(cell2)
                     
                     self.__append_cell_to_lines_dict(cell1)
                     self.__append_cell_to_lines_dict(cell2)
                 else:
+                    print "cell: " + str(cell)
                     self.__append_cell_to_lines_dict(cell)
-        
-        
+                
+                print "self.lines_created_dict: " + str(self.lines_created_dict)
+                print "--------------"
         
         
     def create_columns(self, cells_coordinates_list):
         columns = self.group_cells_in_columns(cells_coordinates_list)
-        
-        MAX_THRESHOLD = 5
         
         for cell in columns:
             new_columns_dict = process_column(columns[i])
@@ -110,15 +146,38 @@ class CSV_Generator:
     def group_cells_in_lines(self, cells_coordinates_list):
         lines_dict = {}
         for cell in cells_coordinates_list:
+            line_y = self.__check_line_threshold_to_cell(cell, lines_dict)
             if lines_dict.has_key(cell[1]):
                 lines_dict[cell[1]].append(cell)
+            elif line_y != -1:
+                lines_dict[line_y].append(cell)
             else:
                 lines_dict[cell[1]] = [cell]
         
         return lines_dict
     
     
+    def __check_line_threshold_to_cell(self, cell, lines_dict):
+        """
+          Verify if there is a line to the cell considering
+          the threshold
+        """
+    
+        global MAX_THRESHOLD
+        
+        for line_y in lines_dict.keys():
+            #print "line_y: " + str(line_y)
+            #print "cell: " + str(cell)
+            #print "abs(line_y - cell[1]): " + str(abs(line_y - cell[1]))
+            #print "------"
+            if abs(line_y - cell[1]) <= MAX_THRESHOLD:
+                return line_y
+        
+        return -1
+        
+        
     def group_cells_in_columns(self, cells_coordinates_list):
+        MAX_THRESHOLD = 5
         columns_dict = {}
         for cell in cells_coordinates_list:
             if columns_dict.has_key(cell[0]):
