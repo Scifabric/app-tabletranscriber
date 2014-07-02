@@ -67,7 +67,6 @@ def get_new_task_link(bookid):
             break
     return pybossa_server + '/app/' + bookid + '_' + app_with_available_task + '/newtask'
 
-
 def get_tasks_progress(bookid):
     tt_suffix = ['tt1', 'tt2', 'tt3', 'tt4']
     result = dict(tt1=dict(total=0, completed=0), tt2=dict(total=0, completed=0), tt3=dict(total=0, completed=0), tt4=dict(total=0, completed=0))

@@ -34,16 +34,15 @@
 		</h1>
 
 		<div style="margin-top: 10px; margin-bottom: 10px;">
-			<span id="progress-from">Voc&ecirc; fez </span><span id="done"
+			<span id="progress-from">Voc&ecirc; j&aacute; completou </span><span id="done"
 				class="label label-info" style="margin-right: 5px"></span><span
-				id="progress-to">de um total de </span>
-			<!-- Progress bar for the user -->
-			<span id="total" class="label label-inverse"></span>
+				id="progress-to">tarefas – continue contribuindo! </span>
 		</div>
-		<div class="progress progress-striped">
-			<div id="progress" rel="tooltip" class="bar" style="width: 0%;"></div>
+		<div class="progress  progress-striped">
+			<div id="community-progress" class="bar bar-success"
+				style="width: 0%;"></div>
+			<div id="user-progress" class="bar bar-info" style="width: 0%;"></div>
 		</div>
-
 		<h5>
 			<strong><span id="book-info"></span></strong> <i><span
 				id="book_title"></span></i>
@@ -69,7 +68,8 @@
 	<div class="skeleton">
 		<!-- Answer buttons -->
 		<div id="answer">
-			<button id="button" class="btn btn-success" onclick="submitTask()">
+			<button id="button" rel="popover" class="btn btn-success"
+				onclick="submitTask()">
 				<i class="icon icon-white icon-ok"></i> Salvar essas marcações
 			</button>
 			<button id="button_bug_report" class="btn btn-warning" rel="tooltip"
@@ -338,7 +338,7 @@
 	</div>
 
 	<div id="image-container" class="skeleton" rel="popover"
-		title="Clique e arraste o mouse sobre uma área da tabela para compartilhar.">
+		title="Você vê alguma tabela na página ao lado? se sim, clique e arraste para desenhar uma área sobre ela. Marque apenas apenas o corpo da tabela, desconsiderando textos avulsos, como título e fontes.">
 		<div id="TTImage" class="TTImageContainer"
 			style="float: left; opacity: 0;">
 			<img id="table" class="TTImage" src="#" onload="unblockUI()">
@@ -350,7 +350,8 @@
 						src="#server/images/social_facebook.png"></img> Facebook
 				</a></li>
 			</ul>
-			<div id="share-canvas-container"></div>
+			<div id="share-canvas-container" rel="popover"
+				title="Clique e arraste o mouse sobre uma área da tabela para compartilhar."></div>
 		</div>
 		<div id="loading-container">
 			<img src="#server/images/loading.gif">
@@ -366,6 +367,7 @@
 	src="#server/js/jquery-ui-1.8.22.custom.min.js"></script>
 <script type="text/javascript" src="#server/js/jquery.blockUI.js"></script>
 <script type="text/javascript" src="#server/js/report.js"></script>
+<script type="text/javascript" src="#server/js/jquery.cookie.js"></script>
 
 <link rel="stylesheet" type="text/css" href="#server/css/annotation.css" />
 <link rel="stylesheet" type="text/css" href="#server/css/tt-meta.css" />
@@ -373,6 +375,11 @@
 <script type="text/javascript" charset="utf-8">
 	var app_shortname = "#app_shortname#";
 	var endpoint = "/pybossa";
+	var isLastAnswer = false;
+	var toolTipsEnabled = false;
+	var COOKIE_EXPIRATION = 60; // days
+	var book_progress;
+	var user_progress;
 
 	function showHelp() {
 		$("#helpModalMeta").modal();
@@ -381,7 +388,17 @@
 
 	$("[rel=tooltip]").tooltip();
 	$("[rel=popover]").popover({
-		"trigger" : "manual"
+		"trigger" : "manual",
+		"placement" : "left"
+	});
+
+	$("#button_share").on("click", function() {
+		if ($("#button_share").hasClass("active")) {
+			$(".image-annotate-edit-close").trigger("click");
+			$("#image-container").popover("hide");
+		} else {
+			$("#image-container").popover("show");
+		}
 	});
 
 	$("#template-container").ready(function() {
@@ -401,6 +418,8 @@
 
 		$("#book-info").text("Você está ajudando a transcrever o livro:");
 		$("#task-type").text("Tarefa de marcação");
+		$("#answer").hide();
+		$("#answer").show();
 	});
 
 	function unblockUI() {
@@ -460,18 +479,61 @@
 	}
 
 	function loadUserProgress() {
-		pybossa.userProgress(app_shortname).done(
+		book_progress = {'total': 0, 'done': 0};
+		user_progress = {'total': 0, 'done': 0};
+		
+		var book_id = app_shortname.split("_")[0];
+		var deferreds = [];
+		deferreds.push(getBookProgress(book_id));
+		deferreds.push(getUserProgress(book_id + "_tt1"));
+		deferreds.push(getUserProgress(book_id + "_tt2"));
+		deferreds.push(getUserProgress(book_id + "_tt3"));
+		deferreds.push(getUserProgress(book_id + "_tt4"));
+		
+	    $.when.apply($, deferreds).then(function() {
+			$("#total").text(100);
+			$("#done").text(30);
+			
+			if (user_progress.done > 1) {
+				$("#motivation-msg").show();
+			}
+			
+			var only_by_community = book_progress.done - user_progress.done;
+	    	var community_pct = Math.round((only_by_community * 100) / book_progress.total);
+			$("#community-progress").tooltip('destroy');
+			$("#community-progress").css("width", community_pct.toString() + "%");
+			$("#community-progress").attr("data-original-title", community_pct.toString() + "% feitas pela comunidade!");
+			$("#community-progress").tooltip({
+				'placement' : 'top'
+			});
+			
+			var user_pct = Math.round((user_progress.done * 100) / book_progress.total);
+			$("#user-progress").tooltip('destroy');
+			$("#user-progress").css("width", user_pct.toString() + "%");
+			$("#user-progress").attr("data-original-title", user_pct.toString() + "% feitas por você!");
+			$("#user-progress").tooltip({
+				'placement' : 'top'
+			});
+	    	
+			$("#total").text(book_progress.total);
+			$("#done").text(user_progress.done);    	
+	    });
+	}
+	
+	function getBookProgress(bookId) {
+		return $.ajax({
+			url : '/mb/api/get_book_progress/' + bookId,
+			success : function(data) {
+				book_progress = $.parseJSON(data);
+			}
+		});
+	}
+	
+	function getUserProgress(app_name) {
+		return pybossa.userProgress(app_name).done(
 				function(data) {
-					var pct = Math.round((data.done * 100) / data.total);
-					$("#progress").css("width", pct.toString() + "%");
-					$("#progress").tooltip('destroy');
-					$("#progress").attr("data-original-title",
-							pct.toString() + "% completados!");
-					$("#progress").tooltip({
-						'placement' : 'left'
-					});
-					$("#total").text(data.total);
-					$("#done").text(data.done);
+					user_progress.total = user_progress.total + data.total;
+					user_progress.done = user_progress.done + data.done;
 				});
 	}
 
@@ -498,6 +560,59 @@
 		});
 	}
 
+	// Add tooltips for a newcomer
+	function addTooltips() {
+		var num_annotations = $(".image-annotate-area").length;
+		$
+				.each(
+						$(".image-annotate-area"),
+						function(index) {
+							if (index == num_annotations - 1) {
+								$(this)
+										.attr(
+												"data-original-title",
+												"Isso é uma marcação. Ao clicar nela, você pode conferir e editar as informações de descrição da tabela.");
+							} else {
+								$(this).attr("data-original-title",
+										"Outra marcação.");
+							}
+						});
+
+		$(".image-annotate-area").on("remove", function() {
+			$(this).popover("destroy");
+		});
+
+		$(".image-annotate-area").popover({
+			"trigger" : "manual",
+			"placement" : "left"
+		});
+
+		$(".image-annotate-edit-area").popover({
+			"trigger" : "manual",
+			"placement" : "left"
+		});
+
+		$(".image-annotate-edit-area")
+				.attr("data-original-title",
+						"Caso precise ajustar a posição da marcação, basta clicar e arrastar.");
+
+		// Listener to annotation's drag event
+		$(".image-annotate-edit-area").on('DOMSubtreeModified', function(e) {
+			$(this).popover("show");
+
+			$("#image-annotate-edit-form").popover({
+				"trigger" : "manual",
+				"placement" : "top"
+			});
+			$("#image-annotate-edit-form").popover("show");
+		});
+
+		if (!isLastAnswer)
+			$("#image-container").popover("show");
+		$(".image-annotate-area").popover("show");
+		$("#button").popover("show");
+	}
+
 	function loadData(data) {
 		var current_task = data.task;
 
@@ -512,9 +627,32 @@
 			$("#task-id").text(task_id);
 			$("#table").attr("src", current_task.info.link);
 
-			var isLastAnswer = current_task.info.last_answer != undefined;
+			isLastAnswer = typeof current_task.info.last_answer != "undefined";
 			var notes = isLastAnswer ? JSON
 					.parse(current_task.info.last_answer) : [];
+
+			var question = "";
+			var save_button = "";
+			var save_button_tip = "";
+			if (isLastAnswer) {
+				question = "Confira as marcações das tabelas abaixo. Se houver erros, corrija-os.";
+				save_button = "Pronto! As marcações estão corretas";
+				save_button_tip = "Após conferir todas as marcações, basta clicar aqui."
+
+				// Check if the interface needs to show the tooltips
+				toolTipsEnabled = typeof $.cookie('finished_t2_correction') == "undefined";
+			} else {
+				question = "Marque a área das tabelas da página abaixo e descreva as informações que serão pedidas após a marcação.";
+				save_button = "Pronto! Salvar essas marcações";
+				save_button_tip = "Após marcar todas as tabelas, basta clicar aqui."
+
+				// Check if the interface needs to show the tooltips
+				toolTipsEnabled = typeof $.cookie('finished_t2') == "undefined";
+			}
+
+			$("#question").text(question);
+			$("#button").text(save_button);
+			$("#button").attr("data-original-title", save_button_tip);
 
 			image = $("#table").annotateImage({
 				editable : true,
@@ -523,25 +661,17 @@
 				notes : notes
 			});
 
-			var num_annotations = $(".image-annotate-area").length;
-			$.each($(".image-annotate-area"), function(index) {
-				if (index == num_annotations - 1) {
-					$(this).trigger("click");
-				}
-			});
+			if (toolTipsEnabled)
+				addTooltips();
 
-			var question = "";
-			var save_button = "";
 			if (isLastAnswer) {
-				question = "Confira as marcações das tabelas abaixo. Se houver erros, corrija-os.";
-				save_button = "Pronto! As marcações estão corretas"
-			} else {
-				question = "Marque a área das tabelas da página abaixo e descreva as informações que serão pedidas após a marcação.";
-				save_button = "Pronto! Salvar essas marcações"
+				var num_annotations = $(".image-annotate-area").length;
+				$.each($(".image-annotate-area"), function(index) {
+					if (index == num_annotations - 1) {
+						$(this).trigger("click");
+					}
+				});
 			}
-
-			$("#question").text(question);
-			$("#button").text(save_button);
 
 			pybossa.getCurrentUserId(function(userId) {
 				initSharer(task_id, userId);
@@ -579,6 +709,8 @@
 
 	// Function to submit and save the TaskRun in PyBossa
 	function submitTask(answer) {
+		$("[rel=popover]").popover("hide");
+
 		// Get the task-id
 		taskid = $("#task-id").text();
 
@@ -588,6 +720,12 @@
 
 		// Save the task
 		pybossa.saveTask(taskid, answerToSave).done(function(data) {
+
+			var cookie_name = isLastAnswer ? 'finished_t2_correction' : 'finished_t2';
+			$.cookie(cookie_name, true, {
+				expires : COOKIE_EXPIRATION,
+				path : '/'
+			});
 
 			taskRunDone(taskid);
 			$.fn.annotateImage.clear(image);

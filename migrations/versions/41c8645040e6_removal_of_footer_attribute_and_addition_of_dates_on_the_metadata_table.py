@@ -21,6 +21,8 @@ def upgrade():
     op.drop_column("metadata", "footer")
     op.add_column("metadata", sa.Column("initial_date", sa.VARCHAR(length=10)))
     op.add_column("metadata", sa.Column("final_date", sa.VARCHAR(length=10)))
+    op.drop_constraint("page_book_id_key", "page", "unique")
+    
     ### end Alembic commands ###
 
 

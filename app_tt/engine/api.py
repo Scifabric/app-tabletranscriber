@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask import Blueprint, request
 from tasks import check_task, create_apps, close_task, close_t1
-from tasks import create_task, available_tasks, save_fact, submit_report, get_fact_page, render_template
+from tasks import create_task, available_tasks, save_fact, submit_report, get_fact_page, render_template, book_progress
 import json
 
 blueprint = Blueprint('api', __name__)
@@ -99,5 +99,7 @@ def render_pages_template(task_shortname, page):
     rendered_page = render_template.delay(task_shortname, page)
     return rendered_page.get()
 
-
-
+@blueprint.route('/get_book_progress/<string(maxlength=255):bookid>')
+def get_book_progress(bookid):
+    progress = book_progress.delay(bookid)
+    return progress.get()

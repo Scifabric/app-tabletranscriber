@@ -26,16 +26,16 @@
 			Mem&oacute;ria Estat&iacute;stica do Brasil (<span id="task-type"></span>)
 		</h1>
 
-		<div style="margin-top: 10px; margin-bottom: 10px;">
+		<div id="motivation-msg" style="margin-top: 10px; margin-bottom: 10px; display: none;">
 			<span id="progress-from">#</span><span id="done"
 				class="label label-info" style="margin-right: 5px"></span><span
-				id="progress-to">#</span><span id="total"
-				class="label label-inverse"></span>
+				id="progress-to">#</span>
 		</div>
-		<div class="progress progress-striped">
-			<div id="progress" rel="tooltip" class="bar" style="width: 0%;"></div>
+		<div class="progress  progress-striped">
+			<div id="community-progress" class="bar bar-success"
+				style="width: 0%;"></div>
+			<div id="user-progress" class="bar bar-info" style="width: 0%;"></div>
 		</div>
-
 		<h5>
 			<strong><span id="book-info"></span></strong> <i><span
 				id="book_title"></span></i>
@@ -169,6 +169,8 @@
 <script type="text/javascript" charset="utf-8">
 	var app_shortname = "#app_shortname#";
 	var endpoint = "/pybossa";
+	var book_progress;
+	var user_progress;
 
 	function unblockUI() {
 		$("#loading-container").hide();
@@ -281,19 +283,61 @@
 	}); //Internationalization using jquery.i18n
 
 	function loadUserProgress() {
-		pybossa.userProgress(app_shortname).done(
+		book_progress = {'total': 0, 'done': 0};
+		user_progress = {'total': 0, 'done': 0};
+		
+		var book_id = app_shortname.split("_")[0];
+		var deferreds = [];
+		deferreds.push(getBookProgress(book_id));
+		deferreds.push(getUserProgress(book_id + "_tt1"));
+		deferreds.push(getUserProgress(book_id + "_tt2"));
+		deferreds.push(getUserProgress(book_id + "_tt3"));
+		deferreds.push(getUserProgress(book_id + "_tt4"));
+		
+	    $.when.apply($, deferreds).then(function() {
+			$("#total").text(100);
+			$("#done").text(30);
+			
+			if (user_progress.done > 1) {
+				$("#motivation-msg").show();
+			}
+			
+			var only_by_community = book_progress.done - user_progress.done;
+	    	var community_pct = Math.round((only_by_community * 100) / book_progress.total);
+			$("#community-progress").tooltip('destroy');
+			$("#community-progress").css("width", community_pct.toString() + "%");
+			$("#community-progress").attr("data-original-title", community_pct.toString() + "% " + $.i18n._('completed-by-community'));
+			$("#community-progress").tooltip({
+				'placement' : 'top'
+			});
+			
+			var user_pct = Math.round((user_progress.done * 100) / book_progress.total);
+			$("#user-progress").tooltip('destroy');
+			$("#user-progress").css("width", user_pct.toString() + "%");
+			$("#user-progress").attr("data-original-title", user_pct.toString() + "% " + $.i18n._('completed-by-user'));
+			$("#user-progress").tooltip({
+				'placement' : 'top'
+			});
+	    	
+			$("#total").text(book_progress.total);
+			$("#done").text(user_progress.done);    	
+	    });
+	}
+	
+	function getBookProgress(bookId) {
+		return $.ajax({
+			url : '/mb/api/get_book_progress/' + bookId,
+			success : function(data) {
+				book_progress = $.parseJSON(data);
+			}
+		});
+	}
+	
+	function getUserProgress(app_name) {
+		return pybossa.userProgress(app_name).done(
 				function(data) {
-					var pct = Math.round((data.done * 100) / data.total);
-					$("#progress").css("width", pct.toString() + "%");
-
-					$("#progress").tooltip('destroy');
-					$("#progress").attr("data-original-title",
-							pct.toString() + "% " + $.i18n._('completed'));
-					$("#progress").tooltip({
-						'placement' : 'left'
-					});
-					$("#total").text(data.total);
-					$("#done").text(data.done);
+					user_progress.total = user_progress.total + data.total;
+					user_progress.done = user_progress.done + data.done;
 				});
 	}
 

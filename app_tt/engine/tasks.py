@@ -222,8 +222,8 @@ def get_fact_page(fact_id):
 
         cursor.execute(query)
 
-        rows = cursor.fetchone()
-        result = __createFactPage(rows[0], rows[1], rows[2], rows[3], rows[4], rows[5], rows[6], rows[7])
+        row = cursor.fetchone()
+        result = __createFactPage(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7])
 
         con.commit()
     except psycopg2.DatabaseError, e:
@@ -299,4 +299,27 @@ def render_template(app_shortname, page):
         line = line.replace("#app_shortname#", app_shortname.encode('utf-8'))
         text += line
     return text    
+
+@task(name="app_tt.engine.tasks.book_progress")
+def book_progress(bookid):
+    con = None
+    result = dict(done=0, total=0)
+    try:
+        con = __create_db_connection("pybossa3")
+        cursor = con.cursor()
+        query = "SELECT * FROM (SELECT COUNT(*) done_task_runs FROM task_run WHERE app_id in (SELECT id FROM app WHERE short_name like '" + bookid + "%')) as tmp1, (SELECT COUNT(*)*2 total_task_runs FROM task WHERE app_id in (SELECT id FROM app WHERE short_name like '" + bookid + "%')) as tmp2"
+
+        cursor.execute(query)
+
+        row = cursor.fetchone()
+        result['done'] = row[0]
+        result['total'] = row[1]
+
+        con.commit()
+    except psycopg2.DatabaseError, e:
+        print 'Error %s' % e
+    finally:
+        if con:
+            con.close()
+        return json.dumps(result)
 

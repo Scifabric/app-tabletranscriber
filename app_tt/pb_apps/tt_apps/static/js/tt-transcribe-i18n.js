@@ -13,8 +13,8 @@ var en_US_dict = {
     'error': "Error! ",
     'err_msg': "Something went wrong, please contact the site administrators.",
     'workflowtask' : "There are other types of tasks available. Click to try it.",
-    'progress-from' : "You have completed ",
-    'progress-to' : "tasks from",
+    'progress-from' : "You have already completed ",
+    'progress-to' : "tasks – keep contributing!",
     'task-instruction-p1' : "<strong> Information </strong>",
     'task-instruction-p2' : "The <strong style='color: #339ACD'>blue</strong> cell is the one currently selected for checking its transcription;",
     'task-instruction-p3' : "The <strong style='color: #1BA038'>green</strong> cells show the transcriptions corrected by you or another user;",
@@ -31,7 +31,10 @@ var en_US_dict = {
     'button-previous-cell' : 'Previous cell',
     'button-next-cell' : 'Next cell',
     'completed' : 'completed!',
-    'button_bug_report' : 'Point an error in the task'
+    'button_bug_report' : 'Point an error in the task',
+    'completed-by-community' : 'completed by the community!',
+    'completed-by-user' : 'completed by you!'
+
 };
 
 var pt_dict= {
@@ -49,8 +52,8 @@ var pt_dict= {
     'error': "Erro! ",
     'err_msg': "Algo ocorreu errado, por favor contate o administrador do site.",
     'workflowtask' : "Há outros tipos de tarefas disponíveis. Clique para ir.",
-    'progress-from' : "Você fez ",
-    'progress-to' : "tarefas de um total de ",
+    'progress-from' : "Você já completou ",
+    'progress-to' : "tarefas – continue contribuindo!",
     'task-instruction-p1' : "<strong> Informações </strong>",
     'task-instruction-p2' : "A célula em <strong style='color: #339ACD'>azul</strong> é a célula atualmente selecionada para você verficar a transcrição;",
     'task-instruction-p3' : "Células em <strong style='color: #1BA038'>verde</strong> indicam transcrições corrigidas por você ou por outro usuário;",
@@ -67,7 +70,9 @@ var pt_dict= {
     'button-previous-cell' : 'Célula anterior',
     'button-next-cell' : 'Próxima célula',
     'completed' : 'finalizados!',
-    'button_bug_report' : 'Aponte um erro na tarefa'
+    'button_bug_report' : 'Aponte um erro na tarefa',
+    'completed-by-community' : 'feitas pela comunidade!',
+    'completed-by-user' : 'feitas por você!'
 };
 
 var language = navigator.language? navigator.language : navigator.userLanguage;

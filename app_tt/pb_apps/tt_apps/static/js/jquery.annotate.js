@@ -1,4 +1,4 @@
-                                                                                                                                                     /// <reference path="jquery-1.2.6-vsdoc.js" />
+/// <reference path="jquery-1.2.6-vsdoc.js" />
 (function($) {
 
 	$.fn.annotateImage = function(options) {
@@ -10,7 +10,7 @@
 //		var image = this;
 
 		this.image = this;
-		
+
 		this.mode = 'view';
 
 		// Assign defaults
@@ -21,8 +21,10 @@
 		this.useAjax = opts.useAjax;
 		this.notes = opts.notes;
 		this.clear = opts.clear;
-        noteS = opts.notes;
-		
+		notesToSave = opts.notes;
+		deletingNote = false;
+		editingNote = false;
+
 		if(this.clear){
 			$.fn.annotateImage.clear(this);
 		}
@@ -96,16 +98,16 @@
 	$.fn.annotateImage.clear = function(image) {
 		///	<summary>
 		///		Clears all existing annotations from the image.
-		///	</summary>    
+		///	</summary>
 		$("#image-annotate-edit-form").remove();
 		$(".image-annotate-canvas").remove();
 		var toDestroy = undefined;
-        for (var i = 0; i < image.notes.length; i++) {
+		for (var i = 0; i < image.notes.length; i++) {
 			toDestroy = image.notes[image.notes[i]];
-            if(toDestroy != undefined) toDestroy.destroy();
+			if(toDestroy != undefined) toDestroy.destroy();
 		}
 		image.notes = new Array();
-		noteS = new Array();
+		notesToSave = new Array();
 	};
 
 	$.fn.annotateImage.ajaxLoad = function(image) {
@@ -150,7 +152,7 @@
 
 			$.fn.annotateImage.createSaveButton(editable, image);
 			$.fn.annotateImage.createCancelButton(editable, image);
-			
+
 		}
 	};
 
@@ -165,17 +167,17 @@
 			var text = {
 					titulo : $('#titulo').val(), 
 					subtitulo: $('#subtitulo').val(),
-	                assunto: $('#assunto').val(), 
-	                fontes: $('#fontes').val(),
-	                outros: $('#outros').val(),
-	                
-	                dataInicial: $('#dataInicial').val(),
-	                dataFinal: $('#dataFinal').val(),
-	                
-	                girar: $('#girar')[0].checked,
-	                nao_girar: $('#nao_girar')[0].checked,
+					assunto: $('#assunto').val(), 
+					fontes: $('#fontes').val(),
+					outros: $('#outros').val(),
+
+					dataInicial: $('#dataInicial').val(),
+					dataFinal: $('#dataFinal').val(),
+
+					girar: $('#girar')[0].checked,
+					nao_girar: $('#nao_girar')[0].checked,
 			};
-			
+
 			$.fn.annotateImage.appendPosition(form, editable);
 			image.mode = 'view';
 
@@ -253,7 +255,7 @@
 			newNote.left = coords.left;
 			newNote.width = coords.width;
 			newNote.height = coords.height;
-			newNote.text = {titulo: "",subtitulo: "",fontes: "", assunto : "", outros: "", dataInicial: "", dataFinal: ""};
+			newNote.text = {titulo: "",subtitulo: "",fontes: "", assunto : "", outros: "", dataInicial: "", dataFinal: "", nao_girar: true, girar: false};
 			this.note = newNote;
 		}
 
@@ -269,73 +271,73 @@
 		image.canvas.children('.image-annotate-view').hide();
 		image.canvas.children('.image-annotate-edit').show();
 
-        var selected = this.note.text.assunto;
-        var girar = this.note.text.girar;
-        var nao_girar = this.note.text.nao_girar;
+		var selected = this.note.text.assunto;
+		var girar = this.note.text.girar;
+		var nao_girar = this.note.text.nao_girar;
 		var fontes = typeof this.note.text.fontes == "undefined" ? "" : this.note.text.fontes;
 		var dataInicial = typeof this.note.text.dataInicial == "undefined" ? "" : this.note.text.dataInicial;
 		var dataFinal = typeof this.note.text.dataFinal == "undefined" ? "" : this.note.text.dataFinal; 
-		
+
 		var data_tooltip_msg = "Caso você identifique apenas o mês e o ano, coloque no seguinte formato: mm/aaaa. Caso identifique apenas" +
-				" o ano, coloque no seguinte formato: aaaa.";
+		" o ano, coloque no seguinte formato: aaaa.";
 		var h_orient_msg = "A orientação do conteúdo das células é predominantemente horizontal.";
 		var v_orient_msg = "A orientação do conteúdo das células é predominantemente vertical.";
-		
-        // Add the note (which we'll load with the form afterwards)
+
+		// Add the note (which we'll load with the form afterwards)
 		var form = $('<div id="image-annotate-edit-form">' + 
-                '<form>	Título: <textarea type="textarea" id="titulo" rows="0">' + this.note.text.titulo + '</textarea><br/>' + 
+				'<form>	Título: <textarea type="textarea" id="titulo" rows="0">' + this.note.text.titulo + '</textarea><br/>' + 
 				'Subtítulo: <textarea type="textarea" id="subtitulo">' + this.note.text.subtitulo + '</textarea><br/>' +
-                'Assunto: <select size="1" id="assunto">' +
-                '<option value="0"' + (selected == "0" ? "selected" : "") + ' >Economia</option>' +
-                '<option value="1"' + (selected == "1" ? "selected" : "") + ' >População/Demografia</option>'+ 
-                '<option value="2"' + (selected == "2" ? "selected" : "") + ' >Violência/Criminalidade</option>' +
-                '<option value="3"' + (selected == "3" ? "selected" : "") + ' >Outros</option>' +
-                '<option value="4"' + (selected == "4" ? "selected" : "") + ' >Finanças</option>' +
-                '<option value="5"' + (selected == "5" ? "selected" : "") + ' >Transporte</option>' +
-                '<option value="6"' + (selected == "6" ? "selected" : "") + ' >Educação</option>' +
-                '<option value="7"' + (selected == "7" ? "selected" : "") + ' >Saúde</option>' +
-                '<option value="8"' + (selected == "8" ? "selected" : "") + ' >Administração Pública</option></select>' +
-                '<input type="text" id="outros" value="' + this.note.text.outros +'">' + '</input><br/>' +
+				'Assunto: <select size="1" id="assunto">' +
+				'<option value="0"' + (selected == "0" ? "selected" : "") + ' >Economia</option>' +
+				'<option value="1"' + (selected == "1" ? "selected" : "") + ' >População/Demografia</option>'+ 
+				'<option value="2"' + (selected == "2" ? "selected" : "") + ' >Violência/Criminalidade</option>' +
+				'<option value="3"' + (selected == "3" ? "selected" : "") + ' >Outros</option>' +
+				'<option value="4"' + (selected == "4" ? "selected" : "") + ' >Finanças</option>' +
+				'<option value="5"' + (selected == "5" ? "selected" : "") + ' >Transporte</option>' +
+				'<option value="6"' + (selected == "6" ? "selected" : "") + ' >Educação</option>' +
+				'<option value="7"' + (selected == "7" ? "selected" : "") + ' >Saúde</option>' +
+				'<option value="8"' + (selected == "8" ? "selected" : "") + ' >Administração Pública</option></select>' +
+				'<input type="text" id="outros" value="' + this.note.text.outros +'">' + '</input><br/>' +
 				'Fontes: <textarea type="textarea" id="fontes">' + fontes + '</textarea>' +
 				'Data Inicial (dd/mm/aaaa): <i class="icon icon-white icon-question-sign" rel="tooltip" title="' + data_tooltip_msg + '"></i> <textarea type="textarea" id="dataInicial">' + dataInicial + '</textarea><br/>' +
 				'Data Final (dd/mm/aaaa): <i class="icon icon-white icon-question-sign" rel="tooltip" title="' + data_tooltip_msg + '"></i> <textarea type="textarea" id="dataFinal">' + dataFinal + '</textarea><br/>' +
 				'<p><input id="nao_girar"' + (nao_girar ? "checked='true'" : "") + 'name="radio" type="radio" value="true" class="radiocheckbox" checked="true"> Tabela possui orientação horizontal</input> <i class="icon icon-white icon-question-sign" rel="tooltip" title="' + h_orient_msg + '"></i></p>' +
-                '<p><input id="girar"' + (girar ? "checked='true'" : "") + 'name="radio" type="radio" value="true" class="radiocheckbox"> Tabela possui orientação vertical</input> <i class="icon icon-white icon-question-sign" rel="tooltip" title="' + v_orient_msg + '"></i></p>' + 
-                '</form></div>');
-		
-        this.form = form;
+				'<p><input id="girar"' + (!nao_girar ? "checked='true'" : "") + 'name="radio" type="radio" value="true" class="radiocheckbox"> Tabela possui orientação vertical</input> <i class="icon icon-white icon-question-sign" rel="tooltip" title="' + v_orient_msg + '"></i></p>' + 
+		'</form></div>');
+
+		this.form = form;
 
 		$('body').append(this.form);
 		
 		// mutual exclusivity of radio buttons
 		$('.radiocheckbox').click(function () {
-            checkedState = $(this).attr('checked');
-             $(this).parent('form').children('.checkbox:checked').each(function () {
-                 $(this).attr('checked', false);
-             });
-             $(this).attr('checked', checkedState);
+			checkedState = $(this).attr('checked');
+			$(this).parent('form').children('.checkbox:checked').each(function () {
+				$(this).attr('checked', false);
+			});
+			$(this).attr('checked', checkedState);
 		});
-		
-        if(selected == "3"){
-            $("#outros").show();
-        }else{
-            $("#outros").hide();    
-        }
-        $("#assunto").change(function(){
-                $("#assunto option:selected").each(function(){
-                    var $option = $(this);
-                    if ($option.attr("value") == 3){
-                        $("#outros").show();                            
-                    }
-                    else{
-                        $("#outros").attr("value","");
-                        $("#outros").hide();
-                    }
-                });
-        });
-        
-        $("[rel=tooltip]").tooltip({ placement: 'bottom'});
-        
+
+		if(selected == "3"){
+			$("#outros").show();
+		}else{
+			$("#outros").hide();    
+		}
+		$("#assunto").change(function(){
+			$("#assunto option:selected").each(function(){
+				var $option = $(this);
+				if ($option.attr("value") == 3){
+					$("#outros").show();                            
+				}
+				else{
+					$("#outros").attr("value","");
+					$("#outros").hide();
+				}
+			});
+		});
+
+		$("[rel=tooltip]").tooltip({ placement: 'bottom'});
+
 		this.form.css('left', (this.area.offset().left + this.area.width() + 7) + 'px');
 		this.form.css('top', parseInt(this.area.offset().top) + 'px');
 
@@ -360,6 +362,34 @@
 				form.css('top', parseInt(area.offset().top) + 'px');
 			}
 		});
+		
+		// Add tooltips for a newcomer
+		if (toolTipsEnabled) {
+			$("#image-annotate-edit-form").attr("data-original-title", "Descreva as informações pedidas da tabela aqui.");
+			$("#image-annotate-edit-form").popover("show");
+			
+			$(".image-annotate-edit-area").popover("show");
+			$("#image-container").popover("hide");
+			
+			$("#image-annotate-edit-form").css("margin-top", "10px");
+		}
+		
+		editingNote = true;
+		$("#image-annotate-edit-form").on("remove", function(){
+			$("#image-annotate-edit-form").popover("hide");
+			$(".image-annotate-edit-area").popover("hide");
+			
+			if ($(".image-annotate-area").length != 1 || !deletingNote) {
+				$(".image-annotate-area").trigger("mouseover");
+			}
+			
+			if (toolTipsEnabled) {
+				$(".image-annotate-area").popover("show");
+				if (!isLastAnswer) $("#image-container").popover("show");	
+			}
+			editingNote = false;
+		});
+		
 		return this;
 	};
 
@@ -477,6 +507,7 @@
 			// Add the delete button
 			var del = $('<a class="image-annotate-edit-delete">Delete</a>');
 			del.click(function() {
+				deletingNote = true;
 				var form = $('#image-annotate-edit-form form');
 
 				$.fn.annotateImage.appendPosition(form, editable);
@@ -492,7 +523,8 @@
 				annotation.image.mode = 'view';
 				editable.destroy();
 				annotation.destroy();
-				noteS = $.fn.annotateImage.removeNote(noteS,annotation.note);
+				notesToSave = $.fn.annotateImage.removeNote(notesToSave,annotation.note);
+				deletingNote = false;
 			});
 			editable.form.append(del);
 
@@ -516,7 +548,7 @@
 		///	<summary>
 		///		Sets the position of an annotation.
 		///	</summary>
-		this.form.html(text);
+		this.form.html(text.titulo);
 		this.form.hide();
 
 		// Resize
@@ -541,8 +573,8 @@
 	 * <summary>
 	 * 		Add a note with a mouse selection
 	 */
-	
-	
+
+
 	$.fn.annotateImage.mouseSelection = function(obj){
 		cont = 0;
 		intoNote = false;
@@ -572,11 +604,13 @@
 			maxHeight = offsetTop + parent.height();
 			x1 = 0; y1 = 0; x2 = 0; y2 = 0; width = 0; height = 0; selTop = 0; selLeft = 0;
 			parent.unbind("mousedown").bind("mousedown",onMouseDown);				  
-
 		}
 
 		function onMouseDown(e){
-
+			if (e.target.className != "" && !editingNote) {
+				$(".image-annotate-area").trigger("mouseout");
+			}
+			
 			if(!intoNote){
 				document.onselectstart = function(){ return false; };
 				x1 = e.pageX - offsetLeft;
@@ -634,37 +668,32 @@
 			cont++;
 			var coords = {top: selTop,left: selLeft, width: Math.abs(width), height: Math.abs(height)};
 			$.fn.annotateImage.add(obj,coords);
-				
+
 		}
 	};
-	
-	
+
+
 	$.fn.annotateImage.addNote = function(note){
-		noteS.push(note);
+		notesToSave.push(note);
 	};
-	
+
 	$.fn.annotateImage.removeNote = function(notes,note){
 		var iToRemove = $.inArray(note,notes);
 		var auxNotes = new Array();
-		
+
 		for(var i = 0; i < notes.length; i++){
 			if(iToRemove == i) continue;
 			auxNotes.push(notes[i]);
 		}
-		
+
 		notes = auxNotes;
 
 		return notes;
 	};
-	
+
 	$.fn.annotateImage.exportJsonData = function(){
-		jsonData = noteS;
-		// for (var i = 0; i < noteS.length; i++) {
-		// 	jsonData.push({data: {titulo: noteS[i].text.titulo, subtitulo: noteS[i].text.subtitulo, assunto: noteS[i].text.assunto,
-                    // fontes: noteS[i].text.fontes}, coords: {x1: noteS[i].left, y1:noteS[i].top, x2: noteS[i].left + noteS[i].width , y2: noteS[i].top + noteS[i].height}});
-		// }
-        
+		jsonData = notesToSave;
 		return JSON.stringify(jsonData);
 	};
-		
+
 })(jQuery);

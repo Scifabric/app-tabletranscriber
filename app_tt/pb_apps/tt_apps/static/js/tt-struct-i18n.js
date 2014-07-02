@@ -21,8 +21,8 @@ var en_US_dict = {
     'error': "Error! ",
     'err_msg': "Something went wrong, please contact the site administrators.",
     'workflowtask' : "There are other types of tasks available. Click to try it.",
-    'progress-from' : "You have completed ",
-    'progress-to' : "tasks from",
+    'progress-from' : "You have already completed ",
+    'progress-to' : "tasks – keep contributing!",
     'task-instruction-p1' : "<strong> Basic Instructions </strong>",
     'task-instruction-use-tool' : "You can use the tool ",
     'task-instruction-p2' : " to select and to adjust the position of a segment;",
@@ -34,7 +34,9 @@ var en_US_dict = {
     'task-instruction-p6' : " to split a segment on the nearest intersection point;",
     'task-instruction-p7-1' : "Click on ",
     'task-instruction-p7-2' : " to solve doubts and advanced shortcuts.",
-    'completed' : 'completed!'
+    'completed' : 'completed!',
+    'completed-by-community' : 'completed by the community!',
+    'completed-by-user' : 'completed by you!'
 };
 
 var pt_dict= {
@@ -60,8 +62,8 @@ var pt_dict= {
     'error': "Erro! ",
     'err_msg': "Algo ocorreu errado, por favor contate o administrador do site.",
     'workflowtask' : "Há outros tipos de tarefas disponíveis. Clique para ir.",
-    'progress-from' : "Você fez ",
-    'progress-to' : "tarefas de um total de",
+    'progress-from' : "Você já completou ",
+    'progress-to' : "tarefas – continue contribuindo!",
     'task-instruction-p1' : "<strong> Instru&ccedil;&otilde;es b&aacute;sicas</strong>",
     'task-instruction-use-tool' : "Use a ferramenta ",
     'task-instruction-p2' : " para selecionar e ajustar a posição de um segmento;",
@@ -73,7 +75,9 @@ var pt_dict= {
     'task-instruction-p6' : " para dividir o segmento na intersecção mais próxima;",
     'task-instruction-p7-1' : "Clique em ",
     'task-instruction-p7-2' : " para soluções de dúvidas e atalhos avançados.",
-    'completed' : 'finalizados!'
+    'completed' : 'finalizados!',
+    'completed-by-community' : 'feitas pela comunidade!',
+    'completed-by-user' : 'feitas por você!'
 };
 
 var language = navigator.language? navigator.language : navigator.userLanguage;

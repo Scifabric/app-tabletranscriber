@@ -16,9 +16,11 @@ var default_dict = {
     'error': "Error! ",
     'err_msg': "Something went wrong, please contact the site administrators.",
     'workflowtask' : "There is a new kind of task available. Click to try it.",
-    'progress-from' : "You have completed ",
-    'progress-to' : "tasks from",
-    'completed' : 'completed!'
+    'progress-from' : "You have already completed ",
+    'progress-to' : "tasks – keep contributing!",
+    'completed' : 'completed!',
+    'completed-by-community' : 'completed by the community!',
+    'completed-by-user' : 'completed by you!'
 };
 
 var en_US_dict = default_dict;
@@ -41,9 +43,11 @@ var pt_dict= {
 	    'error': "Erro! ",
 	    'err_msg': "Algo ocorreu errado, por favor contate o administrador do site.",
         'workflowtask' : "Existe um novo tipo de tarefa disponível. Clique para ir.",
-        'progress-from' : "Você fez ",
-        'progress-to' : "tarefas de um total de ",
-        'completed' : 'finalizados!'
+        'progress-from' : "Você já completou ",
+        'progress-to' : "tarefas – continue contribuindo!",
+        'completed' : 'finalizados!',
+        'completed-by-community' : 'feitas pela comunidade!',
+        'completed-by-user' : 'feitas por você!'
 };
 
 var language = navigator.language? navigator.language : navigator.userLanguage;
