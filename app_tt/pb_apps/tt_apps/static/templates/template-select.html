@@ -26,7 +26,7 @@
 			Mem&oacute;ria Estat&iacute;stica do Brasil (<span id="task-type"></span>)
 		</h1>
 
-		<div id="motivation-msg" style="margin-top: 10px; margin-bottom: 10px; display: none;">
+		<div id="motivation-msg" style="margin-top: 10px; margin-bottom: 10px; opacity: 0;">
 			<span id="progress-from">#</span><span id="done"
 				class="label label-info" style="margin-right: 5px"></span><span
 				id="progress-to">#</span>
@@ -299,7 +299,7 @@
 			$("#done").text(30);
 			
 			if (user_progress.done > 1) {
-				$("#motivation-msg").show();
+				$("#motivation-msg").fadeTo(500, 1);
 			}
 			
 			var only_by_community = book_progress.done - user_progress.done;
