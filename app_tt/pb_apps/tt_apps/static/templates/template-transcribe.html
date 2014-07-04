@@ -321,6 +321,12 @@
 								$("#book_title").html(book_title);
 							}
 						});
+						
+						// Anonymous alert fix
+						$("#msg_warning .close").removeAttr("data-dismiss");
+						$("#msg_warning .close").on("click", function(e) {
+							$("#msg_warning").fadeTo(1, 0);
+						});
 
 						$("#question").text($.i18n._('question'));
 						$("#question-warning").html(

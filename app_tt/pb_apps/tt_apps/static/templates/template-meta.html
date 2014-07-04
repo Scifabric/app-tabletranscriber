@@ -33,9 +33,10 @@
 			Mem&oacute;ria Estat&iacute;stica do Brasil (<span id="task-type"></span>)
 		</h1>
 
-		<div id="motivation-msg" style="margin-top: 10px; margin-bottom: 10px; opacity: 0;">
-			<span id="progress-from">Voc&ecirc; j&aacute; completou </span><span id="done"
-				class="label label-info" style="margin-right: 5px"></span><span
+		<div id="motivation-msg"
+			style="margin-top: 10px; margin-bottom: 10px; opacity: 0;">
+			<span id="progress-from">Voc&ecirc; j&aacute; completou </span><span
+				id="done" class="label label-info" style="margin-right: 5px"></span><span
 				id="progress-to">tarefas – continue contribuindo! </span>
 		</div>
 		<div class="progress  progress-striped">
@@ -416,6 +417,12 @@
 			}
 		});
 
+		// Anonymous alert fix
+		$("#msg_warning .close").removeAttr("data-dismiss");
+		$("#msg_warning .close").on("click", function(e) {
+			$("#msg_warning").fadeTo(1, 0);
+		});
+
 		$("#book-info").text("Você está ajudando a transcrever o livro:");
 		$("#task-type").text("Tarefa de marcação");
 		$("#answer").hide();
@@ -479,9 +486,15 @@
 	}
 
 	function loadUserProgress() {
-		book_progress = {'total': 0, 'done': 0};
-		user_progress = {'total': 0, 'done': 0};
-		
+		book_progress = {
+			'total' : 0,
+			'done' : 0
+		};
+		user_progress = {
+			'total' : 0,
+			'done' : 0
+		};
+
 		var book_id = app_shortname.split("_")[0];
 		var deferreds = [];
 		deferreds.push(getBookProgress(book_id));
@@ -489,37 +502,51 @@
 		deferreds.push(getUserProgress(book_id + "_tt2"));
 		deferreds.push(getUserProgress(book_id + "_tt3"));
 		deferreds.push(getUserProgress(book_id + "_tt4"));
-		
-	    $.when.apply($, deferreds).then(function() {
-			$("#total").text(100);
-			$("#done").text(30);
-			
-			if (user_progress.done > 1) {
-				$("#motivation-msg").fadeTo(500, 1);
-			}
-			
-			var only_by_community = book_progress.done - user_progress.done;
-	    	var community_pct = Math.round((only_by_community * 100) / book_progress.total);
-			$("#community-progress").tooltip('destroy');
-			$("#community-progress").css("width", community_pct.toString() + "%");
-			$("#community-progress").attr("data-original-title", community_pct.toString() + "% feitas pela comunidade!");
-			$("#community-progress").tooltip({
-				'placement' : 'top'
-			});
-			
-			var user_pct = Math.round((user_progress.done * 100) / book_progress.total);
-			$("#user-progress").tooltip('destroy');
-			$("#user-progress").css("width", user_pct.toString() + "%");
-			$("#user-progress").attr("data-original-title", user_pct.toString() + "% feitas por você!");
-			$("#user-progress").tooltip({
-				'placement' : 'top'
-			});
-	    	
-			$("#total").text(book_progress.total);
-			$("#done").text(user_progress.done);    	
-	    });
+
+		$.when
+				.apply($, deferreds)
+				.then(
+						function() {
+							$("#total").text(100);
+							$("#done").text(30);
+
+							if (user_progress.done > 1) {
+								$("#motivation-msg").fadeTo(500, 1);
+							}
+
+							var only_by_community = book_progress.done
+									- user_progress.done;
+							var community_pct = Math
+									.round((only_by_community * 100)
+											/ book_progress.total);
+							$("#community-progress").tooltip('destroy');
+							$("#community-progress").css("width",
+									community_pct.toString() + "%");
+							$("#community-progress").attr(
+									"data-original-title",
+									community_pct.toString()
+											+ "% feitas pela comunidade!");
+							$("#community-progress").tooltip({
+								'placement' : 'top'
+							});
+
+							var user_pct = Math
+									.round((user_progress.done * 100)
+											/ book_progress.total);
+							$("#user-progress").tooltip('destroy');
+							$("#user-progress").css("width",
+									user_pct.toString() + "%");
+							$("#user-progress").attr("data-original-title",
+									user_pct.toString() + "% feitas por você!");
+							$("#user-progress").tooltip({
+								'placement' : 'top'
+							});
+
+							$("#total").text(book_progress.total);
+							$("#done").text(user_progress.done);
+						});
 	}
-	
+
 	function getBookProgress(bookId) {
 		return $.ajax({
 			url : '/mb/api/get_book_progress/' + bookId,
@@ -528,13 +555,12 @@
 			}
 		});
 	}
-	
+
 	function getUserProgress(app_name) {
-		return pybossa.userProgress(app_name).done(
-				function(data) {
-					user_progress.total = user_progress.total + data.total;
-					user_progress.done = user_progress.done + data.done;
-				});
+		return pybossa.userProgress(app_name).done(function(data) {
+			user_progress.total = user_progress.total + data.total;
+			user_progress.done = user_progress.done + data.done;
+		});
 	}
 
 	function taskRunDone(taskId) {
@@ -720,24 +746,26 @@
 				: annotatedTables;
 
 		// Save the task
-		pybossa.saveTask(taskid, answerToSave).done(function(data) {
+		pybossa.saveTask(taskid, answerToSave).done(
+				function(data) {
 
-			var cookie_name = isLastAnswer ? 'finished_t2_correction' : 'finished_t2';
-			$.cookie(cookie_name, true, {
-				expires : COOKIE_EXPIRATION,
-				path : '/'
-			});
+					var cookie_name = isLastAnswer ? 'finished_t2_correction'
+							: 'finished_t2';
+					$.cookie(cookie_name, true, {
+						expires : COOKIE_EXPIRATION,
+						path : '/'
+					});
 
-			taskRunDone(taskid);
-			$.fn.annotateImage.clear(image);
+					taskRunDone(taskid);
+					$.fn.annotateImage.clear(image);
 
-			blockUI();
+					blockUI();
 
-			// Load a new task
-			pybossa.newTask(app_shortname).done(function(data) {
-				loadData(data)
-			});
-		});
+					// Load a new task
+					pybossa.newTask(app_shortname).done(function(data) {
+						loadData(data)
+					});
+				});
 	}
 
 	pybossa.setEndpoint(endpoint);

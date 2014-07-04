@@ -305,7 +305,7 @@ def book_progress(bookid):
     con = None
     result = dict(done=0, total=0)
     try:
-        con = __create_db_connection("pybossa3")
+        con = __create_db_connection(app.config['PYBOSSA_DB'])
         cursor = con.cursor()
         query = "SELECT * FROM (SELECT COUNT(*) done_task_runs FROM task_run WHERE app_id in (SELECT id FROM app WHERE short_name like '" + bookid + "%')) as tmp1, (SELECT COUNT(*)*2 total_task_runs FROM task WHERE app_id in (SELECT id FROM app WHERE short_name like '" + bookid + "%')) as tmp2"
 
