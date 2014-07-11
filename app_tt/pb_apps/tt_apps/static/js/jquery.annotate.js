@@ -615,7 +615,7 @@
 				document.onselectstart = function(){ return false; };
 				x1 = e.pageX - offsetLeft;
 				y1 =  e.pageY - offsetTop;
-				$(this).append("<div id='mark"+ cont +"' style='position: absolute; border: 1px inset; left: " + x1 + "px; top: " + y1 + "px;' ></div>");
+				$(this).append("<div id='mark"+ cont +"' style='position: absolute; border: 2.5px solid #E6663A; left: " + x1 + "px; top: " + y1 + "px;' ></div>");
 				selectionDiv = $("#mark"+cont);
 				$(document).mousemove(setSelection).one('mouseup',selectionEnd).unbind("mousedown");
 			}

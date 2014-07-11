@@ -95,3 +95,24 @@ div.container {
 	margin-bottom: 0px;
 	text-align: center;
 }
+
+.popover {
+	color: #000;
+	border: 1px solid rgba(0, 0, 0, 0.7);
+}
+
+.popover.left .arrow:after {
+	border-left-color: rgba(0, 0, 0, 1);
+}
+
+.popover.top .arrow:after {
+	border-top-color: rgba(0, 0, 0, 1);
+}
+
+.popover.right .arrow:after {
+	border-right-color: rgba(0, 0, 0, 1);
+}
+
+.popover.bottom .arrow:after {
+	border-bottom-color: rgba(0, 0, 0, 1);
+}

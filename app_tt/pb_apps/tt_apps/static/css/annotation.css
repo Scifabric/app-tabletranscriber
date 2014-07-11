@@ -31,9 +31,14 @@
     position: relative;
 }
 .image-annotate-area {
-    border: 1px solid #000000;
+    border: 2.5px solid #E6663A;
     position: absolute;
 }
+
+.image-annotate-area:hover {
+    border: 2.5px solid #339ACD;
+}
+
 .image-annotate-area div {
     border: 1px solid #FFFFFF;
     display: block;
@@ -44,9 +49,7 @@
 .image-annotate-area-editable {
     cursor: pointer;
 }
-.image-annotate-area-editable-hover div {
-    border-color: #00AD00 !important;
-}
+
 .image-annotate-note {
     background: #E7FFE7 none repeat scroll 0 0;
     border: solid 1px #397F39;
@@ -121,7 +124,7 @@
     background-color: #eee;
 }
 .image-annotate-edit-area {
-    border: 1px solid black;
+    border: 2.5px solid #339ACD;
     cursor: move;
     display: block;
     height: 60px;
