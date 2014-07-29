@@ -25,7 +25,8 @@
 		<h1>
 			Mem&oacute;ria Estat&iacute;stica do Brasil (<span id="task-type"></span>)
 		</h1>
-		<div id="motivation-msg" style="margin-top: 10px; margin-bottom: 10px; opacity: 0;">
+		<div id="motivation-msg"
+			style="margin-top: 10px; margin-bottom: 10px; opacity: 0;">
 			<span id="progress-from">#</span><span id="done"
 				class="label label-info" style="margin-right: 5px"></span><span
 				id="progress-to">#</span>
@@ -230,24 +231,49 @@
 	</div>
 </div>
 
-<script src="#server/js/kinetic.js"></script>
-<script type="text/javascript" src="#server/js/jquery.blockUI.js"></script>
-<script type="text/javascript" src="#server/js/jquery.i18n.min.js"></script>
-<script type="text/javascript" src="#server/js/tt-transcribe-i18n.js"></script>
-<script type="text/javascript" charset="utf-8" src="#server/js/tt4.js"></script>
-<script type="text/javascript" src="#server/js/report.js"></script>
-
 <link rel="stylesheet" href="#server/css/tt-transcribe.css" />
 
 <script type="text/javascript">
 	var taskId;
-	var serverName = "#server";
 	var app_shortname = "#app_shortname#";
 	var endpoint = "/pybossa";
 	var minTableViewerWidth = 515;
 	var minTableViewerHeight = $("#right-panel").height();
 	var book_progress;
 	var user_progress;
+	var base_url = "#server";
+
+	function getScripts(scripts, callback) {
+		var progress = 0;
+		var internalCallback = function() {
+			if (++progress == scripts.length) {
+				callback();
+			}
+		};
+		scripts.forEach(function(script) {
+			$.getScript(base_url + script, internalCallback);
+		});
+	}
+	
+	function getBaseURL() {
+		return typeof server_name == "undefined" ? "" : "https://" + server_name;
+	}
+
+	function initialize() {
+		var completeEndpoint = getBaseURL() + endpoint;
+		pybossa.setEndpoint(completeEndpoint);
+
+		var scripts = [ "/js/kinetic.js", "/js/jquery.i18n.min.js",
+				"/js/tt-transcribe-i18n.js", "/js/tt4.js",
+				"/js/jquery.blockUI.js", "/js/report.js" ];
+
+		getScripts(scripts, function() {
+			interfaceConfiguration();
+			pybossa.newTask(app_shortname).done(function(data) {
+				loadData(data);
+			});
+		});
+	}
 
 	function unblockUI() {
 		$("#loading-container").hide();
@@ -292,7 +318,7 @@
 
 		$.ajax({
 			type : 'POST',
-			url : '/mb/api/' + app_shortname + '/' + taskId + '/report',
+			url : getBaseURL() + '/mb/api/' + app_shortname + '/' + taskId + '/report',
 			dataType : 'json',
 			contentType : 'application/json; charset=utf-8',
 			data : jreport
@@ -305,92 +331,83 @@
 		pybossa.getCurrentUserId(callbackGetUserId);
 	}
 
-	$("#template-container")
-			.ready(
-					function() {
-						// update book title on header		
-						$.each($(".row a"), function() {
-							if ($(this).attr('href').indexOf("/pybossa/app/") != -1) {
+	function interfaceConfiguration() {
+		// update book title on header		
+		$.each($(".row a"), function() {
+			if ($(this).attr('href').indexOf("/pybossa/app/") != -1) {
 
-								if ($(this).text().indexOf("Transcrição") != -1) {
-									// remove PyBossa app's header
-									$(this).parent().parent().parent().remove();
-								}
+				if ($(this).text().indexOf("Transcrição") != -1) {
+					// remove PyBossa app's header
+					$(this).parent().parent().parent().remove();
+				}
 
-								var book_title = $(this).text().replace(" Transcrição", "");
-								$("#book_title").html(book_title);
-							}
-						});
-						
-						// Anonymous alert fix
-						$("#msg_warning .close").removeAttr("data-dismiss");
-						$("#msg_warning .close").on("click", function(e) {
-							$("#msg_warning").fadeTo(1, 0);
-						});
+				var book_title = $(this).text().replace(" Transcrição", "");
+				$("#book_title").html(book_title);
+			}
+		});
 
-						$("#question").text($.i18n._('question'));
-						$("#question-warning").html(
-								$.i18n._('question-warning'));
-						$("#book-info").text($.i18n._('book-info'));
-						$("#task-type").text($.i18n._('task-type'));
-						$("#question span:first").text($.i18n._('task_name'));
-						$("#success strong").text($.i18n._('well_done'));
-						$("#success span:nth-child(2)").text($.i18n._('saved'));
-						$("#button-finished-task span:first").text(
-								$.i18n._('button-finished-task'));
-						$("#finish strong").text($.i18n._('congratulations'));
-						$("#finish span:nth-child(2)").text(
-								$.i18n._('finished'));
-						$("#error strong").text($.i18n._('error'));
-						$("#error span:nth-child(2)").text($.i18n._('err_msg'));
-						$("#workflowtask").text($.i18n._('workflowtask'));
-						$("#progress-from").text($.i18n._('progress-from'));
-						$("#progress-to").text($.i18n._('progress-to'));
+		// Anonymous alert fix
+		$("#msg_warning .close").removeAttr("data-dismiss");
+		$("#msg_warning .close").on("click", function(e) {
+			$("#msg_warning").fadeTo(1, 0);
+		});
 
-						$("#task-instruction-p1").html(
-								$.i18n._('task-instruction-p1'));
-						$("#task-instruction-p2").html(
-								$.i18n._('task-instruction-p2'));
-						$("#task-instruction-p3").html(
-								$.i18n._('task-instruction-p3'));
-						$("#task-instruction-p4").html(
-								$.i18n._('task-instruction-p4'));
-						$("#task-instruction-p5").html(
-								$.i18n._('task-instruction-p5'));
-						$("#pc-transcription-p1").html(
-								$.i18n._('pc-transcription-p1'));
-						$("#pc-transcription-p2").html(
-								$.i18n._('pc-transcription-p2'));
-						$("#human-transcription-label").html(
-								$.i18n._('human-transcription-label'));
-						$("#your-transcription-label").html(
-								$.i18n._('your-transcription-label'));
+		$("#question").text($.i18n._('question'));
+		$("#question-warning").html($.i18n._('question-warning'));
+		$("#book-info").text($.i18n._('book-info'));
+		$("#task-type").text($.i18n._('task-type'));
+		$("#question span:first").text($.i18n._('task_name'));
+		$("#success strong").text($.i18n._('well_done'));
+		$("#success span:nth-child(2)").text($.i18n._('saved'));
+		$("#button-finished-task span:first").text(
+				$.i18n._('button-finished-task'));
+		$("#finish strong").text($.i18n._('congratulations'));
+		$("#finish span:nth-child(2)").text($.i18n._('finished'));
+		$("#error strong").text($.i18n._('error'));
+		$("#error span:nth-child(2)").text($.i18n._('err_msg'));
+		$("#workflowtask").text($.i18n._('workflowtask'));
+		$("#progress-from").text($.i18n._('progress-from'));
+		$("#progress-to").text($.i18n._('progress-to'));
 
-						$("#button-zoom-in").attr("title",
-								$.i18n._('button-zoom-in'));
-						$("#button-zoom-out").attr("title",
-								$.i18n._('button-zoom-out'));
-						$("#button-help")
-								.attr("title", $.i18n._('button-help'));
-						$("#button-next-cell").attr("title",
-								$.i18n._('button-next-cell'));
-						$("#button-previous-cell").attr("title",
-								$.i18n._('button-previous-cell'));
+		$("#task-instruction-p1").html($.i18n._('task-instruction-p1'));
+		$("#task-instruction-p2").html($.i18n._('task-instruction-p2'));
+		$("#task-instruction-p3").html($.i18n._('task-instruction-p3'));
+		$("#task-instruction-p4").html($.i18n._('task-instruction-p4'));
+		$("#task-instruction-p5").html($.i18n._('task-instruction-p5'));
+		$("#pc-transcription-p1").html($.i18n._('pc-transcription-p1'));
+		$("#pc-transcription-p2").html($.i18n._('pc-transcription-p2'));
+		$("#human-transcription-label").html(
+				$.i18n._('human-transcription-label'));
+		$("#your-transcription-label").html(
+				$.i18n._('your-transcription-label'));
 
-						$("#task-bar-progress").tooltip({
-							'placement' : 'top',
-							'trigger' : 'manual'
-						});
-						$("#task-bar-progress")
-								.on(
-										'webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend',
-										handleTaskbarProgressChange);
-					});
+		$("#button-zoom-in").attr("title", $.i18n._('button-zoom-in'));
+		$("#button-zoom-out").attr("title", $.i18n._('button-zoom-out'));
+		$("#button-help").attr("title", $.i18n._('button-help'));
+		$("#button-next-cell").attr("title", $.i18n._('button-next-cell'));
+		$("#button-previous-cell").attr("title",
+				$.i18n._('button-previous-cell'));
+
+		$("#task-bar-progress").tooltip({
+			'placement' : 'top',
+			'trigger' : 'manual'
+		});
+		$("#task-bar-progress")
+				.on(
+						'webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend',
+						handleTaskbarProgressChange);
+	}
 
 	function loadUserProgress() {
-		book_progress = {'total': 0, 'done': 0};
-		user_progress = {'total': 0, 'done': 0};
-		
+		book_progress = {
+			'total' : 0,
+			'done' : 0
+		};
+		user_progress = {
+			'total' : 0,
+			'done' : 0
+		};
+
 		var book_id = app_shortname.split("_")[0];
 		var deferreds = [];
 		deferreds.push(getBookProgress(book_id));
@@ -398,52 +415,70 @@
 		deferreds.push(getUserProgress(book_id + "_tt2"));
 		deferreds.push(getUserProgress(book_id + "_tt3"));
 		deferreds.push(getUserProgress(book_id + "_tt4"));
-		
-	    $.when.apply($, deferreds).then(function() {
-			$("#total").text(100);
-			$("#done").text(30);
-			
-			if (user_progress.done > 1) {
-				$("#motivation-msg").fadeTo(500, 1);
-			}
-			
-			var only_by_community = book_progress.done - user_progress.done;
-	    	var community_pct = Math.round((only_by_community * 100) / book_progress.total);
-			$("#community-progress").tooltip('destroy');
-			$("#community-progress").css("width", community_pct.toString() + "%");
-			$("#community-progress").attr("data-original-title", community_pct.toString() + "% " + $.i18n._('completed-by-community'));
-			$("#community-progress").tooltip({
-				'placement' : 'top'
-			});
-			
-			var user_pct = Math.round((user_progress.done * 100) / book_progress.total);
-			$("#user-progress").tooltip('destroy');
-			$("#user-progress").css("width", user_pct.toString() + "%");
-			$("#user-progress").attr("data-original-title", user_pct.toString() + "% " + $.i18n._('completed-by-user'));
-			$("#user-progress").tooltip({
-				'placement' : 'top'
-			});
-	    	
-			$("#total").text(book_progress.total);
-			$("#done").text(user_progress.done);    	
-	    });
+
+		$.when
+				.apply($, deferreds)
+				.then(
+						function() {
+							$("#total").text(100);
+							$("#done").text(30);
+
+							if (user_progress.done > 1) {
+								$("#motivation-msg").fadeTo(500, 1);
+							}
+
+							var only_by_community = book_progress.done
+									- user_progress.done;
+							var community_pct = Math
+									.round((only_by_community * 100)
+											/ book_progress.total);
+							$("#community-progress").tooltip('destroy');
+							$("#community-progress").css("width",
+									community_pct.toString() + "%");
+							$("#community-progress")
+									.attr(
+											"data-original-title",
+											community_pct.toString()
+													+ "% "
+													+ $.i18n
+															._('completed-by-community'));
+							$("#community-progress").tooltip({
+								'placement' : 'top'
+							});
+
+							var user_pct = Math
+									.round((user_progress.done * 100)
+											/ book_progress.total);
+							$("#user-progress").tooltip('destroy');
+							$("#user-progress").css("width",
+									user_pct.toString() + "%");
+							$("#user-progress").attr(
+									"data-original-title",
+									user_pct.toString() + "% "
+											+ $.i18n._('completed-by-user'));
+							$("#user-progress").tooltip({
+								'placement' : 'top'
+							});
+
+							$("#total").text(book_progress.total);
+							$("#done").text(user_progress.done);
+						});
 	}
-	
+
 	function getBookProgress(bookId) {
 		return $.ajax({
-			url : '/mb/api/get_book_progress/' + bookId,
+			url : getBaseURL() + '/mb/api/get_book_progress/' + bookId,
 			success : function(data) {
 				book_progress = $.parseJSON(data);
 			}
 		});
 	}
-	
+
 	function getUserProgress(app_name) {
-		return pybossa.userProgress(app_name).done(
-				function(data) {
-					user_progress.total = user_progress.total + data.total;
-					user_progress.done = user_progress.done + data.done;
-				});
+		return pybossa.userProgress(app_name).done(function(data) {
+			user_progress.total = user_progress.total + data.total;
+			user_progress.done = user_progress.done + data.done;
+		});
 	}
 
 	function showHelpTranscribe() {
@@ -477,7 +512,7 @@
 
 	function taskRunDone(taskId) {
 		$.ajax({
-			url : '/mb/api/' + taskId + '/done',
+			url : getBaseURL() + '/mb/api/' + taskId + '/done',
 			success : function(data) {
 				enableNextTask();
 			}
@@ -526,10 +561,7 @@
 		});
 	}
 
-	pybossa.setEndpoint(endpoint);
-	pybossa.newTask(app_shortname).done(function(data) {
-		loadData(data);
-	});
+	initialize();
 </script>
 <script>
 	(function(i, s, o, g, r, a, m) {

@@ -1,10 +1,8 @@
 	$('body').on('contextmenu', '#canvas-table-container', function(e) {
-		console.log("MENU!");
 		return false;
 	});
 
 	$('body').on('contextmenu', '#canvas-cell-container', function(e) {
-		console.log("MENU!");
 		return false;
 	});
 

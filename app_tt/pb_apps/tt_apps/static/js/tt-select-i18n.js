@@ -53,10 +53,9 @@ var pt_dict= {
 var language = navigator.language? navigator.language : navigator.userLanguage;
 
 switch(language){
-	case 'en-US': var dict = en_US_dict;	break;
-	case 'pt-BR': var dict = pt_dict; break;
-	default: var dict = default_dict;
+	case 'en-US': var t1_dict = en_US_dict;	break;
+	case 'pt-BR': var t1_dict = pt_dict; break;
+	default: var t1_dict = default_dict;
 }
 
-
-$.i18n.setDictionary(dict);
+$.i18n.setDictionary(t1_dict);

@@ -365,7 +365,8 @@
 		
 		// Add tooltips for a newcomer
 		if (toolTipsEnabled) {
-			$("#image-annotate-edit-form").attr("data-original-title", "Descreva as informações pedidas da tabela aqui.");
+			var editFormTip = isLastAnswer ? "Verifique e corrija, se necessário, as informações descritas aqui." : "Descreva as informações pedidas da tabela aqui.";
+			$("#image-annotate-edit-form").attr("data-original-title", editFormTip);
 			$("#image-annotate-edit-form").popover("show");
 			
 			$(".image-annotate-edit-area").popover("show");

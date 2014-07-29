@@ -44,7 +44,7 @@
 					<li><strong>Acervo</strong>: {{ book.info.contributor }}</li>
 					<li><strong>Progresso</strong>: 
 					<iframe align='center' height='20px' frameborder='0' scrolling='no'
-							src="{{url_for('collaborate.progress', bookid=book.info.bookid)}}"></iframe></li>
+							src='{{"http://" ~ host ~ "/collaborate/progress/" ~ book.info.bookid)}}'></iframe></li>
 				</ul>
 			</div>
 			<!-- end of id=data class=span7 -->

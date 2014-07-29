@@ -679,7 +679,7 @@ class TTTask3(pb_task):
         
         for t in similarTasks:
             if(not t.state == "completed"):
-                #m = "invalid task (not completed): " + str(t)
+                m = "invalid task (not completed): " + str(t)
                 logger.warn(m)
                 return False
         

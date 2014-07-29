@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 from flask import Blueprint, request
+from app_tt.meb.util import crossdomain
 from tasks import check_task, create_apps, close_task, close_t1
 from tasks import create_task, available_tasks, save_fact, submit_report, get_fact_page, render_template, book_progress
 import json
 
 blueprint = Blueprint('api', __name__)
-
+cors_headers = ['Content-Type', 'Authorization']
 
 @blueprint.route('/')
 def index():
@@ -95,6 +96,7 @@ def fact_page(fact_id):
     return page.get()
 
 @blueprint.route('/render_template/<task_shortname>/<page>')
+@crossdomain(origin='*', headers=cors_headers)
 def render_pages_template(task_shortname, page):
     rendered_page = render_template.delay(task_shortname, page)
     return rendered_page.get()
