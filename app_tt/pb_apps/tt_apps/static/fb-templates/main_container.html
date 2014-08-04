@@ -8,10 +8,10 @@
 		$('body').off('mouseup');
 		$('body').off('mousedown');
 		$('body').off('contextmenu');
-		$("[rel=tooltip]").tooltip('destroy');
-		$("[rel=popover]").popover('destroy');
 		document.body.style.cursor = "default";
 		$("#image-annotate-edit-form").remove();
+		$("[rel=tooltip]").tooltip('destroy');
+		$(".popover").remove();
 	}
 	
 	function showTaskTemplate() {
@@ -31,7 +31,7 @@
 		$("#share-on-google-plus").attr("href", "javascript:openShareWindow('https://plus.google.com/share?url=https://apps.facebook.com/memoriadobrasil/)");
 	}
 	
-	loadAHTML('#mb', "https://" + server_name + "/mb", function() {
+	loadAHTML('#mb', "http://" + server_name + "/mb", function() {
 		
 		configureShareLinks();
 		$('#footer_links').hide();

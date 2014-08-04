@@ -25,7 +25,6 @@
 	var selectionLayer;
 	var fixedLayer;
 	var imageLayer;
-	var img_url;
 	var origTableStageMaxX;
 	var origTableStageMaxY;
 
@@ -306,8 +305,6 @@
 	function createTableViewer(taskInfo, minTableViewerWidth, minTableViewerHeight) {
 		initVariables();
 
-		img_url = taskInfo.link;
-
 		var tableMaxX = taskInfo.maxX;
 		var tableMaxY = taskInfo.maxY;
 		origTableStageMaxX = tableMaxX + (2 * shiftOnCanvas);
@@ -342,7 +339,7 @@
 		imageLayer = new Kinetic.Layer();
 
 		var imageObj = new Image();
-		imageObj.src = taskInfo.img_url;
+		imageObj.src = taskInfo.img_url.replace("https", "http");
 
 		imageObj.onload = function() {
 			configureTableViewer(imageObj, tableMaxX, tableMaxY);

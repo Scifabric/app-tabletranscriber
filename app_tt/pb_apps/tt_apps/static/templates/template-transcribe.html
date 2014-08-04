@@ -231,8 +231,6 @@
 	</div>
 </div>
 
-<link rel="stylesheet" href="#server/css/tt-transcribe.css" />
-
 <script type="text/javascript">
 	var taskId;
 	var app_shortname = "#app_shortname#";
@@ -241,32 +239,43 @@
 	var minTableViewerHeight = $("#right-panel").height();
 	var book_progress;
 	var user_progress;
-	var base_url = "#server";
 
 	function getScripts(scripts, callback) {
 		var progress = 0;
 		var internalCallback = function() {
 			if (++progress == scripts.length) {
 				callback();
+			} else {
+				$.getScript(getStaticURL() + scripts[progress], internalCallback);
 			}
 		};
-		scripts.forEach(function(script) {
-			$.getScript(base_url + script, internalCallback);
-		});
+		$.getScript(getStaticURL() + scripts[progress], internalCallback);
 	}
 	
 	function getBaseURL() {
-		return typeof server_name == "undefined" ? "" : "https://" + server_name;
+		return typeof server_name == "undefined" ? "" : "http://" + server_name;
+	}
+	
+	// App on FB must load JS/CSS with HTTPS
+	function getStaticURL() {
+		return "/mb-static";
+	}
+
+	function loadCSS(src) {
+		var cssLink = $("<link rel='stylesheet' type='text/css' href='"
+				+ getStaticURL() + src + "'>");
+		$("head").append(cssLink);
 	}
 
 	function initialize() {
 		var completeEndpoint = getBaseURL() + endpoint;
 		pybossa.setEndpoint(completeEndpoint);
+		
+		loadCSS("/css/tt-transcribe.css");
 
 		var scripts = [ "/js/kinetic.js", "/js/jquery.i18n.min.js",
 				"/js/tt-transcribe-i18n.js", "/js/tt4.js",
 				"/js/jquery.blockUI.js", "/js/report.js" ];
-
 		getScripts(scripts, function() {
 			interfaceConfiguration();
 			pybossa.newTask(app_shortname).done(function(data) {

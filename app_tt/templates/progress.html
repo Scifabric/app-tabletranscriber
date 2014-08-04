@@ -1,14 +1,25 @@
 {% block body %}
-<style type="text/css" media="all">
-    body{
-        margin: 0px;
-    }
-</style>
 
-<link rel="stylesheet" href="{{ url_for('static', filename='vendor/progress-bootstrap/css/bootstrap.min.css')}}" type="text/css" />
-
-<div class="progress progress-success progress-striped">
-  <div class="bar" style="width: {{progress}}%"></div>
+<div>
+	<span style="float: left; margin-right: 10px"><strong>Progresso</strong>:</span>
+	<div class="progress progress-success progress-striped">
+		<div id="bar-{{book.info.bookid}}" class="bar"></div>
+	</div>
 </div>
+
+<script type="text/javascript">
+function getOverallProgress(host, bookId) {
+	var request_url = "http://" + host + "/mb/collaborate/progress/" + bookId;
+	  $.ajax({
+		  	dataType: "json",
+			url: request_url,
+			success: function(response) {
+				$("#bar-" + bookId).css("width", response.progress + "%");
+		  }
+	  });
+}
+
+getOverallProgress("{{host}}", "{{book.info.bookid}}");
+</script>
 
 {% endblock %}
