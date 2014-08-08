@@ -361,6 +361,8 @@
 </div>
 
 <script src="//connect.facebook.net/en_US/all.js"></script>
+<link rel="stylesheet" type="text/css" href="#server/css/annotation.css" />
+<link rel="stylesheet" type="text/css" href="#server/css/tt-meta.css" />
 
 <script type="text/javascript" charset="utf-8">
 	var app_shortname = "#app_shortname#";
@@ -383,27 +385,12 @@
 		$.getScript(getStaticURL() + scripts[progress], internalCallback);
 	}
 	
-	function getBaseURL() {
-		return typeof server_name == "undefined" ? "" : "http://" + server_name;
-		
-	}
-	
-	// App on FB must load JS/CSS with HTTPS
 	function getStaticURL() {
 		return "/mb-static";
 	}
 	
-	function loadCSS(src) {
-		 var cssLink = $("<link rel='stylesheet' type='text/css' href='" + getStaticURL() + src + "'>");
-	     $("head").append(cssLink);
-	}
-	
 	function initialize() {
-		var completeEndpoint = getBaseURL() + endpoint;
-		pybossa.setEndpoint(completeEndpoint);
-		
-		loadCSS("/css/annotation.css");
-		loadCSS("/css/tt-meta.css");
+		pybossa.setEndpoint(endpoint);
 		
 		var scripts = ["/js/kinetic.js", "/js/share.js", "/js/jquery.annotate.js", "/js/jquery-ui-1.8.22.custom.min.js", "/js/jquery.blockUI.js", "/js/report.js", "/js/jquery.cookie.js"];
 		getScripts(scripts, function() {
@@ -504,7 +491,7 @@
 
 		$.ajax({
 			type : 'POST',
-			url : getBaseURL() + '/mb/api/' + app_shortname + '/' + taskId + '/report',
+			url : '/mb/api/' + app_shortname + '/' + taskId + '/report',
 			dataType : 'json',
 			contentType : 'application/json; charset=utf-8',
 			data : jreport
@@ -581,7 +568,7 @@
 
 	function getBookProgress(bookId) {
 		return $.ajax({
-			url : getBaseURL() + '/mb/api/get_book_progress/' + bookId,
+			url : '/mb/api/get_book_progress/' + bookId,
 			success : function(data) {
 				book_progress = $.parseJSON(data);
 			}
@@ -597,7 +584,7 @@
 
 	function taskRunDone(taskId) {
 		return $.ajax({
-			url : getBaseURL() + '/mb/api/' + taskid + '/done',
+			url : '/mb/api/' + taskid + '/done',
 			success : function(data) {
 				enableNextTask(taskId);
 			}
@@ -606,7 +593,7 @@
 
 	function enableNextTask(taskId) {
 		$.ajax({
-			url : getBaseURL() + '/mb/api/' + taskId + '/available_tasks',
+			url : '/mb/api/' + taskId + '/available_tasks',
 			success : function(data) {
 				if (data == "True") {
 					$("#workflowtask").fadeIn(200);

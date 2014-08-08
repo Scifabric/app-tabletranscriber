@@ -231,6 +231,8 @@
 	</div>
 </div>
 
+<link rel="stylesheet" type="text/css" href="#server/css/tt-transcribe.css" />
+
 <script type="text/javascript">
 	var taskId;
 	var app_shortname = "#app_shortname#";
@@ -252,27 +254,13 @@
 		$.getScript(getStaticURL() + scripts[progress], internalCallback);
 	}
 	
-	function getBaseURL() {
-		return typeof server_name == "undefined" ? "" : "http://" + server_name;
-	}
-	
-	// App on FB must load JS/CSS with HTTPS
 	function getStaticURL() {
 		return "/mb-static";
 	}
 
-	function loadCSS(src) {
-		var cssLink = $("<link rel='stylesheet' type='text/css' href='"
-				+ getStaticURL() + src + "'>");
-		$("head").append(cssLink);
-	}
-
 	function initialize() {
-		var completeEndpoint = getBaseURL() + endpoint;
-		pybossa.setEndpoint(completeEndpoint);
+		pybossa.setEndpoint(endpoint);
 		
-		loadCSS("/css/tt-transcribe.css");
-
 		var scripts = [ "/js/kinetic.js", "/js/jquery.i18n.min.js",
 				"/js/tt-transcribe-i18n.js", "/js/tt4.js",
 				"/js/jquery.blockUI.js", "/js/report.js" ];
@@ -327,7 +315,7 @@
 
 		$.ajax({
 			type : 'POST',
-			url : getBaseURL() + '/mb/api/' + app_shortname + '/' + taskId + '/report',
+			url : '/mb/api/' + app_shortname + '/' + taskId + '/report',
 			dataType : 'json',
 			contentType : 'application/json; charset=utf-8',
 			data : jreport
@@ -476,7 +464,7 @@
 
 	function getBookProgress(bookId) {
 		return $.ajax({
-			url : getBaseURL() + '/mb/api/get_book_progress/' + bookId,
+			url : '/mb/api/get_book_progress/' + bookId,
 			success : function(data) {
 				book_progress = $.parseJSON(data);
 			}
@@ -521,7 +509,7 @@
 
 	function taskRunDone(taskId) {
 		$.ajax({
-			url : getBaseURL() + '/mb/api/' + taskId + '/done',
+			url : '/mb/api/' + taskId + '/done',
 			success : function(data) {
 				enableNextTask();
 			}
@@ -529,12 +517,11 @@
 	}
 
 	function enableNextTask() {
+		$("#workflowtask").click(function() {
+			redirectToANewTask(getARandomTask());
+		});
 		$("#workflowtask").fadeIn(200);
 	}
-
-	$("#workflowtask").click(function() {
-		redirectToANewTask(getARandomTask());
-	});
 
 	function redirectToANewTask(taskSufix) {
 		window.open(endpoint + "/app/"

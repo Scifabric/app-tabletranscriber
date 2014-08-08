@@ -16,8 +16,6 @@
 	}
 
 	function loadBooksPage(url) {
-		var url = typeof server_name == "undefined"? url : "http://" + server_name + url;
-		
 		$("#books_div-inner").hide();
 		$("#books_div_loading").show();
 
@@ -35,7 +33,6 @@
 			});
 		});
 	}
-
 	
 	loadBooksPage("/mb/collaborate/");
 </script>

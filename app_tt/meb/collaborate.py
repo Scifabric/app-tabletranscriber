@@ -57,9 +57,7 @@ def index(page):
 
     pagination = Pagination(page, per_page, count)
 
-    return render_template('/collaborate.html',  host=pybossa_host,
-            books=books,
-            pagination=pagination)
+    return render_template('/collaborate.html', books=books, pagination=pagination)
 
 def get_new_task_link(bookid):
     app_with_available_task = 'tt1'
@@ -99,7 +97,7 @@ def progress(bookid):
     try:
         progress = (overall_completed/float(overall)) * 100
     except:
-        return json.dumps(dict(progress=0))
+        return render_template('/progress.html', progress=0)
 
-    return json.dumps(dict(progress=progress))
+    return render_template('/progress.html', progress=progress)
     
