@@ -427,8 +427,10 @@
 		if (!$.isEmptyObject(current_task)) {
 			loadUserProgress();
 			task_id = current_task.id;
-			$("#image-link").attr("href", current_task.info.url_b);
-			$("#image").attr("src", current_task.info.url_m);
+			
+			// Workaround to load images through HTTPS
+			$("#image-link").attr("href", current_task.info.url_b.replace("http:", "https:"));
+			$("#image").attr("src", current_task.info.url_m.replace("http:", "https:"));
 			pybossa.getCurrentUserId(function(userId) {
 				initSharer(task_id, userId);
 			});

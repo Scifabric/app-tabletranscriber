@@ -671,7 +671,7 @@
 			loadUserProgress();
 			var task_id = data.task.id;
 			$("#task-id").text(task_id);
-			$("#table").attr("src", current_task.info.link);
+			$("#table").attr("src", current_task.info.link.replace("http:", "https:"));
 
 			isLastAnswer = typeof current_task.info.last_answer != "undefined";
 			var notes = isLastAnswer ? JSON

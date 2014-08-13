@@ -339,7 +339,7 @@
 		imageLayer = new Kinetic.Layer();
 
 		var imageObj = new Image();
-		imageObj.src = taskInfo.img_url.replace("https", "http");
+		imageObj.src = taskInfo.img_url.replace("http:", "https:");
 
 		imageObj.onload = function() {
 			configureTableViewer(imageObj, tableMaxX, tableMaxY);

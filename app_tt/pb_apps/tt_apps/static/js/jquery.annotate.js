@@ -580,19 +580,21 @@
 		cont = 0;
 		intoNote = false;
 
-		$("div.image-annotate-area-editable").live("mouseenter", function(){
-			intoNote = true;
-		}).live("mouseleave", function(){
-			intoNote=false;
-		}); 
+        $("div.image-annotate-area-editable").on("mouseenter", function(){
+            intoNote = true;
+        });
 
+        $("div.image-annotate-area-editable").on("mouseleave", function(){
+            intoNote = false;
+        });
 
-		$("div.image-annotate-edit-area.ui-resizable.ui-draggable").live("mouseenter", function(){
-			intoNote = true;
-		}).live("mouseleave", function(){
-			intoNote=false;
-		});
+        $("div.image-annotate-edit-area.ui-resizable.ui-draggable").on("mouseenter", function(){
+            intoNote = true;
+        });
 
+        $("div.image-annotate-area-editable").on("mouseleave", function(){
+            intoNote = false;
+        });
 
 		doSelect($(obj).parent());
 

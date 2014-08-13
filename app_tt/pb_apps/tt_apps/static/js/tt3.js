@@ -96,7 +96,7 @@
 		highlightColor = "#339ACD";
 
 		hasZoom = taskInfo.hasZoom;
-		img_url = taskInfo.img_url.replace("https", "http");
+		img_url = taskInfo.img_url.replace("http:", "https:");
 		splitToolCursor = "url('" + serverName + "/images/split_tool.png') 10 8, auto";
 
 		if (hasZoom) zoom = taskInfo.zoom;
