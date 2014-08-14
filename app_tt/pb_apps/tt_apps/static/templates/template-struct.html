@@ -36,6 +36,7 @@
 			<div id="community-progress" class="bar bar-success"
 				style="width: 0%;"></div>
 			<div id="user-progress" class="bar bar-info" style="width: 0%;"></div>
+			<div id="remaining-progress" style="float: left; text-align: center; width: 0%;"><span></span></div>
 		</div>
 		<div>
 			<h1>
@@ -408,6 +409,7 @@
 		$("#workflowtask").text($.i18n._('workflowtask'));
 		$("#progress-from").text($.i18n._('progress-from'));
 		$("#progress-to").text($.i18n._('progress-to'));
+		$("#remaining-progress span").text($.i18n._('remaining-tasks'));
 
 		$(".task-instruction-use-tool").html(
 				$.i18n._('task-instruction-use-tool'));
@@ -428,6 +430,7 @@
 		$("#button_split").attr("title", $.i18n._('button_split'));
 		$("#button_remove").attr("title", $.i18n._('button_remove'));
 		$("#button_help").attr("title", $.i18n._('button_help'));
+		
 		$("[rel=tooltip]").tooltip();
 	}
 
@@ -495,6 +498,12 @@
 
 							$("#total").text(book_progress.total);
 							$("#done").text(user_progress.done);
+							
+							var remaining_pct = 100 - (community_pct + user_pct);
+							$("#remaining-progress").css("width", remaining_pct.toString() + "%");
+							if ($("#remaining-progress").width() < 105) {
+								$("#remaining-progress").hide();
+							}
 						});
 	}
 

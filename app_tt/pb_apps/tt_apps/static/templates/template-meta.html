@@ -43,6 +43,7 @@
 			<div id="community-progress" class="bar bar-success"
 				style="width: 0%;"></div>
 			<div id="user-progress" class="bar bar-info" style="width: 0%;"></div>
+			<div id="remaining-progress" style="float: left; text-align: center; width: 0%;"><span>Tarefas restantes</span></div>
 		</div>
 		<h5>
 			<strong><span id="book-info"></span></strong> <i><span
@@ -563,6 +564,12 @@
 
 							$("#total").text(book_progress.total);
 							$("#done").text(user_progress.done);
+							
+							var remaining_pct = 100 - (community_pct + user_pct);
+							$("#remaining-progress").css("width", remaining_pct.toString() + "%");
+							if ($("#remaining-progress").width() < 105) {
+								$("#remaining-progress").hide();
+							}
 						});
 	}
 

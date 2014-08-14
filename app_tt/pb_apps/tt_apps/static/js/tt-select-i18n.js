@@ -20,7 +20,8 @@ var default_dict = {
     'progress-to' : "tasks – keep contributing!",
     'completed' : 'completed!',
     'completed-by-community' : 'completed by the community!',
-    'completed-by-user' : 'completed by you!'
+    'completed-by-user' : 'completed by you!',
+    'remaining-tasks' : 'Remaining tasks'
 };
 
 var en_US_dict = default_dict;
@@ -47,7 +48,8 @@ var pt_dict= {
         'progress-to' : "tarefas – continue contribuindo!",
         'completed' : 'finalizados!',
         'completed-by-community' : 'feitas pela comunidade!',
-        'completed-by-user' : 'feitas por você!'
+        'completed-by-user' : 'feitas por você!',
+        'remaining-tasks' : 'Tarefas restantes'
 };
 
 var language = navigator.language? navigator.language : navigator.userLanguage;

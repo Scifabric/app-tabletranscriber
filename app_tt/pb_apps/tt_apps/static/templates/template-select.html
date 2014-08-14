@@ -36,6 +36,7 @@
 			<div id="community-progress" class="bar bar-success"
 				style="width: 0%;"></div>
 			<div id="user-progress" class="bar bar-info" style="width: 0%;"></div>
+			<div id="remaining-progress" style="float: left; text-align: center; width: 0%;"><span></span></div>
 		</div>
 		<h5>
 			<strong><span id="book-info"></span></strong> <i><span
@@ -307,7 +308,7 @@
 		$("#workflowtask").text($.i18n._('workflowtask'));
 		$("#progress-from").text($.i18n._('progress-from'));
 		$("#progress-to").text($.i18n._('progress-to'));
-
+		$("#remaining-progress span").text($.i18n._('remaining-tasks'));
 	} //Internationalization using jquery.i18n
 
 	function loadUserProgress() {
@@ -344,6 +345,7 @@
 							var community_pct = Math
 									.round((only_by_community * 100)
 											/ book_progress.total);
+							
 							$("#community-progress").tooltip('destroy');
 							$("#community-progress").css("width",
 									community_pct.toString() + "%");
@@ -374,6 +376,12 @@
 
 							$("#total").text(book_progress.total);
 							$("#done").text(user_progress.done);
+							
+							var remaining_pct = 100 - (community_pct + user_pct);
+							$("#remaining-progress").css("width", remaining_pct.toString() + "%");
+							if ($("#remaining-progress").width() < 105) {
+								$("#remaining-progress").hide();
+							}
 						});
 	}
 
