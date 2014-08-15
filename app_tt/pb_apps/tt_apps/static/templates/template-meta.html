@@ -408,19 +408,20 @@
 	}
 
 	function interfaceConfiguration() {
-		// update book title on header		
-		$.each($(".row a"), function() {
-			if ($(this).attr('href').indexOf("/pybossa/app/") != -1) {
+		// update book title on header
+		var book_name = app_shortname.split("_")[0];
+        $.each($(".row a"), function() {
+            if ($(this).attr('href').indexOf(book_name) != -1) {
+            	
+                if ($(this).text().indexOf("Marcação") != -1) {
+                    // remove PyBossa app's header
+                    $(this).parent().parent().parent().remove();
+                }
 
-				if ($(this).text().indexOf("Marcação") != -1) {
-					// remove PyBossa app's header
-					$(this).parent().parent().parent().remove();
-				}
-
-				var book_title = $(this).text().replace(" Marcação", "");
-				$("#book_title").html(book_title);
-			}
-		});
+                var book_title = $(this).text().replace(" Marcação", "");
+                $("#book_title").html(book_title);
+            }
+        });
 		
 		$("[rel=tooltip]").tooltip();
 		$("[rel=popover]").popover({
