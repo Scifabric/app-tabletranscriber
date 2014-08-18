@@ -20,7 +20,9 @@ var default_dict = {
     'progress-to' : "tasks – keep contributing!",
     'completed' : 'completed!',
     'completed-by-community' : 'completed by the community!',
-    'completed-by-user' : 'completed by you!'
+    'completed-by-user' : 'completed by you!',
+    'report-error-tooltip' : 'Have you found a error?',
+    'page-tooltip' : 'Consider as a table any structure that has data for statistical purposes.'
 };
 
 var en_US_dict = default_dict;
@@ -47,7 +49,9 @@ var pt_dict= {
         'progress-to' : "tarefas – continue contribuindo!",
         'completed' : 'finalizados!',
         'completed-by-community' : 'feitas pela comunidade!',
-        'completed-by-user' : 'feitas por você!'
+        'completed-by-user' : 'feitas por você!',
+        'report-error-tooltip' : "Encontrou um erro?",
+        "page-tooltip" : "Considere uma tabela qualquer estrutura que possua dados para fins estatísticos."
 };
 
 var language = navigator.language? navigator.language : navigator.userLanguage;

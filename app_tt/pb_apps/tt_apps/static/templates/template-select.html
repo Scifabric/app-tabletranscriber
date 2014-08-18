@@ -48,7 +48,7 @@
 	</div>
 
 	<div class="skeleton">
-		<div id="answer">
+		<div id="answer" rel="popover" title="">   
 			<button id="button_yes" class="btn btn-success"
 				onclick="submitTask('Yes')">
 				<i class="icon icon-white icon-ok"></i>
@@ -57,9 +57,9 @@
 				onclick="submitTask('No')">
 				<i class="icon icon-white icon-remove"></i>
 			</button>
-			<button id="button_bug_report" class="btn btn-warning" rel="tooltip"
+			<button id="button_bug_report" class="btn btn-warning" rel="tooltip" 
 				title="Aponte um erro na tarefa" onclick="showBugReportForm()">
-				<i class="icon icon-warning-sign"></i>
+				<i id="erro" class="icon icon-warning-sign" ></i>
 			</button>
 			<button id="button_help" class="btn help" data-toggle="modal"
 				rel="tooltip" title="Abre a tela de ajuda"
@@ -96,14 +96,15 @@
 	</div>
 
 	<div id="image-container" class="skeleton" rel="popover"
-		title="Clique e arraste o mouse sobre uma área da tabela para compartilhar.">
+		title="">
 		<a id="image-link" href="#" target="_blank"
 			style="float: left; display: none;"> <img id="image"
 			class="ttImage" src="#" onload="unblockUI();">
 		</a>
 		<div id="share-container">
 			<ul id="share-menu" class="dropdown-menu" role="menu">
-				<li><a style="padding: 3px 12px;" onclick="shareOnFacebook()">
+				<li id="imagem" rel="popover" 
+				title="Considere uma tabela dados importantes para..."><a style="padding: 3px 12px;" onclick="shareOnFacebook()">
 						<img class="icon" style="width: 20px; margin-right: 3px;"
 						src="#server/images/social_facebook.png"></img> Facebook
 				</a></li>
@@ -164,6 +165,7 @@
 <script type="text/javascript" src="#server/js/tt-select-i18n.js"></script>
 <script type="text/javascript" src="#server/js/jquery.blockUI.js"></script>
 <script type="text/javascript" src="#server/js/report.js"></script>
+<script type="text/javascript" src="#server/js/jquery.cookie.js"></script>
 
 <link rel="stylesheet" type="text/css" href="#server/css/tt-select.css" />
 
@@ -172,13 +174,14 @@
 	var endpoint = "/pybossa";
 	var book_progress;
 	var user_progress;
+	var COOKIE_EXPIRATION = 60; // days
 
 	function unblockUI() {
 		$("#loading-container").hide();
 		$("#image-link").show();
 		$.unblockUI();
 	}
-
+	
 	function blockUI() {
 		$("#image-link").hide();
 		$("#loading-container").show();
@@ -239,17 +242,17 @@
 		// update book title on header		
 		$.each($(".row a"), function() {
 			if ($(this).attr('href').indexOf("/pybossa/app/") != -1) {
-
+	
 				if ($(this).text().indexOf("Seleção") != -1) {
 					// remove PyBossa app's header
 					$(this).parent().parent().parent().remove();
 				}
-
+	
 				var book_title = $(this).text().replace(" Seleção", "");
 				$("#book_title").html(book_title);
 			}
 		});
-
+			
 		// Anonymous alert fix
 		$("#msg_warning .close").removeAttr("data-dismiss");
 		$("#msg_warning .close").on("click", function(e) {
@@ -286,7 +289,21 @@
 		$("#workflowtask").text($.i18n._('workflowtask'));
 		$("#progress-from").text($.i18n._('progress-from'));
 		$("#progress-to").text($.i18n._('progress-to'));
-
+		
+		$("#answer").attr("data-original-title", $.i18n._('report-error-tooltip'));
+		$("#image-container").attr("data-original-title", $.i18n._('page-tooltip'));
+		
+		// Show popovers
+		$("[rel=popover]").popover({
+			"trigger" : "manual",
+			"placement" : "right"
+		});
+		
+		var toolTipsEnabled = typeof $.cookie('finished_t1') == "undefined";
+		if (toolTipsEnabled) {
+			$("#answer").popover("show");
+			$("#image-container").popover("show");
+		}
 	}); //Internationalization using jquery.i18n
 
 	function loadUserProgress() {
@@ -444,11 +461,19 @@
 
 	// Function to submit and save the TaskRun in PyBossa
 	function submitTask(answer) {
+		$("[rel=popover]").popover("hide");
 		// Get the task-id
 		taskid = task_id;
 
 		// Save the task
 		pybossa.saveTask(taskid, answer).done(function(data) {
+
+			// Save actions in Cookies
+			$.cookie('finished_t1', true, {
+				expires : COOKIE_EXPIRATION,
+				path : '/'
+			});
+					
 			//Call tt workflow api.
 			taskRunDone(taskid);
 

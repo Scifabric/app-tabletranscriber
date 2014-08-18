@@ -340,7 +340,7 @@
 
 	<div id="image-container" class="skeleton" rel="popover"
 		title="Você vê alguma tabela na página ao lado? se sim, clique e arraste para desenhar uma área sobre ela. Marque apenas apenas o corpo da tabela, desconsiderando textos avulsos, como título e fontes.">
-		<div id="TTImage" class="TTImageContainer"
+		<div id="image-container" class="TTImageContainer"
 			style="float: left; opacity: 0;">
 			<img id="table" class="TTImage" src="#" onload="unblockUI()">
 		</div>
@@ -431,12 +431,12 @@
 
 	function unblockUI() {
 		$("#loading-container").hide();
-		$("#TTImage").fadeTo(1, 1);
+		$("#image-container").fadeTo(1, 1);
 		$.unblockUI();
 	}
 
 	function blockUI() {
-		$("#TTImage").fadeTo(1, 0);
+		$("#image-container").fadeTo(1, 0);
 		$("#loading-container").show();
 		$.blockUI({
 			message : $("#success"),
