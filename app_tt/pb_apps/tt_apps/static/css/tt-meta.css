@@ -83,6 +83,7 @@
 .popover {
 	color: #000;
 	border: 1px solid rgba(0, 0, 0, 0.7);
+	max-width: 200px;
 }
 
 .popover.left .arrow:after {

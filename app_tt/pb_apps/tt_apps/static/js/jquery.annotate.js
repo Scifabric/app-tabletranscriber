@@ -365,7 +365,8 @@
 		
 		// Add tooltips for a newcomer
 		if (toolTipsEnabled) {
-			$("#image-annotate-edit-form").attr("data-original-title", "Descreva as informações pedidas da tabela aqui.");
+			var editFormTip = isLastAnswer ? "Verifique e corrija, se necessário, as informações descritas aqui." : "Descreva as informações pedidas da tabela aqui.";
+			$("#image-annotate-edit-form").attr("data-original-title", editFormTip);
 			$("#image-annotate-edit-form").popover("show");
 			
 			$(".image-annotate-edit-area").popover("show");
@@ -579,19 +580,21 @@
 		cont = 0;
 		intoNote = false;
 
-		$("div.image-annotate-area-editable").live("mouseenter", function(){
-			intoNote = true;
-		}).live("mouseleave", function(){
-			intoNote=false;
-		}); 
+        $("div.image-annotate-area-editable").on("mouseenter", function(){
+            intoNote = true;
+        });
 
+        $("div.image-annotate-area-editable").on("mouseleave", function(){
+            intoNote = false;
+        });
 
-		$("div.image-annotate-edit-area.ui-resizable.ui-draggable").live("mouseenter", function(){
-			intoNote = true;
-		}).live("mouseleave", function(){
-			intoNote=false;
-		});
+        $("div.image-annotate-edit-area.ui-resizable.ui-draggable").on("mouseenter", function(){
+            intoNote = true;
+        });
 
+        $("div.image-annotate-area-editable").on("mouseleave", function(){
+            intoNote = false;
+        });
 
 		doSelect($(obj).parent());
 

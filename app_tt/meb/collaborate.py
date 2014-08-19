@@ -4,6 +4,7 @@ import json
 from app_tt.core import app as flask_app
 from app_tt.core import pbclient
 from flask import Blueprint, render_template
+from app_tt.meb.util import crossdomain
 from app_tt.pagination import Pagination
 import sys
 import requests
@@ -11,12 +12,15 @@ import requests
 
 blueprint = Blueprint('collaborate', __name__)
 pybossa_server = flask_app.config['PYBOSSA_URL']
+pybossa_host = flask_app.config['PYBOSSA_HOST']
+cors_headers = ['Content-Type', 'Authorization']
 
 api_key = flask_app.config['API_KEY']
 max_limit = sys.maxint
 
 @blueprint.route('/', defaults={'page': 1})
 @blueprint.route('/page/<int:page>')
+@crossdomain(origin='*', headers=cors_headers)
 def index(page):
     per_page = 5
     apps = json.loads(requests.get(pybossa_server + '/api/app?api_key=%s&limit=%d' % (api_key, max_limit)).content)
@@ -53,9 +57,7 @@ def index(page):
 
     pagination = Pagination(page, per_page, count)
 
-    return render_template('/collaborate.html',
-            books=books,
-            pagination=pagination)
+    return render_template('/collaborate.html', books=books, pagination=pagination)
 
 def get_new_task_link(bookid):
     app_with_available_task = 'tt1'
@@ -82,6 +84,7 @@ def get_tasks_progress(bookid):
     return result
 
 @blueprint.route('/progress/<string(maxlength=255):bookid>')
+@crossdomain(origin='*', headers=cors_headers)
 def progress(bookid):
     tasks_progress = get_tasks_progress(bookid)
     tt_suffix = ['tt1', 'tt2', 'tt3', 'tt4']

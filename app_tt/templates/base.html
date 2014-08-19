@@ -16,8 +16,8 @@
 	rel="stylesheet">
 
 <!-- Le javascript -->
-<script src="{{url_for('static', filename='js/jquery-1.7.1.js')}}"
-	type="text/javascript" charset="utf-8"></script>
+<script src="{{url_for('static', filename='js/jquery-2.1.1.js')}}"
+    type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript"
 	src="{{url_for('static', filename='vendor/bootstrap/2.1.0/bootstrap.js')}}"></script>
 <script
@@ -32,8 +32,6 @@
 	{% set active_page = active_page | default('index') -%} 
 	{% include "navbar.html" %}
 	<div class="container-wrapper">
-		<!-- <div class="tabbable tabs-left"> -->
-		<!-- </div> -->
 		<div id="tab-container" class="tab-content">
 			{% include "/home.html" %}
 			{% include "/books.html" %}

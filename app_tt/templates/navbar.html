@@ -1,17 +1,30 @@
 <style>
+#header-navbar a {
+	margin-bottom: 0px;
+}
+
 .tab-content {
 	min-height: 750px;
 }
+
+#tab-container {
+	margin: 0px 0px;
+	width: auto;
+}
+
+#tab-container .tab-pane {
+	margin: 5px 0px 0px 245px;
+}
 </style>
 
-<div id="header-navbar" class="navbar navbar-fixed-top" style="background: #FFF;">
+<div id="header-navbar" class="navbar navbar-fixed-top" style="background: #FFF; height: 66px;">
 	<div class="navbar-inner" style="float: left; margin-left: 25px;">
-		<div class="container" style="height: 83px; width: 840px;">
-			<a class="brand" href="/pybossa/" target="_blank"><img
+		<div class="container" style="width: 840px;">
+			<a class="brand" href="/pybossa/" target="_blank" style="padding: 0px 20px 0px 0px;"><img
 				src="{{ url_for('static', filename='images/logo_societic.png') }}"
 				alt="PyBossa"></a>
 
-			<div style="float: left; margin-top: 17px;">
+			<div style="float: left;">
 				<ul class="nav nav-tabs" style="border-bottom: 0px;">
 					<li class="active"><a href="#home" data-toggle="tab"><i
 							class="icon-chevron-right"></i> In&iacute;cio</a></li>
@@ -39,7 +52,7 @@
 				</ul>
 			</div>
 			 -->
-			<div style="float: left; margin-top: 40px; margin-left: 5px;">
+			<div style="float: left; margin-top: 25px; margin-left: 5px;">
 				<a id="share-on-twitter"
 					href="javascript:openShareWindow('https://twitter.com/share?text=Contribua%20com%20o%20Projeto%20Memória%20Estatística%20do%20Brasil!&url=https://alfa.pybossa.socientize.eu/mb');"
 					data-toggle="tooltip" title="Share the project on Twitter"> <img

@@ -36,7 +36,8 @@ var en_US_dict = {
     'task-instruction-p7-2' : " to solve doubts and advanced shortcuts.",
     'completed' : 'completed!',
     'completed-by-community' : 'completed by the community!',
-    'completed-by-user' : 'completed by you!'
+    'completed-by-user' : 'completed by you!',
+    'remaining-tasks' : 'Remaining tasks'
 };
 
 var pt_dict= {
@@ -77,15 +78,16 @@ var pt_dict= {
     'task-instruction-p7-2' : " para soluções de dúvidas e atalhos avançados.",
     'completed' : 'finalizados!',
     'completed-by-community' : 'feitas pela comunidade!',
-    'completed-by-user' : 'feitas por você!'
+    'completed-by-user' : 'feitas por você!',
+    'remaining-tasks' : 'Tarefas restantes'
 };
 
 var language = navigator.language? navigator.language : navigator.userLanguage;
 
 switch(language){
-	case 'en-US': var dict = en_US_dict;	break;
-	case 'pt-BR': var dict = pt_dict; break;
-	default: var dict = en_US_dict; 
+	case 'en-US': var t3_dict = en_US_dict;	break;
+	case 'pt-BR': var t3_dict = pt_dict; break;
+	default: var t3_dict = en_US_dict; 
 }
 
-$.i18n.setDictionary(dict);
+$.i18n.setDictionary(t3_dict);

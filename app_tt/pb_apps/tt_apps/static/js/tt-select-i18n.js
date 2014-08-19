@@ -23,6 +23,7 @@ var default_dict = {
     'completed-by-user' : 'completed by you!',
     'report-error-tooltip' : 'Have you found a error?',
     'page-tooltip' : 'Consider as a table any structure that has data for statistical purposes.'
+    'remaining-tasks' : 'Remaining tasks'
 };
 
 var en_US_dict = default_dict;
@@ -52,15 +53,15 @@ var pt_dict= {
         'completed-by-user' : 'feitas por você!',
         'report-error-tooltip' : "Encontrou um erro?",
         "page-tooltip" : "Considere uma tabela qualquer estrutura que possua dados para fins estatísticos."
+        'remaining-tasks' : 'Tarefas restantes'
 };
 
 var language = navigator.language? navigator.language : navigator.userLanguage;
 
 switch(language){
-	case 'en-US': var dict = en_US_dict;	break;
-	case 'pt-BR': var dict = pt_dict; break;
-	default: var dict = default_dict;
+	case 'en-US': var t1_dict = en_US_dict;	break;
+	case 'pt-BR': var t1_dict = pt_dict; break;
+	default: var t1_dict = default_dict;
 }
 
-
-$.i18n.setDictionary(dict);
+$.i18n.setDictionary(t1_dict);

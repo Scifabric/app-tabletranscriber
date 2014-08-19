@@ -1,30 +1,41 @@
 {% block books_content %}
 
 <div id="books_div" class="container tab-pane">
+	<div id="books_div-inner" style="padding-left: 17px;"
+	></div>
+	<div id="books_div_loading" class="container" style="display: none;">
+		<img style="position: absolute; width: 80px; top: 37%; left: 47%;"
+			src="{{ url_for('static', filename="images/loading.gif") }}">
+	</div>
 </div>
 
 <script>
 	function changeToBooksTab() {
-		$('#books-tab').ready(function(){
+		$('#books-tab').ready(function() {
 			$('#books-tab').trigger('click');
 		});
 	}
-	
+
 	function loadBooksPage(url) {
-		
-		$('#books_div').load(url, function() {
+		$("#books_div-inner").hide();
+		$("#books_div_loading").show();
+
+		$('#books_div-inner').load(url, function() {
+			$("#books_div_loading").hide();
+			$("#books_div-inner").show();
+
 			$("#books_pagination a").on("click", function(e) {
-					var addressValue = $(this).attr("href");
-					if (addressValue.indexOf("collaborate") != -1) {
-						e.preventDefault();
-						loadBooksPage(addressValue);
-						return;
-					}
+				var addressValue = $(this).attr("href");
+				if (addressValue.indexOf("collaborate") != -1) {
+					e.preventDefault();
+					loadBooksPage(addressValue);
+					return;
+				}
 			});
 		});
 	}
 	
-	loadBooksPage('/mb/collaborate');
+	loadBooksPage("/mb/collaborate/");
 </script>
 
 {% endblock books_content %}

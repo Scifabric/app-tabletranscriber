@@ -1,5 +1,5 @@
 <div id="mb" style="display: none"></div>
-<div id='task-template' class='container' style='display: none;'></div>
+<div id='task-template' style='display: none; margin-left: 215px;'></div>
 
 <script>
 	var bookId;
@@ -8,14 +8,14 @@
 		$('body').off('mouseup');
 		$('body').off('mousedown');
 		$('body').off('contextmenu');
-		$("[rel=tooltip]").tooltip('destroy');
-		$("[rel=popover]").popover('destroy');
 		document.body.style.cursor = "default";
 		$("#image-annotate-edit-form").remove();
+		$("[rel=tooltip]").tooltip('destroy');
+		$(".popover").remove();
 	}
 	
 	function showTaskTemplate() {
-		$("#task-template").show();
+		$("#task-template").css("display", "table");
 		$("#tab-container").hide();
 		$('.nav-tabs li').removeClass("active");
 	}
@@ -31,7 +31,7 @@
 		$("#share-on-google-plus").attr("href", "javascript:openShareWindow('https://plus.google.com/share?url=https://apps.facebook.com/memoriadobrasil/)");
 	}
 	
-	loadAHTML('#mb', "https://" + server_name + "/mb", function() {
+	loadAHTML('#mb', "/mb", function() {
 		
 		configureShareLinks();
 		$('#footer_links').hide();

@@ -1,10 +1,8 @@
 	$('body').on('contextmenu', '#canvas-table-container', function(e) {
-		console.log("MENU!");
 		return false;
 	});
 
 	$('body').on('contextmenu', '#canvas-cell-container', function(e) {
-		console.log("MENU!");
 		return false;
 	});
 
@@ -27,7 +25,6 @@
 	var selectionLayer;
 	var fixedLayer;
 	var imageLayer;
-	var img_url;
 	var origTableStageMaxX;
 	var origTableStageMaxY;
 
@@ -308,8 +305,6 @@
 	function createTableViewer(taskInfo, minTableViewerWidth, minTableViewerHeight) {
 		initVariables();
 
-		img_url = taskInfo.link;
-
 		var tableMaxX = taskInfo.maxX;
 		var tableMaxY = taskInfo.maxY;
 		origTableStageMaxX = tableMaxX + (2 * shiftOnCanvas);
@@ -344,7 +339,7 @@
 		imageLayer = new Kinetic.Layer();
 
 		var imageObj = new Image();
-		imageObj.src = taskInfo.img_url;
+		imageObj.src = taskInfo.img_url.replace("http:", "https:");
 
 		imageObj.onload = function() {
 			configureTableViewer(imageObj, tableMaxX, tableMaxY);

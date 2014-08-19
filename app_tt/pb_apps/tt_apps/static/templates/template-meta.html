@@ -43,6 +43,7 @@
 			<div id="community-progress" class="bar bar-success"
 				style="width: 0%;"></div>
 			<div id="user-progress" class="bar bar-info" style="width: 0%;"></div>
+			<div id="remaining-progress" style="float: left; text-align: center; width: 0%;"><span>Tarefas restantes</span></div>
 		</div>
 		<h5>
 			<strong><span id="book-info"></span></strong> <i><span
@@ -360,16 +361,7 @@
 	</div>
 </div>
 
-<script src="#server/js/kinetic.js"></script>
-<script type="text/javascript" src="#server/js/share.js"></script>
 <script src="//connect.facebook.net/en_US/all.js"></script>
-<script src="#server/js/jquery.annotate.js" type="text/javascript"></script>
-<script type="text/javascript"
-	src="#server/js/jquery-ui-1.8.22.custom.min.js"></script>
-<script type="text/javascript" src="#server/js/jquery.blockUI.js"></script>
-<script type="text/javascript" src="#server/js/report.js"></script>
-<script type="text/javascript" src="#server/js/jquery.cookie.js"></script>
-
 <link rel="stylesheet" type="text/css" href="#server/css/annotation.css" />
 <link rel="stylesheet" type="text/css" href="#server/css/tt-meta.css" />
 
@@ -382,38 +374,67 @@
 	var book_progress;
 	var user_progress;
 
+	function getScripts(scripts, callback) {
+		var progress = 0;
+		var internalCallback = function() {
+			if (++progress == scripts.length) {
+				callback();
+			} else {
+				$.getScript(getStaticURL() + scripts[progress], internalCallback);
+			}
+		};
+		$.getScript(getStaticURL() + scripts[progress], internalCallback);
+	}
+	
+	function getStaticURL() {
+		return "/mb-static";
+	}
+	
+	function initialize() {
+		pybossa.setEndpoint(endpoint);
+		
+		var scripts = ["/js/kinetic.js", "/js/share.js", "/js/jquery.annotate.js", "/js/jquery-ui-1.8.22.custom.min.js", "/js/jquery.blockUI.js", "/js/report.js", "/js/jquery.cookie.js"];
+		getScripts(scripts, function() {
+			interfaceConfiguration();
+			pybossa.newTask(app_shortname).done(function(data) {
+				loadData(data);
+			});
+		});
+	}
+	
 	function showHelp() {
 		$("#helpModalMeta").modal();
 		$('#nav-header').affix();
 	}
 
-	$("[rel=tooltip]").tooltip();
-	$("[rel=popover]").popover({
-		"trigger" : "manual",
-		"placement" : "left"
-	});
+	function interfaceConfiguration() {
+		// update book title on header
+		var book_name = app_shortname.split("_")[0];
+        $.each($(".row a"), function() {
+            if ($(this).attr('href').indexOf(book_name) != -1) {
+            	
+                if ($(this).text().indexOf("Marcação") != -1) {
+                    // remove PyBossa app's header
+                    $(this).parent().parent().parent().remove();
+                }
 
-	$("#button_share").on("click", function() {
-		if ($("#button_share").hasClass("active")) {
-			$(".image-annotate-edit-close").trigger("click");
-			$("#image-container").popover("hide");
-		} else {
-			$("#image-container").popover("show");
-		}
-	});
+                var book_title = $(this).text().replace(" Marcação", "");
+                $("#book_title").html(book_title);
+            }
+        });
+		
+		$("[rel=tooltip]").tooltip();
+		$("[rel=popover]").popover({
+			"trigger" : "manual",
+			"placement" : "left"
+		});
 
-	$("#template-container").ready(function() {
-		// update book title on header		
-		$.each($(".row a"), function() {
-			if ($(this).attr('href').indexOf("/pybossa/app/") != -1) {
-
-				if ($(this).text().indexOf("Marcação") != -1) {
-					// remove PyBossa app's header
-					$(this).parent().parent().parent().remove();
-				}
-
-				var book_title = $(this).text().replace(" Marcação", "");
-				$("#book_title").html(book_title);
+		$("#button_share").on("click", function() {
+			if ($("#button_share").hasClass("active")) {
+				$(".image-annotate-edit-close").trigger("click");
+				$("#image-container").popover("hide");
+			} else {
+				$("#image-container").popover("show");
 			}
 		});
 
@@ -427,7 +448,7 @@
 		$("#task-type").text("Tarefa de marcação");
 		$("#answer").hide();
 		$("#answer").show();
-	});
+	}
 
 	function unblockUI() {
 		$("#loading-container").hide();
@@ -544,6 +565,12 @@
 
 							$("#total").text(book_progress.total);
 							$("#done").text(user_progress.done);
+							
+							var remaining_pct = 100 - (community_pct + user_pct);
+							$("#remaining-progress").css("width", remaining_pct.toString() + "%");
+							if ($("#remaining-progress").width() < 105) {
+								$("#remaining-progress").hide();
+							}
 						});
 	}
 
@@ -600,7 +627,7 @@
 												"Isso é uma marcação. Ao clicar nela, você pode conferir e editar as informações de descrição da tabela.");
 							} else {
 								$(this).attr("data-original-title",
-										"Outra marcação.");
+										"Isso também é uma marcação.");
 							}
 						});
 
@@ -618,9 +645,10 @@
 			"placement" : "left"
 		});
 
+		var editAreaTip = isLastAnswer ? "Uma marcação deve conter apenas o corpo da tabela, desconsiderando textos avulsos, como título e fontes. Caso precise ajustar a posição desta marcação, basta clicar e arrastar." : "Caso precise ajustar a posição desta marcação, basta clicar e arrastar.";
 		$(".image-annotate-edit-area")
 				.attr("data-original-title",
-						"Caso precise ajustar a posição da marcação, basta clicar e arrastar.");
+						editAreaTip);
 
 		// Listener to annotation's drag event
 		$(".image-annotate-edit-area").on('DOMSubtreeModified', function(e) {
@@ -651,7 +679,7 @@
 			loadUserProgress();
 			var task_id = data.task.id;
 			$("#task-id").text(task_id);
-			$("#table").attr("src", current_task.info.link);
+			$("#table").attr("src", current_task.info.link.replace("http:", "https:"));
 
 			isLastAnswer = typeof current_task.info.last_answer != "undefined";
 			var notes = isLastAnswer ? JSON
@@ -768,10 +796,7 @@
 				});
 	}
 
-	pybossa.setEndpoint(endpoint);
-	pybossa.newTask(app_shortname).done(function(data) {
-		loadData(data);
-	});
+	initialize();
 </script>
 <script>
 	(function(i, s, o, g, r, a, m) {
