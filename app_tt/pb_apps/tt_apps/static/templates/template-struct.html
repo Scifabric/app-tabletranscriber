@@ -1,4 +1,4 @@
-<div id="template-container" style="width: 940px;">
+<div id="template-container" style="width: 940px; margin-left: 100px;">
 	<div class="row">
 		<div id="alert-container" class="span7" style="height: 50px">
 			<div id="success" class="alert alert-success" style="display: none;">
@@ -52,8 +52,9 @@
 	</div>
 	<!-- End of Skeleton -->
 
-	<div class="skeleton">
-		<div id="toolbar" class="btn-group">
+	<div class="skeleton" id="tools" rel="popover" 
+		title="">
+		<div id="toolbar" class="btn-group" >
 			<button id="button_select" class="btn" rel="tooltip" title=""
 				onclick="handleSelectionToolEvent()">
 				<img class="icon" style="width: 20px"
@@ -113,7 +114,8 @@
 		</div>
 
 		<div id="table-container">
-			<div id="canvas-container" style="float: left; display: none;"></div>
+			<div id="canvas-container" style="float: left; display: none;"
+			 rel="popover" title=""> </div>
 			<div id="loading-container">
 				<img src="#server/images/loading.gif">
 			</div>
@@ -285,7 +287,8 @@
 	var minTaskInfoWidth = 325;
 	var book_progress;
 	var user_progress;
-
+	var COOKIE_EXPIRATION = 60; // days
+	
 	function getScripts(scripts, callback) {
 		var progress = 0;
 		var internalCallback = function() {
@@ -307,7 +310,7 @@
 
 		var scripts = [ "/js/kinetic.js", "/js/jquery.i18n.min.js",
 				"/js/tt-struct-i18n.js", "/js/jquery.blockUI.js", "/js/tt3.js",
-				"/js/report.js" ];
+				"/js/report.js", "/js/jquery.cookie.js" ];
 		getScripts(scripts, function() {
 			interfaceConfiguration();
 			pybossa.newTask(app_shortname).done(function(data) {
@@ -318,7 +321,7 @@
 
 	function unblockUI() {
 		$("#loading-container").hide();
-		$("#canvas-container").show();
+		showTable();
 		$.unblockUI();
 	}
 
@@ -331,6 +334,17 @@
 				height : $("#success").height()
 			}
 		});
+	}
+	
+	function showTable() {
+		$("#canvas-container").show();
+		if (isToolTipsEnabled()) {
+			$("#canvas-container").popover("show");
+		}
+	}
+	
+	function isToolTipsEnabled() {
+		return typeof $.cookie('finished_t3') == "undefined";
 	}
 
 	function showHelpStruct() {
@@ -393,6 +407,7 @@
             }
         });
 
+
 		// Anonymous alert fix
 		$("#msg_warning .close").removeAttr("data-dismiss");
 		$("#msg_warning .close").on("click", function(e) {
@@ -435,8 +450,21 @@
 		$("#button_split").attr("title", $.i18n._('button_split'));
 		$("#button_remove").attr("title", $.i18n._('button_remove'));
 		$("#button_help").attr("title", $.i18n._('button_help'));
+		$("#tools").attr("data-original-title", $.i18n._('bar-tooltip'));
+		$("#canvas-container").attr("data-original-title", $.i18n._('lines-tooltip'));
 		
 		$("[rel=tooltip]").tooltip();
+		
+		
+		// Show Popovers
+		$("[rel=popover]").popover({
+			"trigger" : "manual",
+			"placement" : "left"
+		});
+		
+		if (isToolTipsEnabled()) {
+			$("#tools").popover("show");
+		}
 	}
 
 	function loadUserProgress() {
@@ -618,12 +646,19 @@
 
 	// Function to submit and save the TaskRun in PyBossa
 	function submitTask() {
+		$("[rel=popover]").popover("hide");
 		var answer = getGridLinesAnswer();
 
 		pybossa.saveTask(taskId, answer).done(function(data) {
+			
+			$.cookie('finished_t3', true, {
+				expires : COOKIE_EXPIRATION,
+				path : '/'
+			});
+
 			//Call tt workflow api
 			taskRunDone(taskId);
-
+		
 			clearCanvas();
 
 			blockUI();

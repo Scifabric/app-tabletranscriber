@@ -79,11 +79,11 @@ class Archive_book_data_exception( Meb_exception ):
                           }
     
     def __init__(self, exc_code, key):
-        msg = self.config_msg(key)
-        super(Meb_util_exception, self).__init__(exc_code, msg)
+        msg = self.config_msg(exc_code, key)
+        super(Archive_book_data_exception, self).__init__(exc_code, msg)
         
     def config_msg(self, exc_code, key):
-        return "%s | key : %s" % (key)
+        return "%s | key : %s" % (self.std_exception_msgs[exc_code], key)
     
 
 class Meb_pagination_exception( Meb_exception ):

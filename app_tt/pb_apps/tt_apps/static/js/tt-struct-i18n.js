@@ -37,7 +37,9 @@ var en_US_dict = {
     'completed' : 'completed!',
     'completed-by-community' : 'completed by the community!',
     'completed-by-user' : 'completed by you!',
-    'remaining-tasks' : 'Remaining tasks'
+    'remaining-tasks' : 'Remaining tasks',
+    'bar-tooltip': 'Move the mouse cursor over the tools to get more information.',
+    'lines-tooltip'	:'Fix the rows and columns internals of the  table beside, if necessary.'
 };
 
 var pt_dict= {
@@ -79,7 +81,9 @@ var pt_dict= {
     'completed' : 'finalizados!',
     'completed-by-community' : 'feitas pela comunidade!',
     'completed-by-user' : 'feitas por você!',
-    'remaining-tasks' : 'Tarefas restantes'
+    'remaining-tasks' : 'Tarefas restantes',
+    'bar-tooltip': 'Mova o cursor do mouse sobre as ferramentas para obter mais informações.',
+    'lines-tooltip'	:'Corrija as linhas e colunas internas da tabela ao lado, se necessário for.'
 };
 
 var language = navigator.language? navigator.language : navigator.userLanguage;

@@ -187,7 +187,7 @@
 	function initialize() {
 		pybossa.setEndpoint(endpoint);
 
-		var scripts = ["/js/kinetic.js", "/js/share.js", "/js/jquery.i18n.min.js", "/js/tt-select-i18n.js", "/js/jquery.blockUI.js", "/js/report.js", "jquery.cookie.js"];
+		var scripts = ["/js/kinetic.js", "/js/share.js", "/js/jquery.i18n.min.js", "/js/tt-select-i18n.js", "/js/jquery.blockUI.js", "/js/report.js", "/js/jquery.cookie.js"];
 		getScripts(scripts, function() {
 			interfaceConfiguration();
 			pybossa.newTask(app_shortname).done(function(data) {
@@ -325,7 +325,7 @@
 			$("#answer").popover("show");
 			$("#image-container").popover("show");
 		}
-	}); //Internationalization using jquery.i18n
+	} //Internationalization using jquery.i18n
 
 	function loadUserProgress() {
 		book_progress = {
