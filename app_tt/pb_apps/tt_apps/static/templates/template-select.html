@@ -96,7 +96,7 @@
 		</div>
 	</div>
 
-	<div id="image-container" class="skeleton" rel="popover"
+	<div id="image-container" class="skeleton" rel="popover" popover-placement="right"
 		title="">
 		<a id="image-link" href="#" target="_blank"
 			style="float: left; display: none;"> <img id="image"
@@ -319,12 +319,6 @@
 			"trigger" : "manual",
 			"placement" : "right"
 		});
-		
-		var toolTipsEnabled = typeof $.cookie('finished_t1') == "undefined";
-		if (toolTipsEnabled) {
-			$("#answer").popover("show");
-			$("#image-container").popover("show");
-		}
 	} //Internationalization using jquery.i18n
 
 	function loadUserProgress() {
@@ -439,6 +433,15 @@
 			redirectToANewTask("tt2");
 		});
 	}
+	
+	// Add tooltips for a newcomer
+	function addTooltips() {
+		var toolTipsEnabled = typeof $.cookie('finished_t1') == "undefined";
+		if (toolTipsEnabled) {
+			$("#answer").popover("show");
+			$("#image-container").popover("show");
+		}
+	}
 
 	function loadData(data) {
 		var current_task = data.task;
@@ -450,6 +453,7 @@
 
 		if (!$.isEmptyObject(current_task)) {
 			loadUserProgress();
+			addTooltips();
 			task_id = current_task.id;
 			
 			// Workaround to load images through HTTPS

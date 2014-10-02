@@ -340,7 +340,7 @@
 	</div>
 
 	<div class="skeleton">
-		<div id="image-container" class="TTImageContainer" rel="popover"
+		<div id="image-container" class="TTImageContainer" rel="popover" popover-placement="left"
 			style="float: left; opacity: 0;" title="Você vê alguma tabela na página ao lado? se sim, clique e arraste para desenhar uma área sobre ela. Marque apenas apenas o corpo da tabela, desconsiderando textos avulsos, como título e fontes.">
 			<img id="table" class="TTImage" src="#" onload="unblockUI()">
 		</div>
@@ -426,14 +426,15 @@
 		$("[rel=popover]").popover({
 			"trigger" : "manual",
 			"placement" : "left"
+			
 		});
 
 		$("#button_share").on("click", function() {
 			if ($("#button_share").hasClass("active")) {
 				$(".image-annotate-edit-close").trigger("click");
-				$("#image-container").popover("hide");
+				$(".image-annotate-area").trigger("mouseout");
 			} else {
-				$("#image-container").popover("show");
+				$(".image-annotate-area").trigger("mouseover");
 			}
 		});
 
@@ -614,6 +615,14 @@
 
 	// Add tooltips for a newcomer
 	function addTooltips() {
+		
+		if (!toolTipsEnabled) {
+			$("#template-container").css("margin-left", "38px");
+			return;
+		} else {
+			$("#template-container").css("margin-left", "215px");			
+		}
+		
 		var num_annotations = $(".image-annotate-area").length;
 		$
 				.each(
@@ -714,9 +723,8 @@
 				clear : false,
 				notes : notes
 			});
-
-			if (toolTipsEnabled)
-				addTooltips();
+			
+			addTooltips();
 
 			if (isLastAnswer) {
 				var num_annotations = $(".image-annotate-area").length;

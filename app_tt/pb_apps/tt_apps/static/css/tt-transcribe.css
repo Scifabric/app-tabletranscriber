@@ -1,3 +1,8 @@
+#template-container {
+	width: 940px;
+	margin-left: 38px;
+}
+
 #table-viewer {
 	float: left;
 	overflow: auto;
