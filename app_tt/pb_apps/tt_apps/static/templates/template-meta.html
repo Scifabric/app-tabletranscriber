@@ -615,13 +615,11 @@
 
 	// Add tooltips for a newcomer
 	function addTooltips() {
+		var marginLeft = toolTipsEnabled ? "215px" : "38px";
+		$("#template-container").css("margin-left", marginLeft);
+		$.fn.annotateImage.updateOffset();
 		
-		if (!toolTipsEnabled) {
-			$("#template-container").css("margin-left", "38px");
-			return;
-		} else {
-			$("#template-container").css("margin-left", "215px");			
-		}
+		if (!toolTipsEnabled) return;
 		
 		var num_annotations = $(".image-annotate-area").length;
 		$
