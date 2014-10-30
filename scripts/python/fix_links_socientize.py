@@ -7,7 +7,9 @@ import sys
 def replaceInfo(info):
     print "info before:"
     print info
-    info[1] = info[1].replace("localhost", "socientize")
+    info[1] = info[1].replace("http://alfa.pybossa.socientize.eu", "https://localhost")
+    info[1] = info[1].replace("https://alfa.pybossa.socientize.eu", "https://localhost")
+    
     return info
 
 if len(sys.argv) != 5:
@@ -17,9 +19,12 @@ if len(sys.argv) != 5:
 con = None
 
 try:
-    app_id = 335
-    table = "task_run"
-
+    #app_id = 335
+    table = "task"
+    task_type = "tt4"
+    
+    # tt3 - task e taskrun
+    # tt4 - task
     #NOTE: em task_run, info eh uma string
     #NOTE: em task, info eh um dicionario
 
@@ -27,20 +32,22 @@ try:
     con = psycopg2.connect(conn_string) 
     cursor = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-    cursor.execute("SELECT id,info FROM " + table + " WHERE app_id = " + str(app_id))
+    cursor.execute("SELECT id, info FROM " + table + " WHERE app_id in (SELECT id FROM app WHERE short_name like '%_" + task_type + "')")
     
     rows = cursor.fetchall()
+    print(len(rows))
 
     for row in rows:
-    	newInfo = replaceInfo(row)
-	print "newInfo[1]"
-	print newInfo[1]
+        newInfo = replaceInfo(row)
+    
+        print "newInfo[1]"
+        print newInfo[1]
 
-	#print "row"	
-	#print row
+        print "row"	
+        print row
 
-#	cursor.execute("UPDATE " + table + " SET info=%s WHERE id=%s", (newInfo[1], row['id']) )
-#	con.commit()    
+        cursor.execute("UPDATE " + table + " SET info=%s WHERE id=%s", (newInfo[1], row['id']) )
+        con.commit()    
 
 except psycopg2.DatabaseError, e:
     print 'Error %s' % e    

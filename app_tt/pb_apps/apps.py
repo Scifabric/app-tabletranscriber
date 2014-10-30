@@ -33,7 +33,7 @@ class Apptt(object):
         self.name = name
         
         try:
-           self.app_id = self.__create_app()
+            self.app_id = self.__create_app()
         except Exception as e:
             logger.error(e)
             raise e

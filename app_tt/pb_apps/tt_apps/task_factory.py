@@ -42,9 +42,10 @@ def __find_app(**keyargs):
     :returns: One pybossa's app data
     :rtype: dict
     """
-    return json.loads(requests.get("%s/api/app" % (
+    response = requests.get("%s/api/app" % (
         app.config['PYBOSSA_URL']),
-        params=keyargs).content)[0]  # get the pb_appdata dict
+        params=keyargs).content
+    return json.loads(response)[0]  # get the pb_appdata dict
 
 
 def __find_app_by_taskid(task_id):
@@ -61,6 +62,6 @@ def __find_app_by_taskid(task_id):
 
     try:
         task = json.loads(meta_task)  # get task data
-        return __find_app(id=task["app_id"])
+        return __find_app(id=task["app_id"], api_key=app.config['API_KEY'])
     except:
         raise

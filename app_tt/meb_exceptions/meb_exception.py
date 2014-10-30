@@ -26,7 +26,7 @@ class Meb_apps_exception( Meb_exception ):
         super(Meb_apps_exception, self).__init__(exc_code, msg)
     
     def config_msg(self, exc_code, app_id, app_sh_name):
-        return "%s | app_id : %d | app_short_name: %s" % (self.std_exception_msgs[exc_code], app_id, app_sh_name)
+        return "%s | app_id : %d | app_short_name: %s" % (self.std_exception_msgs[exc_code], int(app_id), app_sh_name)
     
 
 class Meb_ttapps_exception( Meb_apps_exception ):
@@ -57,7 +57,7 @@ class Meb_pb_task_exception( Meb_exception ):
         super(Meb_pb_task_exception, self).__init__(exc_code, msg)
     
     def config_msg(self, exc_code, t_id, app_sh_name):
-        return "%s | task_id : %d | app_short_name : %s" % (self.std_exception_msgs[exc_code], t_id, app_sh_name)   
+        return "%s | task_id : %d | app_short_name : %s" % (self.std_exception_msgs[exc_code], int(t_id), app_sh_name)   
 
         
 class Meb_task_factory_exception( Meb_exception ):
@@ -70,7 +70,7 @@ class Meb_task_factory_exception( Meb_exception ):
         super(Meb_task_factory_exception, self).__init__(exc_code, msg)
     
     def config_msg(self, exc_code, task_id):
-        return "%s | task_id : %d" % (self.std_exception_msgs[exc_code], task_id)
+        return "%s | task_id : %d" % (self.std_exception_msgs[exc_code], int(task_id))
     
 
 class Archive_book_data_exception( Meb_exception ):
@@ -113,7 +113,7 @@ class Meb_exception_tt1( Meb_exception ):
         super(Meb_exception_tt1, self).__init__(exc_code, msg)
     
     def config_msg(self, exc_code, task_id):
-        return "%s | origin task id : %d" % (self.std_exception_msgs[exc_code], task_id)
+        return "%s | origin task id : %d" % (self.std_exception_msgs[exc_code], int(task_id))
         
 
 class Meb_exception_tt2( Meb_exception ):
@@ -131,7 +131,7 @@ class Meb_exception_tt2( Meb_exception ):
         super(Meb_exception_tt2, self).__init__(exc_code, msg)
     
     def config_msg(self, exc_code, task_id):
-        return "%s | origin task id : %d" % (self.std_exception_msgs[exc_code], task_id)
+        return "%s | origin task id : %d" % (self.std_exception_msgs[exc_code], int(task_id))
     
 
 
@@ -150,7 +150,7 @@ class Meb_exception_tt3( Meb_exception ):
         super(Meb_exception_tt3, self).__init__(exc_code, msg)
     
     def config_msg(self, exc_code, task_id):
-        return "%s | origin task id : %d" % (self.std_exception_msgs[exc_code], task_id)
+        return "%s | origin task id : %d" % (self.std_exception_msgs[exc_code], int(task_id))
     
 
 class Meb_exception_tt4( Meb_exception ):
@@ -163,5 +163,5 @@ class Meb_exception_tt4( Meb_exception ):
         super(Meb_exception_tt1, self).__init__(exc_code, msg)
     
     def config_msg(self, exc_code, task_id):
-        return "%s | origin task id : %d" % (self.std_exception_msgs[exc_code], task_id)    
+        return "%s | origin task id : %d" % (self.std_exception_msgs[exc_code], int(task_id))    
         

@@ -1,0 +1,45 @@
+<div id="template-container"></div>
+<div id="books_div_loading" class="container" style="display: none;">
+	<img style="position: absolute; width: 80px; top: 37%; left: 47%;"
+		src="#server/images/loading.gif">
+</div>
+
+<script type="text/javascript" charset="utf-8">
+	function loadBooksPage(url) {
+		$("#books_div_loading").show();
+		$("#template-container").hide();
+		
+		$("#template-container").load(url, function() {
+			$("#books_div_loading").hide();
+			$("#template-container").show();
+
+			$("#books_pagination a").on("click", function(e) {
+				var addressValue = $(this).attr("href");
+				if (addressValue.indexOf("collaborate") != -1) {
+					e.preventDefault();
+					loadBooksPage(addressValue);
+					return;
+				}
+			});
+		});
+	}
+	
+	loadBooksPage("/mb/collaborate/");
+</script>
+
+<script>
+	(function(i, s, o, g, r, a, m) {
+		i['GoogleAnalyticsObject'] = r;
+		i[r] = i[r] || function() {
+			(i[r].q = i[r].q || []).push(arguments)
+		}, i[r].l = 1 * new Date();
+		a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+		a.async = 1;
+		a.src = g;
+		m.parentNode.insertBefore(a, m)
+	})(window, document, 'script', '//www.google-analytics.com/analytics.js',
+			'ga');
+
+	ga('create', 'UA-16766566-2', 'socientize.eu');
+	ga('send', 'pageview');
+</script>

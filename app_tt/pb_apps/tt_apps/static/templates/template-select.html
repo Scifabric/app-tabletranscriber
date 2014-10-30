@@ -254,21 +254,6 @@
 	}
 
 	function interfaceConfiguration() {
-		// update book title on header
-		var book_name = app_shortname.split("_")[0];
-        $.each($(".row a"), function() {
-            if ($(this).attr('href').indexOf(book_name) != -1) {
-            	
-                if ($(this).text().indexOf("Seleção") != -1) {
-                    // remove PyBossa app's header
-                    $(this).parent().parent().parent().remove();
-                }
-
-                var book_title = $(this).text().replace(" Seleção", "");
-                $("#book_title").html(book_title);
-            }
-        });
-		
 		$("[rel=tooltip]").tooltip();
 		$("[rel=popover]").popover({
 			"trigger" : "manual"
@@ -343,6 +328,9 @@
 				.apply($, deferreds)
 				.then(
 						function() {
+							// Set Book's title
+							$("#book_title").html(book_progress.title);
+							
 							$("#total").text(100);
 							$("#done").text(30);
 

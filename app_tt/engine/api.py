@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask import Blueprint, request
 from app_tt.meb.util import crossdomain
-from tasks import check_task, create_apps, close_task, close_t1
+from tasks import check_task, create_apps, close_task, close_t1, create_home_app
 from tasks import create_task, available_tasks, save_fact, submit_report, get_fact_page, render_template, book_progress
 import json
 
@@ -17,6 +17,10 @@ def index():
     """
     return 'Memoria Brasil API'
 
+@blueprint.route('/create_home_app')
+def create_home():
+    result = create_home_app.delay()
+    return str(result.get(propagate=True))
 
 @blueprint.route('/<book_id>/init')
 def book_init(book_id):

@@ -9,7 +9,6 @@ from app_tt.pagination import Pagination
 import sys
 import requests
 
-
 blueprint = Blueprint('collaborate', __name__)
 pybossa_server = flask_app.config['PYBOSSA_URL']
 pybossa_host = flask_app.config['PYBOSSA_HOST']
@@ -30,16 +29,18 @@ def index(page):
     valid_books = ['estatisticasdodi1950depa', 'mensagemdogovern1912gove','caracterizaoeten2001bras', 'MemmoriaParaiba1841A1847', 'anuario1916pb', 'sinopse1937pb', 'rpparaiba1918']
     
     for app in apps:
+        print(app["short_name"])
         book_id = app["short_name"][:-4]
 
-        if(book_id not in book_stack and app["hidden"] == 0):
+        if(book_id not in book_stack and app["short_name"][:-4] in valid_books):
             try:
                 app["info"]["title"]
-                app["info"]["newtask"] = get_new_task_link(book_id)
+                book_progress = get_book_progress(book_id)
+                app["info"]["progress"] = book_progress["overall_progress"]
+                app["info"]["newtask"] = get_new_task_link(book_progress["tasks_progress"], book_id)
                 book_stack.append(book_id)
-                
-                if app["short_name"][:-4] in valid_books:
-                    book_data.append(app)
+                book_data.append(app)
+
             except KeyError:
                 print "It's not a tt app"
             except Exception, e:
@@ -59,10 +60,10 @@ def index(page):
 
     return render_template('/collaborate.html', books=books, pagination=pagination)
 
-def get_new_task_link(bookid):
+def get_new_task_link(tasks_progress, bookid):
     app_with_available_task = 'tt1'
     tt_suffix = ['tt1', 'tt2', 'tt3', 'tt4']
-    tasks_progress = get_tasks_progress(bookid)
+
     for suffix in tt_suffix:
         if (tasks_progress[suffix]['total'] > tasks_progress[suffix]['completed']):
             app_with_available_task = suffix
@@ -81,23 +82,17 @@ def get_tasks_progress(bookid):
         for task in tasks:
             if task.state == 'completed':
                 result[suffix]['completed'] += 1
+                
     return result
 
-@blueprint.route('/progress/<string(maxlength=255):bookid>')
-@crossdomain(origin='*', headers=cors_headers)
-def progress(bookid):
-    tasks_progress = get_tasks_progress(bookid)
+def get_book_progress(bookid):
+    t_progress = get_tasks_progress(bookid)
     tt_suffix = ['tt1', 'tt2', 'tt3', 'tt4']
     overall = 0
     overall_completed = 0
     for suffix in tt_suffix:
-        overall += tasks_progress[suffix]['total']       
-        overall_completed += tasks_progress[suffix]['completed']
-
-    try:
-        progress = (overall_completed/float(overall)) * 100
-    except:
-        return render_template('/progress.html', progress=0)
-
-    return render_template('/progress.html', progress=progress)
+        overall += t_progress[suffix]['total']       
+        overall_completed += t_progress[suffix]['completed']
     
+    book_progress = dict(tasks_progress=t_progress, overall_progress=round((overall_completed/float(overall)) * 100, 2))
+    return book_progress
