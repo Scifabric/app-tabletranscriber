@@ -24,7 +24,7 @@
 		this.parentObj = undefined;
 		notesToSave = opts.notes;
 		deletingNote = false;
-		editingNote = false;		
+		editingNote = false;
 
 		if(this.clear){
 			$.fn.annotateImage.clear(this);
@@ -591,21 +591,19 @@
 		cont = 0;
 		intoNote = false;
 
-        $("div.image-annotate-area-editable").on("mouseenter", function(){
-            intoNote = true;
-        });
+		$("div.image-annotate-area-editable").live("mouseenter", function(){
+			intoNote = true;
+		}).live("mouseleave", function(){
+			intoNote=false;
+		}); 
 
-        $("div.image-annotate-area-editable").on("mouseleave", function(){
-            intoNote = false;
-        });
 
-        $("div.image-annotate-edit-area.ui-resizable.ui-draggable").on("mouseenter", function(){
-            intoNote = true;
-        });
+		$("div.image-annotate-edit-area.ui-resizable.ui-draggable").live("mouseenter", function(){
+			intoNote = true;
+		}).live("mouseleave", function(){
+			intoNote=false;
+		});
 
-        $("div.image-annotate-area-editable").on("mouseleave", function(){
-            intoNote = false;
-        });
 
         this.parentObj = $(obj).parent();
         this.parentObj.unbind("mousedown").bind("mousedown", onMouseDown);
