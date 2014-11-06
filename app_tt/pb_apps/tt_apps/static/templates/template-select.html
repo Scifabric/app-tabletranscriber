@@ -96,7 +96,7 @@
 		</div>
 	</div>
 
-	<div id="image-container" class="skeleton" rel="popover"
+	<div id="image-container" class="skeleton" rel="popover" popover-placement="right"
 		title="">
 		<a id="image-link" href="#" target="_blank"
 			style="float: left; display: none;"> <img id="image"
@@ -254,21 +254,6 @@
 	}
 
 	function interfaceConfiguration() {
-		// update book title on header
-		var book_name = app_shortname.split("_")[0];
-        $.each($(".row a"), function() {
-            if ($(this).attr('href').indexOf(book_name) != -1) {
-            	
-                if ($(this).text().indexOf("Seleção") != -1) {
-                    // remove PyBossa app's header
-                    $(this).parent().parent().parent().remove();
-                }
-
-                var book_title = $(this).text().replace(" Seleção", "");
-                $("#book_title").html(book_title);
-            }
-        });
-		
 		$("[rel=tooltip]").tooltip();
 		$("[rel=popover]").popover({
 			"trigger" : "manual"
@@ -319,12 +304,6 @@
 			"trigger" : "manual",
 			"placement" : "right"
 		});
-		
-		var toolTipsEnabled = typeof $.cookie('finished_t1') == "undefined";
-		if (toolTipsEnabled) {
-			$("#answer").popover("show");
-			$("#image-container").popover("show");
-		}
 	} //Internationalization using jquery.i18n
 
 	function loadUserProgress() {
@@ -349,6 +328,9 @@
 				.apply($, deferreds)
 				.then(
 						function() {
+							// Set Book's title
+							$("#book_title").html(book_progress.title);
+							
 							$("#total").text(100);
 							$("#done").text(30);
 
@@ -439,6 +421,15 @@
 			redirectToANewTask("tt2");
 		});
 	}
+	
+	// Add tooltips for a newcomer
+	function addTooltips() {
+		var toolTipsEnabled = typeof $.cookie('finished_t1') == "undefined";
+		if (toolTipsEnabled) {
+			$("#answer").popover("show");
+			$("#image-container").popover("show");
+		}
+	}
 
 	function loadData(data) {
 		var current_task = data.task;
@@ -450,6 +441,7 @@
 
 		if (!$.isEmptyObject(current_task)) {
 			loadUserProgress();
+			addTooltips();
 			task_id = current_task.id;
 			
 			// Workaround to load images through HTTPS

@@ -69,6 +69,7 @@
 
 #share-container {
 	position: absolute;
+	margin-left: 20px;
 }
 
 #share-menu {

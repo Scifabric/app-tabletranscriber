@@ -67,7 +67,13 @@ if __name__ == "__main__":
                      app_short_name)
 
             app.info['task_presenter'] = new_template
-            #app.info['thumbnail'] = app.info['thumbnail'].replace("alfa2", "alfa"))
+            app.info['thumbnail'] = app.info['thumbnail'].replace("https://alfa.pybossa.socientize.eu", "https://localhost")
+            
+            app.info['newtask'] = app.info['newtask'].replace("https://alfa.pybossa.socientize.eu", "https://localhost")
+            app.info['newtask'] = app.info['newtask'].replace("http://alfa.pybossa.socientize.eu", "https://localhost")
+            app.info['newtask'] = app.info['newtask'].replace("https://alfa2.pybossa.socientize.eu", "https://localhost")
+            app.info['newtask'] = app.info['newtask'].replace("http://alfa2.pybossa.socientize.eu", "https://localhost")
+            
             app.long_description = new_long_desc_template
              
             book_id = app_short_name[:-4]

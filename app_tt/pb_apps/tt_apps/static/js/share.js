@@ -6,11 +6,6 @@ $('body').on('mouseup', function(e) {
 	handleMouseUpEvent(e);
 });
 
-/*$("#share-canvas-container").popover({
-	"trigger" : "manual",
-	"placement" : "right"
-});*/
-
 var isShareActive = false;
 var shareStage;
 var shareArea;
@@ -48,8 +43,9 @@ function enableShare() {
 	
 	oldMessage = $("#image-container").attr("data-original-title");
 	$("#image-container").attr("data-original-title", SHARE_HELP_ENABLED_MESSAGE);
+	$("#image-container").popover("destroy");
+	$("#image-container").popover({"placement" : "right"});
 	$("#image-container").popover("show");
-	//$("#share-canvas-container").popover("show");
 	
 	$("#button_share").attr("data-original-title", SHARE_HELP_ENABLED_MESSAGE);
 	$("#button_share").trigger("mouseover");
@@ -62,14 +58,13 @@ function disableShare() {
 	shareStage.destroy();
 	shareArea = undefined;
 	$("#share-menu").hide();
-	//$("#share-canvas-container").popover("hide");
-	
-/*	if ($("#image-container").attr("data-original-title") == "") {
-		$("#image-container").popover("hide");
-	} else {*/
+
 	$("#image-container").attr("data-original-title", oldMessage);
+	
+	$("#image-container").popover("destroy");
+	var placement = $("#image-container").attr("popover-placement");
+	$("#image-container").popover({"placement" : placement});
 	$("#image-container").popover("show");
-	//}
 
 	$("#button_share").attr("data-original-title", SHARE_HELP_DISABLED_MESSAGE);
 	$("#button_share").trigger("mouseover");

@@ -21,6 +21,7 @@
 		this.useAjax = opts.useAjax;
 		this.notes = opts.notes;
 		this.clear = opts.clear;
+		this.parentObj = undefined;
 		notesToSave = opts.notes;
 		deletingNote = false;
 		editingNote = false;
@@ -569,6 +570,16 @@
 		this.note.id = editable.note.id;
 		this.editable = true;
 	};
+	
+	$.fn.annotateImage.updateOffset = function(){
+		var parent = this.parentObj;
+		var objOffset = parent.offset();
+		offsetLeft = objOffset.left;
+		offsetTop = objOffset.top;
+		maxWidth = offsetLeft + parent.width();
+		maxHeight = offsetTop + parent.height();
+		x1 = 0; y1 = 0; x2 = 0; y2 = 0; width = 0; height = 0; selTop = 0; selLeft = 0;
+	}
 
 	/**
 	 * <summary>
@@ -580,33 +591,31 @@
 		cont = 0;
 		intoNote = false;
 
-        $("div.image-annotate-area-editable").on("mouseenter", function(){
-            intoNote = true;
-        });
+		$("div.image-annotate-area-editable").live("mouseenter", function(){
+			intoNote = true;
+		}).live("mouseleave", function(){
+			intoNote=false;
+		}); 
 
-        $("div.image-annotate-area-editable").on("mouseleave", function(){
-            intoNote = false;
-        });
 
-        $("div.image-annotate-edit-area.ui-resizable.ui-draggable").on("mouseenter", function(){
-            intoNote = true;
-        });
+		$("div.image-annotate-edit-area.ui-resizable.ui-draggable").live("mouseenter", function(){
+			intoNote = true;
+		}).live("mouseleave", function(){
+			intoNote=false;
+		});
 
-        $("div.image-annotate-area-editable").on("mouseleave", function(){
-            intoNote = false;
-        });
 
-		doSelect($(obj).parent());
+        this.parentObj = $(obj).parent();
+        this.parentObj.unbind("mousedown").bind("mousedown", onMouseDown);
+		this.updateOffset();
 
 		function doSelect(parent){
-
 			var objOffset = parent.offset();
 			offsetLeft = objOffset.left;
 			offsetTop = objOffset.top;
 			maxWidth = offsetLeft + parent.width();
 			maxHeight = offsetTop + parent.height();
 			x1 = 0; y1 = 0; x2 = 0; y2 = 0; width = 0; height = 0; selTop = 0; selLeft = 0;
-			parent.unbind("mousedown").bind("mousedown",onMouseDown);				  
 		}
 
 		function onMouseDown(e){

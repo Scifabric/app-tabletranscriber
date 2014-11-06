@@ -59,6 +59,45 @@ def available_tasks(task_id):
     return False
 
 
+@task(name="app_tt.engine.tasks.create_home_app")
+def create_home_app():
+    try:
+        
+        meb_short_name = "meb_home"
+        apps = pbclient.find_app(short_name=meb_short_name)
+        pyb_app = None
+        if len(apps) != 0:
+            pyb_app = apps[0]
+        else:
+            ans = pbclient.create_app(name="Memória Estatística do Brasil", short_name=meb_short_name, description="Página inicial do MEB.")
+            if ans:
+                pyb_app = pbclient.find_app(short_name=meb_short_name)[0]
+                pbclient.create_task(pyb_app.id, {})
+
+        if pyb_app == None:
+            return False
+
+        new_long_desc_template = meb_util.set_url(urllib2.urlopen(
+                                                 urllib2.Request(app.config['URL_TEMPLATES'] +
+                                                                 "/templates/long_description-home.html")), meb_short_name)
+        new_template = meb_util.set_url(urllib2.urlopen(
+                                       urllib2.Request(app.config['URL_TEMPLATES'] +
+                                                        "/templates/template-home.html")), meb_short_name)
+
+        pyb_app.info['thumbnail'] = app.config['URL_TEMPLATES'] + "/images/meb_icon.png"
+
+        pyb_app.category_id = 1
+        pyb_app.long_description = new_long_desc_template
+        pyb_app.info['task_presenter'] = new_template
+        
+        pbclient.update_app(pyb_app)
+
+        return True
+
+    except Exception as e:
+        return False
+
+
 @task(name="app_tt.engine.tasks.create_apps")
 def create_apps(book_id):
     """
@@ -241,7 +280,7 @@ def __createFactPage(fact_id, user_id, book_id, page_id, top_pos, left_pos, bott
     book_app_url=  "http://" + app.config['PYBOSSA_HOST'] + "/pybossa/app/" + book_id + "_tt1/newtask"
     page_url = "http://www.archive.org/download/%s/page/n%d_w%d_h%d" % (book_id, page_id, 550, 700)
     
-    bookInfo = meb_util.getArchiveBookData(book_id)
+    bookInfo = meb_util.get_archive_book_data(book_id)
     book_title = bookInfo['title'].encode('utf-8')
     top_pos = str(top_pos)
     left_pos = str(left_pos)
@@ -303,7 +342,10 @@ def render_template(app_shortname, page):
 @task(name="app_tt.engine.tasks.book_progress")
 def book_progress(bookid):
     con = None
-    result = dict(done=0, total=0)
+    bookInfo = meb_util.get_archive_book_data(bookid)
+    book_title = bookInfo['title'].encode('utf-8')
+    result = dict(title=book_title, done=0, total=0)
+    
     try:
         con = __create_db_connection(app.config['PYBOSSA_DB'])
         cursor = con.cursor()
@@ -322,4 +364,3 @@ def book_progress(bookid):
         if con:
             con.close()
         return json.dumps(result)
-

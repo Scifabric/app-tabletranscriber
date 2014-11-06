@@ -1,5 +1,5 @@
 var default_dict = { 
-    'question': "Is there a table in this page?",
+    'question': "Is/are there table(s) in this page?",
     'question-warning': "<i>*Don't worry if you think you’ve made a mistake, just keep contributing! Each task is executed by many volunteers – you are not alone!</i>",
     'book-info': "You're helping the transcription of the book:",
     'task-type': 'Selection task',
@@ -29,7 +29,7 @@ var default_dict = {
 var en_US_dict = default_dict;
 
 var pt_dict= {
-	    'question': "Existe uma tabela nessa página?",
+	    'question': "Existe(m) tabela(s) nessa página?",
 	    'question-warning': "<i>*Não se preocupe se você acha que fez algo errado, continue contribuindo! Cada tarefa é executada por diversos voluntários – você não está sozinho!</i>",
 	    'book-info': 'Você está ajudando a transcrever o livro:',
 	    'task-type': 'Tarefa de seleção',

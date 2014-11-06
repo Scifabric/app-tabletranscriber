@@ -57,7 +57,7 @@ footer .span2 {
 	<div id="fb-loading-container" style="display: none;">
 		<img src="img/loading.gif">
 	</div>
-	
+
 	<div id="main-container"></div>
 
 	<footer>
@@ -107,7 +107,7 @@ footer .span2 {
 			fb_permissions = {
 				'scope' : permissions
 			};
-			
+
 			window.fbAsyncInit = function() {
 				FB.init({
 					appId : fb_app_id,
@@ -131,13 +131,13 @@ footer .span2 {
 				ref.parentNode.insertBefore(js, ref);
 			}(document));
 		}
-		
+
 		function initFacebookLogin() {
 			if (!successfullyLogged) {
-				FB.getLoginStatus(handleAuthChange);	
+				FB.getLoginStatus(handleAuthChange);
 			}
 		}
-		
+
 		function handleAuthChange(response) {
 			if (response.status === 'connected' && !successfullyLogged) {
 				processLogin(response.authResponse);
@@ -156,10 +156,11 @@ footer .span2 {
 						dataType : 'json'
 					}).pipe(
 					function(response) {
+						var username = typeof response.username == "undefined"? buildName(response.name) : response.username;
 						var authData = {
 							'facebook_user_id' : response.id,
 							'email' : response.email,
-							'name' : response.username,
+							'name' : username,
 							'full_name' : response.name
 						};
 
@@ -172,6 +173,26 @@ footer .span2 {
 						});
 					});
 		}
+		
+		function buildName(text) {
+			var fiveDigitRandomNum = Math.floor(Math.random()*90000) + 10000;
+			return removeSpecialCharacters(text.toLowerCase()) + "." + fiveDigitRandomNum;
+		}
+
+		function removeSpecialCharacters(text) {
+			text = text.replace(/[á|ã|â|à]/gi, "a");
+			text = text.replace(/[é|ê|è]/gi, "e");
+			text = text.replace(/[í|ì|î]/gi, "i");
+			text = text.replace(/[õ|ò|ó|ô]/gi, "o");
+			text = text.replace(/[ú|ù|û]/gi, "u");
+			text = text.replace(/[ç]/gi, "c");
+			text = text.replace(/[ñ]/gi, "n");
+			text = text.replace(/[á|ã|â]/gi, "a");
+
+			text = text.replace(/\W/gi, ".");
+			text = text.replace(/(\-)\1+/gi, ".");
+			return text;
+		}
 	</script>
 
 	<!-- PyBossa Application Template Load -->
@@ -179,19 +200,19 @@ footer .span2 {
 		/* MISC Functions */
 		function loadAHTML(targetEl, htmlUrl, callback) {
 			$("#fb-loading-container").show();
-			$(targetEl).load(htmlUrl, function(){
+			$(targetEl).load(htmlUrl, function() {
 				$("#fb-loading-container").hide();
-				
+
 				if (typeof callback != "undefined") {
-					callback();	
+					callback();
 				}
 			});
 		}
-		
+
 		function ChangeImage(img, url) {
 			img.src = url;
 		}
-		
+
 		function openShareWindow(url) {
 			window
 					.open(
@@ -199,18 +220,18 @@ footer .span2 {
 							"_blank",
 							"toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, copyhistory=yes, width=500, height=300");
 		}
-		
+
 		function shareProjectOnFacebook(url) {
 			FB.ui({
 				method : 'feed',
 				link : url
 			});
 		}
-	
+
 		var app_shortname;
 		var successfullyLogged = false;
 		var numOfTaskRunDone = 0;
-		
+
 		$.getJSON("fb_config.json", function(json) {
 			app_shortname = json.shortname;
 			fb_app_id = json.app_id;
@@ -218,7 +239,7 @@ footer .span2 {
 
 			pybossa.setEndpoint(json.endpoint);
 			initFacebookSDK(json.app_id, json.facebook_permissions_type);
-			
+
 			loadAHTML("#main-container", "main_container.html")
 		});
 	</script>

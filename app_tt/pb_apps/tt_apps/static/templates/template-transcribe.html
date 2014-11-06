@@ -1,4 +1,4 @@
-<div id="template-container" style="width: 940px; margin-left: 100px;">
+<div id="template-container">
 	<div class="row">
 		<div id="alert-container" class="span7" style="height: 50px">
 			<div id="success" class="alert alert-success" style="display: none;">
@@ -344,21 +344,6 @@
 	}
 
 	function interfaceConfiguration() {
-		// update book title on header		
-		var book_name = app_shortname.split("_")[0];
-        $.each($(".row a"), function() {
-            if ($(this).attr('href').indexOf(book_name) != -1) {
-            	
-                if ($(this).text().indexOf("Transcrição") != -1) {
-                    // remove PyBossa app's header
-                    $(this).parent().parent().parent().remove();
-                }
-
-                var book_title = $(this).text().replace(" Transcrição", "");
-                $("#book_title").html(book_title);
-            }
-        });
-		
 		// Anonymous alert fix
 		$("#msg_warning .close").removeAttr("data-dismiss");
 		$("#msg_warning .close").on("click", function(e) {
@@ -407,7 +392,6 @@
 			'placement' : 'top',
 			'trigger' : 'manual'
 		});
-
 		$("#task-bar-progress")
 				.on(
 						'webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend',
@@ -436,6 +420,9 @@
 				.apply($, deferreds)
 				.then(
 						function() {
+							// Set Book's title
+							$("#book_title").html(book_progress.title);
+							
 							$("#total").text(100);
 							$("#done").text(30);
 
