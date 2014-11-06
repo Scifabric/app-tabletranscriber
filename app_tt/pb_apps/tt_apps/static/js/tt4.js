@@ -342,9 +342,21 @@
 		imageObj.src = taskInfo.img_url.replace("http:", "https:");
 
 		imageObj.onload = function() {
-			configureTableViewer(imageObj, tableMaxX, tableMaxY);
-			loadGrid(taskInfo);
+			handleLoadOfTableImage(imageObj, taskInfo, tableMaxX, tableMaxY);
 		};
+	}
+	
+	function handleLoadOfTableImage(imageObj, taskInfo, tableMaxX, tableMaxY) {
+		configureTableViewer(imageObj, tableMaxX, tableMaxY);
+		loadGrid(taskInfo);
+		
+		if (isToolTipsEnabled()){
+			$("#table-viewer").popover({
+				"trigger" : "manual",
+				"placement" : "left"
+			});
+			$("#table-viewer").popover("show");
+		}
 	}
 	
 	function configureTableViewer(imageObj, tableMaxX, tableMaxY) {
@@ -394,12 +406,26 @@
 			 MAX_CELL_VIEWER_WIDTH : scaledCellWidth;
 		var cellViewerHeight = scaledCellHeight > MAX_CELL_VIEWER_HEIGHT ?
 			 MAX_CELL_VIEWER_HEIGHT : scaledCellHeight;
-
+		
+		resizeCellViewer(cellViewerWidth, cellViewerHeight);
+		focusCell(cell, false);
+	}
+	
+	function resizeCellViewer(cellViewerWidth, cellViewerHeight) {
 		$("#cell-viewer").width(cellViewerWidth);
 		$("#cell-viewer").height(cellViewerHeight);
 		$("#canvas-cell-container").width(cellViewerWidth);
 		$("#canvas-cell-container").height(cellViewerHeight);
-		focusCell(cell, false);
+		
+		
+		if (isToolTipsEnabled()){
+			$("#cell-viewer").popover("destroy");
+			$("#cell-viewer").popover({
+				"trigger" : "manual",
+				"placement" : "right"
+			});
+			$("#cell-viewer").popover("show");
+		}
 	}
 
 	function getSuitableScale(cellWidth, cellHeight) {

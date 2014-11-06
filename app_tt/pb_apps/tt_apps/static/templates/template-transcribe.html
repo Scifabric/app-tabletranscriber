@@ -1,4 +1,4 @@
-<div id="template-container" style="width: 940px;">
+<div id="template-container" style="width: 940px; margin-left: 100px;">
 	<div class="row">
 		<div id="alert-container" class="span7" style="height: 50px">
 			<div id="success" class="alert alert-success" style="display: none;">
@@ -105,7 +105,7 @@
 	</div>
 
 	<div class="skeleton">
-		<div id="table-viewer">
+		<div id="table-viewer" rel="popover" title="">
 			<div id="canvas-table-container" style="display: none;"></div>
 			<div id="loading-container">
 				<img src="#server/images/loading.gif">
@@ -123,7 +123,8 @@
 				</button>
 			</div>
 
-			<div id="cell-viewer">
+			<div id="cell-viewer" rel="popover" 
+				title="">
 				<div id="canvas-cell-container"></div>
 			</div>
 
@@ -240,6 +241,7 @@
 	var endpoint = "/pybossa";
 	var minTableViewerWidth = 515;
 	var minTableViewerHeight = $("#right-panel").height();
+	var COOKIE_EXPIRATION = 60; // days
 	var book_progress;
 	var user_progress;
 
@@ -264,7 +266,7 @@
 		
 		var scripts = [ "/js/kinetic.js", "/js/jquery.i18n.min.js",
 				"/js/tt-transcribe-i18n.js", "/js/tt4.js",
-				"/js/jquery.blockUI.js", "/js/report.js" ];
+				"/js/jquery.blockUI.js", "/js/report.js", "/js/jquery.cookie.js" ];
 		getScripts(scripts, function() {
 			interfaceConfiguration();
 			pybossa.newTask(app_shortname).done(function(data) {
@@ -275,8 +277,20 @@
 
 	function unblockUI() {
 		$("#loading-container").hide();
-		$("#canvas-table-container").show();
+		showTable()
 		$.unblockUI();
+	}
+	
+	
+	function showTable() {
+		$("#canvas-table-container").show();
+		if (isToolTipsEnabled()) {
+			$("#canvas-table-container").popover("show");
+		}
+	}
+	
+	function isToolTipsEnabled() {
+		return typeof $.cookie('finished_t4') == "undefined";
 	}
 
 	function blockUI() {
@@ -385,13 +399,15 @@
 		$("#button-zoom-out").attr("title", $.i18n._('button-zoom-out'));
 		$("#button-help").attr("title", $.i18n._('button-help'));
 		$("#button-next-cell").attr("title", $.i18n._('button-next-cell'));
-		$("#button-previous-cell").attr("title",
-				$.i18n._('button-previous-cell'));
-
+		$("#button-previous-cell").attr("title", $.i18n._('button-previous-cell'));
+		$("#cell-viewer").attr("title", $.i18n._('cell-viewer'));
+		$("#table-viewer").attr("title", $.i18n._('table-viewer'));
+			
 		$("#task-bar-progress").tooltip({
 			'placement' : 'top',
 			'trigger' : 'manual'
 		});
+
 		$("#task-bar-progress")
 				.on(
 						'webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend',
@@ -549,10 +565,16 @@
 
 	// Function to submit and save the TaskRun in PyBossa
 	function submitTask() {
-
+		$("[rel=popover]").popover("hide");
 		var answer = getCompleteTranscriptionAnswer();
 
 		pybossa.saveTask(taskId, answer).done(function(data) {
+			// Save actions in Cookies
+			$.cookie('finished_t4', true, {
+				expires : COOKIE_EXPIRATION,
+				path : '/'
+			});
+		
 			//Call tt workflow api.
 			taskRunDone(taskId);
 			clearCanvas();

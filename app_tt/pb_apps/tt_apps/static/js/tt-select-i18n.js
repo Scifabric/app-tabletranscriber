@@ -22,7 +22,7 @@ var default_dict = {
     'completed-by-community' : 'completed by the community!',
     'completed-by-user' : 'completed by you!',
     'report-error-tooltip' : 'Have you found a error?',
-    'page-tooltip' : 'Consider as a table any structure that has data for statistical purposes.',
+    'page-tooltip' : 'Consider as a table any structure that has data for statistical purposes. Consider a table any data that relates a feature to a value.',
     'remaining-tasks' : 'Remaining tasks'
 };
 
@@ -52,7 +52,7 @@ var pt_dict= {
         'completed-by-community' : 'feitas pela comunidade!',
         'completed-by-user' : 'feitas por você!',
         'report-error-tooltip' : "Encontrou um erro?",
-        'page-tooltip' : "Considere uma tabela qualquer estrutura que possua dados para fins estatísticos.",
+        'page-tooltip' : "Considere uma tabela qualquer estrutura que possua dados para fins estatísticos. Considere uma tabela qualquer dado que relacione uma característica a um valor.",
         'remaining-tasks' : 'Tarefas restantes'
 };
 

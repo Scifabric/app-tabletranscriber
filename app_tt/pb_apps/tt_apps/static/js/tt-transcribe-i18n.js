@@ -34,7 +34,9 @@ var en_US_dict = {
     'button_bug_report' : 'Point an error in the task',
     'completed-by-community' : 'completed by the community!',
     'completed-by-user' : 'completed by you!',
-    'remaining-tasks' : 'Remaining tasks'
+    'remaining-tasks' : 'Remaining tasks',
+    'cell-viewer': 'Transcribe the text as shown in the cell.',
+    'table-viewer': 'Green corrected cells, red cells to be corrected.'
 };
 
 var pt_dict= {
@@ -73,7 +75,9 @@ var pt_dict= {
     'button_bug_report' : 'Aponte um erro na tarefa',
     'completed-by-community' : 'feitas pela comunidade!',
     'completed-by-user' : 'feitas por você!',
-    'remaining-tasks' : 'Tarefas restantes'
+    'remaining-tasks' : 'Tarefas restantes',
+    'cell-viewer': 'Transcreva o texto como mostrado na célula.',
+    'table-viewer': 'Células verdes corrigidas, células vermelhas a serem corrigidas.'
 };
 
 var language = navigator.language? navigator.language : navigator.userLanguage;
