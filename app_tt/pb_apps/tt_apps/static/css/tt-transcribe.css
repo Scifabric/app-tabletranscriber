@@ -133,3 +133,12 @@
 .popover.bottom .arrow:after {
 	border-bottom-color: rgba(0, 0, 0, 1);
 }
+
+#book-info-container {
+	height: 48px;
+	overflow: hidden;
+}
+
+.progress {
+	margin-bottom: 0px;
+}

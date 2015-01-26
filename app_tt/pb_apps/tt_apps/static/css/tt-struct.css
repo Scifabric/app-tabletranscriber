@@ -125,3 +125,17 @@ div.container {
 .popover.bottom .arrow:after {
 	border-bottom-color: rgba(0, 0, 0, 1);
 }
+
+#book-info-container {
+	height: 48px;
+	overflow: hidden;
+}
+
+.progress {
+	margin-bottom: 0px;
+}
+
+#question-container {
+	height: 150px;
+	overflow: hidden;
+}

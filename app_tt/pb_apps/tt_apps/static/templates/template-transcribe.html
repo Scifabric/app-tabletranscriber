@@ -35,12 +35,17 @@
 			<div id="community-progress" class="bar bar-success"
 				style="width: 0%;"></div>
 			<div id="user-progress" class="bar bar-info" style="width: 0%;"></div>
-			<div id="remaining-progress" style="float: left; text-align: center; width: 0%;"><span></span></div>
+			<div id="remaining-progress"
+				style="float: left; text-align: center; width: 0%;">
+				<span></span>
+			</div>
 		</div>
-		<h5>
-			<strong><span id="book-info"></span></strong> <i><span
-				id="book_title"></span></i>
-		</h5>
+		<div id="book-info-container">
+			<h5>
+				<strong><span id="book-info"></span></strong> <i><span
+					id="book_title"></span></i>
+			</h5>
+		</div>
 		<div>
 			<h1>
 				<strong><span id="question"></span></strong>
@@ -123,8 +128,7 @@
 				</button>
 			</div>
 
-			<div id="cell-viewer" rel="popover" 
-				title="">
+			<div id="cell-viewer" rel="popover" title="">
 				<div id="canvas-cell-container"></div>
 			</div>
 
@@ -233,7 +237,8 @@
 	</div>
 </div>
 
-<link rel="stylesheet" type="text/css" href="#server/css/tt-transcribe.css" />
+<link rel="stylesheet" type="text/css"
+	href="#server/css/tt-transcribe.css" />
 
 <script type="text/javascript">
 	var taskId;
@@ -251,22 +256,24 @@
 			if (++progress == scripts.length) {
 				callback();
 			} else {
-				$.getScript(getStaticURL() + scripts[progress], internalCallback);
+				$.getScript(getStaticURL() + scripts[progress],
+						internalCallback);
 			}
 		};
 		$.getScript(getStaticURL() + scripts[progress], internalCallback);
 	}
-	
+
 	function getStaticURL() {
 		return "/mb-static";
 	}
 
 	function initialize() {
 		pybossa.setEndpoint(endpoint);
-		
+
 		var scripts = [ "/js/kinetic.js", "/js/jquery.i18n.min.js",
 				"/js/tt-transcribe-i18n.js", "/js/tt4.js",
-				"/js/jquery.blockUI.js", "/js/report.js", "/js/jquery.cookie.js" ];
+				"/js/jquery.blockUI.js", "/js/report.js",
+				"/js/jquery.cookie.js" ];
 		getScripts(scripts, function() {
 			interfaceConfiguration();
 			pybossa.newTask(app_shortname).done(function(data) {
@@ -280,15 +287,14 @@
 		showTable()
 		$.unblockUI();
 	}
-	
-	
+
 	function showTable() {
 		$("#canvas-table-container").show();
 		if (isToolTipsEnabled()) {
 			$("#canvas-table-container").popover("show");
 		}
 	}
-	
+
 	function isToolTipsEnabled() {
 		return typeof $.cookie('finished_t4') == "undefined";
 	}
@@ -384,10 +390,11 @@
 		$("#button-zoom-out").attr("title", $.i18n._('button-zoom-out'));
 		$("#button-help").attr("title", $.i18n._('button-help'));
 		$("#button-next-cell").attr("title", $.i18n._('button-next-cell'));
-		$("#button-previous-cell").attr("title", $.i18n._('button-previous-cell'));
+		$("#button-previous-cell").attr("title",
+				$.i18n._('button-previous-cell'));
 		$("#cell-viewer").attr("title", $.i18n._('cell-viewer'));
 		$("#table-viewer").attr("title", $.i18n._('table-viewer'));
-			
+
 		$("#task-bar-progress").tooltip({
 			'placement' : 'top',
 			'trigger' : 'manual'
@@ -422,7 +429,7 @@
 						function() {
 							// Set Book's title
 							$("#book_title").html(book_progress.title);
-							
+
 							$("#total").text(100);
 							$("#done").text(30);
 
@@ -465,9 +472,10 @@
 
 							$("#total").text(book_progress.total);
 							$("#done").text(user_progress.done);
-							
+
 							var remaining_pct = 100 - (community_pct + user_pct);
-							$("#remaining-progress").css("width", remaining_pct.toString() + "%");
+							$("#remaining-progress").css("width",
+									remaining_pct.toString() + "%");
 							if ($("#remaining-progress").width() < 105) {
 								$("#remaining-progress").hide();
 							}
@@ -561,7 +569,7 @@
 				expires : COOKIE_EXPIRATION,
 				path : '/'
 			});
-		
+
 			//Call tt workflow api.
 			taskRunDone(taskId);
 			clearCanvas();

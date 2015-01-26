@@ -29,7 +29,6 @@ def index(page):
     valid_books = ['estatisticasdodi1950depa', 'mensagemdogovern1912gove','caracterizaoeten2001bras', 'MemmoriaParaiba1841A1847', 'anuario1916pb', 'sinopse1937pb', 'rpparaiba1918']
     
     for app in apps:
-        print(app["short_name"])
         book_id = app["short_name"][:-4]
 
         if(book_id not in book_stack and app["short_name"][:-4] in valid_books):

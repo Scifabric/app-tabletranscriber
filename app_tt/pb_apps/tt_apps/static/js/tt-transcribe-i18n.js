@@ -36,7 +36,7 @@ var en_US_dict = {
     'completed-by-user' : 'completed by you!',
     'remaining-tasks' : 'Remaining tasks',
     'cell-viewer': 'Transcribe the text as shown in the cell.',
-    'table-viewer': 'Green corrected cells, red cells to be corrected.'
+    'table-viewer': 'Corrected cells are in green, cells to be corrected are in red.'
 };
 
 var pt_dict= {
@@ -77,7 +77,7 @@ var pt_dict= {
     'completed-by-user' : 'feitas por você!',
     'remaining-tasks' : 'Tarefas restantes',
     'cell-viewer': 'Transcreva o texto como mostrado na célula.',
-    'table-viewer': 'Células verdes corrigidas, células vermelhas a serem corrigidas.'
+    'table-viewer': 'Células corrigidas estão em verde, células para serem corrigidas em vermelho.'
 };
 
 var language = navigator.language? navigator.language : navigator.userLanguage;

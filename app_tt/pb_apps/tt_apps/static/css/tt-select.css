@@ -109,3 +109,12 @@
 #answer {
 	margin-bottom: 10px;
 }
+
+#book-info-container {
+	height: 48px;
+	overflow: hidden;
+}
+
+.progress {
+	margin-bottom: 0px;
+}

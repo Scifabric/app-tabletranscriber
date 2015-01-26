@@ -36,13 +36,18 @@
 			<div id="community-progress" class="bar bar-success"
 				style="width: 0%;"></div>
 			<div id="user-progress" class="bar bar-info" style="width: 0%;"></div>
-			<div id="remaining-progress" style="float: left; text-align: center; width: 0%;"><span></span></div>
+			<div id="remaining-progress"
+				style="float: left; text-align: center; width: 0%;">
+				<span></span>
+			</div>
 		</div>
-		<h5>
-			<strong><span id="book-info"></span></strong> <i><span
-				id="book_title"></span></i>
-		</h5>
-		<div>
+		<div id="book-info-container">
+			<h5>
+				<strong><span id="book-info"></span></strong> <i><span
+					id="book_title"></span></i>
+			</h5>
+		</div>
+		<div id="question-container">
 			<h1>
 				<strong><span id="question"></span></strong>
 			</h1>
@@ -52,9 +57,8 @@
 	</div>
 	<!-- End of Skeleton -->
 
-	<div class="skeleton" id="tools" rel="popover" 
-		title="">
-		<div id="toolbar" class="btn-group" >
+	<div class="skeleton" id="tools" rel="popover" title="">
+		<div id="toolbar" class="btn-group">
 			<button id="button_select" class="btn" rel="tooltip" title=""
 				onclick="handleSelectionToolEvent()">
 				<img class="icon" style="width: 20px"
@@ -115,7 +119,7 @@
 
 		<div id="table-container">
 			<div id="canvas-container" style="float: left; display: none;"
-			 rel="popover" title=""> </div>
+				rel="popover" title=""></div>
 			<div id="loading-container">
 				<img src="#server/images/loading.gif">
 			</div>
@@ -288,14 +292,15 @@
 	var book_progress;
 	var user_progress;
 	var COOKIE_EXPIRATION = 60; // days
-	
+
 	function getScripts(scripts, callback) {
 		var progress = 0;
 		var internalCallback = function() {
 			if (++progress == scripts.length) {
 				callback();
 			} else {
-				$.getScript(getStaticURL() + scripts[progress], internalCallback);
+				$.getScript(getStaticURL() + scripts[progress],
+						internalCallback);
 			}
 		};
 		$.getScript(getStaticURL() + scripts[progress], internalCallback);
@@ -335,14 +340,14 @@
 			}
 		});
 	}
-	
+
 	function showTable() {
 		$("#canvas-container").show();
 		if (isToolTipsEnabled()) {
 			$("#canvas-container").popover("show");
 		}
 	}
-	
+
 	function isToolTipsEnabled() {
 		return typeof $.cookie('finished_t3') == "undefined";
 	}
@@ -377,8 +382,7 @@
 
 		$.ajax({
 			type : 'POST',
-			url : '/mb/api/' + app_shortname + '/' + taskId
-					+ '/report',
+			url : '/mb/api/' + app_shortname + '/' + taskId + '/report',
 			dataType : 'json',
 			contentType : 'application/json; charset=utf-8',
 			data : jreport
@@ -435,11 +439,11 @@
 		$("#button_remove").attr("title", $.i18n._('button_remove'));
 		$("#button_help").attr("title", $.i18n._('button_help'));
 		$("#tools").attr("data-original-title", $.i18n._('bar-tooltip'));
-		$("#canvas-container").attr("data-original-title", $.i18n._('lines-tooltip'));
-		
+		$("#canvas-container").attr("data-original-title",
+				$.i18n._('lines-tooltip'));
+
 		$("[rel=tooltip]").tooltip();
-		
-		
+
 		// Show Popovers
 		$("[rel=popover]").popover({
 			"trigger" : "manual",
@@ -471,7 +475,7 @@
 						function() {
 							// Set Book's title
 							$("#book_title").html(book_progress.title);
-							
+
 							$("#total").text(100);
 							$("#done").text(30);
 
@@ -514,9 +518,10 @@
 
 							$("#total").text(book_progress.total);
 							$("#done").text(user_progress.done);
-							
+
 							var remaining_pct = 100 - (community_pct + user_pct);
-							$("#remaining-progress").css("width", remaining_pct.toString() + "%");
+							$("#remaining-progress").css("width",
+									remaining_pct.toString() + "%");
 							if ($("#remaining-progress").width() < 105) {
 								$("#remaining-progress").hide();
 							}
@@ -569,7 +574,7 @@
 	function getRandomInt(min, max) {
 		return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
-	
+
 	// Add tooltips for a newcomer
 	function addTooltips() {
 		if (isToolTipsEnabled()) {
@@ -644,7 +649,7 @@
 		var answer = getGridLinesAnswer();
 
 		pybossa.saveTask(taskId, answer).done(function(data) {
-			
+
 			$.cookie('finished_t3', true, {
 				expires : COOKIE_EXPIRATION,
 				path : '/'
@@ -652,7 +657,7 @@
 
 			//Call tt workflow api
 			taskRunDone(taskId);
-		
+
 			clearCanvas();
 
 			blockUI();

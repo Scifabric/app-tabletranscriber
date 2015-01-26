@@ -1,6 +1,6 @@
 var en_US_dict = { 
-    'question': "Place the lines and columns, in red, on the table below. If the placement is right, you only need to save.",
-    'question_with_focus': "Place the lines and columns, in red, from the focused area on the table below. If their position is right, you only need to save",
+    'question': "Place the lines and columns, in red, on the table below. If the position is right, click on save.",
+    'question_with_focus': "Place the lines and columns, in red, from the focused area on the table below. If their position is right, click on save.",
     'question-warning': "<i>*Don't worry if you think you’ve made a mistake, just keep contributing! Each task is executed by many volunteers – you are not alone!</i>",
     'book-info': "You're helping the transcription of the book:",
     'task-type': 'Structure drawing task',
@@ -39,7 +39,7 @@ var en_US_dict = {
     'completed-by-user' : 'completed by you!',
     'remaining-tasks' : 'Remaining tasks',
     'bar-tooltip': 'Move the mouse cursor over the tools to get more information.',
-    'lines-tooltip'	:'Fix the rows and columns internals of the  table beside, if necessary.'
+    'lines-tooltip'	:'Fix the rows and columns from the table, if necessary.'
 };
 
 var pt_dict= {
@@ -83,7 +83,7 @@ var pt_dict= {
     'completed-by-user' : 'feitas por você!',
     'remaining-tasks' : 'Tarefas restantes',
     'bar-tooltip': 'Mova o cursor do mouse sobre as ferramentas para obter mais informações.',
-    'lines-tooltip'	:'Corrija as linhas e colunas internas da tabela ao lado, se necessário for.'
+    'lines-tooltip'	:'Corrija as linhas e colunas da tabela, se necessário.'
 };
 
 var language = navigator.language? navigator.language : navigator.userLanguage;

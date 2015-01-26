@@ -182,7 +182,7 @@ Baixando e instalando os componentes python da aplicação::
     #ative o virtualenv criado
     $ . env/bin/activate
     #instale a aplicação
-    $ pip install -e .
+    $ pip install -r requirements.txt
 
 
 Em seguida realizaremos as configurações necessárias para que o Memória Brasil

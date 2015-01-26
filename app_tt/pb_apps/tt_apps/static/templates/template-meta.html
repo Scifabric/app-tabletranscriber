@@ -43,13 +43,17 @@
 			<div id="community-progress" class="bar bar-success"
 				style="width: 0%;"></div>
 			<div id="user-progress" class="bar bar-info" style="width: 0%;"></div>
-			<div id="remaining-progress" style="float: left; text-align: center; width: 0%;"><span>Tarefas restantes</span></div>
+			<div id="remaining-progress"
+				style="float: left; text-align: center; width: 0%;">
+				<span>Tarefas restantes</span>
+			</div>
 		</div>
-		<h5>
-			<strong><span id="book-info"></span></strong> <i><span
-				id="book_title"></span></i>
-		</h5>
-
+		<div id="book-info-container">
+			<h5>
+				<strong><span id="book-info"></span></strong> <i><span
+					id="book_title"></span></i>
+			</h5>
+		</div>
 		<div>
 			<h1>
 				<strong><span id="question">Question</span></strong>
@@ -340,8 +344,9 @@
 	</div>
 
 	<div class="skeleton">
-		<div id="image-container" class="TTImageContainer" rel="popover" popover-placement="left"
-			style="float: left; opacity: 0;" title="Você vê alguma tabela na página ao lado? se sim, clique e arraste para desenhar uma área sobre ela. Marque apenas apenas o corpo da tabela, desconsiderando textos avulsos, como título e fontes.">
+		<div id="image-container" class="TTImageContainer" rel="popover"
+			popover-placement="left" style="float: left; opacity: 0;"
+			title="Você vê alguma tabela na página ao lado? se sim, clique e arraste para desenhar uma área sobre ela. Marque apenas apenas o corpo da tabela, desconsiderando textos avulsos, como título e fontes.">
 			<img id="table" class="TTImage" src="#" onload="unblockUI()">
 		</div>
 		<div id="share-container">
@@ -379,20 +384,24 @@
 			if (++progress == scripts.length) {
 				callback();
 			} else {
-				$.getScript(getStaticURL() + scripts[progress], internalCallback);
+				$.getScript(getStaticURL() + scripts[progress],
+						internalCallback);
 			}
 		};
 		$.getScript(getStaticURL() + scripts[progress], internalCallback);
 	}
-	
+
 	function getStaticURL() {
 		return "/mb-static";
 	}
-	
+
 	function initialize() {
 		pybossa.setEndpoint(endpoint);
-		
-		var scripts = ["/js/kinetic.js", "/js/share.js", "/js/jquery.annotate.js", "/js/jquery-ui-1.8.22.custom.min.js", "/js/jquery.blockUI.js", "/js/report.js", "/js/jquery.cookie.js"];
+
+		var scripts = [ "/js/kinetic.js", "/js/share.js",
+				"/js/jquery.annotate.js", "/js/jquery-ui-1.8.22.custom.min.js",
+				"/js/jquery.blockUI.js", "/js/report.js",
+				"/js/jquery.cookie.js" ];
 		getScripts(scripts, function() {
 			interfaceConfiguration();
 			pybossa.newTask(app_shortname).done(function(data) {
@@ -400,20 +409,13 @@
 			});
 		});
 	}
-	
+
 	function showHelp() {
 		$("#helpModalMeta").modal();
 		$('#nav-header').affix();
 	}
 
 	function interfaceConfiguration() {
-		$("[rel=tooltip]").tooltip();
-		$("[rel=popover]").popover({
-			"trigger" : "manual",
-			"placement" : "left"
-			
-		});
-
 		$("#button_share").on("click", function() {
 			if ($("#button_share").hasClass("active")) {
 				$(".image-annotate-edit-close").trigger("click");
@@ -433,6 +435,12 @@
 		$("#task-type").text("Tarefa de marcação");
 		$("#answer").hide();
 		$("#answer").show();
+
+		$("[rel=tooltip]").tooltip();
+		$("[rel=popover]").popover({
+			"trigger" : "manual",
+			"placement" : "left"
+		});
 	}
 
 	function unblockUI() {
@@ -515,7 +523,7 @@
 						function() {
 							// Set Book's title
 							$("#book_title").html(book_progress.title);
-							
+
 							$("#total").text(100);
 							$("#done").text(30);
 
@@ -553,9 +561,10 @@
 
 							$("#total").text(book_progress.total);
 							$("#done").text(user_progress.done);
-							
+
 							var remaining_pct = 100 - (community_pct + user_pct);
-							$("#remaining-progress").css("width", remaining_pct.toString() + "%");
+							$("#remaining-progress").css("width",
+									remaining_pct.toString() + "%");
 							if ($("#remaining-progress").width() < 105) {
 								$("#remaining-progress").hide();
 							}
@@ -606,9 +615,10 @@
 		var marginLeft = toolTipsEnabled ? "215px" : "38px";
 		$("#template-container").css("margin-left", marginLeft);
 		$.fn.annotateImage.updateOffset();
-		
-		if (!toolTipsEnabled) return;
-		
+
+		if (!toolTipsEnabled)
+			return;
+
 		var num_annotations = $(".image-annotate-area").length;
 		$
 				.each(
@@ -639,10 +649,9 @@
 			"placement" : "left"
 		});
 
-		var editAreaTip = isLastAnswer ? "Uma marcação deve conter apenas o corpo da tabela, desconsiderando textos avulsos, como título e fontes. Caso precise ajustar a posição desta marcação, basta clicar e arrastar." : "Caso precise ajustar a posição desta marcação, basta clicar e arrastar.";
-		$(".image-annotate-edit-area")
-				.attr("data-original-title",
-						editAreaTip);
+		var editAreaTip = isLastAnswer ? "Uma marcação deve conter apenas o corpo da tabela, desconsiderando textos avulsos, como título e fontes. Caso precise ajustar a posição desta marcação, basta clicar e arrastar."
+				: "Caso precise ajustar a posição desta marcação, basta clicar e arrastar.";
+		$(".image-annotate-edit-area").attr("data-original-title", editAreaTip);
 
 		// Listener to annotation's drag event
 		$(".image-annotate-edit-area").on('DOMSubtreeModified', function(e) {
@@ -673,7 +682,8 @@
 			loadUserProgress();
 			var task_id = data.task.id;
 			$("#task-id").text(task_id);
-			$("#table").attr("src", current_task.info.link.replace("http:", "https:"));
+			$("#table").attr("src",
+					current_task.info.link.replace("http:", "https:"));
 
 			isLastAnswer = typeof current_task.info.last_answer != "undefined";
 			var notes = isLastAnswer ? JSON
@@ -709,7 +719,7 @@
 				clear : false,
 				notes : notes
 			});
-			
+
 			addTooltips();
 
 			if (isLastAnswer) {

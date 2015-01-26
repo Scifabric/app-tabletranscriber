@@ -36,12 +36,17 @@
 			<div id="community-progress" class="bar bar-success"
 				style="width: 0%;"></div>
 			<div id="user-progress" class="bar bar-info" style="width: 0%;"></div>
-			<div id="remaining-progress" style="float: left; text-align: center; width: 0%;"><span></span></div>
+			<div id="remaining-progress"
+				style="float: left; text-align: center; width: 0%;">
+				<span></span>
+			</div>
 		</div>
-		<h5>
-			<strong><span id="book-info"></span></strong> <i><span
-				id="book_title"></span></i>
-		</h5>
+		<div id="book-info-container">
+			<h5>
+				<strong><span id="book-info"></span></strong> <i><span
+					id="book_title"></span></i>
+			</h5>
+		</div>
 		<h1>
 			<strong><span id="question"></span></strong>
 		</h1>
@@ -49,7 +54,7 @@
 	</div>
 
 	<div class="skeleton">
-		<div id="answer" rel="popover" title="">   
+		<div id="answer" rel="popover" title="">
 			<button id="button_yes" class="btn btn-success"
 				onclick="submitTask('Yes')">
 				<i class="icon icon-white icon-ok"></i>
@@ -96,8 +101,8 @@
 		</div>
 	</div>
 
-	<div id="image-container" class="skeleton" rel="popover" popover-placement="right"
-		title="">
+	<div id="image-container" class="skeleton" rel="popover"
+		popover-placement="right" title="">
 		<a id="image-link" href="#" target="_blank"
 			style="float: left; display: none;"> <img id="image"
 			class="ttImage" src="#" onload="unblockUI();">
@@ -167,27 +172,31 @@
 	var book_progress;
 	var user_progress;
 	var COOKIE_EXPIRATION = 60; // days
-	
+
 	function getScripts(scripts, callback) {
 		var progress = 0;
 		var internalCallback = function() {
 			if (++progress == scripts.length) {
 				callback();
 			} else {
-				$.getScript(getStaticURL() + scripts[progress], internalCallback);
+				$.getScript(getStaticURL() + scripts[progress],
+						internalCallback);
 			}
 		};
 		$.getScript(getStaticURL() + scripts[progress], internalCallback);
 	}
-	
+
 	function getStaticURL() {
 		return "/mb-static";
 	}
-	
+
 	function initialize() {
 		pybossa.setEndpoint(endpoint);
 
-		var scripts = ["/js/kinetic.js", "/js/share.js", "/js/jquery.i18n.min.js", "/js/tt-select-i18n.js", "/js/jquery.blockUI.js", "/js/report.js", "/js/jquery.cookie.js"];
+		var scripts = [ "/js/kinetic.js", "/js/share.js",
+				"/js/jquery.i18n.min.js", "/js/tt-select-i18n.js",
+				"/js/jquery.blockUI.js", "/js/report.js",
+				"/js/jquery.cookie.js" ];
 		getScripts(scripts, function() {
 			interfaceConfiguration();
 			pybossa.newTask(app_shortname).done(function(data) {
@@ -195,7 +204,7 @@
 			});
 		});
 	}
-	
+
 	function unblockUI() {
 		$("#loading-container").hide();
 		$("#image-link").show();
@@ -296,9 +305,11 @@
 		$("#progress-from").text($.i18n._('progress-from'));
 		$("#progress-to").text($.i18n._('progress-to'));
 		$("#remaining-progress span").text($.i18n._('remaining-tasks'));
-		$("#answer").attr("data-original-title", $.i18n._('report-error-tooltip'));
-		$("#image-container").attr("data-original-title", $.i18n._('page-tooltip'));
-		
+		$("#answer").attr("data-original-title",
+				$.i18n._('report-error-tooltip'));
+		$("#image-container").attr("data-original-title",
+				$.i18n._('page-tooltip'));
+
 		// Show popovers
 		$("[rel=popover]").popover({
 			"trigger" : "manual",
@@ -330,7 +341,7 @@
 						function() {
 							// Set Book's title
 							$("#book_title").html(book_progress.title);
-							
+
 							$("#total").text(100);
 							$("#done").text(30);
 
@@ -343,7 +354,7 @@
 							var community_pct = Math
 									.round((only_by_community * 100)
 											/ book_progress.total);
-							
+
 							$("#community-progress").tooltip('destroy');
 							$("#community-progress").css("width",
 									community_pct.toString() + "%");
@@ -374,9 +385,10 @@
 
 							$("#total").text(book_progress.total);
 							$("#done").text(user_progress.done);
-							
+
 							var remaining_pct = 100 - (community_pct + user_pct);
-							$("#remaining-progress").css("width", remaining_pct.toString() + "%");
+							$("#remaining-progress").css("width",
+									remaining_pct.toString() + "%");
 							if ($("#remaining-progress").width() < 105) {
 								$("#remaining-progress").hide();
 							}
@@ -421,7 +433,7 @@
 			redirectToANewTask("tt2");
 		});
 	}
-	
+
 	// Add tooltips for a newcomer
 	function addTooltips() {
 		var toolTipsEnabled = typeof $.cookie('finished_t1') == "undefined";
@@ -443,10 +455,12 @@
 			loadUserProgress();
 			addTooltips();
 			task_id = current_task.id;
-			
+
 			// Workaround to load images through HTTPS
-			$("#image-link").attr("href", current_task.info.url_b.replace("http:", "https:"));
-			$("#image").attr("src", current_task.info.url_m.replace("http:", "https:"));
+			$("#image-link").attr("href",
+					current_task.info.url_b.replace("http:", "https:"));
+			$("#image").attr("src",
+					current_task.info.url_m.replace("http:", "https:"));
 			pybossa.getCurrentUserId(function(userId) {
 				initSharer(task_id, userId);
 			});
@@ -494,7 +508,7 @@
 				expires : COOKIE_EXPIRATION,
 				path : '/'
 			});
-					
+
 			//Call tt workflow api.
 			taskRunDone(taskid);
 
