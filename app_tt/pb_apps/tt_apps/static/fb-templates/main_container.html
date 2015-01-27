@@ -38,6 +38,7 @@
 		$('#mb').show();
 		
 		$('#books_div').on('DOMSubtreeModified', function(){
+			$('#books-inner a').off("click");
 			$('#books-inner a').click(function(e) {
 				e.preventDefault();
 

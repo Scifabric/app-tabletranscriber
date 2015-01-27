@@ -597,13 +597,11 @@
 			intoNote=false;
 		}); 
 
-
 		$("div.image-annotate-edit-area.ui-resizable.ui-draggable").live("mouseenter", function(){
 			intoNote = true;
 		}).live("mouseleave", function(){
 			intoNote=false;
 		});
-
 
         this.parentObj = $(obj).parent();
         this.parentObj.unbind("mousedown").bind("mousedown", onMouseDown);
