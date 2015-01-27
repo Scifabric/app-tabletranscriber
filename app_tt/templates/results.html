@@ -1,0 +1,45 @@
+{% extends "/base.html" %} 
+{% set active_page = "results" %}
+
+{%block content %}
+<div class="container wrapper">
+	<div class="span12">
+		<div class="container">
+			<div class="span7 well">
+				<h2>Livro:</h2>
+				<h4>{{bookid}}</h4>
+				<ul style="list-style-type: none;">
+					<li><iframe
+							src="http://www.archive.org/stream/{{ bookid }}?ui=embed#mode/2up"
+							width="650px" height="650px"></iframe></li>
+				</ul>
+				<hr>
+			</div>
+			<div class="span4 well">
+				<h2>Tarefas</h2>
+				{% for item in appTasks %}
+				<div class="row">
+					<div class="span1">
+						{% if item.tasks | length > 0 %} <a href="{{item.url}}"><img
+							class="img-polaroid"
+							src="{{ url_for('static', filename='images/'+item.img_url + 'a.png')}}"></a>
+						{% else %} <a><img class="img-polaroid"
+							src="{{ url_for('static', filename='images/'+item.img_url + '.png')}}"></a>
+						{% endif %}
+					</div>
+					<div class="span3">
+						<strong>{{ item.name }}</strong>
+						<ul style="list-style-type: none;">
+							<li><i class="icon-tasks"></i> Tarefas feitas: {{
+								item.finished| length }} / {{item.tasks | length}}</li>
+						</ul>
+					</div>
+					<!-- end span3-->
+				</div>
+				<hr>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

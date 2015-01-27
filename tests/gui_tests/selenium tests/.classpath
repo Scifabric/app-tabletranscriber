@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="/home/guilhermeg/db drivers/postgresql-9.3-1101.jdbc3.jar"/>
+	<classpathentry kind="lib" path="/home/guilhermeg/drivers to selenium/selenium-2.40.0/selenium-java-2.40.0.jar" sourcepath="/home/guilhermeg/drivers to selenium/selenium-2.40.0/selenium-java-2.40.0-srcs.jar"/>
+	<classpathentry kind="lib" path="/home/guilhermeg/drivers to selenium/selenium-2.40.0/selenium-java-2.40.0-srcs.jar"/>
+	<classpathentry kind="lib" path="/home/guilhermeg/drivers to selenium/chromedriver_linux64_2.1.zip"/>
+	<classpathentry kind="lib" path="/home/guilhermeg/drivers to selenium/selenium-server-standalone-2.40.0.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

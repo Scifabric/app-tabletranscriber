@@ -1,0 +1,6 @@
+.settings/
+*.pyc
+/settings_local.py
+/env
+/doc/_build
+/doc/builddir

@@ -1,0 +1,70 @@
+<div id="mb" style="display: none"></div>
+<div id='task-template' style='display: none;'></div>
+
+<script type="text/javascript" charset="utf-8">
+	var bookId;
+	
+	function clearMBInterface() {
+		$('body').off('mouseup');
+		$('body').off('mousedown');
+		$('body').off('contextmenu');
+		document.body.style.cursor = "default";
+		$("#image-annotate-edit-form").remove();
+		$("[rel=tooltip]").tooltip('destroy');
+		$(".popover").remove();
+	}
+	
+	function showTaskTemplate() {
+		$("#task-template").css("display", "table");
+		$("#tab-container").hide();
+		$('.nav-tabs li').removeClass("active");
+	}
+	
+	function showMainContainer() {
+		$("#task-template").hide();
+		$("#tab-container").show();
+	}
+	
+	function configureShareLinks() {
+		$("#share-on-facebook").attr("href", "javascript:shareProjectOnFacebook('https://apps.facebook.com/memoriadobrasil/')");
+		$("#share-on-twitter").attr("href", "javascript:openShareWindow('https://twitter.com/share?text=Contribua%20com%20o%20Projeto%20Memória%20Estatística%20do%20Brasil!&url=https://apps.facebook.com/memoriadobrasil/');");
+		$("#share-on-google-plus").attr("href", "javascript:openShareWindow('https://plus.google.com/share?url=https://apps.facebook.com/memoriadobrasil/)");
+	}
+	
+	loadAHTML('#mb', "/mb", function() {
+		
+		configureShareLinks();
+		$('#footer_links').hide();
+		$('#mb').show();
+		
+		$('#books_div').on('DOMSubtreeModified', function(){
+			$('#books-inner a').off("click");
+			$('#books-inner a').click(function(e) {
+				e.preventDefault();
+
+				var addressValue = $(this).attr("href");
+				if (addressValue == "#")
+					return;
+
+				var POSITION_BOOK_ID = 5;
+				var tmp = addressValue.split("/")[POSITION_BOOK_ID];
+				bookId = tmp.substring(0, tmp.indexOf("_"));
+				currentTaskType = tmp.substring(tmp.indexOf("_")+1);
+				
+				$("#fb-loading-container").show();
+				$("#task-template").load("task_templates.html", function() {
+					showTaskTemplate();
+				});
+			});
+		});
+		
+		$('.nav-tabs').on('click', function() {
+			clearMBInterface();
+			showMainContainer();
+		});
+		
+		$("#books-tab").on("click", function() {
+			initFacebookLogin();
+		});
+	});
+</script>

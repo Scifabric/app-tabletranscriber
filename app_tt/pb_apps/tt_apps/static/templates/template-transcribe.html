@@ -1,0 +1,603 @@
+<div id="template-container">
+	<div class="row">
+		<div id="alert-container" class="span7" style="height: 50px">
+			<div id="success" class="alert alert-success" style="display: none;">
+				<p style="margin-left: 110px;">
+					<span><strong>#</strong></span><span>#</span>
+				</p>
+			</div>
+			<div id="finish" class="alert alert-success" style="display: none;">
+				<p style="margin-left: 80px;">
+					<span><strong>#</strong></span><span>#</span>
+				</p>
+			</div>
+			<div id="error" class="alert alert-error" style="display: none;">
+				<p>
+					<span><strong>#</strong></span><span>#</span>
+				</p>
+			</div>
+			<div id="workflowtask" class="alert alert-success"
+				style="display: none; text-align: center; cursor: pointer; position: relative; margin-top: 5px;"></div>
+		</div>
+	</div>
+
+	<div class="skeleton" style="width: 720px;">
+		<h1>
+			Mem&oacute;ria Estat&iacute;stica do Brasil (<span id="task-type"></span>)
+		</h1>
+		<div id="motivation-msg"
+			style="margin-top: 10px; margin-bottom: 10px; opacity: 0;">
+			<span id="progress-from">#</span><span id="done"
+				class="label label-info" style="margin-right: 5px"></span><span
+				id="progress-to">#</span>
+		</div>
+		<div class="progress  progress-striped">
+			<div id="community-progress" class="bar bar-success"
+				style="width: 0%;"></div>
+			<div id="user-progress" class="bar bar-info" style="width: 0%;"></div>
+			<div id="remaining-progress"
+				style="float: left; text-align: center; width: 0%;">
+				<span></span>
+			</div>
+		</div>
+		<div id="book-info-container">
+			<h5>
+				<strong><span id="book-info"></span></strong> <i><span
+					id="book_title"></span></i>
+			</h5>
+		</div>
+		<div>
+			<h1>
+				<strong><span id="question"></span></strong>
+			</h1>
+			<h5 id="question-warning"></h5>
+		</div>
+	</div>
+
+	<div class="skeleton" style="margin-bottom: 25px;">
+		<div id="toolbar" class="btn-group">
+			<button id="button-zoom-in" class="btn" rel="tooltip" title=""
+				onclick="handleZoomInToolEvent()">
+				<i class="icon icon-zoom-in"></i>
+			</button>
+			<button id="button-zoom-out" class="btn" rel="tooltip" title=""
+				onclick="handleZoomOutToolEvent()">
+				<i class="icon icon-zoom-out"></i>
+			</button>
+			<button id="button-help" class="btn" rel="tooltip" title=""
+				onclick="showHelpTranscribe()">
+				<i class="icon icon-question-sign"></i>
+			</button>
+			<button id="button_bug_report" class="btn btn-warning" rel="tooltip"
+				title="Apontar erro na tarefa" onclick="showBugReportForm()">
+				<i class="icon icon-warning-sign"></i>
+			</button>
+		</div>
+
+		<button id="button-finished-task" class="btn btn-success"
+			rel="tooltip" title="" onclick="submitTask()">
+			<i class="icon icon-white icon-ok"></i> <span></span>
+		</button>
+
+		<div id="task-progress" class="progress">
+			<div id="task-bar-progress" rel="tooltip" class="bar bar-success"
+				style="width: 0%;"></div>
+		</div>
+	</div>
+
+	<div id="bug_report_div" class="skeleton">
+		<div>
+			<h2 id="bug_report_question">Selecione as opções abaixo que
+				correspondem ao problema encontrado:</h2>
+			<form id="bug_report_form" style="margin: 0 auto;">
+				<input id="loading" type="checkbox" value="1"> A imagem não
+				carrega<br> <input id="submission" type="checkbox" value="2">
+				A página travou quando tentei submeter<br> <input
+					id="loading_next" type="checkbox" value="3"> A próxima
+				tarefa não carrega<br> <input id="content_visualization"
+					type="checkbox" value="4"> Não consigo ver o conteúdo da
+				célula<br> <input id="cut_cell" type="checkbox" value="5">
+				A célula está cortada<br> <input id="other" type="checkbox"
+					value="6"> Outro<br>
+				<textarea type="textarea" id="other_description" rows="0"
+					style="width: 240px"></textarea>
+				<br> <a class="btn btn-default btn-sm" style="float: left;"
+					onclick="cancelSubReport()"> Cancelar</a> <a
+					class="btn btn-info btn-sm" style="float: right;"
+					onclick="subReport()"> Submeter</a><br> <br>
+			</form>
+		</div>
+	</div>
+
+	<div class="skeleton">
+		<div id="table-viewer" rel="popover" title="">
+			<div id="canvas-table-container" style="display: none;"></div>
+			<div id="loading-container">
+				<img src="#server/images/loading.gif">
+			</div>
+		</div>
+		<div id="right-panel">
+			<div class="btn-group" style="margin-bottom: 10px">
+				<button id="button-previous-cell" class="btn" rel="tooltip" title=""
+					onclick="handlePreviousCellEvent()">
+					<i class="icon icon-arrow-left"></i>
+				</button>
+				<button id="button-next-cell" class="btn" rel="tooltip" title=""
+					onclick="handleNextCellEvent()">
+					<i class="icon icon-arrow-right"></i>
+				</button>
+			</div>
+
+			<div id="cell-viewer" rel="popover" title="">
+				<div id="canvas-cell-container"></div>
+			</div>
+
+			<label><span id="pc-transcription-p1"></span><span
+				id="pc-transcription-confidence"></span><span
+				id="pc-transcription-p2"></span></label> <span id="transcription-field"
+				class="input uneditable-input"></span> <label
+				id="human-transcription-label"></label> <span
+				id="human-transcription-field" class="input uneditable-input"></span>
+
+			<label id="your-transcription-label"></label> <input
+				id="edition-field" type="text">
+
+			<button id="button-finished-transcription" class="btn btn-success"
+				onclick="handleSaveCellEvent()">
+				<i class="icon icon-white icon-ok"></i> OK
+			</button>
+
+			<div id="instruction" class="alert alert-info">
+				<h5>
+					<span id="task-instruction-p1"></span><br>
+					<ul>
+						<li><span id="task-instruction-p2"></span></li>
+						<li><span id="task-instruction-p3"></span></li>
+						<li><span id="task-instruction-p4"></span></li>
+						<li><span id="task-instruction-p5"></span></li>
+					</ul>
+				</h5>
+			</div>
+		</div>
+	</div>
+
+	<div id="helpModalTranscribe" class="modal hide fade" tabindex="-1"
+		role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+		style="display: none">
+
+		<div class="modal-header">
+			<button class="close" data-dismiss="modal" aria-hidden="true">
+				<i class="icon-white icon-remove"></i>
+			</button>
+			<h3 id="myModalLabel">
+				<strong>Tutorial de Correção de Células da Tabela</strong>
+			</h3>
+		</div>
+
+		<div class="modal-body">
+			<h2>O que deve ser feito?</h2>
+
+			<p>A tarefa consiste em corrigir o conteúdo das células
+				selecionadas. Existe um campo correspondente à transcrição feita
+				pelo computador, com base em algoritmos de visão computacional. Esta
+				transcrição pode está correta ou conter algum erro, neste último
+				caso, você deve corrigir o conteúdo e clicar no botão Ok. A célula
+				que deve ser transcrita aparece em zoom, acima do campo de edição.</p>
+
+			<h2>Cores das células:</h2>
+
+			<p>
+				As células em <strong style="color: #E93F2D">vermelho</strong> são
+				as células que o computador tem uma baixa confiança na transcrição
+				do que está escrito, e que faltam ser inspecionadas e finalizadas.
+			</p>
+			<p>
+				As células em <strong style="color: #1BA038">verde</strong> são as
+				células que as transcrições corrigidas por você ou por outro
+				usuário;
+			</p>
+			<p>
+				A célula em <strong style="color: #339ACD">azul</strong> é a célula
+				que está selecionada para você verificar a transcrição.
+			</p>
+			<br>
+
+			<h2>Atalhos de Navegação</h2>
+			<dl>
+				<dt>
+					Seta para esquerda <i class="icon-arrow-left"></i>
+				</dt>
+				<dd>Dirija-se para a célula à esquerda da célula atual, caso
+					exista.</dd>
+			</dl>
+			<dl>
+				<dt>
+					Seta para direita <i class="icon-arrow-right"></i>
+				</dt>
+				<dd>Dirija-se para a célula à direita da célula atual, caso
+					exista.</dd>
+			</dl>
+			<br>
+			<p>
+				<strong style="color: red">Atenção</strong>
+			</p>
+			<p>- Caso a célula não apresente nenhum conteúdo, não se
+				preocupe, pode deixá-la em branco.</p>
+			<p>- Caso a célula possua um hífen (-) ou reticências (...),
+				transcreva do jeito que está na célula visualizada.</p>
+			<p>- Caso a célula esteja no lugar errado, indique isso fazendo
+				um comentário no campo de feedback, logo abaixo da tabela.</p>
+			<br>
+
+		</div>
+
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Fechar</button>
+		</div>
+	</div>
+</div>
+
+<link rel="stylesheet" type="text/css"
+	href="#server/css/tt-transcribe.css" />
+
+<script type="text/javascript">
+	var taskId;
+	var app_shortname = "#app_shortname#";
+	var endpoint = "/pybossa";
+	var minTableViewerWidth = 515;
+	var minTableViewerHeight = $("#right-panel").height();
+	var COOKIE_EXPIRATION = 60; // days
+	var book_progress;
+	var user_progress;
+
+	function getScripts(scripts, callback) {
+		var progress = 0;
+		var internalCallback = function() {
+			if (++progress == scripts.length) {
+				callback();
+			} else {
+				$.getScript(getStaticURL() + scripts[progress],
+						internalCallback);
+			}
+		};
+		$.getScript(getStaticURL() + scripts[progress], internalCallback);
+	}
+
+	function getStaticURL() {
+		return "/mb-static";
+	}
+
+	function initialize() {
+		pybossa.setEndpoint(endpoint);
+
+		var scripts = [ "/js/kinetic.js", "/js/jquery.i18n.min.js",
+				"/js/tt-transcribe-i18n.js", "/js/tt4.js",
+				"/js/jquery.blockUI.js", "/js/report.js",
+				"/js/jquery.cookie.js" ];
+		getScripts(scripts, function() {
+			interfaceConfiguration();
+			pybossa.newTask(app_shortname).done(function(data) {
+				loadData(data);
+			});
+		});
+	}
+
+	function unblockUI() {
+		$("#loading-container").hide();
+		showTable()
+		$.unblockUI();
+	}
+
+	function showTable() {
+		$("#canvas-table-container").show();
+		if (isToolTipsEnabled()) {
+			$("#canvas-table-container").popover("show");
+		}
+	}
+
+	function isToolTipsEnabled() {
+		return typeof $.cookie('finished_t4') == "undefined";
+	}
+
+	function blockUI() {
+		$("#canvas-table-container").hide();
+		$("#loading-container").show();
+		$.blockUI({
+			message : $("#success"),
+			css : {
+				height : $("#success").height()
+			}
+		});
+	}
+
+	function callbackGetUserId(u_ident) {
+		var submissionP = $("#submission")[0].checked;
+		var loadingCurrentTaskP = $("#loading")[0].checked;
+		var loadingNextTaskP = $("#loading_next")[0].checked;
+		var contentVisualizationP = $("#content_visualization")[0].checked;
+		var cutCellP = $("#cut_cell")[0].checked;
+		var otherP = $("#other")[0].checked;
+		var otherTextDescriptionP = $("#other_description").val();
+
+		var msg = {
+			'1' : submissionP,
+			'2' : loadingCurrentTaskP,
+			'3' : loadingNextTaskP,
+			'4' : contentVisualizationP,
+			'5' : cutCellP,
+			'6' : otherP,
+			'7' : otherTextDescriptionP
+		};
+
+		var jreport = JSON.stringify({
+			'message' : msg,
+			'u_id' : u_ident
+		});
+
+		$.ajax({
+			type : 'POST',
+			url : '/mb/api/' + app_shortname + '/' + taskId + '/report',
+			dataType : 'json',
+			contentType : 'application/json; charset=utf-8',
+			data : jreport
+		});
+
+		erase_bug_report_div();
+	}
+
+	function subReport() {
+		pybossa.getCurrentUserId(callbackGetUserId);
+	}
+
+	function interfaceConfiguration() {
+		// Anonymous alert fix
+		$("#msg_warning .close").removeAttr("data-dismiss");
+		$("#msg_warning .close").on("click", function(e) {
+			$("#msg_warning").fadeTo(1, 0);
+		});
+
+		$("#question").text($.i18n._('question'));
+		$("#question-warning").html($.i18n._('question-warning'));
+		$("#book-info").text($.i18n._('book-info'));
+		$("#task-type").text($.i18n._('task-type'));
+		$("#question span:first").text($.i18n._('task_name'));
+		$("#success strong").text($.i18n._('well_done'));
+		$("#success span:nth-child(2)").text($.i18n._('saved'));
+		$("#button-finished-task span:first").text(
+				$.i18n._('button-finished-task'));
+		$("#finish strong").text($.i18n._('congratulations'));
+		$("#finish span:nth-child(2)").text($.i18n._('finished'));
+		$("#error strong").text($.i18n._('error'));
+		$("#error span:nth-child(2)").text($.i18n._('err_msg'));
+		$("#workflowtask").text($.i18n._('workflowtask'));
+		$("#progress-from").text($.i18n._('progress-from'));
+		$("#progress-to").text($.i18n._('progress-to'));
+		$("#remaining-progress span").text($.i18n._('remaining-tasks'));
+
+		$("#task-instruction-p1").html($.i18n._('task-instruction-p1'));
+		$("#task-instruction-p2").html($.i18n._('task-instruction-p2'));
+		$("#task-instruction-p3").html($.i18n._('task-instruction-p3'));
+		$("#task-instruction-p4").html($.i18n._('task-instruction-p4'));
+		$("#task-instruction-p5").html($.i18n._('task-instruction-p5'));
+		$("#pc-transcription-p1").html($.i18n._('pc-transcription-p1'));
+		$("#pc-transcription-p2").html($.i18n._('pc-transcription-p2'));
+		$("#human-transcription-label").html(
+				$.i18n._('human-transcription-label'));
+		$("#your-transcription-label").html(
+				$.i18n._('your-transcription-label'));
+
+		$("#button-zoom-in").attr("title", $.i18n._('button-zoom-in'));
+		$("#button-zoom-out").attr("title", $.i18n._('button-zoom-out'));
+		$("#button-help").attr("title", $.i18n._('button-help'));
+		$("#button-next-cell").attr("title", $.i18n._('button-next-cell'));
+		$("#button-previous-cell").attr("title",
+				$.i18n._('button-previous-cell'));
+		$("#cell-viewer").attr("title", $.i18n._('cell-viewer'));
+		$("#table-viewer").attr("title", $.i18n._('table-viewer'));
+
+		$("#task-bar-progress").tooltip({
+			'placement' : 'top',
+			'trigger' : 'manual'
+		});
+		$("#task-bar-progress")
+				.on(
+						'webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend',
+						handleTaskbarProgressChange);
+	}
+
+	function loadUserProgress() {
+		book_progress = {
+			'total' : 0,
+			'done' : 0
+		};
+		user_progress = {
+			'total' : 0,
+			'done' : 0
+		};
+
+		var book_id = app_shortname.split("_")[0];
+		var deferreds = [];
+		deferreds.push(getBookProgress(book_id));
+		deferreds.push(getUserProgress(book_id + "_tt1"));
+		deferreds.push(getUserProgress(book_id + "_tt2"));
+		deferreds.push(getUserProgress(book_id + "_tt3"));
+		deferreds.push(getUserProgress(book_id + "_tt4"));
+
+		$.when
+				.apply($, deferreds)
+				.then(
+						function() {
+							// Set Book's title
+							$("#book_title").html(book_progress.title);
+
+							$("#total").text(100);
+							$("#done").text(30);
+
+							if (user_progress.done > 1) {
+								$("#motivation-msg").fadeTo(500, 1);
+							}
+
+							var only_by_community = book_progress.done
+									- user_progress.done;
+							var community_pct = Math
+									.round((only_by_community * 100)
+											/ book_progress.total);
+							$("#community-progress").tooltip('destroy');
+							$("#community-progress").css("width",
+									community_pct.toString() + "%");
+							$("#community-progress")
+									.attr(
+											"data-original-title",
+											community_pct.toString()
+													+ "% "
+													+ $.i18n
+															._('completed-by-community'));
+							$("#community-progress").tooltip({
+								'placement' : 'top'
+							});
+
+							var user_pct = Math
+									.round((user_progress.done * 100)
+											/ book_progress.total);
+							$("#user-progress").tooltip('destroy');
+							$("#user-progress").css("width",
+									user_pct.toString() + "%");
+							$("#user-progress").attr(
+									"data-original-title",
+									user_pct.toString() + "% "
+											+ $.i18n._('completed-by-user'));
+							$("#user-progress").tooltip({
+								'placement' : 'top'
+							});
+
+							$("#total").text(book_progress.total);
+							$("#done").text(user_progress.done);
+
+							var remaining_pct = 100 - (community_pct + user_pct);
+							$("#remaining-progress").css("width",
+									remaining_pct.toString() + "%");
+							if ($("#remaining-progress").width() < 105) {
+								$("#remaining-progress").hide();
+							}
+						});
+	}
+
+	function getBookProgress(bookId) {
+		return $.ajax({
+			url : '/mb/api/get_book_progress/' + bookId,
+			success : function(data) {
+				book_progress = $.parseJSON(data);
+			}
+		});
+	}
+
+	function getUserProgress(app_name) {
+		return pybossa.userProgress(app_name).done(function(data) {
+			user_progress.total = user_progress.total + data.total;
+			user_progress.done = user_progress.done + data.done;
+		});
+	}
+
+	function showHelpTranscribe() {
+		$('#helpModalTranscribe').modal();
+	}
+
+	function loadData(data) {
+		var current_task = data.task;
+
+		// Defined by FB-template
+		if (typeof loadDataEvent != "undefined") {
+			loadDataEvent(current_task);
+		}
+
+		if (!$.isEmptyObject(current_task)) {
+			loadUserProgress();
+			taskId = current_task.id;
+			createTableViewer(current_task.info, minTableViewerWidth,
+					minTableViewerHeight);
+		} else {
+			unblockUI();
+			$("#task-bar-progress").tooltip('destroy');
+			$(".skeleton").hide();
+			$("#finish").fadeIn(200)
+			setTimeout(function() {
+				$("#finish").fadeOut(200);
+				enableNextTask();
+			}, 2500);
+		}
+	}
+
+	function taskRunDone(taskId) {
+		$.ajax({
+			url : '/mb/api/' + taskId + '/done',
+			success : function(data) {
+				enableNextTask();
+			}
+		});
+	}
+
+	function enableNextTask() {
+		$("#workflowtask").click(function() {
+			redirectToANewTask(getARandomTask());
+		});
+		$("#workflowtask").fadeIn(200);
+	}
+
+	function redirectToANewTask(taskSufix) {
+		window.open(endpoint + "/app/"
+				+ app_shortname.replace("_tt4", "_" + taskSufix) + "/newtask",
+				"_self");
+	}
+
+	function getARandomTask() {
+		var nextTaskArr = [ "tt1", "tt2", "tt3" ];
+		return nextTaskArr[getRandomInt(0, nextTaskArr.length - 1)];
+	}
+
+	function getRandomInt(min, max) {
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
+
+	// Function to submit and save the TaskRun in PyBossa
+	function submitTask() {
+		$("[rel=popover]").popover("hide");
+		var answer = getCompleteTranscriptionAnswer();
+
+		pybossa.saveTask(taskId, answer).done(function(data) {
+			// Save actions in Cookies
+			$.cookie('finished_t4', true, {
+				expires : COOKIE_EXPIRATION,
+				path : '/'
+			});
+
+			//Call tt workflow api.
+			taskRunDone(taskId);
+			clearCanvas();
+
+			blockUI();
+
+			// Load a new task
+			pybossa.newTask(app_shortname).done(function(data) {
+				loadData(data);
+			});
+		});
+	}
+
+	initialize();
+</script>
+<script>
+	(function(i, s, o, g, r, a, m) {
+		i['GoogleAnalyticsObject'] = r;
+		i[r] = i[r] || function() {
+			(i[r].q = i[r].q || []).push(arguments)
+		}, i[r].l = 1 * new Date();
+		a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+		a.async = 1;
+		a.src = g;
+		m.parentNode.insertBefore(a, m)
+	})(window, document, 'script', '//www.google-analytics.com/analytics.js',
+			'ga');
+
+	ga('create', 'UA-16766566-2', 'socientize.eu');
+	ga('send', 'pageview');
+</script>

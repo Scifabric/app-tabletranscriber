@@ -1,0 +1,16 @@
+.container{
+    left:50%;
+    margin-left:-500px; /* metade da largura fictícia */
+    position:relative;
+    width:1000px;
+}
+
+
+.tables{
+float:left;
+position: relative;
+width: 455px;
+height: 600px;
+margin: 5px;
+border: 2px inset;
+}

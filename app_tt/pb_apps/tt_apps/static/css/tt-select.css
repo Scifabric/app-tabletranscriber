@@ -1,0 +1,120 @@
+#template-container {
+	width: 595px;
+	margin-left: 38px;
+}
+
+.ttImage {
+	width: 550px;
+	height: 700px;
+	border: 1px solid;
+}
+
+#image-container {
+	width: 550px;
+	height: 700px;
+	margin-left: 20px;
+	display: table;
+}
+
+#loading-container {
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+}
+
+#button_help {
+	float: right;
+	margin-right: 4px;
+	height: 30px;
+}
+
+#button_bug_report {
+	float: right;
+	height: 30px;
+}
+
+#button_share {
+	float: right;
+	margin-right: 4px;
+	height: 30px;
+	width: 40px
+}
+
+#answer {
+	width: 595px;
+}
+
+#bug_report_div {
+	display: none;
+	border-width: 1px;
+	border-style: dashed;
+	margin-left: 20px;
+	width: 552px;
+}
+
+#bug_report_question {
+	text-align: center;
+}
+
+#disqus_thread {
+	width: 595px;
+	margin-top: 20px;
+}
+
+#share-container {
+	position: absolute;
+}
+
+#share-menu {
+	display: none;
+	position: absolute;
+}
+
+.popover-content{
+	display: none;
+}
+
+.popover {
+	color: #000;
+	border: 1px solid rgba(0, 0, 0, 0.7);
+	max-width: 200px;
+}
+
+.popover.left .arrow:after {
+	border-left-color: rgba(0, 0, 0, 1);
+}
+
+.popover.top .arrow:after {
+	border-top-color: rgba(0, 0, 0, 1);
+}
+
+.popover.right .arrow:after {
+	border-right-color: rgba(0, 0, 0, 1);
+}
+
+.popover.bottom .arrow:after {
+	border-bottom-color: rgba(0, 0, 0, 1);
+}
+
+#alert-container {
+	width: 595px;
+	height: 50px;
+}
+
+#alert-container p {
+	margin-bottom: 0px;
+	text-align: center;
+}
+
+#answer {
+	margin-bottom: 10px;
+}
+
+#book-info-container {
+	height: 48px;
+	overflow: hidden;
+}
+
+.progress {
+	margin-bottom: 0px;
+}

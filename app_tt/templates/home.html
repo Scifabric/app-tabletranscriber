@@ -1,0 +1,55 @@
+{% block home_content %}
+
+<style>
+#button-container {
+	width: 313px;
+	font-weight: bold;
+	float: left;
+	margin-left: 25px;
+	margin-top: 110px;
+}
+
+#motivation {
+	width: 860px;
+	margin: auto;
+}
+
+#yt-iframe {
+	float: left;
+}
+</style>
+
+<div id="home" class="container well active tab-pane">
+	<h1>Mem&oacute;ria Estat&iacute;stica do Brasil</h1>
+	<p>
+		O projeto Mem&oacute;ria Estat&iacute;stica do Brasil (MEB) está
+		selecionando, digitalizando e transcrevendo para arquivos
+		edit&aacute;veis, publica&ccedil;&otilde;es históricas relevantes para
+		a história estat&iacute;stica do Brasil. Estas
+		publica&ccedil;&otilde;es, no momento vindas da <a
+			href="http://memoria.org.br/o_projeto.php" target="_blank">Biblioteca
+			do Minist&eacute;rio da Fazenda no Rio de Janeiro (BMF/RJ)</a>, t&ecirc;m
+		a memória estat&iacute;stica do Brasil nas &aacute;reas de demografia,
+		economia, finan&ccedil;as, administra&ccedil;&atilde;o p&uacute;blica,
+		transporte, educa&ccedil;&atilde;o, sa&uacute;de, entre outras.
+	</p>
+	<div style="margin-top: 35px;">
+		<h2>
+			<strong>Qual a importância de conservar a Memória
+				Estatística do Brasil? </strong>
+		</h2>
+	</div>
+	<div id="motivation">
+		<iframe id="yt-iframe" width="460" height="315"
+			src="//www.youtube.com/embed/U1h0kOUjzGM" frameborder="0"
+			allowfullscreen style="float:left"> </iframe>
+	
+		<div id="button-container">
+			<a id="start-contributing" class="btn btn-success"
+				style="padding: 10px; font-size: 16px;" onclick="changeToBooksTab()"><i
+				class="icon icon-white icon-ok" style="margin-right: 8px;"></i>Comece a Colaborar</a>
+		</div>
+	</div>
+</div>
+
+{% endblock home_content %}

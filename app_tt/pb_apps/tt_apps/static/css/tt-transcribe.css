@@ -1,0 +1,144 @@
+#template-container {
+	width: 940px;
+	margin-left: 38px;
+}
+
+#table-viewer {
+	float: left;
+	overflow: auto;
+	position: relative;
+	margin-top: 10px;
+}
+
+#loading-container {
+	position: absolute;
+	margin-left: 190px;
+	margin-top: 100px;
+}
+
+#cell-viewer {
+	width: 400px;
+	height: 150px;
+	border: 1px solid black;
+	margin-bottom: 10px;
+	position: relative;
+	overflow: hidden;
+}
+
+#canvas-cell-container {
+	width: 400px;
+	height: 150px;
+	padding-right: 15px;
+	padding-bottom: 15px;
+	overflow: auto;
+}
+
+#right-panel {
+	float: right;
+	width: 400px;
+	margin: auto;
+	margin-top: 10px;
+}
+
+#toolbar {
+	float: left;
+}
+
+#toolbar .tooltip-inner {
+	max-width: none;
+}
+
+#toolbar button {
+	width: 55px;
+	height: 35px;
+	font-size: 18px;
+}
+
+#button_bug_report {
+	height: 35px;
+}
+
+#bug_report_div {
+	display: none;
+	border-width: 1px;
+	border-style: dashed;
+	width: 940px;
+}
+
+#bug_report_question {
+	text-align: center;
+}
+
+#button-finished-task {
+	margin-left: 128px;
+	margin-right: 41px;
+	height: 35px;
+	width: 155px;
+	float: left;
+}
+
+#button-finished-transcription {
+	display: block;
+	height: 35px;
+	margin-bottom: 10px;
+}
+
+#task-progress {
+	height: 30px;
+}
+
+#transcription-field {
+	width: 390px;
+}
+
+#human-transcription-field {
+	display: block;
+	width: 390px;
+}
+
+#human-transcription-label {
+	display: none;
+}
+
+#edition-field {
+	width: 390px;
+}
+
+#alert-container p {
+	margin-bottom: 0px;
+}
+
+.popover-content{
+	display: none;
+}
+
+.popover {
+	color: #000;
+	border: 1px solid rgba(0, 0, 0, 0.7);
+	max-width: 200px;
+}
+
+.popover.left .arrow:after {
+	border-left-color: rgba(0, 0, 0, 1);
+}
+
+.popover.top .arrow:after {
+	border-top-color: rgba(0, 0, 0, 1);
+}
+
+.popover.right .arrow:after {
+	border-right-color: rgba(0, 0, 0, 1);
+}
+
+.popover.bottom .arrow:after {
+	border-bottom-color: rgba(0, 0, 0, 1);
+}
+
+#book-info-container {
+	height: 48px;
+	overflow: hidden;
+}
+
+.progress {
+	margin-bottom: 0px;
+}

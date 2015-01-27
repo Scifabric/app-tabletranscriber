@@ -1,0 +1,263 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta charset="utf-8">
+
+<title>Memória Estatística do Brasil</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta property="og:title" content="Memória Estatística do Brasil" />
+<meta property="og:type" content="website" />
+
+<!-- Le styles -->
+<link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link
+	href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css"
+	rel="stylesheet">
+<link href="css/fonts/stylesheet.css" rel="stylesheet">
+<link href="css/styles.css" rel="stylesheet">
+
+<!-- Le javascript -->
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+<script type="text/javascript" src="js/pybossa.js"></script>
+
+<style type="text/css">
+.container {
+	width: 800px;
+}
+
+#task-template {
+	min-height: 700px;
+}
+
+#task-long-description {
+	min-height: 700px;
+}
+
+#main-container {
+	min-height: 700px;
+}
+
+footer .span2 {
+	width: 117px;
+}
+
+#fb-loading-container img {
+	position: absolute;
+	width: 80px;
+	top: 37%;
+	left: 47%;
+}
+</style>
+
+</head>
+<body>
+	<div id="fb-loading-container" style="display: none;">
+		<img src="img/loading.gif">
+	</div>
+
+	<div id="main-container"></div>
+
+	<footer>
+	<div class="container" style="width: 940px;">
+		<div class="row">
+			<div class="span2">
+				<a href="http://www.lsd.ufcg.edu.br/" target="_blank"><img
+					src="img/lsdlogo.png" style="height: 57px"></a>
+			</div>
+			<div class="span2">
+				<a href="http://www.channah.com.br/meb/" target="_blank"><img
+					src="img/meb_icon.png" style="height: 57px"></a>
+			</div>
+			<div class="span2">
+				<a href="http://www.ipea.gov.br/portal/" target="_blank"><img
+					src="img/logoipea.png" style="height: 57px"></a>
+			</div>
+			<div class="span2">
+				<a href="http://ec.europa.eu/" target="_blank"><img
+					src="img/commlogo.jpg"></a>
+			</div>
+			<div class="span2">
+				<a href="http://cordis.europa.eu/fp7/home_en.html" target="_blank"><img
+					src="img/fp7logo.jpg"></a>
+			</div>
+			<div class="span2">
+				<a href="http://europa.eu/" target="_blank"><img
+					src="img/eulogo.jpg"></a>
+			</div>
+			<div class="span2">
+				<a href="http://pybossa.com/" target="_blank"><img
+					src="img/pybossa.png"></a>
+			</div>
+		</div>
+	</div>
+	</footer>
+
+	<!--Facebook Login Code-->
+	<div id="fb-root"></div>
+	<script type="text/javascript" charset="utf-8">
+		var fb_permissions;
+		var fb_app_id;
+		var server_name;
+
+		function initFacebookSDK(app_id, permissions) {
+			fb_app_id = app_id;
+			fb_permissions = {
+				'scope' : permissions
+			};
+
+			window.fbAsyncInit = function() {
+				FB.init({
+					appId : fb_app_id,
+					status : false, // check login status
+					cookie : true, // enable cookies to allow the server to access the session
+					xfbml : true
+				});
+			};
+
+			// Load the SDK asynchronously
+			(function(d) {
+				var js, id = 'facebook-jssdk', ref = d
+						.getElementsByTagName('script')[0];
+				if (d.getElementById(id)) {
+					return;
+				}
+				js = d.createElement('script');
+				js.id = id;
+				js.async = true;
+				js.src = "//connect.facebook.net/en_US/all.js";
+				ref.parentNode.insertBefore(js, ref);
+			}(document));
+		}
+
+		function initFacebookLogin() {
+			if (!successfullyLogged) {
+				FB.getLoginStatus(handleAuthChange);
+			}
+		}
+
+		function handleAuthChange(response) {
+			if (response.status === 'connected' && !successfullyLogged) {
+				processLogin(response.authResponse);
+			} else if (response.status === 'not_authorized') {
+				FB.login(handleAuthChange, fb_permissions);
+			} else {
+				FB.login(handleAuthChange, fb_permissions);
+			}
+		}
+
+		function processLogin(authResponse) {
+			$.ajax(
+					{
+						url : "https://graph.facebook.com/me?access_token="
+								+ authResponse.accessToken,
+						dataType : 'json'
+					}).pipe(
+					function(response) {
+						var username = typeof response.username == "undefined"? buildName(response.name) : response.username;
+						var authData = {
+							'facebook_user_id' : response.id,
+							'email' : response.email,
+							'name' : username,
+							'full_name' : response.name
+						};
+
+						pybossa.authenticateFacebookUser(authData, function(
+								answer) {
+							successfullyLogged = true;
+							FB.Event.subscribe('auth.authResponseChange',
+									handleAuthChange);
+							console.log(answer);
+						});
+					});
+		}
+		
+		function buildName(text) {
+			var fiveDigitRandomNum = Math.floor(Math.random()*90000) + 10000;
+			return removeSpecialCharacters(text.toLowerCase()) + "." + fiveDigitRandomNum;
+		}
+
+		function removeSpecialCharacters(text) {
+			text = text.replace(/[á|ã|â|à]/gi, "a");
+			text = text.replace(/[é|ê|è]/gi, "e");
+			text = text.replace(/[í|ì|î]/gi, "i");
+			text = text.replace(/[õ|ò|ó|ô]/gi, "o");
+			text = text.replace(/[ú|ù|û]/gi, "u");
+			text = text.replace(/[ç]/gi, "c");
+			text = text.replace(/[ñ]/gi, "n");
+			text = text.replace(/[á|ã|â]/gi, "a");
+
+			text = text.replace(/\W/gi, ".");
+			text = text.replace(/(\-)\1+/gi, ".");
+			return text;
+		}
+	</script>
+
+	<!-- PyBossa Application Template Load -->
+	<script type="text/javascript" charset="utf-8">
+		/* MISC Functions */
+		function loadAHTML(targetEl, htmlUrl, callback) {
+			$("#fb-loading-container").show();
+			$(targetEl).load(htmlUrl, function() {
+				$("#fb-loading-container").hide();
+
+				if (typeof callback != "undefined") {
+					callback();
+				}
+			});
+		}
+
+		function ChangeImage(img, url) {
+			img.src = url;
+		}
+
+		function openShareWindow(url) {
+			window
+					.open(
+							url,
+							"_blank",
+							"toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, copyhistory=yes, width=500, height=300");
+		}
+
+		function shareProjectOnFacebook(url) {
+			FB.ui({
+				method : 'feed',
+				link : url
+			});
+		}
+
+		var app_shortname;
+		var successfullyLogged = false;
+		var numOfTaskRunDone = 0;
+
+		$.getJSON("fb_config.json", function(json) {
+			app_shortname = json.shortname;
+			fb_app_id = json.app_id;
+			server_name = json.server_name;
+
+			pybossa.setEndpoint(json.endpoint);
+			initFacebookSDK(json.app_id, json.facebook_permissions_type);
+
+			loadAHTML("#main-container", "main_container.html")
+		});
+	</script>
+</body>
+<script>
+	(function(i, s, o, g, r, a, m) {
+		i['GoogleAnalyticsObject'] = r;
+		i[r] = i[r] || function() {
+			(i[r].q = i[r].q || []).push(arguments)
+		}, i[r].l = 1 * new Date();
+		a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+		a.async = 1;
+		a.src = g;
+		m.parentNode.insertBefore(a, m)
+	})(window, document, 'script', '//www.google-analytics.com/analytics.js',
+			'ga');
+
+	ga('create', 'UA-16766566-2', 'socientize.eu');
+	ga('send', 'pageview');
+</script>
+</html>

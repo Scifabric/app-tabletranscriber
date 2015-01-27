@@ -1,0 +1,23 @@
+<VirtualHost *:80>
+    ServerName serverName
+    DocumentRoot /home/user/pybossa/pybossa
+    WSGIDaemonProcess pybossa user=user group=usergroup threads=5
+    WSGIScriptAlias /pybossa /home/user/pybossa/contrib/pybossa.wsgi
+
+    <Directory /home/user/pybossa>
+        WSGIProcessGroup pybossa
+        WSGIApplicationGroup %{GLOBAL}
+        Order deny,allow
+        Allow from all
+    </Directory>
+
+	WSGIDaemonProcess mb user=user group=usergroup threads=5
+        WSGIScriptAlias /mb <path to app-tabletranscriber>/contrib/app_tt.wsgi
+
+    <Directory <path to app-tabletranscriber>>
+        WSGIProcessGroup mb
+        WSGIApplicationGroup %{GLOBAL}
+        Order deny,allow
+        Allow from all
+    </Directory>
+</VirtualHost>

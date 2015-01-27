@@ -1,0 +1,88 @@
+<style>
+#header-navbar a {
+	margin-bottom: 0px;
+}
+
+.tab-content {
+	min-height: 750px;
+}
+
+#tab-container {
+	margin: 0px 0px;
+	width: auto;
+}
+
+#tab-container .tab-pane {
+	margin: 5px 0px 0px 245px;
+}
+</style>
+
+<div id="header-navbar" class="navbar navbar-fixed-top" style="background: #FFF; height: 66px;">
+	<div class="navbar-inner" style="float: left; margin-left: 25px;">
+		<div class="container" style="width: 840px;">
+			<a class="brand" href="/pybossa/" target="_blank" style="padding: 0px 20px 0px 0px;"><img
+				src="{{ url_for('static', filename='images/logo_societic.png') }}"
+				alt="PyBossa"></a>
+
+			<div style="float: left;">
+				<ul class="nav nav-tabs" style="border-bottom: 0px;">
+					<li class="active"><a href="#home" data-toggle="tab"><i
+							class="icon-chevron-right"></i> In&iacute;cio</a></li>
+					<li><a id="books-tab" href="#books_div" data-toggle="tab"><i
+							class="icon-chevron-right"></i> Livros para
+							Transcri&ccedil;&atilde;o</a></li>
+					<!-- <li><a href="#notebook" data-toggle="tab"><i
+				class="icon-chevron-right"></i> Montar Caderno</a></li>
+		<li><a href="#results" data-toggle="tab"><i
+				class="icon-chevron-right"></i> Resultados</a></li>
+		<li><a href="#individual_contribution" data-toggle="tab"><i
+				class="icon-chevron-right"></i> Transcri&ccedil;&atilde;o Direta</a></li>
+		<li><a href="#admin" data-toggle="tab"><i
+				class="icon-chevron-right"></i> Administra&ccedil;&atilde;o</a></li>-->
+					<li><a href="#other_links" data-toggle="tab"><i
+							class="icon-chevron-right"></i> Outros Links</a></li>
+				</ul>
+			</div>
+
+			<!-- <div class="nav-collapse collapse">
+				<ul id="nav-buttons" class="nav">
+					<li><a href="/pybossa/account/" target="_blank">Community</a></li>
+					<li><a href="/pybossa/app/category/featured/" target="_blank">Applications</a></li>
+					<li><a href="/pybossa/about" target="_blank">About</a></li>
+				</ul>
+			</div>
+			 -->
+			<div style="float: left; margin-top: 25px; margin-left: 5px;">
+				<a id="share-on-twitter"
+					href="javascript:openShareWindow('https://twitter.com/share?text=Contribua%20com%20o%20Projeto%20Memória%20Estatística%20do%20Brasil!&url=https://alfa.pybossa.socientize.eu/mb');"
+					data-toggle="tooltip" title="Share the project on Twitter"> <img
+					src="{{ url_for('static', filename='images/twitter.png') }}"
+					onmouseover="javascript:ChangeImage(this,'{{ url_for('static', filename='images/twitterHover.png') }}');"
+					onmouseout="javascript:ChangeImage(this,'{{ url_for('static', filename='images/twitter.png') }}');"
+					style="margin-right: 10px;" /></a> <a id="share-on-facebook"
+					href="javascript:openShareWindow('https://www.facebook.com/sharer.php?u=https://alfa.pybossa.socientize.eu/mb')"
+					data-toggle="tooltip" title="Share the project on Facebook"> <img
+					src="{{ url_for('static', filename='images/face.png') }}"
+					onmouseover="javascript:ChangeImage(this,'{{ url_for('static', filename='images/faceHover.png') }}');"
+					onmouseout="javascript:ChangeImage(this,'{{ url_for('static', filename='images/face.png') }}');"
+					style="margin-right: 10px;" /></a> <a id="share-on-google-plus"
+					href="javascript:openShareWindow('https://plus.google.com/share?url=https://alfa.pybossa.socientize.eu/mb');"
+					data-toggle="tooltip" title="Share the project on Google+"> <img
+					src="{{ url_for('static', filename='images/google.png') }}"
+					onmouseover="javascript:ChangeImage(this,'{{ url_for('static', filename='images/googleHover.png') }}');"
+					onmouseout="javascript:ChangeImage(this,'{{ url_for('static', filename='images/google.png') }}');"
+					style="margin-right: 10px;" /></a>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+
+function ChangeImage(img, url) {
+	img.src = url;
+}
+
+function openShareWindow(url) {
+	window.open(url, "_blank", "toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, copyhistory=yes, width=500, height=300");
+}
+</script>

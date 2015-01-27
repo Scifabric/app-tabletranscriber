@@ -1,0 +1,38 @@
+<div id="tt1"></div>
+<div id="tt2"></div>
+<div id="tt3"></div>
+<div id="tt4"></div>
+
+<script type="text/javascript" charset="utf-8">
+	var taskType2html = {"tt1": "template-select.html", "tt2": "template-meta.html", "tt3": "template-struct.html", "tt4": "template-transcribe.html"};
+	
+	function loadTaskTemplate(bookId, taskType) {
+		clearCurrentTemplate();
+		$('#'+ taskType).hide();
+		$("#fb-loading-container").show();
+		currentTaskType = taskType;
+		
+		$("#" + taskType).load('/mb/api/render_template/' + bookId + '_' + taskType + '/' + taskType2html[taskType], function() {
+			redirectToANewTask = function(taskSufix) {
+				loadTaskTemplate(bookId, taskSufix);
+			}
+		});
+	}
+	
+	function loadDataEvent(task) {
+		if (!$.isEmptyObject(task)) {
+			$("#fb-loading-container").hide();
+			$('#'+ currentTaskType).show();
+		} else if (currentTaskType == "tt4") {
+			$("#fb-loading-container").hide();
+			$('#'+ currentTaskType).show();
+		}
+	}
+	
+	function clearCurrentTemplate() {
+		clearMBInterface();
+		$('#'+ currentTaskType).empty();
+	}
+	
+	loadTaskTemplate(bookId, currentTaskType);
+</script>

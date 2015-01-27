@@ -1,0 +1,541 @@
+<div id="template-container">
+	<div class="row">
+		<div id="alert-container" class="span7" style="height: 50px">
+			<div id="success" class="alert alert-success" style="display: none;">
+				<p>
+					<span><strong>#</strong></span><span>#</span>
+				</p>
+			</div>
+			<div id="finish" class="alert alert-success" style="display: none;">
+				<p>
+					<span><strong>#</strong></span><span>#</span>
+				</p>
+			</div>
+			<div id="error" class="alert alert-error" style="display: none;">
+				<p>
+					<span><strong>#</strong></span><span>#</span>
+				</p>
+			</div>
+			<div id="workflowtask" class="alert alert-success"
+				style="display: none; text-align: center; cursor: pointer; position: relative; margin-top: 5px;"></div>
+		</div>
+	</div>
+
+	<div class="skeleton">
+		<h1>
+			Mem&oacute;ria Estat&iacute;stica do Brasil (<span id="task-type"></span>)
+		</h1>
+
+		<div id="motivation-msg"
+			style="margin-top: 10px; margin-bottom: 10px; opacity: 0;">
+			<span id="progress-from">#</span><span id="done"
+				class="label label-info" style="margin-right: 5px"></span><span
+				id="progress-to">#</span>
+		</div>
+		<div class="progress  progress-striped">
+			<div id="community-progress" class="bar bar-success"
+				style="width: 0%;"></div>
+			<div id="user-progress" class="bar bar-info" style="width: 0%;"></div>
+			<div id="remaining-progress"
+				style="float: left; text-align: center; width: 0%;">
+				<span></span>
+			</div>
+		</div>
+		<div id="book-info-container">
+			<h5>
+				<strong><span id="book-info"></span></strong> <i><span
+					id="book_title"></span></i>
+			</h5>
+		</div>
+		<h1>
+			<strong><span id="question"></span></strong>
+		</h1>
+		<h5 id="question-warning"></h5>
+	</div>
+
+	<div class="skeleton">
+		<div id="answer" rel="popover" title="">
+			<button id="button_yes" class="btn btn-success"
+				onclick="submitTask('Yes')">
+				<i class="icon icon-white icon-ok"></i>
+			</button>
+			<button id="button_no" class="btn btn-danger"
+				onclick="submitTask('No')">
+				<i class="icon icon-white icon-remove"></i>
+			</button>
+			<button id="button_bug_report" class="btn btn-warning" rel="tooltip"
+				title="Aponte um erro na tarefa" onclick="showBugReportForm()">
+				<i class="icon icon-warning-sign"></i>
+			</button>
+			<button id="button_help" class="btn help" data-toggle="modal"
+				rel="tooltip" title="Abre a tela de ajuda"
+				onclick="showHelpSelect()">
+				<i class="icon icon-question-sign"></i>
+			</button>
+			<button id="button_share" class="btn" rel="tooltip"
+				title="Compartilhe algo interessante da página abaixo"
+				onclick="share()">
+				<img class="icon" src="#server/images/share_icon.png"></img>
+			</button>
+		</div>
+	</div>
+
+	<div id="bug_report_div" class="skeleton">
+		<div>
+			<h2 id="bug_report_question">Selecione as opções abaixo que
+				correspondem ao problema encontrado:</h2>
+			<form id="bug_report_form" style="margin: 0 auto;">
+				<input id="loading" type="checkbox" value="1"> A imagem não
+				carrega<br> <input id="submission" type="checkbox" value="2">
+				A página travou quando tentei submeter<br> <input
+					id="loading_next" type="checkbox" value="3"> A próxima
+				tarefa não carrega<br> <input id="other" type="checkbox"
+					value="4"> Outro<br>
+				<textarea type="textarea" id="other_description" rows="0"
+					style="width: 240px"></textarea>
+				<br> <a class="btn btn-default btn-sm" style="float: left;"
+					onclick="cancelSubReport()"> Cancelar</a> <a
+					class="btn btn-info btn-sm" style="float: right;"
+					onclick="subReport()"> Submeter</a><br> <br>
+			</form>
+		</div>
+	</div>
+
+	<div id="image-container" class="skeleton" rel="popover"
+		popover-placement="right" title="">
+		<a id="image-link" href="#" target="_blank"
+			style="float: left; display: none;"> <img id="image"
+			class="ttImage" src="#" onload="unblockUI();">
+		</a>
+		<div id="share-container">
+			<ul id="share-menu" class="dropdown-menu" role="menu">
+				<li><a style="padding: 3px 12px;" onclick="shareOnFacebook()">
+						<img class="icon" style="width: 20px; margin-right: 3px;"
+						src="#server/images/social_facebook.png"></img> Facebook
+				</a></li>
+			</ul>
+			<div id="share-canvas-container"></div>
+		</div>
+		<div id="loading-container">
+			<img src="#server/images/loading.gif">
+		</div>
+	</div>
+
+	<div id="helpModalSelect" class="modal hide fade" tabindex="-1"
+		role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+		style="display: none">
+
+		<div class="modal-header">
+			<button class="close" data-dismiss="modal" aria-hidden="true">
+				<i class="icon-white icon-remove"></i>
+			</button>
+			<h3 id="myModalLabel">
+				<strong>Tutorial de Seleção de Tabelas</strong>
+			</h3>
+		</div>
+
+		<div class="modal-body">
+			<h2>O que deve ser feito?</h2>
+			<p>A tarefa consiste em selecionar as páginas em que existe pelo
+				menos uma tabela.</p>
+			<br>
+			<p>
+				<strong style="color: red">Atenção</strong>
+			</p>
+			<p>- Caso esteja visível apenas uma parte da tabela confirme que
+				existe uma tabela na página.</p>
+			<p>- Caso você tenha alguma dúvida se existe ou não uma tabela na
+				página, envie um feedback com sua dúvida no campo logo abaixo da
+				página.</p>
+			<br>
+			<h2>O que devo considerar uma tabela?</h2>
+			<p>Você deve considerar uma tabela qualquer estrutura que possua
+				dados sobre economia, geografia, demografia ou outra matéria para
+				fins estatísticos.</p>
+			<p style="color: red">Índices e sumários dos livros não são
+				considerados tabelas válidas para nossa aplicação.</p>
+			<br>
+		</div>
+
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Fechar</button>
+		</div>
+	</div>
+</div>
+
+<script src="//connect.facebook.net/en_US/all.js"></script>
+<link rel="stylesheet" type="text/css" href="#server/css/tt-select.css" />
+
+<script type="text/javascript" charset="utf-8">
+	var app_shortname = "#app_shortname#";
+	var endpoint = "/pybossa";
+	var book_progress;
+	var user_progress;
+	var COOKIE_EXPIRATION = 60; // days
+
+	function getScripts(scripts, callback) {
+		var progress = 0;
+		var internalCallback = function() {
+			if (++progress == scripts.length) {
+				callback();
+			} else {
+				$.getScript(getStaticURL() + scripts[progress],
+						internalCallback);
+			}
+		};
+		$.getScript(getStaticURL() + scripts[progress], internalCallback);
+	}
+
+	function getStaticURL() {
+		return "/mb-static";
+	}
+
+	function initialize() {
+		pybossa.setEndpoint(endpoint);
+
+		var scripts = [ "/js/kinetic.js", "/js/share.js",
+				"/js/jquery.i18n.min.js", "/js/tt-select-i18n.js",
+				"/js/jquery.blockUI.js", "/js/report.js",
+				"/js/jquery.cookie.js" ];
+		getScripts(scripts, function() {
+			interfaceConfiguration();
+			pybossa.newTask(app_shortname).done(function(data) {
+				loadData(data);
+			});
+		});
+	}
+
+	function unblockUI() {
+		$("#loading-container").hide();
+		$("#image-link").show();
+		$.unblockUI();
+	}
+
+	function blockUI() {
+		$("#image-link").hide();
+		$("#loading-container").show();
+
+		$.blockUI({
+			message : $("#success"),
+			css : {
+				height : $("#success").height()
+			}
+		});
+	}
+
+	function showHelpSelect() {
+		$("#helpModalSelect").modal();
+	}
+
+	function callbackGetUserId(u_ident) {
+		var submissionP = $("#submission")[0].checked;
+		var loadingCurrentTaskP = $("#loading")[0].checked;
+		var loadingNextTaskP = $("#loading_next")[0].checked;
+		var otherP = $("#other")[0].checked;
+		var otherTextDescriptionP = $("#other_description").val();
+
+		var msg = {
+			'1' : submissionP,
+			'2' : loadingCurrentTaskP,
+			'3' : loadingNextTaskP,
+			'4' : otherP,
+			'5' : otherTextDescriptionP
+		};
+
+		var jreport = JSON.stringify({
+			'message' : msg,
+			'u_id' : u_ident
+		});
+
+		$.ajax({
+			type : 'POST',
+			url : '/mb/api/' + app_shortname + '/' + taskId + '/report',
+			dataType : 'json',
+			contentType : 'application/json; charset=utf-8',
+			data : jreport
+		});
+
+		erase_bug_report_div();
+	}
+
+	function subReport() {
+		pybossa.getCurrentUserId(callbackGetUserId);
+	}
+
+	function interfaceConfiguration() {
+		$("[rel=tooltip]").tooltip();
+		$("[rel=popover]").popover({
+			"trigger" : "manual"
+		});
+
+		// Anonymous alert fix
+		$("#msg_warning .close").removeAttr("data-dismiss");
+		$("#msg_warning .close").on("click", function(e) {
+			$("#msg_warning").fadeTo(1, 0);
+		});
+
+		$("#question").text($.i18n._('question'));
+		$("#question-warning").html($.i18n._('question-warning'));
+		$("#book-info").text($.i18n._('book-info'));
+		$("#task-type").text($.i18n._('task-type'));
+
+		$("#button_yes").text($.i18n._('button_yes'));
+		$("#button_yes").button({
+			icons : {
+				primary : "icon icon-white icon-ok"
+			}
+		});
+
+		$("#button_no").text($.i18n._('button_no'));
+		$("#button_no").button({
+			icons : {
+				primary : "icon icon-white icon-remove"
+			}
+		});
+
+		$("#button_ntk").text($.i18n._('button_ntk'));
+
+		$("#success strong").text($.i18n._('well_done'));
+		$("#success span:nth-child(2)").text($.i18n._('saved'));
+		$("#finish strong").text($.i18n._('congratulations'));
+		$("#finish span:nth-child(2)").text($.i18n._('finished'));
+		$("#error strong").text($.i18n._('error'));
+		$("#error span:nth-child(2)").text($.i18n._('err_msg'));
+		$("#workflowtask").text($.i18n._('workflowtask'));
+		$("#progress-from").text($.i18n._('progress-from'));
+		$("#progress-to").text($.i18n._('progress-to'));
+		$("#remaining-progress span").text($.i18n._('remaining-tasks'));
+		$("#answer").attr("data-original-title",
+				$.i18n._('report-error-tooltip'));
+		$("#image-container").attr("data-original-title",
+				$.i18n._('page-tooltip'));
+
+		// Show popovers
+		$("[rel=popover]").popover({
+			"trigger" : "manual",
+			"placement" : "right"
+		});
+	} //Internationalization using jquery.i18n
+
+	function loadUserProgress() {
+		book_progress = {
+			'total' : 0,
+			'done' : 0
+		};
+		user_progress = {
+			'total' : 0,
+			'done' : 0
+		};
+
+		var book_id = app_shortname.split("_")[0];
+		var deferreds = [];
+		deferreds.push(getBookProgress(book_id));
+		deferreds.push(getUserProgress(book_id + "_tt1"));
+		deferreds.push(getUserProgress(book_id + "_tt2"));
+		deferreds.push(getUserProgress(book_id + "_tt3"));
+		deferreds.push(getUserProgress(book_id + "_tt4"));
+
+		$.when
+				.apply($, deferreds)
+				.then(
+						function() {
+							// Set Book's title
+							$("#book_title").html(book_progress.title);
+
+							$("#total").text(100);
+							$("#done").text(30);
+
+							if (user_progress.done > 1) {
+								$("#motivation-msg").fadeTo(500, 1);
+							}
+
+							var only_by_community = book_progress.done
+									- user_progress.done;
+							var community_pct = Math
+									.round((only_by_community * 100)
+											/ book_progress.total);
+
+							$("#community-progress").tooltip('destroy');
+							$("#community-progress").css("width",
+									community_pct.toString() + "%");
+							$("#community-progress")
+									.attr(
+											"data-original-title",
+											community_pct.toString()
+													+ "% "
+													+ $.i18n
+															._('completed-by-community'));
+							$("#community-progress").tooltip({
+								'placement' : 'top'
+							});
+
+							var user_pct = Math
+									.round((user_progress.done * 100)
+											/ book_progress.total);
+							$("#user-progress").tooltip('destroy');
+							$("#user-progress").css("width",
+									user_pct.toString() + "%");
+							$("#user-progress").attr(
+									"data-original-title",
+									user_pct.toString() + "% "
+											+ $.i18n._('completed-by-user'));
+							$("#user-progress").tooltip({
+								'placement' : 'top'
+							});
+
+							$("#total").text(book_progress.total);
+							$("#done").text(user_progress.done);
+
+							var remaining_pct = 100 - (community_pct + user_pct);
+							$("#remaining-progress").css("width",
+									remaining_pct.toString() + "%");
+							if ($("#remaining-progress").width() < 105) {
+								$("#remaining-progress").hide();
+							}
+						});
+	}
+
+	function getBookProgress(bookId) {
+		return $.ajax({
+			url : '/mb/api/get_book_progress/' + bookId,
+			success : function(data) {
+				book_progress = $.parseJSON(data);
+			}
+		});
+	}
+
+	function getUserProgress(app_name) {
+		return pybossa.userProgress(app_name).done(function(data) {
+			user_progress.total = user_progress.total + data.total;
+			user_progress.done = user_progress.done + data.done;
+		});
+	}
+
+	function taskRunDone(taskId) {
+		$.ajax({
+			url : '/mb/api/' + taskId + '/done',
+			success : function(data) {
+				enableNextTask(taskId);
+			}
+		});
+	}
+
+	function enableNextTask(taskId) {
+		$.ajax({
+			url : '/mb/api/' + taskId + '/available_tasks',
+			success : function(data) {
+				if (data == "True") {
+					$("#workflowtask").fadeIn(200);
+				}
+			}
+		});
+		$("#workflowtask").click(function() {
+			redirectToANewTask("tt2");
+		});
+	}
+
+	// Add tooltips for a newcomer
+	function addTooltips() {
+		var toolTipsEnabled = typeof $.cookie('finished_t1') == "undefined";
+		if (toolTipsEnabled) {
+			$("#answer").popover("show");
+			$("#image-container").popover("show");
+		}
+	}
+
+	function loadData(data) {
+		var current_task = data.task;
+
+		// Defined by FB-template
+		if (typeof loadDataEvent != "undefined") {
+			loadDataEvent(current_task);
+		}
+
+		if (!$.isEmptyObject(current_task)) {
+			loadUserProgress();
+			addTooltips();
+			task_id = current_task.id;
+
+			// Workaround to load images through HTTPS
+			$("#image-link").attr("href",
+					current_task.info.url_b.replace("http:", "https:"));
+			$("#image").attr("src",
+					current_task.info.url_m.replace("http:", "https:"));
+			pybossa.getCurrentUserId(function(userId) {
+				initSharer(task_id, userId);
+			});
+		} else {
+			unblockUI();
+			$(".skeleton").hide();
+			$("#finish").fadeIn(100, function() {
+				setTimeout(function() {
+					redirectToANewTask(getARandomTask());
+				}, 1500);
+			});
+		}
+		if ($("#button_share").hasClass("active")) {
+			disableShare();
+		}
+	}
+
+	function redirectToANewTask(taskSufix) {
+		window.open(endpoint + "/app/"
+				+ app_shortname.replace("_tt1", "_" + taskSufix) + "/newtask",
+				"_self");
+	}
+
+	function getARandomTask() {
+		var nextTaskArr = [ "tt2", "tt3", "tt4" ];
+		//return nextTaskArr[getRandomInt(0,nextTaskArr.length-1)];
+		return "tt2";
+	}
+
+	function getRandomInt(min, max) {
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
+
+	// Function to submit and save the TaskRun in PyBossa
+	function submitTask(answer) {
+		$("[rel=popover]").popover("hide");
+		// Get the task-id
+		taskid = task_id;
+
+		// Save the task
+		pybossa.saveTask(taskid, answer).done(function(data) {
+
+			// Save actions in Cookies
+			$.cookie('finished_t1', true, {
+				expires : COOKIE_EXPIRATION,
+				path : '/'
+			});
+
+			//Call tt workflow api.
+			taskRunDone(taskid);
+
+			blockUI();
+
+			// Load a new task
+			pybossa.newTask(app_shortname).done(function(data) {
+				loadData(data);
+			});
+		});
+	}
+
+	initialize();
+</script>
+<script>
+	(function(i, s, o, g, r, a, m) {
+		i['GoogleAnalyticsObject'] = r;
+		i[r] = i[r] || function() {
+			(i[r].q = i[r].q || []).push(arguments)
+		}, i[r].l = 1 * new Date();
+		a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+		a.async = 1;
+		a.src = g;
+		m.parentNode.insertBefore(a, m)
+	})(window, document, 'script', '//www.google-analytics.com/analytics.js',
+			'ga');
+
+	ga('create', 'UA-16766566-2', 'socientize.eu');
+	ga('send', 'pageview');
+</script>

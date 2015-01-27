@@ -1,0 +1,41 @@
+.iviewer_common {
+    position: relative;
+    float: left;
+    border: 1px  solid #000;
+    height: 28px;
+}
+
+.iviewer_button {
+    width: 28px;
+    cursor: pointer;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+.iviewer_zoom_in {
+    position: relative;
+    float: left;
+    background: url(../images/zoom-in.png);
+}
+
+.iviewer_zoom_out {
+    margin-left: 1px;
+    margin-right: 1px;
+    position: relative;
+    float: left;
+    background: url(../images/zoom-out.png);
+}
+
+.iviewer_zoom_status {
+    font: 1em/28px Sans;
+    color: #000;
+    background-color: #fff;
+    text-align: center;
+    width: 60px;
+}
+img {
+max-width: 800%;
+height: auto;
+border: 0;
+}
+
